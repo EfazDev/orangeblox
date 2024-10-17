@@ -27,7 +27,7 @@ if __name__ == "__main__":
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
-    current_version = {"version": "1.2.3"}
+    current_version = {"version": "1.2.5"}
     given_args = list(filter(None, sys.argv))
     pip_class = pip()
 
@@ -148,7 +148,10 @@ if __name__ == "__main__":
                 generated_manifest[i] = mod_info
         return generated_manifest
     
-    os.system("cls" if os.name == "nt" else "clear")
+    os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+    if main_os == "Darwin":
+        subprocess.Popen('echo "\\033]0;Efaz\'s Roblox Bootstrap\\007"', shell=True)
+
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap!")
     printWarnMessage("Made by Efaz from efaz.dev!")
@@ -182,18 +185,18 @@ if __name__ == "__main__":
             input("> ")
             sys.exit(0)
         else:
-            cur_vers = handler.getCurrentClientVersion()
-            if cur_vers["success"] == True:
-                printMainMessage(f"Current Roblox Version: {cur_vers['version']}")
+            installed_roblox_version = handler.getCurrentClientVersion()
+            if installed_roblox_version["success"] == True:
+                printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
             else:
                 printErrorMessage("Something went wrong trying to determine your current Roblox version.")
                 input("> ")
                 sys.exit(0)
     elif main_os == "Darwin":
         if os.path.exists("/Applications/Roblox.app/"):
-            cur_vers = handler.getCurrentClientVersion()
-            if cur_vers["success"] == True:
-                printMainMessage(f"Current Roblox Version: {cur_vers['version']}")
+            installed_roblox_version = handler.getCurrentClientVersion()
+            if installed_roblox_version["success"] == True:
+                printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
             else:
                 printErrorMessage("Something went wrong trying to determine your current Roblox version.")
                 input("> ")
@@ -275,6 +278,9 @@ if __name__ == "__main__":
         if isYes(a) == True:
             fflag_configuration["EFlagRemoveBuilderFont"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(a) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(a) == True:
             fflag_configuration["EFlagRemoveBuilderFont"] = False
             printDebugMessage("User selected: False")
@@ -331,6 +337,9 @@ if __name__ == "__main__":
             set_avatar_editor_location = getName()
             fflag_configuration["EFlagAvatarEditorBackground"] = set_avatar_editor_location
             printSuccessMessage(f"Set avatar background: {set_avatar_editor_location}")
+        elif isRequestClose(c) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(c) == True:
             fflag_configuration["EFlagEnableChangeAvatarEditorBackground"] = False
             printDebugMessage("User selected: False")
@@ -386,6 +395,9 @@ if __name__ == "__main__":
             set_cursor_location = getName()
             fflag_configuration["EFlagSelectedCursor"] = set_cursor_location
             printSuccessMessage(f"Set cursor folder: {set_cursor_location}")
+        elif isRequestClose(c) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(c) == True:
             fflag_configuration["EFlagEnableChangeCursor"] = False
             printDebugMessage("User selected: False")
@@ -441,6 +453,9 @@ if __name__ == "__main__":
             set_app_icon_location = getName()
             fflag_configuration["EFlagSelectedBrandLogo"] = set_app_icon_location
             printSuccessMessage(f"Set logo folder: {set_app_icon_location}")
+        elif isRequestClose(c) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(c) == True:
             fflag_configuration["EFlagEnableChangeBrandIcons"] = False
             printDebugMessage("User selected: False")
@@ -496,6 +511,9 @@ if __name__ == "__main__":
             set_death_sound = getName()
             fflag_configuration["EFlagSelectedDeathSound"] = set_death_sound
             printSuccessMessage(f"Set death sound: {set_death_sound}")
+        elif isRequestClose(c) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(c) == True:
             fflag_configuration["EFlagEnableChangeDeathSound"] = False
             printDebugMessage("User selected: False")
@@ -510,6 +528,9 @@ if __name__ == "__main__":
                 printYellowMessage("1. Make sure all currently open instances are fully loaded in a game before going to an another account.")
                 printYellowMessage("2. Use only the bootstrap to load Roblox since macOS will try to validate a check and fail.")
                 printYellowMessage("3. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
+            elif isRequestClose(c) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
             elif isNo(c) == True:
                 fflag_configuration["EFlagEnableDuplicationOfClients"] = False
                 printDebugMessage("User selected: False")
@@ -527,6 +548,9 @@ if __name__ == "__main__":
         if isYes(d) == True:
             fflag_configuration["EFlagAllowActivityTracking"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagAllowActivityTracking"] = False
             printDebugMessage("User selected: False")
@@ -537,6 +561,9 @@ if __name__ == "__main__":
             if isYes(d) == True:
                 fflag_configuration["EFlagNotifyServerLocation"] = True
                 printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagNotifyServerLocation"] = False
                 printDebugMessage("User selected: False")
@@ -562,6 +589,9 @@ if __name__ == "__main__":
                 elif isNo(d) == True:
                     fflag_configuration["EFlagEnableDiscordRPCJoining"] = False
                     printDebugMessage("User selected: False")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagEnableDiscordRPCJoining"] = False
                 fflag_configuration["EFlagEnableDiscordRPC"] = False
@@ -666,6 +696,9 @@ if __name__ == "__main__":
                 else:
                     fflag_configuration["EFlagUseDiscordWebhook"] = False
                     printErrorMessage("The provided webhook link is not a valid format.")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagUseDiscordWebhook"] = False
                 printDebugMessage("User selected: False")
@@ -677,6 +710,9 @@ if __name__ == "__main__":
         if isYes(d) == True:
             fflag_configuration["EFlagEnableDebugMode"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagEnableDebugMode"] = False
             printDebugMessage("User selected: False")
@@ -687,6 +723,9 @@ if __name__ == "__main__":
             if isYes(d) == True:
                 fflag_configuration["EFlagAllowFullDebugMode"] = True
                 printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagAllowFullDebugMode"] = False
                 printDebugMessage("User selected: False")
@@ -696,6 +735,9 @@ if __name__ == "__main__":
         if isYes(d) == True:
             fflag_configuration["EFlagFreshCopyRoblox"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagFreshCopyRoblox"] = False
             printDebugMessage("User selected: False")
@@ -705,6 +747,9 @@ if __name__ == "__main__":
         if isYes(d) == True:
             fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
             printDebugMessage("User selected: False")
@@ -714,6 +759,9 @@ if __name__ == "__main__":
         if isYes(d) == True:
             fflag_configuration["EFlagDisableBootstrapChecks"] = True
             printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagDisableBootstrapChecks"] = False
             printDebugMessage("User selected: False")
@@ -725,17 +773,19 @@ if __name__ == "__main__":
                         json.dump(fflag_configuration, f, indent=4)
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
             elif main_os == "Darwin":
                 if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json'):
                     with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json', "w") as f:
                         json.dump(fflag_configuration, f, indent=4)
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
 
         with open("FastFlagConfiguration.json", "w") as f:
             json.dump(fflag_configuration, f, indent=4)
-
         printSuccessMessage("Successfully saved Bootstrap Settings!")
+        return "Successfully synced settings!"
     def handleOption5(): # Sync to Fast Flag Configuration
         printWarnMessage("--- Sync to Fast Flag Configuration ---")
         global fflag_configuration
@@ -746,17 +796,22 @@ if __name__ == "__main__":
                     with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}\\FastFlagConfiguration.json', "w") as f:
                         json.dump(fflag_configuration, f, indent=4)
                     printSuccessMessage("Successfully synced Bootstrap Settings!")
+                    return "Successfully synced settings!"
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
             elif main_os == "Darwin":
                 if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json'):
                     with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json', "w") as f:
                         json.dump(fflag_configuration, f, indent=4)
                     printSuccessMessage("Successfully synced Bootstrap Settings!")
+                    return "Successfully synced settings!"
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
         else:
             printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+            return "Syncing failed!"
     def handleOption6(): # Sync from Fast Flag Configuration
         printWarnMessage("--- Sync from Fast Flag Configuration ---")
         global fflag_configuration
@@ -770,8 +825,10 @@ if __name__ == "__main__":
                     with open(f'FastFlagConfiguration.json', "w") as f:
                         json.dump(fromFastFlagConfig, f, indent=4)
                     printSuccessMessage("Successfully synced Bootstrap Settings!")
+                    return "Successfully synced settings!"
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
             elif main_os == "Darwin":
                 if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json'):
                     with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json', "r") as f:
@@ -780,10 +837,13 @@ if __name__ == "__main__":
                     with open(f'FastFlagConfiguration.json', "w") as f:
                         json.dump(fromFastFlagConfig, f, indent=4)
                     printSuccessMessage("Successfully synced Bootstrap Settings!")
+                    return "Successfully synced settings!"
                 else:
                     printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    return "Syncing failed!"
         else:
             printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+            return "Roblox closing task has been canceled!"
     def handleOption7(): # Credits
         printWarnMessage("--- Credits ---")
         printMainMessage("1. Made by \033[38;5;202m@EfazDev\033[0m")
@@ -791,12 +851,12 @@ if __name__ == "__main__":
         printMainMessage("3. AvatarEditorMaps were from \033[38;5;197mMielesgames's Map Files (https://github.com/Mielesgames/RobloxAvatarEditorMaps)\033[0m slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
         printMainMessage("4. Some files were exported from the main macOS Roblox.app files. \033[38;5;202m(Logo was from the Apple Pages icon, recolored and then added the Roblox Logo)\033[0m")
         if main_os == "Darwin":
-            printMainMessage(f'5. macOS App was built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (macOS only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps --noconfirm && zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrap.app" "./Apps/PlayRoblox" "./Apps/EfazRobloxBootstrapLoad.app" && rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ && {sys.executable} Install.py --install --disable-remove\033[0m')
+            printMainMessage(f'5. macOS App was built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (macOS only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps --noconfirm --clean && zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrap.app" "./Apps/PlayRoblox" "./Apps/EfazRobloxBootstrapLoad.app" && rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ && {sys.executable} Install.py --install --disable-remove\033[0m')
         elif main_os == "Windows":
             if platform.architecture()[0] == "32bit":
-                printMainMessage(f"5. Windows App was also built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (windows only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --distpath Apps --noconfirm && move Apps\\EfazRobloxBootstrap32\\PlayRoblox32.exe Apps\\PlayRoblox\\ && {sys.executable} Install.py --install --disable-remove\033[0m")
+                printMainMessage(f"5. Windows App was also built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (windows only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm && move Apps\\EfazRobloxBootstrap32\\PlayRoblox32.exe Apps\\PlayRoblox\\ && {sys.executable} Install.py --install --disable-remove\033[0m")
             else:
-                printMainMessage(f"5. Windows App was also built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (windows only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --distpath Apps --noconfirm && move Apps\\EfazRobloxBootstrap\\PlayRoblox.exe Apps\\PlayRoblox\\ && {sys.executable} Install.py --install --disable-remove\033[0m")
+                printMainMessage(f"5. Windows App was also built using \033[38;5;39mpyinstaller\033[0m. You can recreate and deploy using this command (windows only): \033[38;5;39mpyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --clean --distpath Apps --noconfirm && move Apps\\EfazRobloxBootstrap\\PlayRoblox.exe Apps\\PlayRoblox\\ && {sys.executable} Install.py --install --disable-remove\033[0m")
         printDebugMessage(f"Operating System: {main_os}")
     def handleOption8(): # End All Roblox Instances
         printWarnMessage("--- End All Roblox Instances ---")
@@ -804,6 +864,9 @@ if __name__ == "__main__":
         a = input("> ")
         if isYes(a) == True:
             handler.endRoblox()
+            return "Successfully closed all open Roblox windows!"
+        else:
+            return "Roblox closing task has been canceled!"       
     def handleOption9(): # Reinstall Roblox
         printWarnMessage("--- Reinstall Roblox ---")
         printMainMessage("Are you sure you want to reinstall Roblox?")
@@ -812,6 +875,9 @@ if __name__ == "__main__":
         a = input("> ")
         if isYes(a) == True:
             handler.installRoblox(forceQuit=main_os == "Windows")
+            return "Roblox has been reinstalled!"
+        else:
+            return "Roblox reinstallation has been canceled!"
     def handleOption10(url_scheme=None): # Roblox Link Shortcuts
         printWarnMessage("--- Roblox Link Shortcuts ---")
         if type(url_scheme) is str:
@@ -958,7 +1024,7 @@ if __name__ == "__main__":
                     else:
                         sys.exit(0)
             else:
-                sys.exit(0)
+                return
     def handleOption11(): # Mods Manager
         global fflag_configuration
         def saveSettings():
@@ -1029,7 +1095,8 @@ if __name__ == "__main__":
                 if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(os.path.join(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"), "Mods"))):
                     generated_ui_options.append({"index": 999999, "message": "Sync Mods from Installation Folder"})
                 generated_ui_options.append({"index": 1000000, "message": "Disable Appling Mods"})
-                generated_ui_options.append({"index": 1000001, "message": "Exit Mods Manager"})
+                generated_ui_options.append({"index": 1000001, "message": "Clear Installed Mods [Reinstall Roblox]"})
+                generated_ui_options.append({"index": 1000002, "message": "Exit Mods Manager"})
                 generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
                 count = 1
                 for i in generated_ui_options:
@@ -1156,6 +1223,8 @@ if __name__ == "__main__":
                         printMainMessage("Exiting Mods Manager..")
                         return
                     elif opt["index"] == 1000001:
+                        handleOption9()
+                    elif opt["index"] == 1000002:
                         printMainMessage("Exiting Mods Manager..")
                         return
                     else:
@@ -1183,12 +1252,6 @@ if __name__ == "__main__":
                 saveSettings()
                 handleOption11()
 
-    def handleOptionSelect(mes="Option finished! Would you like to continue to Roblox? (y/n)"): # Handle Continue to Roblox
-        printWarnMessage(mes)
-        a = input("> ")
-        if isYes(a) == False:
-            sys.exit(0)
-
     # Continue to Menu or URL Handler
     continue_to_url_handler = False
     if len(given_args) > 1:
@@ -1196,266 +1259,436 @@ if __name__ == "__main__":
             continue_to_url_handler = True
 
     # Main Menu
-    if (not (fflag_configuration.get("EFlagRemoveMenuAndSkipToRoblox") == True)) or continue_to_url_handler == True:
-        if (len(given_args) < 2):
-            if not (fflag_configuration.get("EFlagCompletedTutorial") == True): # Tutorial
-                printWarnMessage("--- Tutorial ---")
-                printMainMessage("Welcome to Efaz's Roblox Bootstrap!")
-                printMainMessage("Efaz's Roblox Bootstrap is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
-                if main_os == "Darwin":
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app"):
-                        printSuccessMessage("It seems like everything is working, so you can reach the next part!")
-                    else:
-                        printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
-                        input("> ")
-                        sys.exit(0)
-                elif main_os == "Windows":
-                    if os.path.exists(f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\"):
-                        printSuccessMessage("It seems like everything is working, so you can reach the next part!")
-                    else:
-                        printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
-                        input("> ")
-                        sys.exit(0)
+    def main_menu():
+        global fflag_configuration
+        global fast_config_loaded
+        if (not (fflag_configuration.get("EFlagRemoveMenuAndSkipToRoblox") == True)) or continue_to_url_handler == True:
+            if (len(given_args) < 2):
+                if not (fflag_configuration.get("EFlagCompletedTutorial") == True): # Tutorial
+                    printWarnMessage("--- Tutorial ---")
+                    printMainMessage("Welcome to Efaz's Roblox Bootstrap!")
+                    printMainMessage("Efaz's Roblox Bootstrap is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
+                    if main_os == "Darwin":
+                        if os.path.exists("/Applications/EfazRobloxBootstrap.app"):
+                            printSuccessMessage("It seems like everything is working, so you can reach the next part!")
+                        else:
+                            printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
+                            input("> ")
+                            sys.exit(0)
+                    elif main_os == "Windows":
+                        if os.path.exists(f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\"):
+                            printSuccessMessage("It seems like everything is working, so you can reach the next part!")
+                        else:
+                            printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
+                            input("> ")
+                            sys.exit(0)
 
-                printMainMessage("Before we get started, there's some information you may need to know.")
-                printWarnMessage("--- Information 1 ---")
-                if main_os == "Darwin":
-                    printMainMessage("First, you may need to know that after you go to Roblox through this bootstrap, Roblox will not be able to be opened normally.")
-                    printMainMessage("This is because of macOS trying to scan signatures but failing.")
-                    printMainMessage("Don't worry though, you will be able to join through your web browser since the app will sync.")
-                    printYellowMessage("Additionally, if you want to uninstall this bootstrap, you may run Uninstall.py which is located in the same folder as the Install.py you ran to be here! However, you can use the Reinstall Roblox option in the bootstrap menu to prevent uninstalling this.")
-                else:
-                    printMainMessage("This info is only for macOS and you may continue!")
-                input("> ")
-                printWarnMessage("--- Information 2 ---")
-                printMainMessage("Second, some features are based on Activity Tracking on your Roblox Client.")
-                printMainMessage("This app will use your Roblox logs to track data such as Game Join Data, Discord Presences, BloxstrapRPC and more!")
-                printYellowMessage("Don't worry, your Roblox account is safely secured and this won't get you banned.")
-                input("> ")
-                printWarnMessage("--- Information 3 ---")
-                displayNotification("Hello!", "If you see this, your notifications are set up! Good job!")
-                printMainMessage("We have just sent a notification to your device so that you can enable notifications.")
-                printYellowMessage("Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!")
-                input("> ")
-                printWarnMessage("--- Information 4 ---")
-                printMainMessage("If you haven't noticed, we have installed a Play Roblox app into your system!")
-                printMainMessage("This will allow you to skip the main menu and launch Roblox instantly through the bootstrap!")
-                if main_os == "Darwin":
-                    printMainMessage("You may find this in your Applications folder!")
-                elif main_os == "Windows":
-                    printMainMessage("You may find this in your Start Menu or Desktop!")
-                input("> ")
-                printWarnMessage("--- Step 1 ---")
-                printMainMessage("Alright, now to the actual stuff, firstly, it's important you best understand on how the choosing works.")
-                printMainMessage('Let\'s start off with a quick input! Let\'s say you want to enable this option (use the prompt here for the example), enter "y" or "yes"!')
-                def a():
-                    b = input("> ")
-                    if isYes(b) == True:
-                        return
+                    printMainMessage("Before we get started, there's some information you may need to know.")
+                    printWarnMessage("--- Information 1 ---")
+                    if main_os == "Darwin":
+                        printMainMessage("First, you may need to know that after you go to Roblox through this bootstrap, Roblox will not be able to be opened normally.")
+                        printMainMessage("This is because of macOS trying to scan signatures but failing.")
+                        printMainMessage("Don't worry though, you will be able to join through your web browser since the app will sync.")
+                        printYellowMessage("Additionally, if you want to uninstall this bootstrap, you may run Uninstall.py which is located in the same folder as the Install.py you ran to be here! However, you can use the Reinstall Roblox option in the bootstrap menu to prevent uninstalling this.")
                     else:
-                        printErrorMessage("Uhm, not quite, try again!")
-                        a()
-                a()
-                printWarnMessage("--- Step 2 ---")
-                printMainMessage("Congrats! You completed the first step!")
-                printMainMessage('Now, let\'s try that again! But instead, enter "n" or "no" for you don\'t want this feature!')
-                def a():
-                    b = input("> ")
-                    if isNo(b) == True:
-                        return
-                    else:
-                        printErrorMessage("Uhm, not quite, try again!")
-                        a()
-                a()
-                printWarnMessage("--- Step 3 ---")
-                printMainMessage("You're getting good at this!")
-                printMainMessage('Now, let\'s learn about how you select from a list. Take the list below for an example.')
-                printMainMessage("Try selecting a number that is next to that option!")
-                generated_ui_options = []
-                main_ui_options = {}
-                generated_ui_options.append({"index": 1, "message": "Do jumping-jacks", "func": handleOption1})
-                generated_ui_options.append({"index": 2, "message": "Do push-ups", "func": handleOption1})
-                generated_ui_options.append({"index": 3, "message": "Do curl-ups", "func": handleOption1})
-                generated_ui_options.append({"index": 4, "message": "Do weight-lifting", "func": handleOption1})
-                generated_ui_options.append({"index": 5, "message": "Do neither", "func": handleOption1})
-                generated_ui_options.append({"index": 6, "message": "Do all of the above", "func": handleOption1})
-                generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-                printWarnMessage("--- Select Option ---")
-                count = 1
-                for i in generated_ui_options:
-                    printMainMessage(f"[{str(count)}] = {i['message']}")
-                    main_ui_options[str(count)] = i
-                    count += 1
-                def a():
+                        printMainMessage("This info is only for macOS and you may continue!")
+                    input("> ")
+                    printWarnMessage("--- Information 2 ---")
+                    printMainMessage("Second, some features are based on Activity Tracking on your Roblox Client.")
+                    printMainMessage("This app will use your Roblox logs to track data such as Game Join Data, Discord Presences, BloxstrapRPC and more!")
+                    printYellowMessage("Don't worry, your Roblox account is safely secured and this won't get you banned.")
+                    input("> ")
+                    printWarnMessage("--- Information 3 ---")
+                    displayNotification("Hello!", "If you see this, your notifications are set up! Good job!")
+                    printMainMessage("We have just sent a notification to your device so that you can enable notifications.")
+                    printYellowMessage("Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!")
+                    input("> ")
+                    printWarnMessage("--- Information 4 ---")
+                    printMainMessage("If you haven't noticed, we have installed a Play Roblox app into your system!")
+                    printMainMessage("This will allow you to skip the main menu and launch Roblox instantly through the bootstrap!")
+                    if main_os == "Darwin":
+                        printMainMessage("You may find this in your Applications folder or through Launchpad!")
+                    elif main_os == "Windows":
+                        printMainMessage("You may find this in your Start Menu or Desktop!")
+                    input("> ")
+                    printWarnMessage("--- Step 1 ---")
+                    printMainMessage("Alright, now to the actual stuff, firstly, it's important you best understand on how the choosing works.")
+                    printMainMessage('Let\'s start off with a quick input! Let\'s say you want to enable this option (use the prompt here for the example), enter "y" or "yes"!')
+                    def a():
+                        b = input("> ")
+                        if isYes(b) == True:
+                            return
+                        else:
+                            printErrorMessage("Uhm, not quite, try again!")
+                            a()
+                    a()
+                    printWarnMessage("--- Step 2 ---")
+                    printMainMessage("Congrats! You completed the first step!")
+                    printMainMessage('Now, let\'s try that again! But instead, enter "n" or "no" for you don\'t want this feature!')
+                    def a():
+                        b = input("> ")
+                        if isNo(b) == True:
+                            return
+                        else:
+                            printErrorMessage("Uhm, not quite, try again!")
+                            a()
+                    a()
+                    printWarnMessage("--- Step 3 ---")
+                    printMainMessage("You're getting good at this!")
+                    printMainMessage('Now, let\'s learn about how you select from a list. Take the list below for an example.')
+                    printMainMessage("Try selecting a number that is next to that option!")
+                    generated_ui_options = []
+                    main_ui_options = {}
+                    generated_ui_options.append({"index": 1, "message": "Do jumping-jacks", "func": handleOption1})
+                    generated_ui_options.append({"index": 2, "message": "Do push-ups", "func": handleOption1})
+                    generated_ui_options.append({"index": 3, "message": "Do curl-ups", "func": handleOption1})
+                    generated_ui_options.append({"index": 4, "message": "Do weight-lifting", "func": handleOption1})
+                    generated_ui_options.append({"index": 5, "message": "Do neither", "func": handleOption1})
+                    generated_ui_options.append({"index": 6, "message": "Do all of the above", "func": handleOption1})
+                    generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
+                    printWarnMessage("--- Select Option ---")
+                    count = 1
+                    for i in generated_ui_options:
+                        printMainMessage(f"[{str(count)}] = {i['message']}")
+                        main_ui_options[str(count)] = i
+                        count += 1
+                    def a():
+                        res = input("> ")
+                        if main_ui_options.get(res):
+                            opt = main_ui_options[res]
+                            printSuccessMessage(f"You have selected {opt.get('message')}!")
+                        else:
+                            printErrorMessage("Uhm, not quite an option here, try again!")
+                            return a()
+                    a()
+                    printWarnMessage("--- Step 4 ---")
+                    printMainMessage("Nice job! Oh yea, during the tutorial, it will repeat with a \"Not quite\". However, it will close the window in future prompts like in main menu.")
+                    printYellowMessage("Additionally, if you do meet with an option with a *, this means that any input will result with that option.")
+                    printMainMessage("Anyways, welcome to step 4! Here, you can select your settings!")
+                    printMainMessage("[In the settings area, you can just input nothing or anything else instead of y or n to skip the option without affecting the current state of it.]")
+                    printMainMessage("See you after a little bit!")
+                    input("> ")
+                    handleOption4()
+                    printWarnMessage("--- Step 5 ---")
+                    printMainMessage("Welcome back! I hope you have enabled some things you may want!")
+                    printMainMessage("Now, let's get more customizable! Next, you will be able to select your fast flags.")
+                    printYellowMessage("But before, prepare yourself your Roblox User ID. It will be used for some settings depending on what you select.")
+                    input("> ")
+                    handleOption3()
+                    printWarnMessage("--- Final Touches ---")
+                    printSuccessMessage("Woo hoo! You finally reached the end of this tutorial!")
+                    printSuccessMessage("I hope you learned from this and how you may use Roblox using this bootstrap!")
+                    printSuccessMessage("For now, before you exit, I hope you have a great day!")
+                    input("> ")
+                    with open("FastFlagConfiguration.json", "r") as f:
+                        try:
+                            fflag_configuration = json.load(f)
+                        except Exception as e:
+                            fast_config_loaded = False
+                    fflag_configuration["EFlagCompletedTutorial"] = True
+                    if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
+                        if main_os == "Windows":
+                            if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}\\FastFlagConfiguration.json'):
+                                with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}\\FastFlagConfiguration.json', "w") as f:
+                                    json.dump(fflag_configuration, f, indent=4)
+                            else:
+                                printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                        elif main_os == "Darwin":
+                            if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json'):
+                                with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json', "w") as f:
+                                    json.dump(fflag_configuration, f, indent=4)
+                            else:
+                                printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
+                    with open("FastFlagConfiguration.json", "w") as f:
+                        json.dump(fflag_configuration, f, indent=4)
+                if not (fflag_configuration.get("EFlagSkipEfazRobloxBootstrapPromptUI") == True): # Main Menu
+                    def info_message():
+                        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+                        printWarnMessage("-----------")
+                        printWarnMessage("Welcome to Efaz's Roblox Bootstrap!")
+                        printWarnMessage("Made by Efaz from efaz.dev!")
+                        printWarnMessage(f"v{current_version['version']}")
+                        printWarnMessage("-----------")
+
+                        # Requirement Checks
+                        if main_os == "Windows":
+                            printMainMessage(f"System OS: {main_os}")
+                        elif main_os == "Darwin":
+                            printMainMessage(f"System OS: {main_os} (macOS)")
+                        else:
+                            printErrorMessage("Efaz's Roblox Bootstrap is only supported for macOS or Windows.")
+                            input("> ")
+                            sys.exit(0)
+                        current_python_version = platform.python_version_tuple()
+                        if current_python_version < ("3", "10", "0"):
+                            printErrorMessage("Please update your current installation of Python above 3.10.0")
+                            input("> ")
+                            sys.exit(0)
+                        else:
+                            printMainMessage(f"Python Version: {platform.python_version()}")
+                        if main_os == "Windows":
+                            stored_content_folder_destinations["Windows"] = f"{handler.getRobloxInstallFolder()}\\"
+                            stored_font_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\fonts\\"
+                            stored_robux_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\textures\\ui\\common\\"
+                            if not os.path.exists(stored_font_folder_destinations["Windows"]):
+                                printErrorMessage("Please install Roblox from the Roblox website in order to use this bootstrap!")
+                                input("> ")
+                                sys.exit(0)
+                            else:
+                                installed_roblox_version = handler.getCurrentClientVersion()
+                                if installed_roblox_version["success"] == True:
+                                    printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
+                                else:
+                                    printErrorMessage("Something went wrong trying to determine your current Roblox version.")
+                                    input("> ")
+                                    sys.exit(0)
+                        elif main_os == "Darwin":
+                            if os.path.exists("/Applications/Roblox.app/"):
+                                installed_roblox_version = handler.getCurrentClientVersion()
+                                if installed_roblox_version["success"] == True:
+                                    printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
+                                else:
+                                    printErrorMessage("Something went wrong trying to determine your current Roblox version.")
+                                    input("> ")
+                                    sys.exit(0)
+                            else:
+                                printErrorMessage("Please install Roblox from the Roblox website in order to use this bootstrap!")
+                                input("> ")
+                                sys.exit(0)
+                    if not (fflag_configuration.get("EFlagDisableNewMainMenu") == True):
+                        info_message()
+                    generated_ui_options = []
+                    main_ui_options = {}
+                    generated_ui_options.append({
+                        "index": 1, 
+                        "message": "Continue to Roblox", 
+                        "func": handleOption1, 
+                        "include_go_to_roblox": False
+                    })
+                    generated_ui_options.append({
+                        "index": 3, 
+                        "message": "Run Fast Flag Installer", 
+                        "func": handleOption3, 
+                        "include_go_to_roblox": True,
+                        "include_message": "Installer has finished! Would you like to go to Roblox? (y/n)", 
+                        "include_new_message": "Installer has finished!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 4, 
+                        "message": "Open Mods Manager", 
+                        "func": handleOption11, 
+                        "include_go_to_roblox": True, 
+                        "include_message": "Mod Settings has been saved! Would you like to go to Roblox? (y/n)", 
+                        "include_new_message": "Mod Settings has been saved!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 5, 
+                        "message": "Set Settings", 
+                        "func": handleOption4, 
+                        "include_go_to_roblox": True, 
+                        "include_message": "Settings has been saved! Would you like to go to Roblox? (y/n)", 
+                        "include_new_message": "Settings has been saved!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 6, 
+                        "message": "Roblox Link Shortcuts", 
+                        "func": handleOption10, 
+                        "include_go_to_roblox": False, 
+                        "include_message": "Roblox Link Shortcut Settings are now saved! Would you like to run it now? (y/n)", 
+                        "include_new_message": "Roblox Link Shortcut Settings are now saved!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 7, 
+                        "message": "End All Roblox Instances", 
+                        "func": handleOption8, 
+                        "include_go_to_roblox": True, 
+                        "include_message": "Roblox Instances have been ended! Would you like to rerun it? (y/n)", 
+                        "include_new_message": "Roblox Instances have been ended!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 8, 
+                        "message": "Reinstall Roblox", 
+                        "func": handleOption9, 
+                        "include_go_to_roblox": True, 
+                        "include_message": "Roblox has been reinstalled! Would you like to run it now? (y/n)", 
+                        "include_new_message": "Roblox has been reinstalled!",
+                        "clear_console": True
+                    })
+                    generated_ui_options.append({
+                        "index": 99, 
+                        "message": "Credits", 
+                        "func": handleOption7, 
+                        "include_go_to_roblox": True, 
+                        "include_message": "Would you like to go to Roblox? (y/n)", 
+                        "include_new_message": "",
+                        "clear_console": True
+                    })
+                    if main_os == "Darwin" or main_os == "Windows":
+                        if (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
+                            generated_ui_options.append({
+                                "index": 2, 
+                                "message": "Generate Another Roblox Instance", 
+                                "func": handleOption2, 
+                                "include_go_to_roblox": False
+                            })
+                    if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
+                        generated_ui_options.append({
+                            "index": 97, 
+                            "message": "Sync to Fast Flag Configuration",
+                            "func": handleOption5, 
+                            "include_go_to_roblox": True, 
+                            "include_message": "Sync finished! Would you like to run Roblox now? (y/n)",
+                            "include_new_message": "Sync finished!",
+                            "clear_console": True
+                        })
+                        generated_ui_options.append({
+                            "index": 98, 
+                            "message": "Sync from Fast Flag Configuration", 
+                            "func": handleOption6, 
+                            "include_go_to_roblox": True, 
+                            "include_message": "Sync finished! Would you like to run Roblox now? (y/n)",
+                            "include_new_message": "Sync finished!",
+                            "clear_console": True
+                        })
+
+                    generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
+                    printWarnMessage("--- Main Menu ---")
+                    count = 1
+                    for i in generated_ui_options:
+                        printMainMessage(f"[{str(count)}] = {i['message']}")
+                        main_ui_options[str(count)] = i
+                        count += 1
+
                     res = input("> ")
                     if main_ui_options.get(res):
                         opt = main_ui_options[res]
-                        printSuccessMessage(f"You have selected {opt.get('message')}!")
-                    else:
-                        printErrorMessage("Uhm, not quite an option here, try again!")
-                        return a()
-                a()
-                printWarnMessage("--- Step 4 ---")
-                printMainMessage("Nice job! Oh yea, during the tutorial, it will repeat with a \"Not quite\". However, it will close the window in future prompts like in main menu.")
-                printYellowMessage("Additionally, if you do meet with an option with a *, this means that any input will result with that option.")
-                printMainMessage("Anyways, welcome to step 4! Here, you can select your settings!")
-                printMainMessage("[In the settings area, you can just input nothing or anything else instead of y or n to skip the option without affecting the current state of it.]")
-                printMainMessage("See you after a little bit!")
-                input("> ")
-                handleOption4()
-                printWarnMessage("--- Step 5 ---")
-                printMainMessage("Welcome back! I hope you have enabled some things you may want!")
-                printMainMessage("Now, let's get more customizable! Next, you will be able to select your fast flags.")
-                printYellowMessage("But before, prepare yourself your Roblox User ID. It will be used for some settings depending on what you select.")
-                input("> ")
-                handleOption3()
-                printWarnMessage("--- Final Touches ---")
-                printSuccessMessage("Woo hoo! You finally reached the end of this tutorial!")
-                printSuccessMessage("I hope you learned from this and how you may use Roblox using this bootstrap!")
-                printSuccessMessage("For now, before you exit, I hope you have a great day!")
-                input("> ")
-                with open("FastFlagConfiguration.json", "r") as f:
-                    try:
-                        fflag_configuration = json.load(f)
-                    except Exception as e:
-                        fast_config_loaded = False
-                fflag_configuration["EFlagCompletedTutorial"] = True
-                if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
-                    if main_os == "Windows":
-                        if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}\\FastFlagConfiguration.json'):
-                            with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}\\FastFlagConfiguration.json', "w") as f:
-                                json.dump(fflag_configuration, f, indent=4)
+                        if not (fflag_configuration.get("EFlagDisableNewMainMenu") == True):
+                            if opt.get("clear_console") == True:
+                                info_message()
+                            re = opt["func"]()
+                            if opt.get("include_go_to_roblox") == True: 
+                                if type(re) is str:
+                                    handleOptionSelect(re)
+                                else:
+                                    handleOptionSelect(opt.get("include_new_message"))
                         else:
-                            printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
-                    elif main_os == "Darwin":
-                        if os.path.exists(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json'):
-                            with open(f'{fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir")}/FastFlagConfiguration.json', "w") as f:
-                                json.dump(fflag_configuration, f, indent=4)
-                        else:
-                            printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
-                with open("FastFlagConfiguration.json", "w") as f:
-                    json.dump(fflag_configuration, f, indent=4)
-            if not (fflag_configuration.get("EFlagSkipEfazRobloxBootstrapPromptUI") == True): # Main Menu
-                generated_ui_options = []
-                main_ui_options = {}
-                generated_ui_options.append({"index": 1, "message": "Continue to Roblox", "func": handleOption1, "include_go_to_roblox": False})
-                generated_ui_options.append({"index": 3, "message": "Run Fast Flag Installer", "func": handleOption3, "include_go_to_roblox": True, "include_message": "Installer has finished! Would you like to go to Roblox? (y/n)"})
-                generated_ui_options.append({"index": 4, "message": "Open Mods Manager", "func": handleOption11, "include_go_to_roblox": True, "include_message": "Mod Settings has been saved! Would you like to go to Roblox? (y/n)"})
-                generated_ui_options.append({"index": 5, "message": "Set Settings", "func": handleOption4, "include_go_to_roblox": True, "include_message": "Settings has been saved! Would you like to go to Roblox? (y/n)"})
-                generated_ui_options.append({"index": 6, "message": "Roblox Link Shortcuts", "func": handleOption10, "include_go_to_roblox": False, "include_message": "Roblox Start Shortcut is set! Would you like to run it now? (y/n)"})
-                generated_ui_options.append({"index": 7, "message": "End All Roblox Instances", "func": handleOption8, "include_go_to_roblox": True, "include_message": "Roblox Instances have been ended! Would you like to rerun it? (y/n)"})
-                generated_ui_options.append({"index": 8, "message": "Reinstall Roblox", "func": handleOption9, "include_go_to_roblox": True, "include_message": "Roblox has been reinstalled! Would you like to run it now? (y/n)"})
-                generated_ui_options.append({"index": 99, "message": "Credits", "func": handleOption7, "include_go_to_roblox": True, "include_message": "Would you like to go to Roblox? (y/n)"})
-                if main_os == "Darwin" or main_os == "Windows":
-                    if (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
-                        generated_ui_options.append({"index": 2, "message": "Generate Another Roblox Instance", "func": handleOption2, "include_go_to_roblox": False})
-                if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
-                    generated_ui_options.append({"index": 97, "message": "Sync to Fast Flag Configuration", "func": handleOption5, "include_go_to_roblox": True, "include_message": "Sync finished! Would you like to run Roblox now? (y/n)"})
-                    generated_ui_options.append({"index": 98, "message": "Sync from Fast Flag Configuration", "func": handleOption6, "include_go_to_roblox": True, "include_message": "Sync finished! Would you like to run Roblox now? (y/n)"})
-
-                generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-                printWarnMessage("--- Main Menu ---")
-                count = 1
-                for i in generated_ui_options:
-                    printMainMessage(f"[{str(count)}] = {i['message']}")
-                    main_ui_options[str(count)] = i
-                    count += 1
-
-                res = input("> ")
-                if main_ui_options.get(res):
-                    opt = main_ui_options[res]
-                    opt["func"]()
-                    if opt.get("include_go_to_roblox") == True: handleOptionSelect(opt.get("include_message"))
-                else:
-                    sys.exit(0)
-
-                fast_config_loaded = True
-                with open("FastFlagConfiguration.json", "r") as f:
-                    try:
-                        fflag_configuration = json.load(f)
-                    except Exception as e:
-                        fast_config_loaded = False
-
-                if fflag_configuration.get("EFlagSkipEfazRobloxBootstrapPromptUI") == None:
-                    printMainMessage("Would you like to skip the Bootstrap Start UI in the future? (y/n)")
-                    skipInFuture = input("> ")
-                    
-                    if isYes(skipInFuture) == True:
-                        fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = True
+                            re = opt["func"]()
+                            if opt.get("include_go_to_roblox") == True: 
+                                handleOptionSelect(opt.get("include_message"))
                     else:
-                        fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
+                        sys.exit(0)
 
-                    with open("FastFlagConfiguration.json", "w") as f:
-                        json.dump(fflag_configuration, f, indent=4)
-            else: # Skip Efaz's Roblox Bootstrap Prompt UI
-                printWarnMessage("--- Continue to Roblox? ---")
-                printMainMessage("[1/*] = Continue")
-                printMainMessage("[2] = Revert Remove UI")
-                printMainMessage("[3] = End Process")
-                res = input("> ")
-                if res == "2":
-                    fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
-                    with open("FastFlagConfiguration.json", "w") as f:
-                        json.dump(fflag_configuration, f, indent=4)
-                    printSuccessMessage("Reverted successfully!")
-                    input("> ")
-                    sys.exit(0)
-                elif res == "3":
-                    sys.exit(0)
-        elif len(given_args) > 1: # URL Scheme Handler
-            url = given_args[1]
-            if "efaz-bootstrap" in url:
-                if "continue" in url:
-                    handleOption1()
-                elif "new" in url:
-                    handleOption2()
-                elif "fflag-install" in url:
-                    handleOption3()
-                    handleOptionSelect()
-                elif "settings" in url:
-                    handleOption4()
-                    handleOptionSelect()
-                elif "sync-to-install" in url:
-                    handleOption5()
-                    handleOptionSelect()
-                elif "sync-from-install" in url:
-                    handleOption6()
-                    handleOptionSelect()
-                elif "end-roblox" in url:
-                    handleOption8()
-                    handleOptionSelect()
-                elif "reinstall-roblox" in url:
-                    handleOption9()
-                    handleOptionSelect()
-                elif ("credits" in url) or ("about" in url):
-                    handleOption7()
-                    handleOptionSelect()
-                elif "mods" in url:
-                    handleOption11()
-                    handleOptionSelect()
-                elif ("shortcuts/" in url):
-                    handleOption10(url)
-                else:
-                    printDebugMessage(f"Unknown command: {url}")
+                    fast_config_loaded = True
+                    with open("FastFlagConfiguration.json", "r") as f:
+                        try:
+                            fflag_configuration = json.load(f)
+                        except Exception as e:
+                            fast_config_loaded = False
+                else: # Skip Efaz's Roblox Bootstrap Prompt UI
                     printWarnMessage("--- Continue to Roblox? ---")
-                    printMainMessage("[1] = Continue")
-                    printMainMessage("[69] = Remove Skip UI")
-                    printMainMessage("[*] = End Process")
+                    printMainMessage("[1/*] = Continue")
+                    printMainMessage("[2] = Revert Remove UI")
+                    printMainMessage("[3] = End Process")
                     res = input("> ")
-                    if res == "1":
-                        handleOption1()
-                    elif res == "69":
+                    if res == "2":
                         fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
                         with open("FastFlagConfiguration.json", "w") as f:
                             json.dump(fflag_configuration, f, indent=4)
                         printSuccessMessage("Reverted successfully!")
-                        printWarnMessage("Option finished! Would you like to continue to Roblox? (y/n)")
-                        a = input("> ")
-                        if isYes(a) == False:
-                            sys.exit(0)
-                    else:
+                        input("> ")
                         sys.exit(0)
-    
+                    elif res == "3":
+                        sys.exit(0)
+            elif len(given_args) > 1: # URL Scheme Handler
+                url = given_args[1]
+                if "efaz-bootstrap" in url:
+                    if "continue" in url:
+                        handleOption1()
+                    elif "new" in url:
+                        handleOption2()
+                    elif "fflag-install" in url:
+                        handleOption3()
+                        handleOptionSelect()
+                    elif "settings" in url:
+                        handleOption4()
+                        handleOptionSelect()
+                    elif "sync-to-install" in url:
+                        handleOption5()
+                        handleOptionSelect()
+                    elif "sync-from-install" in url:
+                        handleOption6()
+                        handleOptionSelect()
+                    elif "end-roblox" in url:
+                        handleOption8()
+                        handleOptionSelect()
+                    elif "reinstall-roblox" in url:
+                        handleOption9()
+                        handleOptionSelect()
+                    elif ("credits" in url) or ("about" in url):
+                        handleOption7()
+                        handleOptionSelect()
+                    elif "mods" in url:
+                        handleOption11()
+                        handleOptionSelect()
+                    elif ("shortcuts/" in url):
+                        handleOption10(url)
+                    else:
+                        printDebugMessage(f"Unknown command: {url}")
+                        printWarnMessage("--- Continue to Roblox? ---")
+                        printMainMessage("[1] = Continue")
+                        printMainMessage("[69] = Remove Skip UI")
+                        printMainMessage("[*] = End Process")
+                        res = input("> ")
+                        if res == "1":
+                            handleOption1()
+                        elif res == "69":
+                            fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
+                            with open("FastFlagConfiguration.json", "w") as f:
+                                json.dump(fflag_configuration, f, indent=4)
+                            printSuccessMessage("Reverted successfully!")
+                            printWarnMessage("Option finished! Would you like to continue to Roblox? (y/n)")
+                            a = input("> ")
+                            if isYes(a) == False:
+                                sys.exit(0)
+                        else:
+                            sys.exit(0)
+    def handleOptionSelect(mes=None): # Handle Continue to Roblox
+        new_menu_mode = False
+        if mes == None:
+            if not (fflag_configuration.get("EFlagDisableNewMainMenu") == True):
+                mes = "Option finished! Would you like to return to the main menu or would you like to continue to Roblox?"
+                new_menu_mode = True
+            else:
+                mes = "Option finished! Would you like to continue to Roblox? (y/n)"
+        else:
+            if not (fflag_configuration.get("EFlagDisableNewMainMenu") == True):
+                if mes == "":
+                    mes = f"Would you like to return to the main menu or would you like to continue to Roblox?"
+                else:
+                    mes = f"{mes} Would you like to return to the main menu or would you like to continue to Roblox?"
+                new_menu_mode = True
+        if new_menu_mode == True:
+            if not (fflag_configuration.get("EFlagReturnToMainMenuInstant") == True):
+                printWarnMessage(mes)
+                printMainMessage("[1] = Return to Main Menu")
+                printMainMessage("[*] = Continue to Roblox")
+                a = input("> ")
+                if a == "1":
+                    main_menu()
+            else:
+                main_menu()
+        else:
+            printWarnMessage(mes)
+            a = input("> ")
+            if isYes(a) == False:
+                sys.exit(0)
+    main_menu()
+
     # Check for Updates
     if (not (fflag_configuration.get("EFlagDisableBootstrapChecks") == True)) and os.path.exists("Version.json"):
         printWarnMessage("--- Checking for Bootstrap Updates ---")

@@ -27,7 +27,7 @@ void printWarnMessage(const std::string& mes) {
 }
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.2.3";
+    std::string current_version = "1.2.5";
     std::string main_os;
     
     #ifdef __APPLE__

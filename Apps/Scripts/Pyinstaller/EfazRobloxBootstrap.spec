@@ -1,8 +1,8 @@
 from PyInstaller.utils.hooks import collect_data_files
 import os
 
-icon_file = "AppIcon.icns"
-current_version = {"version": "1.2.3"}
+icon_file = "../AppIcon.icns"
+current_version = {"version": "1.2.5"}
 
 main_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrap",
@@ -44,7 +44,7 @@ loader_plist = {
 block_cipher = None
 
 a = Analysis(
-    ["EfazRobloxBootstrap.py", "EfazRobloxBootstrapLoad.py", "PipHandler.py"],
+    ["../EfazRobloxBootstrap.py", "../EfazRobloxBootstrapLoad.py", "../PipHandler.py"],
     pathex=[],
     binaries=[],
     datas=collect_data_files("EfazRobloxBootstrap"),

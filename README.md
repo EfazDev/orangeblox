@@ -2,7 +2,7 @@
 <h2 align="center">Customize your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/roblox-bootstrap?color=7a39fb" alt="Version"></a>
-    <a href="https://github.com/EfazDev/roblox-bootstrap/releases"><img src="https://img.shields.io/github/stars/EfazDev/roblox-bootstrap?style=plastic&label=%E2%AD%90%20Stars&color=ffff00" alt="Stars"></a>    
+    <a href="https://github.com/EfazDev/roblox-bootstrap"><img src="https://img.shields.io/github/stars/EfazDev/roblox-bootstrap?style=plastic&label=%E2%AD%90%20Stars&color=ffff00" alt="Stars"></a>    
     <a href="https://twitter.efaz.dev"><img src="https://img.shields.io/twitter/follow/EfazDev?style=social&labelColor=00ffff&color=00ffff" alt="Twitter"></a>
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
@@ -26,7 +26,7 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 4. Use multiple instances directly by launching from your default web browser or the EfazRobloxBootstrap app!
 5. Get server locations when joining (also uses ipinfo.io like Bloxstrap)
 6. Discord Rich Presences [Includes Support for BloxstrapRPC]
-7. Discord Webhooks [Join, Disconnect, Teleport, Crash, App Start, App Close Notifications]
+7. Discord Webhooks [Join, Disconnect, Teleport, Crash, App Start, App Close, Bloxstrap RPC Notifications]
 8. Run Python Scripts based on events ran on the Roblox client using Mod Mode Scripts! *[One script limit]
 9. Play Roblox app so you can run Roblox directly!
 10. Read Logs from Roblox using RobloxFastFlagsInstaller and Debug Mode!
@@ -34,13 +34,17 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 ## Requirements
 1. [Full ZIP file](https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip)
 2. [Python 3.10+](https://www.python.org/downloads/) (You may install Python 3.13.0 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
-3. Python Modules: pip install pypresence pyobjc posix-ipc requests plyer (For Windows: pip install pypresence requests pywin32 plyer posix-ipc)
+3. Python Modules: pip install pypresence pyobjc posix-ipc requests plyer (For Windows: pip install pypresence requests pywin32 plyer)
 
 ## Install
-1. Once you got all the requirements, run Install.py
-2. Complete the installation process and once it says success, run the bootstrap using Launchpad for macOS or Search Menu for Windows.
+1. Once you have installed Python 3.10 or higher and downloaded the ZIP file, extract the full ZIP into a new folder.
+2. After you have extracted the folder, open it and make sure you see Install.py. Once you do, run it.
+2. Complete the installation process and once it says success, run the bootstrap by using the Launchpad for macOS or by using the Search Menu for Windows.
 3. Complete the tutorial about how to use the bootstrap.
 4. Done! You have installed Efaz's Roblox Bootstrap!
+
+## Anti-Virus Information
+1. Efaz's Roblox Bootstrap is a safe program and won't harm your Roblox account. However, pyinstaller has issues with false positives, so it may conflict with your anti-virus. For example, Windows Defender would result with Win32/Wacapew.C!ml. 
 
 ## Credits
 1. Made by <span style="color:#FF8700">@EfazDev</span>
@@ -52,7 +56,7 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 > This command can only be used using native macOS so a virtual machine may be needed and can reduce security.
 
 6. Windows App was also built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using these commands: <br>
-x64: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap\PlayRoblox.exe Apps\PlayRoblox\ && python Install.py --install --disable-remove`<br>
-x86 (32bit): `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap32\PlayRoblox32.exe Apps\PlayRoblox\ && py Install.py --install --disable-remove`<br>
+x64: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap\PlayRoblox.exe Apps\PlayRoblox\ && python Install.py --install --disable-remove`<br>
+x86 (32bit): `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap32\PlayRoblox32.exe Apps\PlayRoblox\ && py Install.py --install --disable-remove`<br>
 > [!WARNING]
 > This command also can only be used using Windows and can reduce security. This command also can only be used using Windows and can reduce security. In order to create a x86 exe file from x64, use Python 3.13.0 in x86 (32-bit)

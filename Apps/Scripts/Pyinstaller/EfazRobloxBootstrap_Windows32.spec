@@ -3,7 +3,7 @@ import os
 block_cipher = None
 
 a = Analysis(
-    ["EfazRobloxBootstrap.py", "EfazRobloxBootstrapPlayRoblox.py", "PipHandler.py"],
+    ["../EfazRobloxBootstrap.py", "../EfazRobloxBootstrapPlayRoblox.py", "../PipHandler.py"],
     pathex=[],
     binaries=[],
     datas=collect_data_files("EfazRobloxBootstrap"),

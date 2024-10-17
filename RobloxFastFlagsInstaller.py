@@ -27,6 +27,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
+fast_flag_installer_version = "1.4.2"
 
 class pip:
     def install(self, packages: list[str]):
@@ -1240,20 +1241,27 @@ class Main():
 
 if __name__ == "__main__":
     if efaz_bootstrap_mode == False:
-        os.system("cls" if os.name == "nt" else "clear")
-    if main_os == "Windows":
+        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+        if main_os == "Windows":
+            printWarnMessage("-----------")
+            printWarnMessage("Welcome to Roblox Fast Flags Installer!")
+        elif main_os == "Darwin":
+            printWarnMessage("-----------")
+            printWarnMessage("Welcome to Roblox Fast Flags Installer!")
+        else:
+            printErrorMessage("Please run this script on macOS/Windows.")
+            exit()
+        printWarnMessage("Made by Efaz from efaz.dev!")
+        printWarnMessage(f"v{fast_flag_installer_version}")
         printWarnMessage("-----------")
-        printWarnMessage("Welcome to Roblox Fast Flags Installer!")
-    elif main_os == "Darwin":
-        printWarnMessage("-----------")
-        printWarnMessage("Welcome to Roblox Fast Flags Installer!")
     else:
-        printErrorMessage("Please run this script on macOS/Windows.")
-        exit()
-    printWarnMessage("Made by Efaz from efaz.dev!")
-    printWarnMessage("v1.4.2")
-    printWarnMessage("-----------")
-    printWarnMessage("Entering Setup..")
+        if main_os == "Windows":
+            printWarnMessage(f"Starting Roblox Fast Flags Installer v{fast_flag_installer_version}!")
+        elif main_os == "Darwin":
+            printWarnMessage(f"Starting Roblox Fast Flags Installer v{fast_flag_installer_version}!")
+        else:
+            printErrorMessage("Please run this script on macOS/Windows.")
+            exit()
     if main_os == "Windows":
         if not os.path.exists(windows_dir):
             printErrorMessage("The Roblox Website App Path doesn't exist. Please install Roblox from your web browser in order to use!")

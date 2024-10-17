@@ -50,7 +50,8 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git"]
-    current_version = {"version": "1.2.3"}
+    current_version = {"version": "1.2.5"}
+    current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False
     disable_remove_other_operating_systems = False
@@ -70,7 +71,7 @@ if __name__ == "__main__":
         def printWarnMessage(mes): silent_mode = True
         def printDebugMessage(mes): silent_mode = True
     else:
-        os.system("cls" if os.name == "nt" else "clear")
+        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
 
     if "--disable-remove" in sys.argv:
         disable_remove_other_operating_systems = True
@@ -125,6 +126,7 @@ if __name__ == "__main__":
             printErrorMessage("Please install Roblox from the Roblox website in order to use this bootstrap!")
             input("> ")
             sys.exit(0)
+    printMainMessage(f"Installation Folder: {current_path_location}")
     overwrited = False
     if os.path.exists(stored_main_app[found_platform][0]) and os.path.exists(stored_main_app[found_platform][1]):
         overwrited = True
@@ -146,23 +148,31 @@ if __name__ == "__main__":
                     pip_class.install(["posix-ipc", "pyobjc"])
                 elif main_os == "Windows":
                     pip_class.install(["pywin32"])
+                import requests
+                import plyer
+                import pypresence
+                if main_os == "Darwin":
+                    import posix_ipc
+                    import objc
+                elif main_os == "Windows":
+                    import win32com.client
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Ending installation..")
                 sys.exit(0)
-        if os.path.exists("./Apps/"):
+        if os.path.exists(f"{current_path_location}/Apps/"):
             if main_os == "Darwin":
-                if os.path.exists(f"./Apps/EfazRobloxBootstrapMac.zip"):
+                if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip"):
                     # Unzip Installation ZIP
                     printMainMessage("Unzipping Installation ZIP File..")
                     try:
-                        subprocess.run(["unzip", "-o", f"./Apps/EfazRobloxBootstrapMac.zip", "-d", f"./Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                        subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                     except Exception as e:
                         printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
                     time.sleep(1)
                 else:
                     printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
-                if os.path.exists(f"./Apps/EfazRobloxBootstrapMac/"):
+                if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/"):
                     # Get FastFlagConfiguration.json Data
                     if overwrited == True:
                         printMainMessage("Getting Configuration File Data..")
@@ -178,11 +188,11 @@ if __name__ == "__main__":
                     # Delete Other Operating System Files
                     if not (disable_remove_other_operating_systems == True):
                         deleted_other_os = False
-                        if os.path.exists("./Apps/EfazRobloxBootstrap/"):
-                            shutil.rmtree("./Apps/EfazRobloxBootstrap/")
+                        if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrap/"):
+                            shutil.rmtree(f"{current_path_location}/Apps/EfazRobloxBootstrap/")
                             deleted_other_os = True
-                        if os.path.exists("./Apps/EfazRobloxBootstrap32/"):
-                            shutil.rmtree("./Apps/EfazRobloxBootstrap32/")
+                        if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrap32/"):
+                            shutil.rmtree(f"{current_path_location}/Apps/EfazRobloxBootstrap32/")
                             deleted_other_os = True
                         if deleted_other_os == True: printMainMessage("To help save space, the script has automatically deleted files made for other operating systems!")
 
@@ -218,15 +228,15 @@ if __name__ == "__main__":
                             shutil.rmtree("/Applications/Play Roblox.app/Contents/Frameworks/")
 
                     # Convert All Mod Modes to Mods
-                    if os.path.exists("./ModModes/"):
+                    if os.path.exists(f"{current_path_location}/ModModes/"):
                         printMainMessage("Converting Mod Modes to Mods..")
-                        for i in os.listdir("./ModModes/"):
-                            mod_mode_path = os.path.join("./ModModes/", i)
+                        for i in os.listdir(f"{current_path_location}/ModModes/"):
+                            mod_mode_path = os.path.join(f"{current_path_location}/ModModes/", i)
                             if os.path.isdir(mod_mode_path):
-                                if not os.path.exists(f"./Mods/{i}/"):
-                                    os.makedirs(f"./Mods/{i}/", exist_ok=True)
-                                shutil.copytree(mod_mode_path, f"./Mods/{i}/", dirs_exist_ok=True)
-                        shutil.rmtree("./ModModes/")
+                                if not os.path.exists(f"{current_path_location}/Mods/{i}/"):
+                                    os.makedirs(f"{current_path_location}/Mods/{i}/", exist_ok=True)
+                                shutil.copytree(mod_mode_path, f"{current_path_location}/Mods/{i}/", dirs_exist_ok=True)
+                        shutil.rmtree(f"{current_path_location}/ModModes/")
                     if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/"):
                         printMainMessage("Converting Mod Modes to Mods..")
                         for i in os.listdir("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/"):
@@ -240,11 +250,11 @@ if __name__ == "__main__":
                     # Install to /Applications/
                     printMainMessage("Installing to Applications Folder..")
                     if os.path.exists(stored_main_app[found_platform][0]):
-                        copy_with_symlinks(f"./Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrap.app", stored_main_app[found_platform][0], ignore_files=ignore_files)
+                        copy_with_symlinks(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrap.app", stored_main_app[found_platform][0], ignore_files=ignore_files)
                     else:
-                        copy_with_symlinks(f"./Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrap.app", stored_main_app[found_platform][0])
-                    copy_with_symlinks(f"./Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrapLoad.app", stored_main_app[found_platform][1])
-                    copy_with_symlinks(f"./Apps/EfazRobloxBootstrapMac/Apps/PlayRoblox/Play Roblox.app", stored_main_app[found_platform][2])
+                        copy_with_symlinks(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrap.app", stored_main_app[found_platform][0])
+                    copy_with_symlinks(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/Apps/EfazRobloxBootstrapLoad.app", stored_main_app[found_platform][1])
+                    copy_with_symlinks(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/Apps/PlayRoblox/Play Roblox.app", stored_main_app[found_platform][2])
 
                     # Prepare Contents of .app files
                     printMainMessage("Preparing Contents..")
@@ -255,7 +265,7 @@ if __name__ == "__main__":
 
                         # Export ./ to /Contents/Resources/
                         printMainMessage("Copying Main Resources..")
-                        shutil.copytree(f"./", f"{stored_main_app[found_platform][0]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func, symlinks=True)
+                        shutil.copytree(f"{current_path_location}/", f"{stored_main_app[found_platform][0]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func, symlinks=True)
                         
                         # Remove Apps Folder in /Contents/Resources/
                         printMainMessage("Removing Apps Folder in /Contents/Resources/ to save space.")
@@ -285,7 +295,7 @@ if __name__ == "__main__":
                             printSuccessMessage(f"Successfully installed Efaz's Roblox Bootstrap!")
                     else:
                         printErrorMessage("Something went wrong trying to find the application folder.")
-                    shutil.rmtree(f"./Apps/EfazRobloxBootstrapMac/")
+                    shutil.rmtree(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/")
                 else:
                     printErrorMessage("Something went wrong trying to find the installation folder.")
             elif main_os == "Windows":
@@ -303,29 +313,29 @@ if __name__ == "__main__":
                 # Delete Other Operating System Files
                 deleted_other_os = False
                 if not (disable_remove_other_operating_systems == True):
-                    if os.path.exists("./Apps/EfazRobloxBootstrapMac.zip"):
-                        os.remove("./Apps/EfazRobloxBootstrapMac.zip")
+                    if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip")):
+                        os.remove(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip"))
                         deleted_other_os = True
                     if is_x86_windows():
-                        if os.path.exists("./Apps/EfazRobloxBootstrap/"):
-                            shutil.rmtree("./Apps/EfazRobloxBootstrap/")
+                        if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrap/")):
+                            shutil.rmtree(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrap/"))
                             deleted_other_os = True
                     else:
-                        if os.path.exists("./Apps/EfazRobloxBootstrap32/"):
-                            shutil.rmtree("./Apps/EfazRobloxBootstrap32/")
+                        if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrap32/")):
+                            shutil.rmtree(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrap32/"))
                             deleted_other_os = True
                     if deleted_other_os == True: printMainMessage("To help save space, the script has automatically deleted files made for other operating systems!")
 
                 # Convert All Mod Modes to Mods
-                if os.path.exists("./ModModes/"):
+                if os.path.exists(os.path.join(current_path_location, "/ModModes/")):
                     printMainMessage("Converting Mod Modes to Mods..")
-                    for i in os.listdir("./ModModes/"):
-                        mod_mode_path = os.path.join("./ModModes/", i)
+                    for i in os.listdir(os.path.join(current_path_location, "/ModModes/")):
+                        mod_mode_path = os.path.join(os.path.join(current_path_location, "/ModModes/"), i)
                         if os.path.isdir(mod_mode_path):
-                            if not os.path.exists(f"./Mods/{i}/"):
-                                os.makedirs(f"./Mods/{i}/", exist_ok=True)
-                            shutil.copytree(mod_mode_path, f"./Mods/{i}/", dirs_exist_ok=True)
-                    shutil.rmtree("./ModModes/")
+                            if not os.path.exists(os.path.join(current_path_location, f"/Mods/{i}/")):
+                                os.makedirs(os.path.join(current_path_location, f"/Mods/{i}/"), exist_ok=True)
+                            shutil.copytree(mod_mode_path, f"{current_path_location}/Mods/{i}/", dirs_exist_ok=True)
+                    shutil.rmtree(os.path.join(current_path_location, "/ModModes/"))
                 if os.path.exists(os.path.join(stored_main_app[found_platform][0], "ModModes")):
                     printMainMessage("Converting Mod Modes to Mods..")
                     for i in os.listdir(os.path.join(stored_main_app[found_platform][0], "ModModes")):
