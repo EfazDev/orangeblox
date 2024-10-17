@@ -351,13 +351,13 @@ if __name__ == "__main__":
                 os.makedirs(stored_main_app[found_platform][0], exist_ok=True)
                 printMainMessage("Installing EXE File..")
                 if is_x86_windows():
-                    shutil.copy(os.path.join(os.curdir, "Apps", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
-                    shutil.copy(os.path.join(os.curdir, "Apps", "PlayRoblox", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                    shutil.copytree(os.path.join(os.curdir, "Apps", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                    shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
+                    shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
                 else:
-                    shutil.copy(os.path.join(os.curdir, "Apps", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
-                    shutil.copy(os.path.join(os.curdir, "Apps", "PlayRoblox", "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                    shutil.copytree(os.path.join(os.curdir, "Apps", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                    shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
+                    shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
 
                 # Setup URL Schemes
                 import winreg
@@ -424,7 +424,7 @@ if __name__ == "__main__":
                 # Copy App Resources
                 printMainMessage("Copying App Resources..")
                 if os.path.exists(stored_main_app[found_platform][1]):
-                    shutil.copytree(os.curdir, stored_main_app[found_platform][0], dirs_exist_ok=True, ignore=ignore_files_func)
+                    shutil.copytree(current_path_location, stored_main_app[found_platform][0], dirs_exist_ok=True, ignore=ignore_files_func)
 
                     # Handle Existing Configuration Files
                     printMainMessage("Copying Configuration Files..")
