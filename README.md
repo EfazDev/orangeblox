@@ -49,7 +49,7 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 
 ## Anti-Virus Information
 > [!IMPORTANT]
-> Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app in order to allow use.
+> Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app instead (python Install.py --use-x86-windows) in order to allow use.
 
 ## Credits
 1. Made by <span style="color:#FF8700">@EfazDev</span>

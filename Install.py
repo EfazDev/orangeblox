@@ -54,6 +54,7 @@ if __name__ == "__main__":
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False
+    use_x86_windows = False
     disable_remove_other_operating_systems = False
     pip_class = pip()
 
@@ -75,6 +76,9 @@ if __name__ == "__main__":
 
     if "--disable-remove" in sys.argv:
         disable_remove_other_operating_systems = True
+    
+    if "--use-x86-windows" in sys.argv:
+        use_x86_windows = True
 
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap Installer!")
@@ -350,7 +354,7 @@ if __name__ == "__main__":
                 printMainMessage("Creating paths..")
                 os.makedirs(stored_main_app[found_platform][0], exist_ok=True)
                 printMainMessage("Installing EXE File..")
-                if is_x86_windows():
+                if is_x86_windows() or use_x86_windows == True:
                     shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
                     shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
                     shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
