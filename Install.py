@@ -355,15 +355,25 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
                     shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
                 else:
-                    shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
-                    shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                    if os.path.exists(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
+                        shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
+                        shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                        shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                    else:
+                        printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
+                        a = input("> ")
+                        if not (a.lower() == "n"):
+                            shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
+                            shutil.copy(os.path.join(current_path_location, "Apps", "PlayRoblox", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                            shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                        else:
+                            sys.exit(0)
 
                 # Setup URL Schemes
                 import winreg
                 disabled_url_schemes = False
                 if instant_install == False:
-                    printMainMessage("Would you like to install URL Schemes?")
+                    printMainMessage("Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Roblox Link Shortcuts and when Roblox updates]")
                     a = input("> ")
                     if not (a.lower() == "n"):
                         printMainMessage("Setting up URL Schemes..")
@@ -480,6 +490,7 @@ if __name__ == "__main__":
         else:
             printErrorMessage("There was an issue while finding the Apps folder for installation.")
     if silent_mode == True:
+        instant_install = True
         install()
     else:
         if overwrited == True:
@@ -488,15 +499,16 @@ if __name__ == "__main__":
             printWarnMessage("--- Installer ---")
         if instant_install == True:
             install()
+            input("> ")
         else:
             if overwrited == True:
                 printMainMessage("Do you want to update Efaz's Roblox Bootstrap? (This will reupdate all files based on this Installation folder.) (y/n)")
             else:
                 printMainMessage("Do you want to install Efaz's Roblox Bootstrap into your system? (This will add the app to your Applications folder.) (y/n)")
-        res = input("> ")
-        if isYes(res) == True:
-            install()
-            input("> ")
+            res = input("> ")
+            if isYes(res) == True:
+                install()
+                input("> ")
     sys.exit(0)
 else:
     class EfazRobloxBootstrapNotModule(Exception):

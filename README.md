@@ -35,16 +35,21 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 1. [Full ZIP file](https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip)
 2. [Python 3.10+](https://www.python.org/downloads/) (You may install Python 3.13.0 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
 3. Python Modules: pip install pypresence pyobjc posix-ipc requests plyer (For Windows: pip install pypresence requests pywin32 plyer)
+> [!NOTE]
+> Python 3.10 is not tested with the bootstrap, it may work though.
 
 ## Install
 1. Once you have installed Python 3.10 or higher and downloaded the ZIP file, extract the full ZIP into a new folder.
-2. After you have extracted the folder, open it and make sure you see Install.py. Once you do, run it.
+2. After you have EXTRACTED the folder, open it and make sure you see Install.py. Once you do, run it.
 2. Complete the installation process and once it says success, run the bootstrap by using the Launchpad for macOS or by using the Search Menu for Windows.
 3. Complete the tutorial about how to use the bootstrap.
 4. Done! You have installed Efaz's Roblox Bootstrap!
+> [!NOTE]
+> If there's an error during the installation process, try checking if your computer is supported or if something was edited that may cause this error.
 
 ## Anti-Virus Information
-1. Efaz's Roblox Bootstrap is a safe program and won't harm your Roblox account. However, pyinstaller has issues with false positives, so it may conflict with your anti-virus. For example, Windows Defender would result with Win32/Wacapew.C!ml. 
+> [!IMPORTANT]
+> Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app in order to allow use.
 
 ## Credits
 1. Made by <span style="color:#FF8700">@EfazDev</span>
@@ -52,11 +57,11 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 3. AvatarEditorMaps were from <span style="color:#FF00FF">[Mielesgames's Map Files](https://github.com/Mielesgames/RobloxAvatarEditorMaps)</span> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
 4. Some files were exported from the main macOS Roblox.app or Bloxstrap files. <span style="color:#FF8700">(Logo was from the Apple Pages icon, recolored and then added the Roblox Logo)</span>
 5. macOS App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps --noconfirm && zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrap.app" "./Apps/PlayRoblox" "./Apps/EfazRobloxBootstrapLoad.app" && rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ && python3 Install.py --install --disable-remove`
-> [!WARNING]
+> [!IMPORTANT]
 > This command can only be used using native macOS so a virtual machine may be needed and can reduce security.
 
 6. Windows App was also built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using these commands: <br>
 x64: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap\PlayRoblox.exe Apps\PlayRoblox\ && python Install.py --install --disable-remove`<br>
 x86 (32bit): `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap32\PlayRoblox32.exe Apps\PlayRoblox\ && py Install.py --install --disable-remove`<br>
-> [!WARNING]
+> [!IMPORTANT]
 > This command also can only be used using Windows and can reduce security. This command also can only be used using Windows and can reduce security. In order to create a x86 exe file from x64, use Python 3.13.0 in x86 (32-bit)
