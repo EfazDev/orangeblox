@@ -1,3 +1,9 @@
+#!/bin/bash
+printMessage() {
+    local message=$1
+    echo "\033[38;5;202mInstall Python @ ${message}\033[0m"
+}
+
 ma_os=$(uname)
 arch=$(uname -m)
 if [ "$ma_os" = "Darwin" ]; then
@@ -6,9 +12,9 @@ if [ "$ma_os" = "Darwin" ]; then
     curl -o "$tmp_pkg" "$url"
     if [ $? -eq 0 ]; then
         open "$tmp_pkg"
-        echo "Python installer has been executed: $tmp_pkg"
+        printMessage "Python installer has been executed: $tmp_pkg"
     else
-        echo "Failed to download Python installer."
+        printMessage "Failed to download Python installer."
     fi
 elif [[ "$ma_os" == *"MINGW"* || "$ma_os" == *"CYGWIN"* || "$ma_os" == *"MSYS"* ]]; then
     if [ "$arch" = "x86_64" ]; then
@@ -24,10 +30,10 @@ elif [[ "$ma_os" == *"MINGW"* || "$ma_os" == *"CYGWIN"* || "$ma_os" == *"MSYS"* 
     curl -o "$tmp_exe" "$url"
     if [ $? -eq 0 ]; then
         "$tmp_exe"
-        echo "Python installer has been executed: $tmp_exe"
+        printMessage "Python installer has been executed: $tmp_exe"
     else
-        echo "Failed to download Python installer."
+        printMessage "Failed to download Python installer."
     fi
 else
-    echo "Unsupported operating system."
+    printMessage "Unsupported operating system."
 fi

@@ -20,12 +20,12 @@ if __name__ == "__main__":
         "Darwin": ["/Applications/EfazRobloxBootstrap.app", "/Applications/EfazRobloxBootstrapLoader.app", "/Applications/Play Roblox.app"],
         "Windows": [f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap", f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\EfazRobloxBootstrap.exe"]
     }
-    current_version = {"version": "1.2.5"}
+    current_version = {"version": "1.3.0"}
     handler = RobloxFastFlagsInstaller.Main()
 
     os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
     printWarnMessage("-----------")
-    printWarnMessage("Welcome to Efaz's Roblox Bootstrap Installer!")
+    printWarnMessage("Welcome to Efaz's Roblox Bootstrap Uninstaller!")
     printWarnMessage("Made by Efaz from efaz.dev!")
     printWarnMessage(f"v{current_version['version']}")
     printWarnMessage("-----------")
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         printMainMessage(f"System OS: {main_os} (macOS)")
         found_platform = "Darwin"
     else:
-        printErrorMessage("Efaz's Roblox Bootstrap is only supported for macOS or Windows.")
+        printErrorMessage("Efaz's Roblox Bootstrap is only supported for macOS and Windows.")
         input("> ")
         sys.exit(0)
     current_python_version = platform.python_version_tuple()

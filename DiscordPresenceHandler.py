@@ -108,6 +108,7 @@ def suppress_hook():
 
 class Presence(pypresence.Presence):
     connected = False
+    discord_session_connected = False
     current_presence = None
     main_thread = None
     stop_event = None
@@ -118,32 +119,40 @@ class Presence(pypresence.Presence):
         self.presence_class.__init__(*args, **kwargs)
     def connect(self):
         if self.connected == False:
-            self.presence_class.connect()
-            self.stop_event = threading.Event()
-            suppress_hook()
+            def create_connection():
+                try:
+                    self.presence_class.connect()
+                    self.stop_event = threading.Event()
+                    suppress_hook()
 
-            def loop():
-                err_count = 0
-                while not self.stop_event.is_set():
-                    if not self:
-                        break
-                    if self.connected == False:
-                        break
-                    try:
-                        if self.connected == True:
-                            if self.current_presence:
-                                self.presence_class.update(**(self.current_presence))
-                            else:
-                                self.presence_class.clear()
-                        else:
-                            break
-                    except Exception as e:
-                        err_count += 1
-                    time.sleep(4.5)
-
+                    def loop():
+                        err_count = 0
+                        while not self.stop_event.is_set():
+                            if not self:
+                                break
+                            if self.connected == False:
+                                break
+                            try:
+                                if self.connected == True:
+                                    if self.current_presence:
+                                        self.presence_class.update(**(self.current_presence))
+                                    else:
+                                        self.presence_class.clear()
+                                else:
+                                    break
+                            except Exception as e:
+                                err_count += 1
+                            time.sleep(4.5)
+                    self.main_thread = threading.Thread(target=loop, daemon=True)
+                    self.main_thread.start()
+                    self.discord_session_connected = True
+                except Exception as e:
+                    # Discord may not be open, await opening loop.
+                    if self.connected == True:
+                        time.sleep(0.5)
+                        create_connection()
+            threading.Thread(target=create_connection, daemon=True).start()
             self.connected = True
-            self.main_thread = threading.Thread(target=loop)
-            self.main_thread.start()
             return {"success": True, "code": 0}
         else:
             return {"success": True, "code": 1}
@@ -164,9 +173,10 @@ class Presence(pypresence.Presence):
     def close(self):
         if self.connected == True:
             self.connected = False
-            if self.stop_event: self.stop_event.set()
-            if self.main_thread: self.main_thread.join()
-            self.presence_class.close()
+            if self.discord_session_connected == True: 
+                if self.stop_event: self.stop_event.set()
+                if self.main_thread: self.main_thread.join()
+                self.presence_class.close()
             self.current_presence = None
             self.current_loop_id = None
             return {"success": True, "code": 0}
@@ -174,7 +184,7 @@ class Presence(pypresence.Presence):
             return {"success": False, "code": 1}
     def clear(self, *args, **kwargs):
         if self.connected == True:
-            self.presence_class.clear(*args, **kwargs)
+            if self.discord_session_connected == True: self.presence_class.clear(*args, **kwargs)
             self.current_presence = None
             self.current_loop_id = None
             return {"success": True, "code": 0}

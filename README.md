@@ -56,12 +56,12 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 2. Old Death Sound and Cursors were sourced from <span style="color:#FF5FFF">[Bloxstrap files](https://github.com/pizzaboxer/bloxstrap)</span>
 3. AvatarEditorMaps were from <span style="color:#FF00FF">[Mielesgames's Map Files](https://github.com/Mielesgames/RobloxAvatarEditorMaps)</span> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
 4. Some files were exported from the main macOS Roblox.app or Bloxstrap files. <span style="color:#FF8700">(Logo was from the Apple Pages icon, recolored and then added the Roblox Logo)</span>
-5. macOS App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps --noconfirm && zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrap.app" "./Apps/PlayRoblox" "./Apps/EfazRobloxBootstrapLoad.app" && rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ && python3 Install.py --install --disable-remove`
+5. macOS App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh`
 > [!IMPORTANT]
-> This command can only be used using native macOS so a virtual machine may be needed and can reduce security.
+> This command can only be used using native macOS so a virtual machine may be needed. You will also need to run the rebuilding process in the EfazRobloxBootstrap folder as current path.
 
-6. Windows App was also built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using these commands: <br>
-x64: `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap\PlayRoblox.exe Apps\PlayRoblox\ && python Install.py --install --disable-remove`<br>
-x86 (32bit): `pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm && move Apps\EfazRobloxBootstrap32\PlayRoblox32.exe Apps\PlayRoblox\ && py Install.py --install --disable-remove`<br>
+6. Windows App was also built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using these files: <br>
+x64: `Apps\Scripts\Pyinstaller\RecreateWindows.bat`<br>
+x86 (32bit): `Apps\Scripts\Pyinstaller\RecreateWindows32.bat`<br>
 > [!IMPORTANT]
-> This command also can only be used using Windows and can reduce security. This command also can only be used using Windows and can reduce security. In order to create a x86 exe file from x64, use Python 3.13.0 in x86 (32-bit)
+> This command is also only usable in Windows and requires pyinstaller to be installed. This command also can only be used using Windows and can reduce security. In order to create a x86 exe file from x64, use Python 3.13.0 in x86 (32-bit). Also, run the rebuilding process in the EfazRobloxBootstrap folder as current path.

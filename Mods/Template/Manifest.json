@@ -8,8 +8,7 @@
         "onBloxstrapSDK",
         "onRobloxPassedUpdate",
         "onGameDisconnected",
-        "onGameJoined",
-        "fastFlagConfiguration",
-        "editModScript"
-    ]
+        "onGameJoined"
+    ],
+    "needed_python_modules": []
 }

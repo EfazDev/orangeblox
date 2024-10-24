@@ -24,7 +24,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.2.5"}
+    current_version = {"version": "1.3.0"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
@@ -139,7 +139,7 @@ if __name__ == "__main__":
                                 displayMacOSNotification(notification["title"], notification["message"])
                                 printSuccessMessage("Successfully pinged notification!")
                         seconds += 1
-                        time.sleep(1)
+                        time.sleep(0.05)
                 threading.Thread(target=awake).start() 
                 printMainMessage(f"Starting Bootstrap..")
                 result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                                 except Exception as e: 
                                     printErrorMessage(str(e))
                         seconds += 1
-                        time.sleep(1)
+                        time.sleep(0.05)
                 def main_process():
                     try:
                         printMainMessage(f"Starting Bootstrap..")

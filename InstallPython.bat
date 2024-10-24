@@ -17,23 +17,23 @@ if !errorlevel! equ 0 (
     ) else (
         set "url=https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
     )
-    echo Download URL: !url!
+    echo %esc%[38;5;202mInstall Python @ Download URL: !url!%esc%[0m
     if defined url (
         set "tmp_exe=%TEMP%\python-installer-%RANDOM%.exe"
-        echo Temp EXE path: !tmp_exe!
+        echo %esc%[38;5;202mInstall Python @ Generated Python Temp Path: !tmp_exe!%esc%[0m
         powershell -Command "(New-Object Net.WebClient).DownloadFile('!url!', '!tmp_exe!')"
         if exist "!tmp_exe!" (
             start "" "!tmp_exe!"
-            echo Python installer has been executed: !tmp_exe!
+            echo %esc%[38;5;202mInstall Python @ Python installer has been executed: !tmp_exe!%esc%[0m
         ) else (
-            echo Failed to download Python installer.
+            echo %esc%[38;5;202mInstall Python @ Failed to download Python installer.%esc%[0m
         )
 	timeout 5
     ) else (
-        echo Failed to set download URL.
+        echo %esc%[38;5;202mInstall Python @ Failed to set download URL.%esc%[0m
     )
 ) else (
-    echo Unsupported operating system: !os_name!
+    echo %esc%[38;5;202mInstall Python @ Unsupported operating system: !os_name!%esc%[0m
 )
 
 endlocal

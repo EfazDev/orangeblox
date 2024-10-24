@@ -27,7 +27,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.4.2"
+fast_flag_installer_version = "1.4.5"
 
 class pip:
     def install(self, packages: list[str]):
@@ -125,13 +125,14 @@ class Main():
         "onRobloxExit", 
         "onRobloxLog",
         "onRobloxAppStart", 
+        "onRobloxAppLoginFailed", 
         "onRobloxPassedUpdate", 
         "onBloxstrapSDK", 
         "onLoadedFFlags", 
-        "onGameUDMUXLoaded", 
         "onHttpResponse", 
         "onOtherRobloxLog",
         "onRobloxCrash",
+        "onRobloxChannel",
         "onRobloxTerminateInstance",
         "onGameStart", 
         "onGameLoading", 
@@ -139,6 +140,8 @@ class Main():
         "onGameLoadingPrivate", 
         "onGameLoadingReserved", 
         "onGameLoadingParty", 
+        "onGameUDMUXLoaded", 
+        "onGameAudioDeviceAvailable",
         "onGameTeleport", 
         "onGameTeleportFailed", 
         "onGameJoinInfo", 
@@ -146,41 +149,63 @@ class Main():
         "onGameLeaving", 
         "onGameDisconnected"
     ]
-    robloxInstanceInfoNames = {
-        "onRobloxExit": "Allow detecting when Roblox closes", 
-        "onRobloxLog": "Allow detecting every Roblox event",
-        "onRobloxAppStart": "Allow detecting when Roblox starts", 
-        "onRobloxPassedUpdate": "Allow detecting when Roblox passes update checks", 
-        "onBloxstrapSDK": "Allow detecting when BloxstrapRPC is triggered", 
-        "onLoadedFFlags": "Allow detecting when FFlags are loaded", 
-        "onGameUDMUXLoaded": "Allow detecting when Roblox Server IPs are loaded", 
-        "onHttpResponse": "Allow detecting when Roblox HttpResponses are ran", 
-        "onOtherRobloxLog": "Allow detecting when Unknown Roblox Handlers are detected",
-        "onRobloxCrash": "Allow detecting when Roblox crashes",
-        "onRobloxTerminateInstance": "Allow detecting when Roblox closes an extra window.",
-        "onGameStart": "Allow getting Job ID, Place ID and Roblox IP", 
-        "onGameLoading": "Allow detecting when loading any server", 
-        "onGameLoadingNormal": "Allow detecting when loading public server", 
-        "onGameLoadingPrivate": "Allow detecting when loading private server", 
-        "onGameLoadingReserved": "Allow detecting when loading reserved server", 
-        "onGameLoadingParty": "Allow detecting when loading party", 
-        "onGameTeleport": "Allow detecting when you teleport places", 
-        "onGameTeleportFailed": "Allow detecting when teleporting fails", 
-        "onGameJoinInfo": "Allow getting join info for a game", 
-        "onGameJoined": "Allow detecting when Roblox loads a game fully", 
-        "onGameLeaving": "Allow detecting when you leave a game", 
-        "onGameDisconnected": "Allow detecting when you disconnect from a game",
+    robloxInstanceEventInfo = {
+        # 0 = Safe, 1 = Caution, 2 = Warning, 3 = Dangerous
+        "onRobloxExit": {"message": "Allow detecting when Roblox closes", "level": 0}, 
+        "onRobloxLog": {"message": "Allow detecting every Roblox event", "level": 3},
+        "onRobloxAppStart": {"message": "Allow detecting when Roblox starts", "level": 0}, 
+        "onRobloxAppLoginFailed": {"message": "Allow detecting when Roblox logging in fails", "level": 0},
+        "onRobloxPassedUpdate": {"message": "Allow detecting when Roblox passes update checks", "level": 0}, 
+        "onBloxstrapSDK": {"message": "Allow detecting when BloxstrapRPC is triggered", "level": 1}, 
+        "onLoadedFFlags": {"message": "Allow detecting when FFlags are loaded", "level": 0}, 
+        "onHttpResponse": {"message": "Allow detecting when Roblox HttpResponses are ran", "level": 2}, 
+        "onOtherRobloxLog": {"message": "Allow detecting when Unknown Roblox Handlers are detected", "level": 3},
+        "onRobloxCrash": {"message": "Allow detecting when Roblox crashes", "level": 1},
+        "onRobloxChannel": {"message": "Allow detecting the current Roblox channel", "level": 0},
+        "onRobloxTerminateInstance": {"message": "Allow detecting when Roblox closes an extra window.", "level": 1},
+        "onGameStart": {"message": "Allow getting Job ID, Place ID and Roblox IP", "level": 2}, 
+        "onGameLoading": {"message": "Allow detecting when loading any server", "level": 1}, 
+        "onGameLoadingNormal": {"message": "Allow detecting when loading public server", "level": 1}, 
+        "onGameLoadingPrivate": {"message": "Allow detecting when loading private server", "level": 2}, 
+        "onGameLoadingReserved": {"message": "Allow detecting when loading reserved server", "level": 2},
+        "onGameLoadingParty": {"message": "Allow detecting when loading party", "level": 1}, 
+        "onGameAudioDeviceAvailable": {"message": "Allow detecting when a new game audio device is available.", "level": 1},
+        "onGameUDMUXLoaded": {"message": "Allow detecting when Roblox Server IPs are loaded", "level": 2}, 
+        "onGameTeleport": {"message": "Allow detecting when you teleport places", "level": 1}, 
+        "onGameTeleportFailed": {"message": "Allow detecting when teleporting fails", "level": 1}, 
+        "onGameJoinInfo": {"message": "Allow getting join info for a game", "level": 2}, 
+        "onGameJoined": {"message": "Allow detecting when Roblox loads a game fully", "level": 0}, 
+        "onGameLeaving": {"message": "Allow detecting when you leave a game", "level": 0}, 
+        "onGameDisconnected": {"message": "Allow detecting when you disconnect from a game", "level": 0},
 
         # Efaz's Roblox Bootstrap Permissions
-        "fastFlagConfiguration": "Edit or view your bootstrap configuration file",
-        "editMainExecutable": "Edit the main bootstrap executable",
-        "editModScript": "Edit ModScript.py executable",
-        "notifications": "Configure or send macOS Notifications through Bootstrap",
-        "configureModModes": "Configure your mod modes",
-        "configureRobloxBranding": "Configure your Roblox client's branding",
-        "configureDeathSounds": "Configure your death sounds",
-        "configureCursors": "Configure your cursors",
-        "configureAvatarMaps": "Configure your avatar maps"
+        "fastFlagConfiguration": {"message": "Edit or view your bootstrap configuration file", "level": 3, "detection": "FastFlagConfiguration.json"},
+        "editMainExecutable": {"message": "Edit the main bootstrap executable", "level": 3, "detection": "Main.py"},
+        "editRobloxFastFlagInstallerExecutable": {"message": "Edit the RobloxFastFlagInstaller executable", "level": 3, "detection": "RobloxFastFlagInstaller.py"},
+        "editEfazRobloxBootstrapAPIExecutable": {"message": "Edit the EfazRobloxBootstrapAPI executable", "level": 3, "detection": "EfazRobloxBootstrapAPI.py"},
+        "editModScript": {"message": "Edit ModScript.py executable", "level": 3, "detection": "ModScript.py"},
+        "notifications": {"message": "Configure or send macOS Notifications through Bootstrap", "level": 1, "detection": "MacOSNotification"},
+        "configureModModes": {"message": "Configure your mod modes", "level": 2, "detection": "Mods"},
+        "configureRobloxBranding": {"message": "Configure your Roblox client's branding", "level": 1, "detection": "RobloxBrand"},
+        "configureDeathSounds": {"message": "Configure your death sounds", "level": 1, "detection": "DeathSounds"},
+        "configureCursors": {"message": "Configure your cursors", "level": 1, "detection": "Cursors"},
+        "configureAvatarMaps": {"message": "Configure your avatar maps", "level": 1, "detection": "AvatarEditorMaps"},
+        "generateModsManifest": {"message": "Get information about all your installed mods", "level": 0},
+        "displayNotification": {"message": "Send notifications through the bootstrap", "level": 1},
+        "getRobloxLogFolderSize": {"message": "Get current size of the Roblox Logs folder", "level": 0},
+        "sendBloxstrapRPC": {"message": "Send requests through Bloxstrap RPC", "level": 2},
+        "getLatestRobloxVersion": {"message": "Get the latest Roblox version", "level": 0},
+        "getInstalledRobloxVersion": {"message": "Get the currently installed Roblox version", "level": 1},
+        "getRobloxInstallationFolder": {"message": "Get the Roblox installation folder", "level": 2},
+        "getIfRobloxIsOpen": {"message": "Get if the Roblox client is open", "level": 1},
+        "getFastFlagConfiguration": {"message": "View your bootstrap configuration file", "level": 1},
+        "setFastFlagConfiguration": {"message": "Set your bootstrap configuration within executable", "level": 2},
+        "saveFastFlagConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
+        "getLatestRobloxPid": {"message": "Get the current latest Roblox window's PID", "level": 1},
+        "getConfiguration": {"message": "Get data in a separate configuration", "level": 0, "free": True},
+        "setConfiguration": {"message": "Store data in a separate configuration", "level": 0, "free": True},
+        "getDebugMode": {"message": "Get if the bootstrap is in Debug Mode", "level": 0, "free": True},
+        "about": {"message": "Get bootstrap info", "level": 0, "free": True},
     }
     # System Functions 
     class RobloxInstance():
@@ -288,6 +313,7 @@ class Main():
                     time.sleep(0.5)
                     if main_os == "Darwin" or main_os == "Windows":
                         main_log = ""
+                        passed_lines = []
                         def newest(path):
                             files = os.listdir(path)
                             paths = []
@@ -418,6 +444,44 @@ class Main():
                                 generated_data = generate_arg()
                                 if generated_data:
                                     submitToThread(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
+                            elif "[FLog::Audio] InputDevice" in line:
+                                def generate_arg():
+                                    pattern = re.compile(
+                                        r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Audio\] InputDevice (?P<device_index>\d+): (?P<device_name>[^()]+)\(\{(?P<device_id>[0-9a-fA-F-]+)\}\) (?P<connections>\d+/\d+/\d+)'
+                                    )
+                                    match = pattern.search(line)
+                                    if not match:
+                                        return None
+                                    data = match.groupdict()
+                                    result = {
+                                        "device_name": data.get("device_name"),
+                                        "device_uuid": data.get("device_id"),
+                                        "device_index": int(data.get("device_index")),
+                                        "connection_divisons": data.get("connections")
+                                    }
+                                    return result
+                                generated_data = generate_arg()
+                                if generated_data:
+                                    submitToThread(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
+                            elif "[FLog::ClientRunInfo] The channel is " in line:
+                                def generate_arg():
+                                    pattern = re.compile(
+                                        r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)'
+                                    )
+                                    match = pattern.search(line)
+                                    if not match:
+                                        return None
+                                    data = match.groupdict()
+                                    result = {
+                                        "channel": data.get("channel")
+                                    }
+                                    if result["channel"] == "production": result["channel"] = "LIVE"
+                                    return result
+                                generated_data = generate_arg()
+                                if generated_data:
+                                    submitToThread(eventName="onRobloxChannel", data=generated_data, isLine=False)
+                            elif "[FLog::Warning] WebLogin authentication is failed and App is quitting" in line:
+                                submitToThread(eventName="onRobloxAppLoginFailed", data=line, isLine=True)
                             elif "[FLog::UgcExperienceController] UgcExperienceController: doTeleport: joinScriptUrl" in line:
                                 submitToThread(eventName="onGameTeleport", data=line, isLine=True)
                             elif "raiseTeleportInitFailedEvent" in line:
@@ -558,7 +622,8 @@ class Main():
                                                 "userId": None,
                                                 "displayName": None,
                                                 "universeId": None,
-                                                "isTeleport": None
+                                                "isTeleport": None,
+                                                "followUserId": None
                                             }
                                 
                                 first_try = False
@@ -593,7 +658,7 @@ class Main():
                                     submitToThread(eventName="onGameJoined", data=generated_data, isLine=False)
                             elif "[FLog::SingleSurfaceApp] leaveUGCGameInternal" in line:
                                 submitToThread(eventName="onGameLeaving", data=line, isLine=True)
-                            elif "RBXCRASH: UnhandledException" in line:
+                            elif "RBXCRASH:" in line:
                                 submitToThread(eventName="onRobloxCrash", data=line, isLine=True)
                             elif "Roblox::terminateWaiter" in line:
                                 submitToThread(eventName="onRobloxTerminateInstance", data=line, isLine=True)
@@ -634,29 +699,57 @@ class Main():
                             main_log = self.main_log_file
 
                         with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
+                            def cleanLogs():
+                                if self.debug_mode == True: printDebugMessage(f"Cleaning logs from session..")
+                                with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
+                                    lines = file.readlines()
+                                with open(main_log, "w", encoding="utf-8", errors="ignore") as write_file:
+                                    end_lines = []
+                                    current_log = ""
+                                    for line in lines:
+                                        should_remove = False
+                                        f_index = line.find("[F")
+                                        if f_index != -1:
+                                            filtered_line = line[f_index:]
+                                            if filtered_line == current_log:
+                                                should_remove = True
+                                            elif "[FLog::WndProcessCheck]" in line:
+                                                should_remove = True
+                                            elif "[FLog::FMOD] FMOD API error" in line:
+                                                should_remove = True
+                                            else:
+                                                current_log = filtered_line
+                                        if should_remove == False: end_lines.append(line)
+                                    write_file.writelines(end_lines)
                             while True:
                                 line = file.readline()
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
                                     return
                                 if not line:
+                                    threading.Thread(target=cleanLogs).start()
                                     break
-                                res = handleLine(line)
-                                if res and res.code == 0:
-                                    break
+                                if not (line in passed_lines):
+                                    res = handleLine(line)
+                                    if res and res.code == 0:
+                                        threading.Thread(target=cleanLogs).start()
+                                        break
                             file.seek(0, os.SEEK_END)
                             while True:
                                 line = file.readline()
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
+                                    threading.Thread(target=cleanLogs).start()
                                     break
                                 if not line:
                                     time.sleep(0.01)
                                     continue
-                                res = handleLine(line)
-                                if res and res.code == 0:
-                                    self.ended_process = True
-                                    break                                
+                                if not (line in passed_lines):
+                                    res = handleLine(line)
+                                    if res and res.code == 0:
+                                        self.ended_process = True
+                                        threading.Thread(target=cleanLogs).start()
+                                        break                                
                 threading.Thread(target=watchDog).start()
                 threading.Thread(target=self.awaitRobloxClosing).start()
     def printLog(self, m):
@@ -683,14 +776,22 @@ class Main():
                 return {"success": False, "message": "Something went wrong.", "data": ""}
         else:
             return {"success": False, "message": "Path doesn't end with .plist", "data": path}
-    def endRoblox(self):
+    def endRoblox(self, pid=""):
         if self.getIfRobloxIsOpen():
-            if self.__main_os__ == "Darwin":
-                os.system("killall -9 RobloxPlayer")
-            elif self.__main_os__ == "Windows":
-                os.system("taskkill /IM RobloxPlayerBeta.exe /F")
+            if pid == "":
+                if self.__main_os__ == "Darwin":
+                    os.system("killall -9 RobloxPlayer")
+                elif self.__main_os__ == "Windows":
+                    os.system("taskkill /IM RobloxPlayerBeta.exe /F")
+                else:
+                    self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
             else:
-                self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
+                if self.__main_os__ == "Darwin":
+                    os.system(f"kill -9 {pid}")
+                elif self.__main_os__ == "Windows":
+                    os.system(f"taskkill /PID {pid} /F")
+                else:
+                    self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
     def getIfRobloxIsOpen(self, installer=False, pid=""):
         if self.__main_os__ == "Windows":
             process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -731,7 +832,7 @@ class Main():
                 return False
             else:
                 return True
-    def getLatestClientVersion(self, debug=False):
+    def getLatestClientVersion(self, debug=False, channel="LIVE"):
         # Mac: https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer
         # Windows: https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer
 
@@ -749,32 +850,46 @@ class Main():
             
         if self.__main_os__ == "Darwin":
             if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-            res = requests.get("https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer")
+            if channel:
+                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer/channel/{channel}")
+            else:
+                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer")
             if res.ok:
                 jso = res.json()
                 if jso.get("clientVersionUpload") and jso.get("version"):
-                    if debug == True: printDebugMessage(f"{res.text}")
+                    if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
                     return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
                 else:
                     if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
                     return {"success": False, "message": "Something went wrong."}
             else:
-                if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                return {"success": False, "message": "Something went wrong."}
+                if not (channel == "LIVE"):
+                    if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                    return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                else:
+                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                    return {"success": False, "message": "Something went wrong."}
         elif self.__main_os__ == "Windows":
             if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-            res = requests.get("https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer")
+            if channel:
+                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer/channel/{channel}")
+            else:
+                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer")
             if res.ok:
                 jso = res.json()
                 if jso.get("clientVersionUpload") and jso.get("version"):
-                    if debug == True: printDebugMessage(f"{res.text}")
+                    if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
                     return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
                 else:
                     if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
                     return {"success": False, "message": "Something went wrong."}
             else:
-                if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                return {"success": False, "message": "Something went wrong."}
+                if not (channel == "LIVE"):
+                    if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                    return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                else:
+                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                    return {"success": False, "message": "Something went wrong."}
         else:
             self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
             return {"success": False, "message": "OS not compatible."}
@@ -783,7 +898,23 @@ class Main():
             if os.path.exists(f"{macOS_dir}/Contents/Info.plist"):
                 read_plist = self.readPListFile(f"{macOS_dir}/Contents/Info.plist")
                 if read_plist.get("CFBundleShortVersionString"):
-                    return {"success": True, "isClientVersion": False, "version": read_plist["CFBundleShortVersionString"]}
+                    version_channel = "LIVE"
+                    try:
+                        local_storage_location = f'{os.path.expanduser("~")}/Library/Roblox/LocalStorage/'
+                        if os.path.exists(local_storage_location):
+                            for i in os.listdir(local_storage_location):
+                                fi = os.path.join(local_storage_location, i)
+                                if os.path.isfile(fi) and fi.endswith(".json") and not ("Studio" in fi) and ("memProfStorage" in fi):
+                                    with open(fi, "r") as f:
+                                        prof_storage = json.load(f)
+                                    if type(prof_storage) is dict:
+                                        if prof_storage.get("Channel"):
+                                            version_channel = prof_storage.get("Channel", "LIVE")
+                            if not (value.replace(" ", "") == "") and not (value == "production"):
+                                version_channel = value
+                    except Exception:
+                        version_channel = "LIVE"
+                    return {"success": True, "isClientVersion": False, "version": read_plist["CFBundleShortVersionString"], "channel": version_channel}
                 else:
                     return {"success": False, "message": "Something went wrong."}
             else:
@@ -791,7 +922,22 @@ class Main():
         elif self.__main_os__ == "Windows":
             res = self.getRobloxInstallFolder()
             if res:
-                return {"success": True, "isClientVersion": True, "version": os.path.basename(os.path.dirname(res))}
+                import winreg
+                version_channel = ""
+                try:
+                    registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, winreg.KEY_READ)
+                    value, regtype = winreg.QueryValueEx(registry_key, "www.roblox.com")
+                    winreg.CloseKey(registry_key)
+                    if value.replace(" ", "") == "": 
+                        version_channel = "LIVE"
+                    else:
+                        if value == "production":
+                            version_channel = "LIVE"
+                        else:
+                            version_channel = value
+                except Exception:
+                    version_channel = "LIVE"
+                return {"success": True, "isClientVersion": True, "version": os.path.basename(os.path.dirname(res)), "channel": version_channel}
             else:
                 return {"success": False, "message": "Roblox not installed."}
         else:
@@ -930,7 +1076,7 @@ class Main():
                                 merge_json = json.loads(f.read())
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
-                            if debug == True: printDebugMessage("Merged JSON.")
+                            if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                         except Exception as e:
                             self.printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                 with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "w") as f:
@@ -938,7 +1084,7 @@ class Main():
                         json.dump(fastflagJSON, f)
                     else:
                         json.dump(fastflagJSON, f, indent=4)
-                if debug == True: printDebugMessage(f"Saved {fastFlagFileName}")
+                if debug == True: printDebugMessage(f"Saved to {fastFlagFileName} successfully!")
             elif self.__main_os__ == "Windows":
                 self.endRoblox()
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
@@ -954,7 +1100,7 @@ class Main():
                                     merge_json = json.loads(f.read())
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
-                                if debug == True: printDebugMessage("Merged JSON.")
+                                if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                             except Exception as e:
                                 self.printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                     with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "w") as f:
@@ -962,7 +1108,7 @@ class Main():
                             json.dump(fastflagJSON, f)
                         else:
                             json.dump(fastflagJSON, f, indent=4)
-                    if debug == True: printDebugMessage(f"Saved {fastFlagFileName}")
+                    if debug == True: printDebugMessage(f"Saved to {fastFlagFileName} successfully!")
                 else:
                     self.printLog("Roblox couldn't be found.")
             else:
@@ -975,7 +1121,7 @@ class Main():
                 return None
             for fold in versions:
                 if os.path.isdir(fold):
-                    if os.path.exists(f"{fold}\\RobloxPlayerLauncher.exe"):
+                    if os.path.exists(f"{fold}\\RobloxPlayerBeta.exe"):
                         formatted.append(f"{fold}\\")
             if len(formatted) > 0:
                 latest_folder = max(formatted, key=os.path.getmtime)
@@ -1184,21 +1330,12 @@ class Main():
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
         def waitForRobloxEnd():
             if disableRobloxAutoOpen == True:
-                if self.getIfRobloxIsOpen():
-                    self.endRoblox()
-                    return
-                time.sleep(1)
-                if self.getIfRobloxIsOpen():
-                    self.endRoblox()
-                    return
-                time.sleep(1)
-                if self.getIfRobloxIsOpen():
-                    self.endRoblox()
-                    return
-                time.sleep(1)
-                if self.getIfRobloxIsOpen():
-                    self.endRoblox()
-                    return
+                for i in range(50):
+                    if self.getIfRobloxIsOpen():
+                        self.endRoblox()
+                        return
+                    time.sleep(0.1)
+                
         if self.__main_os__ == "Darwin":
             if self.getIfRobloxIsOpen(installer=True):
                 if debug == True: printDebugMessage("Installer is already opened. Waiting for installation to end..")

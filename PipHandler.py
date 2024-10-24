@@ -18,11 +18,25 @@ class pip:
         if type(command) is list and len(command) > 0:
             subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: list[str]):
+        res = {}
         for i in packages:
-            subprocess.check_call([self.executable, "-m", "pip", "install", i])
+            if type(i) is str:
+                try:
+                    subprocess.check_call([self.executable, "-m", "pip", "install", i])
+                    res[i] = {"success": True}
+                except Exception as e:
+                    res[i] = {"success": False}
+        return res
     def uninstall(self, packages: list[str]):
+        res = {}
         for i in packages:
-            subprocess.check_call([self.executable, "-m", "pip", "uninstall", i])
+            if type(i) is str:
+                try:
+                    subprocess.check_call([self.executable, "-m", "pip", "uninstall", i])
+                    res[i] = {"success": True}
+                except Exception as e:
+                    res[i] = {"success": False}
+        return res
     def installed(self, packages: list[str]):
         installed = {}
         all_installed = True
@@ -40,29 +54,9 @@ class pip:
         installed["all"] = all_installed
         return installed
     def pythonInstalled(self):
-        ma_os = platform.system()
-        if ma_os == "Darwin":
-            paths = [
-                "/usr/local/bin/python*",
-                "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
-                "~/Library/Python/*/bin/python*"
-            ]
-            for path_pattern in paths:
-                for path in glob.glob(path_pattern):
-                    if os.path.isfile(path):
-                        return True
-            return False
-        elif ma_os == "Windows":
-            paths = [
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*'),
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES%\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES(x86)%\\Python*\\python.exe')
-            ]
-            for path_pattern in paths:
-                for path in glob.glob(path_pattern):
-                    if os.path.isfile(path):
-                        return True
+        if self.findPython():
+            return True
+        else:
             return False
     def pythonInstall(self):
         ma_os = platform.system()
@@ -96,16 +90,20 @@ class pip:
     def findPython(self):
         ma_os = platform.system()
         if ma_os == "Darwin":
-            paths = [
-                "/usr/local/bin/python*",
-                "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
-                "~/Library/Python/*/bin/python*"
-            ]
-            for path_pattern in paths:
-                for path in glob.glob(path_pattern):
-                    if os.path.isfile(path):
-                        return path
-            return None
+            out = subprocess.getoutput("which python3")
+            if "/Versions/" in out and os.path.isfile(out):
+                return out
+            else:
+                paths = [
+                    "/usr/local/bin/python*",
+                    "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
+                    "~/Library/Python/*/bin/python*"
+                ]
+                for path_pattern in paths:
+                    for path in glob.glob(path_pattern):
+                        if os.path.isfile(path):
+                            return path
+                return None
         elif ma_os == "Windows":
             paths = [
                 os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*'),
