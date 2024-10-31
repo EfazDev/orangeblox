@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 current_version = {"version": "1.3.0"}
 
 class EfazRobloxBootstrapAPI:
-    # Variables [Used for contacting with the bootstrap]
+    # Variables [Used for connecting with the bootstrap]
     requestedFunctions = {}
     launchedFromBootstrap = False
 

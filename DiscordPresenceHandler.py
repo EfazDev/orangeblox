@@ -117,7 +117,7 @@ class Presence(pypresence.Presence):
     def __init__(self, *args, **kwargs):
         self.presence_class = super()
         self.presence_class.__init__(*args, **kwargs)
-    def connect(self):
+    def connect(self, debug=False):
         if self.connected == False:
             def create_connection():
                 try:
@@ -150,7 +150,10 @@ class Presence(pypresence.Presence):
                     # Discord may not be open, await opening loop.
                     if self.connected == True:
                         time.sleep(0.5)
-                        create_connection()
+                        try:
+                            create_connection()
+                        except Exception as e:
+                            if debug == True: print(f"\033[38;5;226mFailed to connect to Discord.\033[0m")
             threading.Thread(target=create_connection, daemon=True).start()
             self.connected = True
             return {"success": True, "code": 0}

@@ -20,7 +20,7 @@ if __name__ == "__main__":
         "Darwin": ["/Applications/EfazRobloxBootstrap.app", "/Applications/EfazRobloxBootstrapLoader.app", "/Applications/Play Roblox.app"],
         "Windows": [f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap", f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\EfazRobloxBootstrap.exe"]
     }
-    current_version = {"version": "1.3.0"}
+    current_version = {"version": "1.3.1"}
     handler = RobloxFastFlagsInstaller.Main()
 
     os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')

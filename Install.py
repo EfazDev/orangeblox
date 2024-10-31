@@ -54,7 +54,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git"]
-    current_version = {"version": "1.3.0"}
+    current_version = {"version": "1.3.1"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False
@@ -62,6 +62,7 @@ if __name__ == "__main__":
     use_x86_windows = False
     disable_remove_other_operating_systems = False
     disabled_url_scheme_installation = None
+    disabled_shortcuts_installation = None
     use_installation_syncing = True
     pip_class = pip()
 
@@ -90,7 +91,8 @@ if __name__ == "__main__":
         use_installation_syncing = False
     if "--disable-url-schemes" in sys.argv:
         disabled_url_scheme_installation = True
-
+    if "--disable-shortcuts" in sys.argv:
+        disabled_shortcuts_installation = True
     if "--use-x86-windows" in sys.argv:
         use_x86_windows = True
 
@@ -152,6 +154,7 @@ if __name__ == "__main__":
         global disabled_url_scheme_installation
         global use_x86_windows
         global disable_remove_other_operating_systems
+        global disabled_shortcuts_installation
         global use_installation_syncing
 
         try:
@@ -238,14 +241,13 @@ if __name__ == "__main__":
                         handler.writePListFile("/Applications/Play Roblox.app/Contents/Info.plist", dis)
 
                     # Delete frameworks if there's extra
-                    if True:
-                        printMainMessage("Clearing App Frameworks..")
-                        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/"):
-                            shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/")
-                        if os.path.exists("/Applications/EfazRobloxBootstrapLoader.app/Contents/Frameworks/"):
-                            shutil.rmtree("/Applications/EfazRobloxBootstrapLoader.app/Contents/Frameworks/")
-                        if os.path.exists("/Applications/Play Roblox.app/Contents/Frameworks/"):
-                            shutil.rmtree("/Applications/Play Roblox.app/Contents/Frameworks/")
+                    printMainMessage("Clearing App Frameworks..")
+                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/"):
+                        shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/")
+                    if os.path.exists("/Applications/EfazRobloxBootstrapLoader.app/Contents/Frameworks/"):
+                        shutil.rmtree("/Applications/EfazRobloxBootstrapLoader.app/Contents/Frameworks/")
+                    if os.path.exists("/Applications/Play Roblox.app/Contents/Frameworks/"):
+                        shutil.rmtree("/Applications/Play Roblox.app/Contents/Frameworks/")
 
                     # Convert All Mod Modes to Mods
                     if os.path.exists(f"{current_path_location}/ModModes/"):
@@ -414,7 +416,7 @@ if __name__ == "__main__":
                             set_url_scheme("roblox-player", stored_main_app[found_platform][1])
                             set_url_scheme("roblox", stored_main_app[found_platform][1])
                     else:
-                        if not (fastFlagConfig.get("EFlagDisableURLSchemeInstall") == False):
+                        if not (fastFlagConfig.get("EFlagDisableURLSchemeInstall") == True):
                             printMainMessage("Setting up URL Schemes..")
                             def set_url_scheme(protocol, exe_path):
                                 protocol_key = r"Software\Classes\{}".format(protocol)
@@ -434,21 +436,25 @@ if __name__ == "__main__":
                             set_url_scheme("roblox", stored_main_app[found_platform][1])
 
                     # Setup Shortcuts
-                    printMainMessage("Setting up shortcuts..")
-                    import win32com.client # type: ignore
-                    def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
-                        shell = win32com.client.Dispatch('WScript.Shell')
-                        shortcut = shell.CreateShortcut(shortcut_path)
-                        shortcut.TargetPath = target_path
-                        if working_directory:
-                            shortcut.WorkingDirectory = working_directory
-                        if icon_path:
-                            shortcut.IconLocation = icon_path
-                        shortcut.save()
-                    create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
-                    create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
-                    create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
-                    create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                    if not (disabled_shortcuts_installation == True or fastFlagConfig.get("EFlagDisableShortcutsInstall") == True):
+                        printMainMessage("Setting up shortcuts..")
+                        try:
+                            import win32com.client # type: ignore
+                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                                shell = win32com.client.Dispatch('WScript.Shell')
+                                shortcut = shell.CreateShortcut(shortcut_path)
+                                shortcut.TargetPath = target_path
+                                if working_directory:
+                                    shortcut.WorkingDirectory = working_directory
+                                if icon_path:
+                                    shortcut.IconLocation = icon_path
+                                shortcut.save()
+                            create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
+                            create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+                            create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
+                            create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                        except Exception as e:
+                            printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
                     # Copy App Resources
                     printMainMessage("Copying App Resources..")
@@ -462,6 +468,11 @@ if __name__ == "__main__":
                                 fastFlagConfig["EFlagDisableURLSchemeInstall"] = True
                             elif disabled_url_scheme_installation == False:
                                 fastFlagConfig["EFlagDisableURLSchemeInstall"] = False
+                            if disabled_shortcuts_installation == True:
+                                fastFlagConfig["EFlagDisableShortcutsInstall"] = True
+                            elif disabled_shortcuts_installation == False:
+                                fastFlagConfig["EFlagDisableShortcutsInstall"] = False
+
                             if use_installation_syncing == True:
                                 if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
                             with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
@@ -471,13 +482,18 @@ if __name__ == "__main__":
                                 fastFlagConfig["EFlagDisableURLSchemeInstall"] = True
                             elif disabled_url_scheme_installation == False:
                                 fastFlagConfig["EFlagDisableURLSchemeInstall"] = False
+                            if disabled_shortcuts_installation == True:
+                                fastFlagConfig["EFlagDisableShortcutsInstall"] = True
+                            elif disabled_shortcuts_installation == False:
+                                fastFlagConfig["EFlagDisableShortcutsInstall"] = False
+
                             if use_installation_syncing == True:
                                 if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
                             with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
                                 json.dump(fastFlagConfig, f, indent=4)
 
-                        # Remove Apps Folder in /Contents/Resources/
-                        printMainMessage("Removing Apps Folder in /Contents/Resources/ to save space.")
+                        # Remove Apps Folder in Installed Folder
+                        printMainMessage("Removing Apps Folder in Installed Folder to save space.")
                         if os.path.exists(os.path.join(stored_main_app[found_platform][0], "Apps")):
                             shutil.rmtree(os.path.join(stored_main_app[found_platform][0], "Apps"))
                         if os.path.exists(os.path.join(stored_main_app[found_platform][1], "Apps")):
@@ -536,6 +552,10 @@ if __name__ == "__main__":
                 a = input("> ")
                 if isYes(a) == False:
                     disabled_url_scheme_installation = True
+                printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
+                a = input("> ")
+                if isYes(a) == False:
+                    disabled_shortcuts_installation = True
             printMainMessage("Would you like to allow syncing configurations and mods from this folder to the app? (Only 1 installation folder can be used) (y/n)")
             a = input("> ")
             if isYes(a) == False:

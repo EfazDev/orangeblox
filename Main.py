@@ -27,7 +27,7 @@ if __name__ == "__main__":
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
-    current_version = {"version": "1.3.0"}
+    current_version = {"version": "1.3.1"}
     given_args = list(filter(None, sys.argv))
     pip_class = pip()
 
@@ -457,7 +457,7 @@ if __name__ == "__main__":
                     else:
                         return False
                 elif main_os == "Darwin":
-                    if os.path.exists(f"{os.path.curdir}/Cursors/{a}/ArrowCursor.rbxl") and os.path.exists(f"{os.path.curdir}/Cursors/{a}/ArrowFarCursor.rbxl"):
+                    if os.path.exists(f"{os.path.curdir}/Cursors/{a}/ArrowCursor.png") and os.path.exists(f"{os.path.curdir}/Cursors/{a}/ArrowFarCursor.png"):
                         return True
                     else:
                         return False
@@ -510,12 +510,12 @@ if __name__ == "__main__":
             fflag_configuration["EFlagEnableChangeBrandIcons"] = True
             def scan_name(a):
                 if main_os == "Windows":
-                    if os.path.exists(f"{os.path.curdir}\\RobloxBrand\\{a}\\AppIcon.icns"):
+                    if os.path.exists(f"{os.path.curdir}\\RobloxBrand\\{a}\\RobloxTilt.png"):
                         return True
                     else:
                         return False
                 elif main_os == "Darwin":
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{a}/AppIcon.icns"):
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{a}/RobloxTilt.png"):
                         return True
                     else:
                         return False
@@ -903,6 +903,31 @@ if __name__ == "__main__":
         elif isNo(d) == True:
             fflag_configuration["EFlagSkipEfazRobloxBootstrapPromptUI"] = False
             printDebugMessage("User selected: False")
+
+        if main_os == "Windows":
+            printMainMessage("Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
+            d = input("> ")
+            if isYes(d) == True:
+                fflag_configuration["EFlagDisableURLSchemeInstall"] = True
+                printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
+            elif isNo(d) == True:
+                fflag_configuration["EFlagDisableURLSchemeInstall"] = False
+                printDebugMessage("User selected: False")
+
+            printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
+            d = input("> ")
+            if isYes(d) == True:
+                fflag_configuration["EFlagDisableShortcutsInstall"] = True
+                printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
+            elif isNo(d) == True:
+                fflag_configuration["EFlagDisableShortcutsInstall"] = False
+                printDebugMessage("User selected: False")
 
         printMainMessage("Would you like to disable Bootstrap Update Checks? (y/n)")
         d = input("> ")
@@ -2002,16 +2027,17 @@ if __name__ == "__main__":
                 set_url_scheme("roblox", bootstrap_path)
 
             # Reapply Shortcuts
-            printMainMessage("Setting up shortcuts..")
-            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
-                shell = win32com.client.Dispatch('WScript.Shell')
-                shortcut = shell.CreateShortcut(shortcut_path)
-                shortcut.TargetPath = target_path
-                if working_directory: shortcut.WorkingDirectory = working_directory
-                if icon_path: shortcut.IconLocation = icon_path
-                shortcut.save()
-            create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
-            create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+            if not (fflag_configuration.get("EFlagDisableShortcutsInstall") == True):
+                printMainMessage("Setting up shortcuts..")
+                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                    shell = win32com.client.Dispatch('WScript.Shell')
+                    shortcut = shell.CreateShortcut(shortcut_path)
+                    shortcut.TargetPath = target_path
+                    if working_directory: shortcut.WorkingDirectory = working_directory
+                    if icon_path: shortcut.IconLocation = icon_path
+                    shortcut.save()
+                create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
+                create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
 
             # Reapply Installation to Windows
             printMainMessage("Marking Program Installation into Windows..")
@@ -2021,7 +2047,7 @@ if __name__ == "__main__":
                 winreg.SetValueEx(key, "Installed", 0, winreg.REG_DWORD, 1)
             registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
             with winreg.CreateKey(winreg.HKEY_CURRENT_USER, registry_path) as key:
-                winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"py {os.path.join(bootstrap_folder_path, "Uninstall.py")}")
+                winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, "Uninstall.py")}")
                 winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Efaz's Roblox Bootstrap")
                 winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, current_version["version"])
                 winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, os.path.join(bootstrap_folder_path, "AppIcon.ico"))
@@ -2039,10 +2065,11 @@ if __name__ == "__main__":
                     handler.endRoblox()
                     time.sleep(2)
 
-        stored_content_folder_destinations["Windows"] = f"{handler.getRobloxInstallFolder()}\\"
-        stored_font_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\fonts\\"
-        stored_robux_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\textures\\ui\\common\\"
-        if not os.path.exists(stored_font_folder_destinations["Windows"]):
+        if main_os == "Windows":
+            stored_content_folder_destinations["Windows"] = f"{handler.getRobloxInstallFolder()}\\"
+            stored_font_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\fonts\\"
+            stored_robux_folder_destinations["Windows"] = f"{stored_content_folder_destinations['Windows']}content\\textures\\ui\\common\\"
+        if not os.path.exists(stored_font_folder_destinations[found_platform]):
             printErrorMessage("Please install Roblox from the Roblox website in order to use this bootstrap!")
             input("> ")
             sys.exit(0)
@@ -2101,9 +2128,11 @@ if __name__ == "__main__":
             if main_os == "Windows":
                 copyFile(f"{os.path.curdir}\\Cursors\\Original\\ArrowCursor.png", f"{stored_content_folder_destinations[found_platform]}content\\textures\\Cursors\\KeyboardMouse\\ArrowCursor.png")
                 copyFile(f"{os.path.curdir}\\Cursors\\Original\\ArrowFarCursor.png", f"{stored_content_folder_destinations[found_platform]}content\\textures\\Cursors\\KeyboardMouse\\ArrowFarCursor.png")
+                copyFile(f"{os.path.curdir}\\Cursors\\Original\\IBeamCursor.png", f"{stored_content_folder_destinations[found_platform]}content\\textures\\Cursors\\KeyboardMouse\\IBeamCursor.png")
             elif main_os == "Darwin":
                 copyFile(f"{os.path.curdir}/Cursors/Original/ArrowCursor.png", f"{stored_content_folder_destinations[found_platform]}content/textures/Cursors/KeyboardMouse/ArrowCursor.png")
                 copyFile(f"{os.path.curdir}/Cursors/Original/ArrowFarCursor.png", f"{stored_content_folder_destinations[found_platform]}content/textures/Cursors/KeyboardMouse/ArrowFarCursor.png")
+                copyFile(f"{os.path.curdir}/Cursors/Original/IBeamCursor.png", f"{stored_content_folder_destinations[found_platform]}content/textures/Cursors/KeyboardMouse/IBeamCursor.png")
             printSuccessMessage("Successfully changed current cursor with original cursor image!")
         if fflag_configuration.get("EFlagEnableChangeDeathSound") == True:
             printMainMessage("Changing Current Death Sound to Set Sound File..")
@@ -2143,6 +2172,14 @@ if __name__ == "__main__":
                 if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png"):
                     copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
                 printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
+            elif main_os == "Windows":
+                icon_pa = f"{os.path.curdir}\\RobloxBrand\\{fflag_configuration['EFlagSelectedBrandLogo']}\\AppIcon.ico"
+                exe_pa = os.path.join(stored_content_folder_destinations["Windows"], "RobloxPlayerBeta.exe")
+                if os.path.exists(icon_pa):
+                    # DO NOT USE ICON FOR WINDOWS. IT MAY BREAK THE INSTALLATION
+                    printDebugMessage("Icon for Windows is not available due to Windows security purposes.")
+                else:
+                    printDebugMessage("Icon for Windows is not available.")
             else:
                 printDebugMessage("Change App Icon while on an another operating system..?")
         else:
@@ -2187,6 +2224,10 @@ if __name__ == "__main__":
                         printSuccessMessage("Successfully wrote to Info.plist!")
                     else:
                         printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
+                else:
+                    printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
+            else:
+                printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
 
         printMainMessage("Installing Fast Flags..")
         if fast_config_loaded == True:
