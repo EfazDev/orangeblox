@@ -6,6 +6,7 @@ import time
 import datetime
 import threading
 import re
+import sys
 
 main_os = platform.system()
 efaz_bootstrap_mode = False
@@ -27,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.4.5"
+fast_flag_installer_version = "1.4.8"
 
 class pip:
     def install(self, packages: list[str]):
@@ -257,6 +258,8 @@ class Main():
         }
         event_names = None
         created_mutex = False
+        await_20_second_log_creation = False
+        await_log_creation_attempts = 0
 
         class __ReadingLineResponse__():
             class EndRoblox(): code=0
@@ -265,7 +268,7 @@ class Main():
             def __init__(self):            
                 super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Main class!")
 
-        def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, created_mutex=None):
+        def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_20_second_log_creation=False, created_mutex=None):
             if type(main_handler) is Main:
                 self.main_handler = main_handler
                 self.event_names = main_handler.robloxInstanceEventNames
@@ -273,6 +276,7 @@ class Main():
                 self.debug_mode = debug_mode
                 self.allow_other_logs = allow_other_logs
                 self.created_mutex = created_mutex
+                self.await_20_second_log_creation = await_20_second_log_creation
                 if log_file == "" or os.path.exists(log_file):
                     self.main_log_file = log_file
                 self.startActivityTracking()
@@ -321,17 +325,25 @@ class Main():
                                 if "Player" in basename:
                                     paths.append(os.path.join(path, basename))
                             return max(paths, key=os.path.getctime)
-
+                        def fileCreatedRecently(file_path):
+                            try:
+                                creation_time = os.path.getctime(file_path)
+                                current_time = time.time()
+                                if (current_time - creation_time) <= 20:
+                                    return True
+                                else:
+                                    return False
+                            except:
+                                return False
                         def submitToThread(eventName="onUnknownEvent", data=None, isLine=True):
                             if not (eventName == "onRobloxLog"): 
                                 submitToThread(eventName="onRobloxLog", data={"eventName": eventName, "data": data, "isLine": isLine}, isLine=False)
                                 if isLine == True:
-                                    if self.debug_mode == True and not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(f"Event triggered: {eventName}, Line: {data}")
+                                    if self.debug_mode == True and not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(f'Event triggered: {eventName}, Line: {data}')
                                 else:
-                                    if self.debug_mode == True: printDebugMessage(f"Event triggered: {eventName}, Data: {data}")
+                                    if self.debug_mode == True: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
                             for i in self.events:
                                 if i and callable(i.get("callback")) and i.get("name") == eventName: threading.Thread(target=i.get("callback"), args=[data]).start()
-
                         def handleLine(line=""):
                             if "The crash manager ends the monitor thread at exit." in line or "[FLog::SingleSurfaceApp] destroy controllers" in line:
                                 submitToThread(eventName="onRobloxExit", data=line)
@@ -688,12 +700,41 @@ class Main():
                             else:
                                 submitToThread(eventName="onOtherRobloxLog", data=line, isLine=True)
                         if self.main_log_file == "":
-                            if main_os == "Darwin":
-                                main_log = newest(f'{os.path.expanduser("~")}/Library/Logs/Roblox/')
-                            elif main_os == "Windows":
-                                main_log = newest(f'{windows_dir}\\logs\\')
-                            else:
-                                main_log = newest(f'{os.path.expanduser("~")}/Library/Logs/Roblox/')
+                            self.await_log_creation_attempts = 0
+                            def getLogFile():
+                                logs_path = None
+                                if main_os == "Darwin":
+                                    logs_path = f'{os.path.expanduser("~")}/Library/Logs/Roblox/'
+                                elif main_os == "Windows":
+                                    logs_path = f'{windows_dir}\\logs\\'
+                                else:
+                                    logs_path = f'{os.path.expanduser("~")}/Library/Logs/Roblox/'
+                                main_log = newest(logs_path)
+                                if self.await_20_second_log_creation == True:
+                                    logs_attached = []
+                                    if os.path.exists("EfazBootstrapLogFilesAttached.json"):
+                                        with open("EfazBootstrapLogFilesAttached.json", "r") as f:
+                                            logs_attached = json.load(f)
+                                    if self.await_log_creation_attempts < 40:
+                                        if fileCreatedRecently(main_log):
+                                            if main_log in logs_attached:
+                                                time.sleep(0.5)
+                                                self.await_log_creation_attempts += 1
+                                                return getLogFile()
+                                            else:
+                                                logs_attached.append(main_log)
+                                                with open("EfazBootstrapLogFilesAttached.json", "w") as f:
+                                                    json.dump(logs_attached, f, indent=4)
+                                                return main_log
+                                        else:
+                                            time.sleep(0.5)
+                                            self.await_log_creation_attempts += 1
+                                            return getLogFile()
+                                    else:
+                                        return main_log
+                                else:
+                                    return main_log
+                            main_log = getLogFile()
                             self.main_log_file = main_log
                         else:
                             main_log = self.main_log_file
@@ -1243,7 +1284,7 @@ class Main():
                         if attachInstance == True:
                             cur_open_pid = self.getLatestOpenedRobloxPid()
                             start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
                             while True:
                                 if test_instance.ended_process == True:
                                     break
@@ -1254,7 +1295,7 @@ class Main():
                                     time.sleep(1)
                             cur_open_pid = self.getLatestOpenedRobloxPid()
                             start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
                             while True:
                                 if test_instance.ended_process == True:
                                     break
@@ -1268,9 +1309,9 @@ class Main():
                                 pid = self.getLatestOpenedRobloxPid()
                                 if pid:
                                     if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
                                     else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
                 else:
                     com = f"open --new -a '{macOS_dir}{macOS_beforeClientServices}RobloxPlayer' '{startData}'"
                     if debug == True: printDebugMessage("Running Roblox Player Unix Executable..")
@@ -1282,9 +1323,9 @@ class Main():
                                 pid = self.getLatestOpenedRobloxPid()
                                 if pid:
                                     if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
                                     else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
             else:
                 if debug == True: printDebugMessage("Running Roblox.app..")
                 a = subprocess.run(f"open -a {macOS_dir} '{startData}'", shell=True)
@@ -1295,9 +1336,9 @@ class Main():
                             pid = self.getLatestOpenedRobloxPid()
                             if pid:
                                 if not (mainLogFile == ""):
-                                    return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                    return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
                                 else:
-                                    return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug)
+                                    return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
         elif self.__main_os__ == "Windows":
             created_mutex = False
             if not self.getIfRobloxIsOpen():
@@ -1307,18 +1348,51 @@ class Main():
             if most_recent_roblox_version_dir:
                 if debug == True: printDebugMessage("Running RobloxPlayerBeta.exe..")
                 if startData == "":
-                    subprocess.Popen(f"{most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True)
+                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True)
                 else:
-                    subprocess.Popen(f"{most_recent_roblox_version_dir}RobloxPlayerBeta.exe {startData}", shell=True)
-                if attachInstance == True:
-                    time.sleep(2)
-                    if self.getIfRobloxIsOpen() == True:
-                        pid = self.getLatestOpenedRobloxPid()
-                        if pid:
-                            if not (mainLogFile == ""):
-                                return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, created_mutex=created_mutex)
-                            else:
-                                return self.RobloxInstance(self, pid=pid, debug_mode=debug, created_mutex=created_mutex)
+                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe {startData}", shell=True)
+                if a.returncode == 0:
+                    if attachInstance == True:
+                        if makeDupe == True:
+                            cur_open_pid = self.getLatestOpenedRobloxPid()
+                            start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                            while True:
+                                if test_instance.ended_process == True:
+                                    break
+                                elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    test_instance.requestThreadClosing()
+                                    break
+                                else:
+                                    time.sleep(1)
+                            cur_open_pid = self.getLatestOpenedRobloxPid()
+                            start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                            while True:
+                                if test_instance.ended_process == True:
+                                    break
+                                elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    test_instance.requestThreadClosing()
+                                    break
+                                else:
+                                    time.sleep(1)
+                            if self.getIfRobloxIsOpen() == True:
+                                self.prepareMultiInstance(debug=debug, required=True)
+                                pid = self.getLatestOpenedRobloxPid()
+                                if pid:
+                                    if not (mainLogFile == ""):
+                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                    else:
+                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                        else:
+                            time.sleep(2)
+                            if self.getIfRobloxIsOpen() == True:
+                                pid = self.getLatestOpenedRobloxPid()
+                                if pid:
+                                    if not (mainLogFile == ""):
+                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, created_mutex=created_mutex, await_20_second_log_creation=True)
+                                    else:
+                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, created_mutex=created_mutex, await_20_second_log_creation=True)
             else:
                 self.printLog("Roblox couldn't be found.")
         else:
@@ -1330,10 +1404,10 @@ class Main():
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
         def waitForRobloxEnd():
             if disableRobloxAutoOpen == True:
-                for i in range(50):
+                for i in range(100):
                     if self.getIfRobloxIsOpen():
                         self.endRoblox()
-                        return
+                        break
                     time.sleep(0.1)
                 
         if self.__main_os__ == "Darwin":
@@ -1344,13 +1418,15 @@ class Main():
                         break
                     else:
                         time.sleep(1)
-                
                 threading.Thread(target=waitForRobloxEnd).start()
             else:
-                if debug == True: printDebugMessage("Running RobloxPlayerInstaller.app..")
-                subprocess.run([f"{macOS_dir}{macOS_beforeClientServices}RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller"], shell=True)
+                if debug == True: printDebugMessage("Running RobloxPlayerInstaller executable..")
+                insta = subprocess.run(f"{macOS_dir}{macOS_beforeClientServices}RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller", shell=True, check=True, stdout=subprocess.DEVNULL)
+                if insta.returncode == 0:
+                    if debug == True: printDebugMessage("Installer has succeeded!")
+                else:
+                    if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
                 threading.Thread(target=waitForRobloxEnd).start()
-                
         elif self.__main_os__ == "Windows":
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
             if most_recent_roblox_version_dir:
@@ -1363,13 +1439,12 @@ class Main():
                             time.sleep(1)
                     threading.Thread(target=waitForRobloxEnd).start()
                 else:
-                    if debug == True: printDebugMessage("Running RobloxPlayerInstaller.exe..")
-                    os.system(f"start {most_recent_roblox_version_dir}RobloxPlayerInstaller.exe")
-                    while True:
-                        if not self.getIfRobloxIsOpen(installer=True):
-                            break
-                        else:
-                            time.sleep(1)
+                    if debug == True: printDebugMessage("Running RobloxPlayerInstaller executable..")
+                    insta = subprocess.run(f"{most_recent_roblox_version_dir}RobloxPlayerInstaller.exe", shell=True, check=True, stdout=subprocess.DEVNULL)
+                    if insta.returncode == 0:
+                        if debug == True: printDebugMessage("Installer has succeeded!")
+                    else:
+                        if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
                     threading.Thread(target=waitForRobloxEnd).start()
             else:
                 self.printLog("Roblox Installer couldn't be found.")
@@ -1377,6 +1452,7 @@ class Main():
             self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
 
 if __name__ == "__main__":
+    handler = Main()
     if efaz_bootstrap_mode == False:
         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
         if main_os == "Windows":
@@ -1391,6 +1467,38 @@ if __name__ == "__main__":
         printWarnMessage("Made by Efaz from efaz.dev!")
         printWarnMessage(f"v{fast_flag_installer_version}")
         printWarnMessage("-----------")
+        if main_os == "Windows":
+            printMainMessage(f"System OS: {main_os}")
+            found_platform = "Windows"
+        elif main_os == "Darwin":
+            printMainMessage(f"System OS: {main_os} (macOS)")
+            found_platform = "Darwin"
+        else:
+            input("> ")
+            sys.exit(0)
+        current_python_version = platform.python_version_tuple()
+        if current_python_version < ("3", "10", "0"):
+            printErrorMessage("Please update your current installation of Python above 3.10.0")
+            input("> ")
+            sys.exit(0)
+        else:
+            printMainMessage(f"Python Version: {platform.python_version()}")
+        if main_os == "Windows":
+            if not os.path.exists(windows_dir):
+                printErrorMessage("The Roblox Website App Path doesn't exist. Please install Roblox from your web browser in order to use!")
+                exit()
+        elif main_os == "Darwin":
+            if not os.path.exists(macOS_dir):
+                printErrorMessage("The Roblox Website App Path doesn't exist. Please install Roblox from your web browser in order to use!")
+                exit()
+            else:
+                installed_roblox_version = handler.getCurrentClientVersion()
+                if installed_roblox_version["success"] == True:
+                    printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
+                else:
+                    printErrorMessage("Something went wrong trying to determine your current Roblox version.")
+                    input("> ")
+                    sys.exit(0)
     else:
         if main_os == "Windows":
             printWarnMessage(f"Starting Roblox Fast Flags Installer v{fast_flag_installer_version}!")
@@ -1399,15 +1507,7 @@ if __name__ == "__main__":
         else:
             printErrorMessage("Please run this script on macOS/Windows.")
             exit()
-    if main_os == "Windows":
-        if not os.path.exists(windows_dir):
-            printErrorMessage("The Roblox Website App Path doesn't exist. Please install Roblox from your web browser in order to use!")
-            exit()
-    elif main_os == "Darwin":
-        if not os.path.exists(macOS_dir):
-            printErrorMessage("The Roblox Website App Path doesn't exist. Please install Roblox from your web browser in order to use!")
-            exit()
-    handler = Main()
+    printWarnMessage("-----------")
 
     def getUserId():
         printMainMessage("Please input your User ID! This can be found on your profile in the URL: https://www.roblox.com/users/XXXXXXXX/profile")
@@ -1415,21 +1515,12 @@ if __name__ == "__main__":
         id = input("> ")
         if id.isnumeric():
             return id
-        elif id == "exit":
+        elif isRequestClose(id):
             printMainMessage("Ending installation..")
             exit()
         else:
             printWarnMessage("Let's try again!")
             return getUserId()
-        
-    def isYes(text):
-        return text.lower() == "y" or text.lower() == "yes"
-    
-    def isNo(text):
-        return text.lower() == "n" or text.lower() == "no"
-    
-    def isRequestClose(text):
-        return text.lower() == "exit" or text.lower() == "exit()"
     
     id = getUserId()
     if id:
@@ -1446,7 +1537,7 @@ if __name__ == "__main__":
             cap = input("> ")
             if cap.isnumeric():
                 return cap
-            elif cap == "exit":
+            elif isRequestClose(cap):
                 printMainMessage("Ending installation..")
                 exit()
             else:
@@ -1723,24 +1814,29 @@ if __name__ == "__main__":
         printWarnMessage("--- Custom Fast Flags ---")
         def custom():
             def loop():
-                printMainMessage("Enter Key Value: ")
+                printMainMessage("Enter Key Name: ")
                 key = input("> ")
-                if key == "exit" or key == "":
+                if isRequestClose(key) or key == "":
                     return {"success": False, "key": "", "value": ""}
                 if efaz_bootstrap_mode == True and key.startswith("EFlag"):
                     printMainMessage("Are you sure you want to set this Efaz's Roblox Bootstrap setting?")
                     con = input("> ")
                     if isYes(con) == False:
                         return loop()
-                printMainMessage("Enter Value Value: ")
+                printMainMessage("Enter Key Value: ")
                 value = input("> ")
-                if value == "exit":
+                if isRequestClose(value):
                     return {"success": False, "key": "", "value": ""}
                 if value.isnumeric():
                     printMainMessage("Would you like this value to be a number value or do you want to keep it as a string? (y/n)")
                     isNum = input("> ")
                     if isNum == True:
                         value = int(value)
+                elif value == "true" or value == "false":
+                    printMainMessage("Would you like this value to be a boolean value or do you want to keep it as a string? (y/n)")
+                    isBool = input("> ")
+                    if isBool == True:
+                        value = value=="true"
                 return {"success": True, "key": key, "value": value}
             completeLoop = loop()
             if completeLoop["success"] == True:

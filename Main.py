@@ -27,7 +27,7 @@ if __name__ == "__main__":
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
-    current_version = {"version": "1.3.1"}
+    current_version = {"version": "1.3.5"}
     given_args = list(filter(None, sys.argv))
     pip_class = pip()
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     def printWarnMessage(mes): print(f"\033[38;5;202m{mes}\033[0m")
     def printYellowMessage(mes): print(f"\033[38;5;226m{mes}\033[0m")
     def printDebugMessage(mes): 
-        if fast_config_loaded and fflag_configuration.get("EFlagEnableDebugMode"): printYellowMessage(mes)
+        if fast_config_loaded and fflag_configuration.get("EFlagEnableDebugMode"): print(f"\033[38;5;226m{mes}\033[0m")
 
     def isYes(text): return text.lower() == "y" or text.lower() == "yes"
     def isNo(text): return text.lower() == "n" or text.lower() == "no"
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             multi_instance_enabled = True
             printMainMessage("Enabled Multiple Instances!")
     def handleOption3(): # Run Fast Flag Installer
-        printWarnMessage("--- Running Installer ---")
+        printWarnMessage("-----------")
         subprocess.run(args=[sys.executable, "RobloxFastFlagsInstaller.py"])
 
         global fast_config_loaded
@@ -375,7 +375,7 @@ if __name__ == "__main__":
     def handleOption4(): # Set Settings
         printWarnMessage("--- Settings ---")
         global fflag_configuration
-        printMainMessage("Would you like to remove the Builder Font and use the old one? (y/n)")
+        printMainMessage("Would you like to revert the Builder Sans and Monsterrat Fonts and use the old Gotham ones instead? (y/n)")
         a = input("> ")
         if isYes(a) == True:
             fflag_configuration["EFlagRemoveBuilderFont"] = True
@@ -808,7 +808,7 @@ if __name__ == "__main__":
                 printDebugMessage("User selected: False")
 
         if main_os == "Windows":
-            printMainMessage("Would you like to set a Roblox client channel?")
+            printMainMessage("Would you like to set a Roblox client channel? (y/n)")
             printYellowMessage("This will be used to determine the latest Roblox version.")
             d = input("> ")
             if isYes(d) == True:
@@ -824,7 +824,7 @@ if __name__ == "__main__":
                     printMainMessage('Additionally, you may enter "A" to automatically get from next launch or "D" to disable Roblox update checks.')
                     channel_inp = input("> ")
                     if channel_inp == "A":
-                        fflag_configuration["EFlagRobloxClientChannel"] = channel_inp
+                        fflag_configuration["EFlagRobloxClientChannel"] = "Automatic"
                         fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
                         printSuccessMessage("Successfully set Roblox client channel to automatically determine during next Roblox launch!")
                     elif channel_inp == "D":
@@ -927,6 +927,18 @@ if __name__ == "__main__":
                 return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagDisableShortcutsInstall"] = False
+                printDebugMessage("User selected: False")
+        elif main_os == "Darwin":
+            printMainMessage("Would you like to allow Tkinter to be ran under the bootstrap? [This will allow responsiveness between macOS and the bootstrap] (y/n)")
+            d = input("> ")
+            if isYes(d) == True:
+                fflag_configuration["EFlagDisableCreatingTkinterApp"] = False
+                printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
+            elif isNo(d) == True:
+                fflag_configuration["EFlagDisableCreatingTkinterApp"] = True
                 printDebugMessage("User selected: False")
 
         printMainMessage("Would you like to disable Bootstrap Update Checks? (y/n)")
@@ -1035,7 +1047,7 @@ if __name__ == "__main__":
         printDebugMessage(f"Operating System: {main_os}")
     def handleOption8(): # End All Roblox Instances
         printWarnMessage("--- End All Roblox Instances ---")
-        printMainMessage("Are you sure you want to end all currently open Roblox instances?")
+        printMainMessage("Are you sure you want to end all currently open Roblox instances? (y/n)")
         a = input("> ")
         if isYes(a) == True:
             handler.endRoblox()
@@ -1044,12 +1056,12 @@ if __name__ == "__main__":
             return "Roblox closing task has been canceled!"       
     def handleOption9(): # Reinstall Roblox
         printWarnMessage("--- Reinstall Roblox ---")
-        printMainMessage("Are you sure you want to reinstall Roblox?")
+        printMainMessage("Are you sure you want to reinstall Roblox? (y/n)")
         if main_os == "Windows":
             printYellowMessage("WARNING! This will force-quit any open Roblox windows!")
         a = input("> ")
         if isYes(a) == True:
-            handler.installRoblox(forceQuit=main_os == "Windows")
+            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
             return "Roblox has been reinstalled!"
         else:
             return "Roblox reinstallation has been canceled!"
@@ -1379,9 +1391,9 @@ if __name__ == "__main__":
                         d = input("> ")
                         if isYes(d) == True:
                             if main_os == "Windows":
-                                handler.installRoblox(forceQuit=True)
+                                handler.installRoblox(forceQuit=True, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
                             else:
-                                handler.installRoblox()
+                                handler.installRoblox(debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
                         elif isNo(d) == True:
                             saveSettings()
                             printDebugMessage("User selected: False")
@@ -1734,6 +1746,7 @@ if __name__ == "__main__":
                         printMainMessage(f"[{str(count)}] = {i['message']}")
                         main_ui_options[str(count)] = i
                         count += 1
+                    printMainMessage(f"[*] = Exit Bootstrap")
 
                     res = input("> ")
                     if main_ui_options.get(res):
@@ -1850,10 +1863,13 @@ if __name__ == "__main__":
             if not (fflag_configuration.get("EFlagReturnToMainMenuInstant") == True):
                 printWarnMessage(mes)
                 printMainMessage("[1] = Return to Main Menu")
+                printMainMessage("[2] = Exit Bootstrap")
                 printMainMessage("[*] = Continue to Roblox")
                 a = input("> ")
                 if a == "1":
                     main_menu()
+                elif a == "2":
+                    sys.exit(0)
             else:
                 main_menu()
         else:
@@ -1882,7 +1898,7 @@ if __name__ == "__main__":
             if latest_vers_res.ok:
                 latest_vers = latest_vers_res.json()
                 if current_version.get("version"):
-                    printDebugMessage(f"Called ({version_server}): {latest_vers}") 
+                    printDebugMessage(f'Called ({version_server}): {latest_vers}') 
                     if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
                         download_location = latest_vers.get("download_location", "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip")
                         printDebugMessage(f"Update v{latest_vers['latest_version']} detected!")
@@ -1963,7 +1979,7 @@ if __name__ == "__main__":
                 handler.installRoblox(forceQuit=False, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
                 time.sleep(3)
         elif current_roblox_version["success"] == True:
-            if not (fflag_configuration.get("EFlagRobloxClientChannel", "LIVE") == "A"):
+            if not (fflag_configuration.get("EFlagRobloxClientChannel", "LIVE") == "Automatic"):
                 latest_roblox_version = handler.getLatestClientVersion(debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), channel=fflag_configuration.get("EFlagRobloxClientChannel", current_roblox_version.get("channel", "LIVE")))
                 if latest_roblox_version["success"] == True:
                     if current_roblox_version["isClientVersion"] == True:
@@ -2077,6 +2093,17 @@ if __name__ == "__main__":
 
         if fflag_configuration.get("EFlagRemoveBuilderFont") == True or (fflag_configuration.get("EFlagEnableNewFontNameMappingABTest2") and fflag_configuration.get("EFlagEnableNewFontNameMappingABTest2").lower() == "false"):
             printMainMessage("Changing Font Files..")
+            # Copy All Builder/Monsterrat Files to Separate Files
+            if not os.path.exists(f"{stored_font_folder_destinations[found_platform]}BuilderSansLock"):
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-ExtraBold.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-ExtraBold-Locked.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Bold.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Bold-Locked.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Medium.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Medium-Locked.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Regular.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Regular-Locked.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Black.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Black-Locked.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Bold.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Bold-Locked.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Medium.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Medium-Locked.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Regular.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Regular-Locked.ttf")
+
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Black.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-ExtraBold.otf")
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Medium.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Bold.otf")
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Medium.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Medium.otf")
@@ -2085,7 +2112,18 @@ if __name__ == "__main__":
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Bold.otf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Bold.ttf")
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Medium.otf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Medium.ttf")
             copyFile(f"{stored_font_folder_destinations[found_platform]}GothamSSm-Book.otf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Regular.ttf")
-            printSuccessMessage("Successfully changed Builder San files to GothamSSm!")
+            printSuccessMessage("Successfully changed Builder Sans/Monsterrat files to GothamSSm!")
+        else:
+            if os.path.exists(f"{stored_font_folder_destinations[found_platform]}BuilderSansLock"):
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-ExtraBold-Locked.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-ExtraBold.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Bold-Locked.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Bold.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Medium-Locked.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Medium.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}BuilderSans-Regular-Locked.otf", f"{stored_font_folder_destinations[found_platform]}BuilderSans-Regular.otf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Black-Locked.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Black.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Bold-Locked.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Bold.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Medium-Locked.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Medium.ttf")
+                copyFile(f"{stored_font_folder_destinations[found_platform]}Montserrat-Regular-Locked.ttf", f"{stored_font_folder_destinations[found_platform]}Montserrat-Regular.ttf")
+                printSuccessMessage("Successfully reverted Builder Sans/Monsterrat files!")
         if fflag_configuration.get("EFlagEnableModModes") == True:
             printMainMessage("Applying Mods..")
             for i in fflag_configuration.get("EFlagEnabledMods", []):
@@ -2098,6 +2136,7 @@ if __name__ == "__main__":
                         shutil.copytree(mod_path, f"{stored_content_folder_destinations[found_platform]}/", dirs_exist_ok=True, ignore=ignore_files_here)
                     printDebugMessage(f'Successfully applied "{i}" mod!')
             printSuccessMessage("Successfully applied all enabled mods!")
+        
         if fflag_configuration.get("EFlagEnableChangeAvatarEditorBackground") == True:
             printMainMessage("Changing Current Avatar Editor to Set Avatar Background..")
             if main_os == "Windows":
@@ -2206,6 +2245,7 @@ if __name__ == "__main__":
                 if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
                     copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
                 printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
+
         if main_os == "Darwin":
             if os.path.exists("/Applications/Roblox.app/Contents/Info.plist"):
                 plist_data = handler.readPListFile("/Applications/Roblox.app/Contents/Info.plist")
@@ -2251,6 +2291,7 @@ if __name__ == "__main__":
     # Mod Mode Scripts
     mod_mode_module = None
     mod_mode_json = None
+    fflag_modified_locally = False
     if fflag_configuration.get("EFlagEnableModModes") == True:
         if fflag_configuration.get("EFlagSelectedModMode") and not (fflag_configuration.get("EFlagAllowActivityTracking") == False) and fflag_configuration.get("EFlagEnableModModeScripts") == True and os.path.exists(os.path.join(os.path.curdir, "Mods", fflag_configuration.get("EFlagSelectedModMode"), "ModScript.py")):
             if os.path.exists(os.path.join(os.path.curdir, "Mods", fflag_configuration.get("EFlagSelectedModMode"), "Manifest.json")):
@@ -2305,11 +2346,13 @@ if __name__ == "__main__":
                                                                         def setFF(js, full=False): 
                                                                             if type(js) is dict:
                                                                                 global fflag_configuration
+                                                                                global fflag_modified_locally
                                                                                 if full == True:
                                                                                     fflag_configuration = js
                                                                                 else:
                                                                                     for i, v in js.items():
                                                                                         fflag_configuration[i] = v
+                                                                                fflag_modified_locally = True
                                                                         def saveFF(js, full=False): 
                                                                             if type(js) is dict:
                                                                                 global fflag_configuration
@@ -2478,7 +2521,7 @@ if __name__ == "__main__":
                                         except Exception as e:
                                             resulting_err = str(e)
                                             if "dictionary changed size during iteration" in resulting_err:
-                                                printDebugMessage("Mod Script is requesting data too fast!")
+                                                if fflag_configuration.get("EFlagModScriptRequestTooFastMessage") == True: printDebugMessage("Mod Script is requesting data too fast!")
                                             else:
                                                 printDebugMessage(f"Error from mod mode module: {resulting_err}")
                                                 printErrorMessage("Ended accepting requests from Mod Scripts due to an error.")
@@ -3437,7 +3480,7 @@ if __name__ == "__main__":
         set_current_private_server_key = None
         printSuccessMessage("Roblox is currently pending to a public server!")
     def onRobloxChannel(data):
-        if data and data.get("channel") and fflag_configuration.get("EFlagRobloxClientChannel", "LIVE") == "A":
+        if data and data.get("channel") and fflag_configuration.get("EFlagRobloxClientChannel", "LIVE") == "Automatic":
             fflag_configuration["EFlagRobloxClientChannel"] = data.get("channel")
             if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
                 if main_os == "Windows":
@@ -3452,8 +3495,9 @@ if __name__ == "__main__":
                             json.dump(fflag_configuration, f, indent=4)
                     else:
                         printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
-            with open("FastFlagConfiguration.json", "w") as f:
-                json.dump(fflag_configuration, f, indent=4)
+            if fflag_modified_locally == False:
+                with open("FastFlagConfiguration.json", "w") as f:
+                    json.dump(fflag_configuration, f, indent=4)
 
     # Launch Roblox
     def runRoblox():
@@ -3550,7 +3594,7 @@ if __name__ == "__main__":
                 printDebugMessage(f"Unknown URL.")
         else:
             if handler.getIfRobloxIsOpen():
-                printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect?")
+                printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect? (y/n)")
                 c = input("> ")
                 if isYes(c) == True:
                     handler.endRoblox()

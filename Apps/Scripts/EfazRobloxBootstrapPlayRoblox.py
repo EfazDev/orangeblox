@@ -19,7 +19,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.3.1"}
+    current_version = {"version": "1.3.5"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
@@ -32,13 +32,13 @@ if __name__ == "__main__":
     printMainMessage("Determining System OS..")
 
     if main_os == "Darwin":
-        if os.path.exists("/Applications/EfazRobloxBootstrap.app/"):
+        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/"):
             url_scheme_path = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange"
             with open(url_scheme_path, "w") as f:
                 f.write("efaz-bootstrap://continue")
             printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
             printMainMessage("Loading EfazRobloxBootstrap executable!")
-            result = subprocess.run(["open", "-n", "-a", "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap"], cwd="/Applications/EfazRobloxBootstrap.app/Contents/Resources/", stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            result = subprocess.run(["open", "-n", "-a", "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"], cwd="/Applications/EfazRobloxBootstrap.app/Contents/Resources/", stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
             if result.returncode == 0:
                 printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")
             else:
@@ -54,8 +54,8 @@ if __name__ == "__main__":
                 f.write("efaz-bootstrap://continue")
             printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
             printMainMessage("Loading EfazRobloxBootstrap.exe!")
-            os.system(f'start {os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")}')
-            sys.exit(0)
+            result = subprocess.run(f'{os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")}', shell=True)
+            sys.exit(result.returncode)
         else:
             printErrorMessage("Bootstrap Run Failed: App is not installed.")
 else:

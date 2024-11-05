@@ -17,10 +17,10 @@ def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit
 if __name__ == "__main__":
     main_os = platform.system()
     stored_main_app = {
-        "Darwin": ["/Applications/EfazRobloxBootstrap.app", "/Applications/EfazRobloxBootstrapLoader.app", "/Applications/Play Roblox.app"],
+        "Darwin": ["/Applications/EfazRobloxBootstrap.app", "/Applications/Play Roblox.app"],
         "Windows": [f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap", f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\EfazRobloxBootstrap.exe"]
     }
-    current_version = {"version": "1.3.1"}
+    current_version = {"version": "1.3.5"}
     handler = RobloxFastFlagsInstaller.Main()
 
     os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             printMainMessage(f"Current Roblox Version: Not Installed")
     printWarnMessage("--- Uninstaller ---")
     if main_os == "Darwin":
-        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/"):
+        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/"):
             printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
             input("> ")
             sys.exit(0)
@@ -88,11 +88,8 @@ if __name__ == "__main__":
                 printMainMessage("Removing from Applications Folder (Main Bootstrap)..")
                 shutil.rmtree(stored_main_app[found_platform][0])
             if os.path.exists(stored_main_app[found_platform][1]):
-                printMainMessage("Removing from Applications Folder (Bootstrap Loader)..")
-                shutil.rmtree(stored_main_app[found_platform][1])
-            if os.path.exists(stored_main_app[found_platform][2]):
                 printMainMessage("Removing from Applications Folder (Play Roblox)..")
-                shutil.rmtree(stored_main_app[found_platform][2])
+                shutil.rmtree(stored_main_app[found_platform][1])
         elif main_os == "Windows":
             # Remove URL Schemes
             printMainMessage("Resetting URL Schemes..")

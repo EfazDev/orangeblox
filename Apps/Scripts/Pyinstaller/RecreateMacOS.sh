@@ -15,7 +15,7 @@ pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps 
 
 # Create EfazRobloxBootstrapMac.zip
 printMessage "Creating EfazRobloxBootstrapMac.zip.."
-zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrap.app" "./Apps/Play Roblox.app" "./Apps/EfazRobloxBootstrapLoad.app" 
+zip -r -y ./Apps/EfazRobloxBootstrapMac.zip "./Apps/EfazRobloxBootstrapMain.app" "./Apps/Play Roblox.app" "./Apps/EfazRobloxBootstrapLoad.app" 
 
 # Remove Build and EfazRobloxBootstrapLoad folder
 rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ 
@@ -26,7 +26,7 @@ python3 Install.py --rebuild-mode
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/EfazRobloxBootstrap.app/ ./Apps/EfazRobloxBootstrapLoad.app/ ./Apps/EfazRobloxBootstrap/ ./__pycache__/
+rm -rf ./Apps/EfazRobloxBootstrapMain.app/ ./Apps/EfazRobloxBootstrapLoad.app/ ./Apps/EfazRobloxBootstrapMain/ ./__pycache__/
 
 printMessage "Successfully rebuilt EfazRobloxBootstrap!"
 printMessage "Check the Apps folder for the generated ZIP file! File: ./Apps/EfazRobloxBootstrapMac.zip"

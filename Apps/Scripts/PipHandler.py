@@ -4,6 +4,7 @@ import platform
 import os
 import glob
 import tempfile
+import sys
 
 class pip:
     executable = None
@@ -12,9 +13,15 @@ class pip:
             if os.path.isfile(executable):
                 self.executable = executable
             else:
-                self.executable = self.findPython()
+                if getattr(sys, 'frozen', False):
+                    self.executable = self.findPython()
+                else:
+                    self.executable = sys.executable
         else:
-            self.executable = self.findPython()
+            if getattr(sys, 'frozen', False):
+                self.executable = self.findPython()
+            else:
+                self.executable = sys.executable
         if type(command) is list and len(command) > 0:
             subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: list[str]):
@@ -72,12 +79,11 @@ class pip:
             else:
                 print("Failed to download Python installer.")
         elif ma_os == "Windows":
-            if ma_arch[0] == "32bit":
-                url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
-            elif ma_arch[0] == "64bit" and ma_processor.lower() == "arm64":
-                url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-arm64.exe"
-            elif ma_arch[0] == "64bit" and ma_processor.lower() == "amd64":
-                url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.exe"
+            if ma_arch[0] == "64bit":
+                if ma_processor.lower() == "arm64":
+                    url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-arm64.exe"
+                else:
+                    url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.exe"
             else:
                 url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
             exe_file_path = tempfile.mktemp(suffix=".exe")
@@ -89,10 +95,10 @@ class pip:
                 print("Failed to download Python installer.")
     def findPython(self):
         ma_os = platform.system()
+        ma_arch = platform.architecture()
         if ma_os == "Darwin":
-            out = subprocess.getoutput("which python3")
-            if "/Versions/" in out and os.path.isfile(out):
-                return out
+            if os.path.exists("/usr/local/bin/python3") and os.path.islink("/usr/local/bin/python3"):
+                return "/usr/local/bin/python3"
             else:
                 paths = [
                     "/usr/local/bin/python*",
@@ -102,7 +108,8 @@ class pip:
                 for path_pattern in paths:
                     for path in glob.glob(path_pattern):
                         if os.path.isfile(path):
-                            return path
+                            if not (ma_arch[1].lower() == "arm64" and "intel64" in path):
+                                return path
                 return None
         elif ma_os == "Windows":
             paths = [
@@ -116,3 +123,6 @@ class pip:
                     if os.path.isfile(path):
                         return path
             return None
+        
+if __name__ == "__main__":
+    print("PipHandler.py is a module and is not a runable instance!")

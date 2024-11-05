@@ -2,13 +2,13 @@ from PyInstaller.utils.hooks import collect_data_files
 import os
 
 icon_file = "../AppIcon.icns"
-current_version = {"version": "1.3.1"}
+current_version = {"version": "1.3.5"}
 
 main_plist = {
-    "CFBundleExecutable": "EfazRobloxBootstrap",
+    "CFBundleExecutable": "EfazRobloxBootstrapMain",
     "CFBundleIdentifier": "dev.efaz.robloxbootstrap",
     "CFBundleURLTypes": [],
-    "CFBundleName": "EfazRobloxBootstrap",
+    "CFBundleName": "Efaz's Roblox Bootstrap",
     "CFBundleDisplayName": "Efaz's Roblox Bootstrap",
     "CFBundleVersion": current_version["version"],
     "LSMinimumSystemVersion": "10.9",
@@ -21,16 +21,21 @@ main_plist = {
 }
 loader_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrapLoad",
-    "CFBundleIdentifier": "dev.efaz.robloxbootstrap",
+    "CFBundleIdentifier": "dev.efaz.robloxbootstrap.loader",
     "CFBundleURLTypes": [
         {
             "CFBundleTypeRole": "Viewer",
             "CFBundleURLName": "ReplicateRobloxPlayer",
-            "CFBundleURLSchemes": ["roblox-player", "roblox", "efaz-bootstrap"],
+            "CFBundleURLSchemes": ["roblox-player", "roblox"],
+        },
+        {
+            "CFBundleTypeRole": "Viewer",
+            "CFBundleURLName": "BootstrapURLScheme",
+            "CFBundleURLSchemes": ["efaz-bootstrap"],
         }
     ],
-    "CFBundleName": "EfazRobloxBootstrapLoad",
-    "CFBundleDisplayName": "Load Efaz's Roblox Bootstrap",
+    "CFBundleName": "Efaz's Roblox Bootstrap",
+    "CFBundleDisplayName": "Efaz's Roblox Bootstrap",
     "CFBundleVersion": current_version["version"],
     "CFBundleDevelopmentRegion": "en-US",
     "LSMinimumSystemVersion": "10.9",
@@ -43,39 +48,58 @@ loader_plist = {
 }
 block_cipher = None
 
-a = Analysis(
-    ["../EfazRobloxBootstrap.py", "../EfazRobloxBootstrapLoad.py", "../PipHandler.py"],
+main_analysis = Analysis(
+    ["../EfazRobloxBootstrap.py", "../PipHandler.py"],
     pathex=[],
     binaries=[],
-    datas=collect_data_files("EfazRobloxBootstrap"),
-    hiddenimports=["sys", "subprocess", "json", "threading", "os", "platform", "time", "traceback", "importlib", "glob", "tempfile", "pyobjc", "subprocess"],
+    datas=collect_data_files("EfazRobloxBootstrapMain"),
+    hiddenimports=["pyobjc", "tkinter"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["tkinter", "unittest", "email", "matplotlib"],
+    excludes=[],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+loader_analysis = Analysis(
+    ["../EfazRobloxBootstrapLoad.py"],
+    pathex=[],
+    binaries=[],
+    datas=collect_data_files("EfazRobloxBootstrapLoad"),
+    hiddenimports=[],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+main_pyz = PYZ(main_analysis.pure, main_analysis.zipped_data, cipher=block_cipher)
+loader_pyz = PYZ(loader_analysis.pure, loader_analysis.zipped_data, cipher=block_cipher)
+
 main_exe = EXE(
-    pyz,
-    [a.scripts[1]],
+    main_pyz,
+    [main_analysis.scripts[2]],
     exclude_binaries=True,
-    name="EfazRobloxBootstrap",
+    name="EfazRobloxBootstrapMain",
     debug=False,
     bootloader_ignore_signals=False,
     argv_emulation=True,
     strip=False,
     target_arch="universal2",
     console=False,
+    windowed=True,
     upx=True,
     icon=os.path.join(os.getcwd(), icon_file),
 )
 loader_exe = EXE(
-    pyz,
-    [a.scripts[2]],
+    loader_pyz,
+    [loader_analysis.scripts[1]],
     exclude_binaries=True,
     name="EfazRobloxBootstrapLoad",
     debug=False,
@@ -89,33 +113,33 @@ loader_exe = EXE(
 )
 main_collect = COLLECT(
     main_exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    main_analysis.binaries,
+    main_analysis.zipfiles,
+    main_analysis.datas,
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="EfazRobloxBootstrap",
+    name="EfazRobloxBootstrapMain",
     distpath='Apps',
 )
 loader_collect = COLLECT(
     loader_exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    loader_analysis.binaries,
+    loader_analysis.zipfiles,
+    loader_analysis.datas,
     strip=False,
     upx=True,
     upx_exclude=[],
     name="EfazRobloxBootstrapLoad",
-    distpath='Apps',
+    distpath="Apps",
 )
 main_app = BUNDLE(
     main_collect,
-    name="EfazRobloxBootstrap.app",
+    name="EfazRobloxBootstrapMain.app",
     icon=icon_file,
     bundle_identifier=main_plist["CFBundleIdentifier"],
     info_plist=main_plist,
-    distpath='Apps',
+    distpath="Apps",
     codesign_identity=None
 )
 loader_app = BUNDLE(
@@ -124,6 +148,6 @@ loader_app = BUNDLE(
     icon=icon_file,
     bundle_identifier=loader_plist["CFBundleIdentifier"],
     info_plist=loader_plist,
-    distpath='Apps',
+    distpath="Apps",
     codesign_identity=None
 )

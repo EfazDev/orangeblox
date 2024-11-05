@@ -6,5 +6,9 @@ printMessage() {
 }
 
 printMessage "Building Clang Package for EfazRobloxBootstrapPlayRoblox.."
-clang++ -std=c++17 -arch x86_64 -arch arm64 -o EfazRobloxBootstrapPlayRoblox EfazRobloxBootstrapPlayRoblox.cpp
+clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o EfazRobloxBootstrapPlayRoblox ./Apps/Scripts/Clang/EfazRobloxBootstrapPlayRoblox.cpp
+mv EfazRobloxBootstrapPlayRoblox "./Apps/Play Roblox.app/Contents/MacOS/EfazRobloxBootstrapPlayRoblox"
+
 printMessage "Successfully rebuilt EfazRobloxBootstrapPlayRoblox!"
+printMessage "The executable has been moved to the Play Roblox.app bundle"
+read -p "> "

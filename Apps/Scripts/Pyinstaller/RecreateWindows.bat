@@ -1,9 +1,5 @@
 @echo off
 
-rem Remove Existing EfazRobloxBootstrapWindows.zip
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Removing Existing EfazRobloxBootstrapWindows.zip..%esc%[0m
-del Apps\EfazRobloxBootstrapWindows.zip
-
 rem Build Pyinstaller Package
 echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Building Pyinstaller Package..%esc%[0m
 pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows.spec --clean --distpath Apps --noconfirm 

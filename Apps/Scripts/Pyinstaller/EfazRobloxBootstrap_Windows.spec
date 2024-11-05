@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=collect_data_files("EfazRobloxBootstrap"),
-    hiddenimports=["subprocess"],
+    hiddenimports=["pyobjc", "tkinter"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -20,7 +20,7 @@ a = Analysis(
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 main_exe = EXE(
     pyz,
-    [a.scripts[1]],
+    [a.scripts[2]],
     exclude_binaries=True,
     name="EfazRobloxBootstrap",
     debug=False,
@@ -33,7 +33,7 @@ main_exe = EXE(
 )
 play_roblox_exe = EXE(
     pyz,
-    [a.scripts[2]],
+    [a.scripts[3]],
     exclude_binaries=True,
     name="PlayRoblox",
     debug=False,
