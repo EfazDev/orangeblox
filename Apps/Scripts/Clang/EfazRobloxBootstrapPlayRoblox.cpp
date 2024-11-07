@@ -27,7 +27,7 @@ void printWarnMessage(const std::string& mes) {
 }
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.3.5";
+    std::string current_version = "1.3.6";
     std::string main_os;
     
     #ifdef __APPLE__
@@ -56,15 +56,17 @@ int main(int argc, char* argv[]) {
             }
             printMainMessage("Created URL Exchange File: " + url_scheme_path);
             printMainMessage("Loading EfazRobloxBootstrap executable!");
-            int result = std::system("open -n -a /Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain");
+            int result = std::system("open -n -a /Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain");
             if (result == 0) {
                 printSuccessMessage("Bootstrap Run Success: " + std::to_string(result));
+                return 0;
             } else {
                 printErrorMessage("Bootstrap Run Failed: " + std::to_string(result));
+                return 1;
             }
-            return 0;
         } else {
             printErrorMessage("Bootstrap Run Failed: App is not installed.");
+            return 1;
         }
     } else if (main_os == "Windows") {
         char* localAppData = std::getenv("LOCALAPPDATA");
@@ -85,10 +87,14 @@ int main(int argc, char* argv[]) {
                 return 0;
             } else {
                 printErrorMessage("Bootstrap Run Failed: App is not installed.");
+                return 1;
             }
+        } else {
+            printErrorMessage("Local app data not found.");
+            return 1;
         }
     } else {
-        printMainMessage("Efaz's Roblox Bootstrap is not a module.");
+        printMainMessage("Efaz's Roblox Bootstrap is only supported for macOS/Windows.");
         std::cin.get();
         return 1;
     }

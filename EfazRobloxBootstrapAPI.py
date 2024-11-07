@@ -1,11 +1,11 @@
 # 
 # Efaz's Roblox Bootstrap API
 # Made by Efaz from efaz.dev
-# v1.3.0
+# v1.3.6
 # 
 # Provided to Mod Mode Scripts using variable EfazRobloxBootstrapAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
-# from EfazRobloxBootstrapAPI import EfazRobloxBootstrapAPI; EfazRobloxBootstrapAPI = EfazRobloxBootstrapAPI()
+# import EfazRobloxBootstrapAPI as ERBAPI; EfazRobloxBootstrapAPI = ERBAPI.EfazRobloxBootstrapAPI()
 # 
 
 import time
@@ -16,12 +16,13 @@ import json
 from typing import Union
 from urllib.parse import urlparse
 
-current_version = {"version": "1.3.0"}
+current_version = {"version": "1.3.6"}
 
 class EfazRobloxBootstrapAPI:
     # Variables [Used for connecting with the bootstrap]
     requestedFunctions = {}
     launchedFromBootstrap = False
+    debugMode = False
 
     # Classes
     class InvalidRequested(Exception):
@@ -216,7 +217,17 @@ class EfazRobloxBootstrapAPI:
     def getLatestRobloxPid(self): # Permission: getLatestRobloxPid
         return self.Request(self, "getLatestRobloxPid").generateResponse().response
     def getDebugMode(self): # No Permission Needed
-        return self.Request(self, "getDebugMode").generateResponse().response
+        return self.debugMode == True
+    def printMainMessage(self, mes): # No Permission Needed
+        print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
+    def printErrorMessage(self, mes): # No Permission Needed
+        print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
+    def printSuccessMessage(self, mes): # No Permission Needed
+        print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
+    def printWarnMessage(self, mes): # No Permission Needed
+        print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+    def printDebugMessage(self, mes): # No Permission Needed
+        if self.debugMode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
     def getConfiguration(self, name: str="*"): # No Permission Needed
         if type(name) is str:
             return self.Request(self, "getConfiguration", {"name": name}).generateResponse().response
@@ -234,6 +245,6 @@ class EfazRobloxBootstrapAPI:
     def about(self): # No Permission Needed
         bootstrap_res = self.Request(self, "about").generateResponse().response
         if bootstrap_res:
-            return {"bootstrap_version": bootstrap_res["version"], "api_version": current_version}
+            return {"bootstrap_version": bootstrap_res["version"], "api_version": current_version["version"]}
         else:
-            return None
+            return {"bootstrap_version": current_version["version"], "api_version": current_version["version"]}

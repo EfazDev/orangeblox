@@ -1,5 +1,12 @@
 from PyInstaller.utils.hooks import collect_data_files
 import os
+try:
+    from PyInstaller.building.api import *
+    from PyInstaller.building.build_main import *
+    from PyInstaller.building.osx import *
+except:
+    print("Disabled Visual Studio Code Mode")
+
 block_cipher = None
 
 a = Analysis(
@@ -7,7 +14,14 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=collect_data_files("EfazRobloxBootstrap"),
-    hiddenimports=["pyobjc", "tkinter"],
+    hiddenimports=[
+        "pyobjc", 
+        "tkinter", 
+        "plyer",
+        "plyer.platforms",
+        "plyer.platforms.win.notification",
+        "plyer.platforms.win",
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

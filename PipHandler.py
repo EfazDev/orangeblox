@@ -1,50 +1,55 @@
-import subprocess
-import importlib
-import platform
-import os
-import glob
-import tempfile
-import sys
-
+# Usable Version in Python Scripts [Import Needed Modules During Function]
 class pip:
     executable = None
     def __init__(self, command: list=[], executable: str=None):
+        import sys
+        import os
+        import subprocess
         if type(executable) is str:
             if os.path.isfile(executable):
                 self.executable = executable
             else:
-                if getattr(sys, 'frozen', False):
+                if getattr(sys, "frozen", False):
                     self.executable = self.findPython()
                 else:
                     self.executable = sys.executable
         else:
-            if getattr(sys, 'frozen', False):
+            if getattr(sys, "frozen", False):
                 self.executable = self.findPython()
             else:
                 self.executable = sys.executable
         if type(command) is list and len(command) > 0:
             subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: list[str]):
+        import subprocess
         res = {}
+        generated_list = []
         for i in packages:
             if type(i) is str:
-                try:
-                    subprocess.check_call([self.executable, "-m", "pip", "install", i])
-                    res[i] = {"success": True}
-                except Exception as e:
-                    res[i] = {"success": False}
+                generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                subprocess.check_call([self.executable, "-m", "pip", "install"] + generated_list)
+                res[i] = {"success": True}
+            except Exception as e:
+                res[i] = {"success": False}
         return res
     def uninstall(self, packages: list[str]):
+        import subprocess
         res = {}
+        generated_list = []
         for i in packages:
             if type(i) is str:
-                try:
-                    subprocess.check_call([self.executable, "-m", "pip", "uninstall", i])
-                    res[i] = {"success": True}
-                except Exception as e:
-                    res[i] = {"success": False}
+                generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                subprocess.check_call([self.executable, "-m", "pip", "uninstall"] + generated_list)
+                res[i] = {"success": True}
+            except Exception as e:
+                res[i] = {"success": False}
         return res
     def installed(self, packages: list[str]):
+        import importlib
         installed = {}
         all_installed = True
         for i in packages:
@@ -66,6 +71,9 @@ class pip:
         else:
             return False
     def pythonInstall(self):
+        import subprocess
+        import platform
+        import tempfile
         ma_os = platform.system()
         ma_arch = platform.architecture()
         ma_processor = platform.machine()
@@ -93,7 +101,20 @@ class pip:
                 print(f"Python installer has been executed: {exe_file_path}")
             else:
                 print("Failed to download Python installer.")
+    def getLocalAppData(self):
+        import platform
+        import os
+        ma_os = platform.system()
+        if ma_os == "Windows":
+            return os.path.expandvars(r'%LOCALAPPDATA%')
+        elif ma_os == "Darwin":
+            return f'{os.path.expanduser("~")}/Library/'
+        else:
+            return f'{os.path.expanduser("~")}/'
     def findPython(self):
+        import os
+        import glob
+        import platform
         ma_os = platform.system()
         ma_arch = platform.architecture()
         if ma_os == "Darwin":

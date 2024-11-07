@@ -20,7 +20,7 @@ if __name__ == "__main__":
         "Darwin": ["/Applications/EfazRobloxBootstrap.app", "/Applications/Play Roblox.app"],
         "Windows": [f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap", f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\EfazRobloxBootstrap.exe"]
     }
-    current_version = {"version": "1.3.5"}
+    current_version = {"version": "1.3.6"}
     handler = RobloxFastFlagsInstaller.Main()
 
     os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             printMainMessage(f"Current Roblox Version: Not Installed")
     printWarnMessage("--- Uninstaller ---")
     if main_os == "Darwin":
-        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/"):
+        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
             printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
             input("> ")
             sys.exit(0)

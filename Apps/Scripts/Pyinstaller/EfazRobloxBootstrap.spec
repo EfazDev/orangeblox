@@ -1,8 +1,14 @@
 from PyInstaller.utils.hooks import collect_data_files
 import os
+try:
+    from PyInstaller.building.api import *
+    from PyInstaller.building.build_main import *
+    from PyInstaller.building.osx import *
+except:
+    print("Disabled Visual Studio Code Mode")
 
 icon_file = "../AppIcon.icns"
-current_version = {"version": "1.3.5"}
+current_version = {"version": "1.3.6"}
 
 main_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrapMain",

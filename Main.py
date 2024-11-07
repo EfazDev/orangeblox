@@ -14,7 +14,8 @@ from urllib.parse import unquote, urlparse
 
 if __name__ == "__main__":
     main_os = platform.system()
-    windows_dir = os.path.join(f"{os.getenv('LOCALAPPDATA')}", "Roblox")
+    pip_class = pip()
+    windows_dir = os.path.join(f"{pip_class.getLocalAppData()}", "Roblox")
     stored_content_folder_destinations = {
         "Darwin": "/Applications/Roblox.app/Contents/Resources/"
     }
@@ -27,9 +28,8 @@ if __name__ == "__main__":
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
-    current_version = {"version": "1.3.5"}
+    current_version = {"version": "1.3.6"}
     given_args = list(filter(None, sys.argv))
-    pip_class = pip()
 
     with open("FastFlagConfiguration.json", "r") as f:
         try:
@@ -131,20 +131,12 @@ if __name__ == "__main__":
     def displayNotification(title="Unknown Title", message="Unknown Message"):
         if main_os == "Darwin":
             if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/"):
-                with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/MacOSNotification", "w") as f:
+                with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification", "w") as f:
                     json.dump({"title": title, "message": message}, f)
         elif main_os == "Windows":
-            try:
-                from plyer import notification
-            except Exception as e:
-                pip_class.install(["plyer"])
-                from plyer import notification
-            notification.notify(
-                title = title,
-                message = message,
-                app_icon = "AppIcon.ico",
-                timeout = 30,
-            )
+            if os.path.exists(os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")):
+                with open(os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap", "AppNotification"), "w") as f:
+                    json.dump({"title": title, "message": message}, f)
     def generateModsManifest():
         generated_manifest = {}
         for i in os.listdir("./Mods/"):
@@ -186,12 +178,20 @@ if __name__ == "__main__":
                                     mod_info["python_modules"].append(pyt)
                         mod_info["manifest_path"] = manifest_path
                 if os.path.exists(mod_script_path) and os.path.isfile(mod_script_path):
-                    with open(mod_script_path, "r") as f:
-                        mod_mode_script_text = f.read()
-                    for pe, va in handler.robloxInstanceEventInfo.items():
-                        if va.get("detection") and va.get("detection") in mod_mode_script_text and not (pe in mod_info["permissions"]):
-                            mod_info["permissions"].append(pe)
-                    mod_info["mod_script_path"] = mod_script_path
+                    contains_other_python_scripts = False
+                    for a, b, c in os.walk(mod_path):
+                        for i in c:
+                            if ".py" in i:
+                                contains_other_python_scripts = True
+                    if contains_other_python_scripts == True:
+                        mod_info["mod_script"] = False
+                    else:
+                        with open(mod_script_path, "r") as f:
+                            mod_mode_script_text = f.read()
+                        for pe, va in handler.robloxInstanceEventInfo.items():
+                            if va.get("detection") and va.get("detection") in mod_mode_script_text and not (pe in mod_info["permissions"]):
+                                mod_info["permissions"].append(pe)
+                        mod_info["mod_script_path"] = mod_script_path
                 else:
                     mod_info["mod_script"] = False
                 generated_manifest[i] = mod_info
@@ -318,7 +318,7 @@ if __name__ == "__main__":
             given_args = ["Main.py", filtered_args]
             os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange")
     elif main_os == "Windows":
-        generated_app_path = os.path.join(os.getenv('LOCALAPPDATA'), "EfazRobloxBootstrap")
+        generated_app_path = os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")
         if os.path.exists(os.path.join(generated_app_path, "URLSchemeExchange")):
             with open(os.path.join(generated_app_path, "URLSchemeExchange"), "r") as f:
                 filtered_args = f.read()
@@ -807,51 +807,50 @@ if __name__ == "__main__":
                 fflag_configuration["EFlagUseDiscordWebhook"] = False
                 printDebugMessage("User selected: False")
 
-        if main_os == "Windows":
-            printMainMessage("Would you like to set a Roblox client channel? (y/n)")
-            printYellowMessage("This will be used to determine the latest Roblox version.")
-            d = input("> ")
-            if isYes(d) == True:
-                def t():
+        printMainMessage("Would you like to set a Roblox client channel? (y/n)")
+        printYellowMessage("This will be used to determine the latest Roblox version.")
+        d = input("> ")
+        if isYes(d) == True:
+            def t():
+                try:
+                    import requests
+                except Exception as e:
+                    pip_class.install(["requests"])
+                    import requests
+                    printSuccessMessage("Successfully installed modules!")
+                printMainMessage("Please enter the channel in the input selection below! You may also use the link below to determine the channel for your account!")
+                printMainMessage(f"https://clientsettings.roblox.com/v2/user-channel?binaryType=WindowsPlayer")
+                printMainMessage('Additionally, you may enter "A" to automatically get from next launch or "D" to disable Roblox update checks.')
+                channel_inp = input("> ")
+                if channel_inp == "A":
+                    fflag_configuration["EFlagRobloxClientChannel"] = "Automatic"
+                    fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
+                    printSuccessMessage("Successfully set Roblox client channel to automatically determine during next Roblox launch!")
+                elif channel_inp == "D":
+                    fflag_configuration["EFlagRobloxClientChannel"] = "LIVE"
+                    fflag_configuration["EFlagDisableRobloxUpdateChecks"] = True
+                    printSuccessMessage("Successfully disabled Roblox Update Checks for launching from Efaz's Roblox Bootstrap. Roblox may still check for updates though.")
+                else:
                     try:
-                        import requests
-                    except Exception as e:
-                        pip_class.install(["requests"])
-                        import requests
-                        printSuccessMessage("Successfully installed modules!")
-                    printMainMessage("Please enter the channel in the input selection below! You may also use the link below to determine the channel for your account!")
-                    printMainMessage(f"https://clientsettings.roblox.com/v2/user-channel?binaryType=WindowsPlayer")
-                    printMainMessage('Additionally, you may enter "A" to automatically get from next launch or "D" to disable Roblox update checks.')
-                    channel_inp = input("> ")
-                    if channel_inp == "A":
-                        fflag_configuration["EFlagRobloxClientChannel"] = "Automatic"
-                        fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
-                        printSuccessMessage("Successfully set Roblox client channel to automatically determine during next Roblox launch!")
-                    elif channel_inp == "D":
-                        fflag_configuration["EFlagRobloxClientChannel"] = "LIVE"
-                        fflag_configuration["EFlagDisableRobloxUpdateChecks"] = True
-                        printSuccessMessage("Successfully disabled Roblox Update Checks for launching from Efaz's Roblox Bootstrap. Roblox may still check for updates though.")
-                    else:
-                        try:
-                            a = requests.get(f"https://clientsettings.roblox.com/v2/client-version/WindowsPlayer/channel/{channel_inp}")
-                            if a.ok == True:
-                                fflag_configuration["EFlagRobloxClientChannel"] = channel_inp
-                                fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
-                                printSuccessMessage("Successfully set Roblox client channel!")
-                            else:
-                                printErrorMessage("Channel may not exist. Please try again or use LIVE!")
-                                t()
-                        except Exception as e:
-                            printErrorMessage("Something went wrong. Please try again or use LIVE!")
+                        a = requests.get(f"https://clientsettings.roblox.com/v2/client-version/WindowsPlayer/channel/{channel_inp}")
+                        if a.ok == True:
+                            fflag_configuration["EFlagRobloxClientChannel"] = channel_inp
+                            fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
+                            printSuccessMessage("Successfully set Roblox client channel!")
+                        else:
+                            printErrorMessage("Channel may not exist. Please try again or use LIVE!")
                             t()
-                t()
-            elif isRequestClose(d) == True:
-                printMainMessage("Closing settings..")
-                return "Settings was closed."
-            elif isNo(d) == True:
-                fflag_configuration["EFlagRobloxClientChannel"] = "LIVE"
-                fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
-                printDebugMessage("User selected: False")
+                    except Exception as e:
+                        printErrorMessage("Something went wrong. Please try again or use LIVE!")
+                        t()
+            t()
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
+        elif isNo(d) == True:
+            fflag_configuration["EFlagRobloxClientChannel"] = "LIVE"
+            fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
+            printDebugMessage("User selected: False")
 
         printMainMessage("Would you like to enable Debug Mode? (y/n)")
         printYellowMessage("[WARNING! This will expose information like login to Roblox.]")
@@ -951,6 +950,19 @@ if __name__ == "__main__":
             return "Settings was closed."
         elif isNo(d) == True:
             fflag_configuration["EFlagDisableBootstrapChecks"] = False
+            printDebugMessage("User selected: False")
+
+        printMainMessage("Would you like to disable Bootstrap Cooldowns? (y/n)")
+        printYellowMessage("If your computer is laggy, this may prevent multiple windows opening.")
+        d = input("> ")
+        if isYes(d) == True:
+            fflag_configuration["EFlagDisableBootstrapCooldown"] = True
+            printDebugMessage("User selected: True")
+        elif isRequestClose(d) == True:
+            printMainMessage("Closing settings..")
+            return "Settings was closed."
+        elif isNo(d) == True:
+            fflag_configuration["EFlagDisableBootstrapCooldown"] = False
             printDebugMessage("User selected: False")
 
         if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
@@ -1503,7 +1515,7 @@ if __name__ == "__main__":
                             input("> ")
                             sys.exit(0)
                     elif main_os == "Windows":
-                        if os.path.exists(f"{os.getenv('LOCALAPPDATA')}\\EfazRobloxBootstrap\\"):
+                        if os.path.exists(f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"):
                             printSuccessMessage("It seems like everything is working, so you can reach the next part!")
                         else:
                             printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
@@ -1882,7 +1894,6 @@ if __name__ == "__main__":
     # Check for Updates
     if (not (fflag_configuration.get("EFlagDisableBootstrapChecks") == True)) and os.path.exists("Version.json"):
         printWarnMessage("--- Checking for Bootstrap Updates ---")
-        skip_check = False
         try:
             import requests
         except Exception as e:
@@ -1890,79 +1901,78 @@ if __name__ == "__main__":
             pip_class.install(["requests"])
             import requests
             printSuccessMessage("Successfully installed modules!")
-        if skip_check == False:
-            printDebugMessage("Sending Request to Bootstrap Version Servers..") 
-            version_server = fflag_configuration.get("EFlagBootstrapUpdateServer", "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json")
-            if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
-            latest_vers_res = requests.get(f"{version_server}")
-            if latest_vers_res.ok:
-                latest_vers = latest_vers_res.json()
-                if current_version.get("version"):
-                    printDebugMessage(f'Called ({version_server}): {latest_vers}') 
-                    if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                        download_location = latest_vers.get("download_location", "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip")
-                        printDebugMessage(f"Update v{latest_vers['latest_version']} detected!")
-                        printWarnMessage("--- New Bootstrap Update ---")
-                        printMainMessage(f"We have detected a new version of Efaz's Roblox Bootstrap! Would you like to install it? (y/n)")
-                        if download_location == "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip":
-                            printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
-                        elif download_location == "https://cdn.efaz.dev/cdn/py/roblox-bootstrap-beta.zip":
-                            printYellowMessage("⚠️ This version is a beta and may cause issues with your installation.")
-                        else:
-                            printErrorMessage("❌ The download location for this version is different from the official GitHub download link!! You may be downloading an unofficial Efaz's Roblox Bootstrap version!")
-                        printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
-                        if isYes(input("> ")) == True:
-                            printMainMessage("Downloading latest version..")
-                            printDebugMessage(f"Download location: {download_location} => ./Update.zip")
-                            download_update = subprocess.run(["curl", "-L", download_location, "-o", "./Update.zip"], check=True)
-                            if download_update.returncode == 0:
-                                printMainMessage("Download Success! Extracting ZIP now!")
-                                if main_os == "Darwin":
-                                    zip_extract = subprocess.run(["unzip", "-o", "Update.zip", "-d", "./Update/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                                elif main_os == "Windows":
-                                    zip_extract = subprocess.run(["powershell", "-command", f"Expand-Archive -Path 'Update.zip' -DestinationPath './Update/' -Force"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                                if zip_extract.returncode == 0:
-                                    printMainMessage("Extracted successfully! Installing Files!")
-                                    for file in os.listdir("./Update/roblox-bootstrap-main/"):
-                                        src_path = os.path.join("./Update/roblox-bootstrap-main/", file)
-                                        dest_path = os.path.join("./", file)
-                                        
-                                        if os.path.isdir(src_path):
-                                            shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
-                                        else:
-                                            if not file.endswith(".json"):
-                                                shutil.copy2(src_path, dest_path)
-                                    if latest_vers.get("versions_required_install"):
-                                        if latest_vers.get("versions_required_install").get(current_version.get('version', '1.0.0')) == True:
-                                            printMainMessage("Updating Files..")
-                                            silent_install = subprocess.run(args=[sys.executable, "Install.py", "--install", "--silent"])
-                                            if not (silent_install.returncode == 0): printErrorMessage("Updating Files failed.")
-                                    printMainMessage("Cleaning up files..")
-                                    os.remove("Update.zip")
-                                    shutil.rmtree("./Update/")
-                                    printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting bootstrap..")
-                                    subprocess.run(args=[sys.executable] + given_args)
-                                    sys.exit(0)
-                                else:
-                                    printMainMessage("Cleaning up files..")
-                                    os.remove("Update.zip")
-                                    shutil.rmtree("./Update/")
-                                    printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
-                                    if isYes(input("> ")) == False: sys.exit(0)
+        printDebugMessage("Sending Request to Bootstrap Version Servers..") 
+        version_server = fflag_configuration.get("EFlagBootstrapUpdateServer", "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json")
+        if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
+        latest_vers_res = requests.get(f"{version_server}")
+        if latest_vers_res.ok:
+            latest_vers = latest_vers_res.json()
+            if current_version.get("version"):
+                printDebugMessage(f'Called ({version_server}): {latest_vers}') 
+                if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
+                    download_location = latest_vers.get("download_location", "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip")
+                    printDebugMessage(f"Update v{latest_vers['latest_version']} detected!")
+                    printWarnMessage("--- New Bootstrap Update ---")
+                    printMainMessage(f"We have detected a new version of Efaz's Roblox Bootstrap! Would you like to install it? (y/n)")
+                    if download_location == "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip":
+                        printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
+                    elif download_location == "https://cdn.efaz.dev/cdn/py/roblox-bootstrap-beta.zip":
+                        printYellowMessage("⚠️ This version is a beta and may cause issues with your installation.")
+                    else:
+                        printErrorMessage("❌ The download location for this version is different from the official GitHub download link!! You may be downloading an unofficial Efaz's Roblox Bootstrap version!")
+                    printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
+                    if isYes(input("> ")) == True:
+                        printMainMessage("Downloading latest version..")
+                        printDebugMessage(f"Download location: {download_location} => ./Update.zip")
+                        download_update = subprocess.run(["curl", "-L", download_location, "-o", "./Update.zip"], check=True)
+                        if download_update.returncode == 0:
+                            printMainMessage("Download Success! Extracting ZIP now!")
+                            if main_os == "Darwin":
+                                zip_extract = subprocess.run(["unzip", "-o", "Update.zip", "-d", "./Update/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                            elif main_os == "Windows":
+                                zip_extract = subprocess.run(["powershell", "-command", f"Expand-Archive -Path 'Update.zip' -DestinationPath './Update/' -Force"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                            if zip_extract.returncode == 0:
+                                printMainMessage("Extracted successfully! Installing Files!")
+                                for file in os.listdir("./Update/roblox-bootstrap-main/"):
+                                    src_path = os.path.join("./Update/roblox-bootstrap-main/", file)
+                                    dest_path = os.path.join("./", file)
+                                    
+                                    if os.path.isdir(src_path):
+                                        shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
+                                    else:
+                                        if not file.endswith(".json"):
+                                            shutil.copy2(src_path, dest_path)
+                                if latest_vers.get("versions_required_install"):
+                                    if latest_vers.get("versions_required_install").get(current_version.get('version', '1.0.0')) == True:
+                                        printMainMessage("Updating Files..")
+                                        silent_install = subprocess.run(args=[sys.executable, "Install.py", "--install", "--silent"])
+                                        if not (silent_install.returncode == 0): printErrorMessage("Updating Files failed.")
+                                printMainMessage("Cleaning up files..")
+                                os.remove("Update.zip")
+                                shutil.rmtree("./Update/")
+                                printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting bootstrap..")
+                                subprocess.run(args=[sys.executable] + given_args)
+                                sys.exit(0)
                             else:
-                                printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                printMainMessage("Cleaning up files..")
+                                os.remove("Update.zip")
+                                shutil.rmtree("./Update/")
+                                printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
                                 if isYes(input("> ")) == False: sys.exit(0)
                         else:
-                            printDebugMessage("User rejected update.")
-                    elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"):
-                        printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
+                            printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                            if isYes(input("> ")) == False: sys.exit(0)
                     else:
-                        printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
+                        printDebugMessage("User rejected update.")
+                elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"):
+                    printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
                 else:
-                    printDebugMessage("There was an error reading the latest version.")
+                    printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
             else:
-                printErrorMessage("There was an issue while checking for updates.")
-                printDebugMessage("Update Check Response failed.")
+                printDebugMessage("There was an error reading the latest version.")
+        else:
+            printErrorMessage("There was an issue while checking for updates.")
+            printDebugMessage("Update Check Response failed.")
     if (not (fflag_configuration.get("EFlagDisableRobloxUpdateChecks") == True)):
         printWarnMessage("--- Checking for Roblox Updates ---")
         current_roblox_version = handler.getCurrentClientVersion()
@@ -2009,10 +2019,10 @@ if __name__ == "__main__":
     
     # Reinstate Windows Shortcuts
     if main_os == "Windows":
-        if os.path.exists(os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
+        if os.path.exists(os.path.join(f"{pip_class.getLocalAppData()}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
             if not (fflag_configuration.get("EFlagDisableURLSchemeInstall") == True):
                 printWarnMessage("--- Configuring Windows Registry ---")
-                bootstrap_folder_path = os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")
+                bootstrap_folder_path = os.path.join(f"{pip_class.getLocalAppData()}", "EfazRobloxBootstrap")
                 bootstrap_path = os.path.join(bootstrap_folder_path, "EfazRobloxBootstrap.exe")
                 try:
                     import requests
@@ -2317,6 +2327,7 @@ if __name__ == "__main__":
                                 generated_api_instance = EfazRobloxBootstrapAPI()
                                 generated_api_instance.requestedFunctions = {}
                                 generated_api_instance.launchedFromBootstrap = True
+                                generated_api_instance.debugMode = (fflag_configuration.get("EFlagEnableDebugMode")==True)
                                 api_handled_requests = {}
 
                                 # Load Mod Script
@@ -2528,6 +2539,17 @@ if __name__ == "__main__":
                                                 break
                                 threading.Thread(target=handleRequests, daemon=True).start()
                                 printDebugMessage("Started handling requests for Efaz's Roblox Bootstrap API!")
+
+                                # Set and Handle Printing Functions
+                                def handlePrint(mes): printMainMessage(f"[MOD SCRIPT]: {mes}")
+                                setattr(mod_mode_module, "print", handlePrint)
+                                setattr(mod_mode_module, "input", None)
+                                setattr(mod_mode_module, "write", None)
+                                setattr(mod_mode_module, "open", None)
+                                setattr(mod_mode_module, "exec", None)
+                                setattr(mod_mode_module, "eval", None)
+                                setattr(mod_mode_module, "setattr", None)
+                                setattr(mod_mode_module, "__import__", None)
 
                                 # Launch Script
                                 spec.loader.exec_module(mod_mode_module)

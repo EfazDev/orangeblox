@@ -28,24 +28,62 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.4.8"
+fast_flag_installer_version = "1.5.0"
 
 class pip:
+    executable = None
+    def __init__(self, command: list=[], executable: str=None):
+        import sys
+        import os
+        import subprocess
+        if type(executable) is str:
+            if os.path.isfile(executable):
+                self.executable = executable
+            else:
+                if getattr(sys, "frozen", False):
+                    self.executable = self.findPython()
+                else:
+                    self.executable = sys.executable
+        else:
+            if getattr(sys, "frozen", False):
+                self.executable = self.findPython()
+            else:
+                self.executable = sys.executable
+        if type(command) is list and len(command) > 0:
+            subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: list[str]):
+        import subprocess
+        res = {}
+        generated_list = []
         for i in packages:
-            import subprocess
-            import sys
-            subprocess.check_call([sys.executable, "-m", "pip", "install", i])
+            if type(i) is str:
+                generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                subprocess.check_call([self.executable, "-m", "pip", "install"] + generated_list)
+                res[i] = {"success": True}
+            except Exception as e:
+                res[i] = {"success": False}
+        return res
     def uninstall(self, packages: list[str]):
+        import subprocess
+        res = {}
+        generated_list = []
         for i in packages:
-            import subprocess
-            import sys
-            subprocess.check_call([sys.executable, "-m", "pip", "uninstall", i])
+            if type(i) is str:
+                generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                subprocess.check_call([self.executable, "-m", "pip", "uninstall"] + generated_list)
+                res[i] = {"success": True}
+            except Exception as e:
+                res[i] = {"success": False}
+        return res
     def installed(self, packages: list[str]):
+        import importlib
         installed = {}
         all_installed = True
         for i in packages:
-            import importlib
             try:
                 a = importlib.import_module(i)
                 if a:
@@ -59,22 +97,62 @@ class pip:
         installed["all"] = all_installed
         return installed
     def pythonInstalled(self):
-        import platform
-        import os
-        import subprocess
-        import glob
-        ma_os = platform.system()
-        if ma_os == "Darwin":
-            paths = [
-                "/usr/local/bin/python*",
-                "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
-                "~/Library/Python/*/bin/python*"
-            ]
-            for path_pattern in paths:
-                for path in glob.glob(path_pattern):
-                    if os.path.isfile(path):
-                        return True
+        if self.findPython():
+            return True
+        else:
             return False
+    def pythonInstall(self):
+        import subprocess
+        import platform
+        import tempfile
+        ma_os = platform.system()
+        ma_arch = platform.architecture()
+        ma_processor = platform.machine()
+        if ma_os == "Darwin":
+            url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-macos11.pkg"
+            pkg_file_path = tempfile.mktemp(suffix=".pkg")
+            result = subprocess.run(["curl", "-o", pkg_file_path, url], stdout=subprocess.PIPE, stderr=subprocess.PIPE)            
+            if result.returncode == 0:
+                subprocess.run(["open", pkg_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                print(f"Python installer has been executed: {pkg_file_path}")
+            else:
+                print("Failed to download Python installer.")
+        elif ma_os == "Windows":
+            if ma_arch[0] == "64bit":
+                if ma_processor.lower() == "arm64":
+                    url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-arm64.exe"
+                else:
+                    url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.exe"
+            else:
+                url = "https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
+            exe_file_path = tempfile.mktemp(suffix=".exe")
+            result = subprocess.run(["curl", "-o", exe_file_path, url], stdout=subprocess.PIPE, stderr=subprocess.PIPE)            
+            if result.returncode == 0:
+                subprocess.run([exe_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                print(f"Python installer has been executed: {exe_file_path}")
+            else:
+                print("Failed to download Python installer.")
+    def findPython(self):
+        import os
+        import glob
+        import platform
+        ma_os = platform.system()
+        ma_arch = platform.architecture()
+        if ma_os == "Darwin":
+            if os.path.exists("/usr/local/bin/python3") and os.path.islink("/usr/local/bin/python3"):
+                return "/usr/local/bin/python3"
+            else:
+                paths = [
+                    "/usr/local/bin/python*",
+                    "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
+                    "~/Library/Python/*/bin/python*"
+                ]
+                for path_pattern in paths:
+                    for path in glob.glob(path_pattern):
+                        if os.path.isfile(path):
+                            if not (ma_arch[1].lower() == "arm64" and "intel64" in path):
+                                return path
+                return None
         elif ma_os == "Windows":
             paths = [
                 os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*'),
@@ -85,39 +163,8 @@ class pip:
             for path_pattern in paths:
                 for path in glob.glob(path_pattern):
                     if os.path.isfile(path):
-                        return True
-            return False
-    def pythonInstall(self):
-        import platform
-        import requests
-        import subprocess
-        import tempfile
-
-        ma_os = platform.system()
-        if ma_os == "Darwin":
-            url = "https://www.python.org/ftp/python/3.12.5/python-3.12.5-macos11.pkg"
-            response = requests.get(url)
-            
-            if response.status_code == 200:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pkg") as pkg_file:
-                    pkg_file.write(response.content)
-                    pkg_file_path = pkg_file.name
-                subprocess.run(["open", pkg_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                print(f"Python installer has been executed: {pkg_file_path}")
-            else:
-                print("Failed to download Python installer.")
-        elif ma_os == "Windows":
-            url = "https://www.python.org/ftp/python/3.12.5/python-3.12.5-amd64.exe"
-            response = requests.get(url)
-            
-            if response.status_code == 200:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as exe_file:
-                    exe_file.write(response.content)
-                    exe_file_path = exe_file.name
-                subprocess.run([exe_file_path], check=True)
-                print(f"Python installer has been executed: {exe_file_path}")
-            else:
-                print("Failed to download Python installer.")
+                        return path
+            return None
 class Main():
     # System Functions
     def __init__(self):
@@ -185,9 +232,11 @@ class Main():
         "editRobloxFastFlagInstallerExecutable": {"message": "Edit the RobloxFastFlagInstaller executable", "level": 3, "detection": "RobloxFastFlagInstaller.py"},
         "editEfazRobloxBootstrapAPIExecutable": {"message": "Edit the EfazRobloxBootstrapAPI executable", "level": 3, "detection": "EfazRobloxBootstrapAPI.py"},
         "editModScript": {"message": "Edit ModScript.py executable", "level": 3, "detection": "ModScript.py"},
-        "notifications": {"message": "Configure or send macOS Notifications through Bootstrap", "level": 1, "detection": "MacOSNotification"},
+        "notifications": {"message": "Configure or send notifications through Bootstrap", "level": 1, "detection": "AppNotification"},
         "configureModModes": {"message": "Configure your mod modes", "level": 2, "detection": "Mods"},
         "configureRobloxBranding": {"message": "Configure your Roblox client's branding", "level": 1, "detection": "RobloxBrand"},
+        "importOtherModules": {"message": "Import outside modules from source", "level": 2, "detection": "importlib"},
+        "runOtherScripts": {"message": "Run other scripts or commands", "level": 2, "detection": "subprocess"},
         "configureDeathSounds": {"message": "Configure your death sounds", "level": 1, "detection": "DeathSounds"},
         "configureCursors": {"message": "Configure your cursors", "level": 1, "detection": "Cursors"},
         "configureAvatarMaps": {"message": "Configure your avatar maps", "level": 1, "detection": "AvatarEditorMaps"},
@@ -206,6 +255,10 @@ class Main():
         "getConfiguration": {"message": "Get data in a separate configuration", "level": 0, "free": True},
         "setConfiguration": {"message": "Store data in a separate configuration", "level": 0, "free": True},
         "getDebugMode": {"message": "Get if the bootstrap is in Debug Mode", "level": 0, "free": True},
+        "printSuccessMessage": {"message": "Print a console in green (indicates success)", "level": 0, "free": True},
+        "printMainMessage": {"message": "Print a console in the standard white color", "level": 0, "free": True},
+        "printErrorMessage": {"message": "Print a console in red (indicates an error)", "level": 0, "free": True},
+        "printYellowMessage": {"message": "Print a console in a yellow text (indicates a warning)", "level": 0, "free": True},
         "about": {"message": "Get bootstrap info", "level": 0, "free": True},
     }
     # System Functions 
@@ -712,8 +765,8 @@ class Main():
                                 main_log = newest(logs_path)
                                 if self.await_20_second_log_creation == True:
                                     logs_attached = []
-                                    if os.path.exists("EfazBootstrapLogFilesAttached.json"):
-                                        with open("EfazBootstrapLogFilesAttached.json", "r") as f:
+                                    if os.path.exists("RobloxFastFlagLogFilesAttached.json"):
+                                        with open("RobloxFastFlagLogFilesAttached.json", "r") as f:
                                             logs_attached = json.load(f)
                                     if self.await_log_creation_attempts < 40:
                                         if fileCreatedRecently(main_log):
@@ -723,7 +776,7 @@ class Main():
                                                 return getLogFile()
                                             else:
                                                 logs_attached.append(main_log)
-                                                with open("EfazBootstrapLogFilesAttached.json", "w") as f:
+                                                with open("RobloxFastFlagLogFilesAttached.json", "w") as f:
                                                     json.dump(logs_attached, f, indent=4)
                                                 return main_log
                                         else:
@@ -941,18 +994,10 @@ class Main():
                 if read_plist.get("CFBundleShortVersionString"):
                     version_channel = "LIVE"
                     try:
-                        local_storage_location = f'{os.path.expanduser("~")}/Library/Roblox/LocalStorage/'
-                        if os.path.exists(local_storage_location):
-                            for i in os.listdir(local_storage_location):
-                                fi = os.path.join(local_storage_location, i)
-                                if os.path.isfile(fi) and fi.endswith(".json") and not ("Studio" in fi) and ("memProfStorage" in fi):
-                                    with open(fi, "r") as f:
-                                        prof_storage = json.load(f)
-                                    if type(prof_storage) is dict:
-                                        if prof_storage.get("Channel"):
-                                            version_channel = prof_storage.get("Channel", "LIVE")
-                            if not (value.replace(" ", "") == "") and not (value == "production"):
-                                version_channel = value
+                        if os.path.exists(f"{macOS_dir}/Contents/MacOS/RobloxPlayerLauncher.app/Contents/Info.plist"):
+                            read_install_plist = self.readPListFile(f"{macOS_dir}/Contents/Info.plist")
+                            if read_install_plist.get("RobloxChannel") and not read_install_plist.get("RobloxChannel") == "":
+                                version_channel = read_install_plist.get("RobloxChannel", "LIVE")
                     except Exception:
                         version_channel = "LIVE"
                     return {"success": True, "isClientVersion": False, "version": read_plist["CFBundleShortVersionString"], "channel": version_channel}
@@ -1004,7 +1049,7 @@ class Main():
                         try:
                             printMainMessage("Reading Previous Configurations..")
                             with open(f"FastFlagConfiguration.json", "r") as f:
-                                merge_json = json.loads(f.read())
+                                merge_json = json.load(f)
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
                         except Exception as e:
@@ -1013,7 +1058,7 @@ class Main():
                         try:
                             printMainMessage("Reading Previous Client App Settings..")
                             with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "r") as f:
-                                merge_json = json.loads(f.read())
+                                merge_json = json.load(f)
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
                         except Exception as e:
@@ -1058,7 +1103,7 @@ class Main():
                             try:
                                 printMainMessage("Reading Previous Configurations..")
                                 with open(f"FastFlagConfiguration.json", "r") as f:
-                                    merge_json = json.loads(f.read())
+                                    merge_json = json.load(f)
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
                             except Exception as e:
@@ -1067,7 +1112,7 @@ class Main():
                             try:
                                 printMainMessage("Reading Previous Client App Settings..")
                                 with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "r") as f:
-                                    merge_json = json.loads(f.read())
+                                    merge_json = json.load(f)
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
                             except Exception as e:
@@ -1114,7 +1159,7 @@ class Main():
                     if os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}"):
                         try:
                             with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "r") as f:
-                                merge_json = json.loads(f.read())
+                                merge_json = json.load(f)
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
                             if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
@@ -1138,7 +1183,7 @@ class Main():
                         if os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}"):
                             try:
                                 with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "r") as f:
-                                    merge_json = json.loads(f.read())
+                                    merge_json = json.load(f)
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
                                 if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
@@ -1350,7 +1395,7 @@ class Main():
                 if startData == "":
                     a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True)
                 else:
-                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe {startData}", shell=True)
+                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe '{startData}'", shell=True)
                 if a.returncode == 0:
                     if attachInstance == True:
                         if makeDupe == True:
@@ -1421,12 +1466,15 @@ class Main():
                 threading.Thread(target=waitForRobloxEnd).start()
             else:
                 if debug == True: printDebugMessage("Running RobloxPlayerInstaller executable..")
-                insta = subprocess.run(f"{macOS_dir}{macOS_beforeClientServices}RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller", shell=True, check=True, stdout=subprocess.DEVNULL)
-                if insta.returncode == 0:
-                    if debug == True: printDebugMessage("Installer has succeeded!")
-                else:
-                    if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
-                threading.Thread(target=waitForRobloxEnd).start()
+                try:
+                    insta = subprocess.run(f"{macOS_dir}{macOS_beforeClientServices}RobloxPlayerInstaller.app/Contents/MacOS/RobloxPlayerInstaller", shell=True, check=True, stdout=subprocess.DEVNULL)
+                    if insta.returncode == 0:
+                        if debug == True: printDebugMessage("Installer has succeeded!")
+                    else:
+                        if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
+                    threading.Thread(target=waitForRobloxEnd).start()
+                except Exception as e:
+                    printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
         elif self.__main_os__ == "Windows":
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
             if most_recent_roblox_version_dir:
@@ -1440,12 +1488,15 @@ class Main():
                     threading.Thread(target=waitForRobloxEnd).start()
                 else:
                     if debug == True: printDebugMessage("Running RobloxPlayerInstaller executable..")
-                    insta = subprocess.run(f"{most_recent_roblox_version_dir}RobloxPlayerInstaller.exe", shell=True, check=True, stdout=subprocess.DEVNULL)
-                    if insta.returncode == 0:
-                        if debug == True: printDebugMessage("Installer has succeeded!")
-                    else:
-                        if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
-                    threading.Thread(target=waitForRobloxEnd).start()
+                    try:
+                        insta = subprocess.run(f"{most_recent_roblox_version_dir}RobloxPlayerInstaller.exe", shell=True, check=True, stdout=subprocess.DEVNULL)
+                        if insta.returncode == 0:
+                            if debug == True: printDebugMessage("Installer has succeeded!")
+                        else:
+                            if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
+                        threading.Thread(target=waitForRobloxEnd).start()
+                    except Exception as e:
+                        printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
             else:
                 self.printLog("Roblox Installer couldn't be found.")
         else:

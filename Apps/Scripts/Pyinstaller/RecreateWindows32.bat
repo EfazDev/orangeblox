@@ -1,12 +1,12 @@
 @echo off
 
 rem Build Pyinstaller Package
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Building Pyinstaller Package..%esc%[0m
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Building Pyinstaller Package..\033[0m
 pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm
 timeout 3
 
 rem Create EfazRobloxBootstrapWindows Folder
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Creating EfazRobloxBootstrapWindows.zip..%esc%[0m
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Creating EfazRobloxBootstrapWindows.zip..\033[0m
 mkdir EfazRobloxBootstrapWindows
 if exist Apps\EfazRobloxBootstrap\ (
     xcopy /e Apps\EfazRobloxBootstrap\ EfazRobloxBootstrapWindows\EfazRobloxBootstrap\
@@ -24,15 +24,15 @@ powershell Compress-Archive -Path EfazRobloxBootstrapWindows\* -Update -Destinat
 rmdir /S /Q EfazRobloxBootstrapWindows
 
 rem Run Installer
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Running Installer..%esc%[0m
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Running Installer..\033[0m
 python Install.py --rebuild-mode
 
 rem Cleaning Up
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Cleaning Up..%esc%[0m
-rmdir /S /Q __pycache__
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Cleaning Up..\033[0m
+rmdir /S /Q __pycache__ Apps\EfazRobloxBootstrap Apps\EfazRobloxBootstrap32 build
 
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Successfully rebuilt EfazRobloxBootstrap!%esc%[0m
-echo %esc%[38;5;202mRebuild EfazRobloxBootstrap @ Check the Apps folder for the generated ZIP file! File: Apps\EfazRobloxBootstrapWindows.zip%esc%[0m
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Successfully rebuilt EfazRobloxBootstrap!\033[0m
+echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Check the Apps folder for the generated ZIP file! File: Apps\EfazRobloxBootstrapWindows.zip\033[0m
 set /p aaaaaa="> "
 
 @echo on

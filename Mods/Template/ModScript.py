@@ -7,22 +7,38 @@
 # 
 
 # Load Bootstrap API
-from EfazRobloxBootstrapAPI import EfazRobloxBootstrapAPI; EfazRobloxBootstrapAPI = EfazRobloxBootstrapAPI()
+import EfazRobloxBootstrapAPI as ERBAPI; EfazRobloxBootstrapAPI = ERBAPI.EfazRobloxBootstrapAPI()
 debugMode = EfazRobloxBootstrapAPI.getDebugMode()
+apiVersion = EfazRobloxBootstrapAPI.about()
     
 # Printing Functions
 def printMainMessage(mes): # White System Console Text
-    print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
+    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
+        print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
+    else:
+        EfazRobloxBootstrapAPI.printMainMessage(mes)
 def printErrorMessage(mes): # Error Colored Console Text
-    print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
+    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
+        print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
+    else:
+        EfazRobloxBootstrapAPI.printErrorMessage(mes)
 def printSuccessMessage(mes): # Success Colored Console Text
-    print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
+    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
+        print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
+    else:
+        EfazRobloxBootstrapAPI.printSuccessMessage(mes)
 def printWarnMessage(mes): # Orange Colored Console Text
-    print(f"\033[38;5;202m[MOD SCRIPT]: {mes}\033[0m")
+    print(f"\033[38;5;202m{mes}\033[0m")
 def printYellowMessage(mes): # Yellow Colored Console Text
-    print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
+        print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+    else:
+        EfazRobloxBootstrapAPI.printWarnMessage(mes)
 def printDebugMessage(mes): # Debug Console Text
-    if debugMode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
+        if debugMode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+    else:
+        EfazRobloxBootstrapAPI.printDebugMessage(mes)
 
 # Main Handler
 def onRobloxAppStart(data):

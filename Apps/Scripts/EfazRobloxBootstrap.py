@@ -6,6 +6,7 @@ import os
 import platform
 import time
 import traceback
+import datetime
 from PipHandler import pip
 
 def printMainMessage(mes):
@@ -24,7 +25,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.3.5"}
+    current_version = {"version": "1.3.6"}
     main_os = platform.system()
     args = sys.argv
     pip_class = pip()
@@ -36,26 +37,8 @@ if __name__ == "__main__":
     printWarnMessage("-----------")
     printMainMessage("Determining System OS..")
 
-    if main_os == "Darwin":
-        filtered_args = ""
-        loaded_json = True
-        use_shell = False
-
-        printMainMessage(f"Loading Configuration File..")
-        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json"):
-            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json", "r") as f:
-                try:
-                    fastFlagConfig = json.loads(f.read())
-                except Exception as e:
-                    loaded_json = False
-        else:
-            with open("FastFlagConfiguration.json", "r") as f:
-                try:
-                    fastFlagConfig = json.loads(f.read())
-                except Exception as e:
-                    loaded_json = False
-
-        def displayMacOSNotification(title, message):
+    def displayNotification(title="Unknown Title", message="Unknown Message"):
+        if main_os == "Darwin":
             import objc
             NSUserNotification = objc.lookUpClass("NSUserNotification")
             NSUserNotificationCenter = objc.lookUpClass("NSUserNotificationCenter")
@@ -65,13 +48,63 @@ if __name__ == "__main__":
             notification.setInformativeText_(message)
             center = NSUserNotificationCenter.defaultUserNotificationCenter()
             center.deliverNotification_(notification)
+        elif main_os == "Windows":
+            try:
+                from plyer import notification
+            except Exception as e:
+                pip_class.install(["plyer"])
+                from plyer import notification
+            notification.notify(
+                title = title,
+                message = message,
+                app_icon = os.path.join(local_app_data, "EfazRobloxBootstrap", "AppIcon.ico"),
+                timeout = 30,
+            )
+
+    if main_os == "Darwin":
+        filtered_args = ""
+        loaded_json = True
+        use_shell = False
+
+        printMainMessage(f"Loading Configuration File..")
+        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json"):
+            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json", "r") as f:
+                try:
+                    fastFlagConfig = json.load(f)
+                except Exception as e:
+                    loaded_json = False
+        else:
+            with open("FastFlagConfiguration.json", "r") as f:
+                try:
+                    fastFlagConfig = json.load(f)
+                except Exception as e:
+                    loaded_json = False
+
+        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown"):
+            if not fastFlagConfig.get("EFlagDisableBootstrapCooldown") == True:
+                with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown", "r") as f:
+                    te = f.read()
+                    if te.isnumeric():
+                        if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
+                            printErrorMessage("You're starting the booldown too fast! Please wait 3 seconds!")
+                            if fastFlagConfig.get("EFlagEnableDebugMode") == True: printDebugMessage(f'If this message is still here after 3 seconds, delete the file "/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown"')
+                            sys.exit(0)
+        else:
+            if not fastFlagConfig.get("EFlagDisableBootstrapCooldown") == True:
+                def cool():
+                    with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown", "w") as f:
+                        f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 3))
+                    time.sleep(fastFlagConfig.get("EFlagBootstrapCooldownAmount", 3))
+                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown"):
+                        os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown")
+                threading.Thread(target=cool).start()
 
         if pip_class.pythonInstalled() == False: pip_class.pythonInstall()
         pythonExecutable = pip_class.findPython()
         if not pythonExecutable:
             printErrorMessage("Please install Python in order to run this bootstrap!")
             input("> ")
-            sys.exit(1)
+            sys.exit(0)
         else:
             printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
@@ -123,24 +156,27 @@ if __name__ == "__main__":
                 seconds = 0
                 printMainMessage("Starting Notification Loop..")
                 while True:
-                    if ended == True:
-                        break
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/MacOSNotification"):
-                        with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/MacOSNotification", "r") as f:
-                            try:
-                                notification = json.loads(f.read())
-                                if type(notification) is list:
-                                    class InvalidNotificationException(Exception):
-                                        pass
-                                    raise InvalidNotificationException()
-                            except Exception as e:
-                                printDebugMessage(str(e))
-                                notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                        os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/MacOSNotification")
-                        if notification.get("title") and notification.get("message"):
-                            displayMacOSNotification(notification["title"], notification["message"])
-                            printSuccessMessage("Successfully pinged notification!")
-                    seconds += 1
+                    try:
+                        if ended == True:
+                            break
+                        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification"):
+                            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification", "r") as f:
+                                try:
+                                    notification = json.load(f)
+                                    if type(notification) is list:
+                                        class InvalidNotificationException(Exception):
+                                            pass
+                                        raise InvalidNotificationException("The following data for notification is not valid.")
+                                except Exception as e:
+                                    printDebugMessage(str(e))
+                                    notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
+                            os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification")
+                            if notification.get("title") and notification.get("message"):
+                                displayNotification(notification["title"], notification["message"])
+                                printSuccessMessage("Successfully pinged notification!")
+                        seconds += 1
+                    except Exception as e:
+                        printErrorMessage(f"There was an issue making a notification: {str(e)}")
                     time.sleep(0.05)
             def startBootstrap():
                 global ended
@@ -154,7 +190,7 @@ if __name__ == "__main__":
                     sys.exit(0)
                 else:
                     printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
-                    sys.exit(1)
+                    sys.exit(0)
             def createTkinterAppReplication():
                 try:
                     printMainMessage(f"Starting Tkinter App Replication..")
@@ -208,12 +244,12 @@ if __name__ == "__main__":
                     associated_terminal_pid = getLatestTerminalID()
                     if associated_terminal_pid:
                         try:
-                            if getattr(sys, 'frozen', False):
-                                os.environ['TCL_LIBRARY'] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/Contents/Resources/_tcl_data"
-                                os.environ['TK_LIBRARY'] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/Contents/Resources/_tk_data"
+                            if getattr(sys, "frozen", False):
+                                os.environ["TCL_LIBRARY"] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tcl_data"
+                                os.environ["TK_LIBRARY"] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tk_data"
                             else:
-                                os.environ['TCL_LIBRARY'] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tcl.framework/Versions/8.6/Resources/Scripts/"
-                                os.environ['TK_LIBRARY'] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tk.framework/Versions/8.6/Resources/Scripts/"
+                                os.environ["TCL_LIBRARY"] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tcl.framework/Versions/8.6/Resources/Scripts/"
+                                os.environ["TK_LIBRARY"] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tk.framework/Versions/8.6/Resources/Scripts/"
                             import tkinter as tk
                             from tkinter import messagebox
                             global app_root
@@ -308,20 +344,38 @@ if __name__ == "__main__":
             traceback.print_exc()
             traceback_err_str = traceback.format_exc()
             printErrorMessage(f"Bootstrap Run Failed: {traceback_err_str}")
-            sys.exit(1)
+            sys.exit(0)
     elif main_os == "Windows":
         filtered_args = ""
         loaded_json = True
-        local_app_data = os.path.expandvars(r'%LOCALAPPDATA%')
+        local_app_data = pip_class.getLocalAppData()
         
         if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")):
             os.system("title Efaz's Roblox Bootstrap")
             printMainMessage(f"Loading Configuration File..")
             with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "FastFlagConfiguration.json"), "r") as f:
                 try:
-                    fastFlagConfig = json.loads(f.read())
+                    fastFlagConfig = json.load(f)
                 except Exception as e:
                     loaded_json = False
+
+            if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown")):
+                if not fastFlagConfig.get("EFlagDisableBootstrapCooldown") == True:
+                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"), "r") as f:
+                        te = f.read()
+                        if te.isnumeric():
+                            if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
+                                printErrorMessage("You're starting the booldown too fast! Please wait 3 seconds!")
+                                if fastFlagConfig.get("EFlagEnableDebugMode") == True: printDebugMessage(f'If this message is still here after 3 seconds, delete the file "/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown"')
+                                sys.exit(0)
+            else:
+                def cool():
+                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"), "w") as f:
+                        f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 3))
+                    time.sleep(fastFlagConfig.get("EFlagBootstrapCooldownAmount", 3))
+                    if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown")):
+                        os.remove(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"))
+                threading.Thread(target=cool).start()
 
             if len(args) > 1:
                 cou = 0
@@ -336,26 +390,66 @@ if __name__ == "__main__":
             if not pythonExecutable:
                 printErrorMessage("Please install Python in order to run this bootstrap!")
                 input("> ")
-                sys.exit(1)
+                sys.exit(0)
 
             try:
-                printMainMessage(f"Starting Bootstrap..")
-                if filtered_args == "":
-                    result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
-                else:
-                    result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py"), filtered_args], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
-                if result.returncode == 0:
-                    printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")
-                else:
-                    printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
-                sys.exit(0)
+                ended = False
+                def awake():
+                    global ended
+                    seconds = 0
+                    printMainMessage("Starting Notification Loop..")
+                    while True:
+                        try:
+                            if ended == True:
+                                break
+                            if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification")):
+                                with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification"), "r") as f:
+                                    try:
+                                        notification = json.load(f)
+                                        if type(notification) is list:
+                                            class InvalidNotificationException(Exception):
+                                                pass
+                                            raise InvalidNotificationException("The following data for notification is not valid.")
+                                    except Exception as e:
+                                        printDebugMessage(str(e))
+                                        notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
+                                os.remove(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification"))
+                                if notification.get("title") and notification.get("message"):
+                                    displayNotification(notification["title"], notification["message"])
+                                    printSuccessMessage("Successfully pinged notification!")
+                            seconds += 1
+                        except Exception as e:
+                            printErrorMessage(f"There was an issue making a notification: {str(e)}")
+                        time.sleep(0.05)
+                def startBootstrap():
+                    global ended
+                    try:
+                        printMainMessage(f"Starting Bootstrap..")
+                        if filtered_args == "":
+                            result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
+                        else:
+                            result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py"), filtered_args], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
+                        printMainMessage("Ending Bootstrap..")
+                        ended = True
+                        if result.returncode == 0:
+                            printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")
+                        else:
+                            printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
+                        sys.exit(0)
+                    except Exception as e:
+                        printErrorMessage(f"Bootstrap Run Failed: {str(e)}")
+                        sys.exit(0)
+                threading.Thread(target=awake).start()
+                startBootstrap()
             except Exception as e:
-                printErrorMessage(f"Bootstrap Run Failed: {str(e)}")
-                sys.exit(1)
+                traceback.print_exc()
+                traceback_err_str = traceback.format_exc()
+                printErrorMessage(f"Bootstrap Run Failed: {traceback_err_str}")
+                sys.exit(0)
         else:
             printMainMessage("Please install the bootstrap using the Install.py command!!")
             input("> ")
-            sys.exit(1)
+            sys.exit(0)
 else:
     class EfazRobloxBootstrapNotModule(Exception):
         def __init__(self):            
