@@ -28,7 +28,7 @@ if __name__ == "__main__":
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
-    current_version = {"version": "1.3.6"}
+    current_version = {"version": "1.3.7"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                     contains_other_python_scripts = False
                     for a, b, c in os.walk(mod_path):
                         for i in c:
-                            if ".py" in i:
+                            if ".py" in i and not (i == "ModScript.py"):
                                 contains_other_python_scripts = True
                     if contains_other_python_scripts == True:
                         mod_info["mod_script"] = False
@@ -938,6 +938,21 @@ if __name__ == "__main__":
                 return "Settings was closed."
             elif isNo(d) == True:
                 fflag_configuration["EFlagDisableCreatingTkinterApp"] = True
+                printDebugMessage("User selected: False")
+
+        if main_os == "Darwin":
+            printMainMessage("Would you like to enable Adhoc Signature Signing? (y/n)")
+            printYellowMessage("This will fix issues with macOS unable to open the app which causes requirement of a new Roblox Reinstallation.")
+            printYellowMessage("However, this may hit security measures set by Roblox or trigger macOS Security.")
+            d = input("> ")
+            if isYes(d) == True:
+                fflag_configuration["EFlagEnableAdhocSigning"] = True
+                printDebugMessage("User selected: True")
+            elif isRequestClose(d) == True:
+                printMainMessage("Closing settings..")
+                return "Settings was closed."
+            elif isNo(d) == True:
+                fflag_configuration["EFlagEnableAdhocSigning"] = False
                 printDebugMessage("User selected: False")
 
         printMainMessage("Would you like to disable Bootstrap Update Checks? (y/n)")
@@ -2274,6 +2289,30 @@ if __name__ == "__main__":
                         printSuccessMessage("Successfully wrote to Info.plist!")
                     else:
                         printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
+                    if fflag_configuration.get("EFlagEnableAdhocSigning") == True:
+                        def check_codesign():
+                            try:
+                                result = subprocess.run(
+                                    ["codesign", "-v", "/Applications/Roblox.app"],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,
+                                    text=True
+                                )
+                                if result.returncode == 0:
+                                    return True
+                                else:
+                                    return False
+                            except Exception as e:
+                                return False
+                        if check_codesign() == False:
+                            printMainMessage("Signing Roblox.app..")
+                            re = subprocess.run("codesign -f -s - --deep /Applications/Roblox.app", shell=True, stdout=subprocess.DEVNULL)
+                            if re.returncode == 0:
+                                printSuccessMessage("Successfully signed Roblox.app!")
+                            else:
+                                printErrorMessage(f"Unable to sign Roblox.app: {re.returncode}")
+                        else:
+                            printMainMessage("Code-signing is valid and not needed!")
                 else:
                     printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
             else:
@@ -2604,16 +2643,20 @@ if __name__ == "__main__":
                 printDebugMessage("Failed to get server information: IP Request Rejected.")
 
             if fflag_configuration.get("EFlagNotifyServerLocation") == True:
-                printSuccessMessage(f"Roblox is connecting to a server in: {generated_location} [{allocated_roblox_ip}]")
                 if setTypeOfServer == 0:
+                    printSuccessMessage(f"Roblox is currently connecting to a public server in: {generated_location} [{allocated_roblox_ip}]!")
                     displayNotification("Joining Server", f"You have connected to a server from {generated_location}!")
                 elif setTypeOfServer == 1:
+                    printSuccessMessage(f"Roblox is currently connecting to a private server in: {generated_location} [{allocated_roblox_ip}]!")
                     displayNotification("Joining Private Server", f"You have connected to a private server from {generated_location}!")
                 elif setTypeOfServer == 2:
+                    printSuccessMessage(f"Roblox is currently connecting to a reserved server in: {generated_location} [{allocated_roblox_ip}]!")
                     displayNotification("Joining Reserved Server", f"You have connected to a reserved server from {generated_location}!")
                 elif setTypeOfServer == 3:
+                    printSuccessMessage(f"Roblox is currently connecting to a party in: {generated_location} [{allocated_roblox_ip}]!")
                     displayNotification("Joining Party", f"You have connected to a party server from {generated_location}!")
                 else:
+                    printSuccessMessage(f"Roblox is currently connecting to a server in: {generated_location} [{allocated_roblox_ip}]!")
                     displayNotification("Joining Server", f"You have connected to a server from {generated_location}!")
                 printDebugMessage("Sent Notification to Bootstrap for Notification Center shipping!")
 
@@ -3476,7 +3519,6 @@ if __name__ == "__main__":
             set_current_private_server_key = data["data"].get("accessCode")
         else:
             set_current_private_server_key = None
-        printSuccessMessage("Roblox is currently pending to a private server!")
     def onReservedServer(data):
         global setTypeOfServer
         global set_current_private_server_key
@@ -3485,7 +3527,6 @@ if __name__ == "__main__":
             set_current_private_server_key = data["data"].get("accessCode")
         else:
             set_current_private_server_key = None
-        printSuccessMessage("Roblox is currently pending to a reserved server!")
     def onPartyServer(data):
         global setTypeOfServer
         global set_current_private_server_key
@@ -3494,13 +3535,11 @@ if __name__ == "__main__":
             set_current_private_server_key = data["data"].get("accessCode")
         else:
             set_current_private_server_key = None
-        printSuccessMessage("Roblox is currently pending to a party!")
     def onMainServer(consoleLine):
         global setTypeOfServer
         global set_current_private_server_key
         setTypeOfServer = 0
         set_current_private_server_key = None
-        printSuccessMessage("Roblox is currently pending to a public server!")
     def onRobloxChannel(data):
         if data and data.get("channel") and fflag_configuration.get("EFlagRobloxClientChannel", "LIVE") == "Automatic":
             fflag_configuration["EFlagRobloxClientChannel"] = data.get("channel")
@@ -3547,6 +3586,7 @@ if __name__ == "__main__":
                 connected_roblox_instance.setRobloxEventCallback("onGameJoinInfo", onGameUserInfo)
                 connected_roblox_instance.setRobloxEventCallback("onGameDisconnected", onGameDisconnected)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoading", onMainServer)
+                connected_roblox_instance.setRobloxEventCallback("onGameLoadingNormal", onMainServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingPrivate", onPrivateServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingReserved", onReservedServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
@@ -3599,6 +3639,7 @@ if __name__ == "__main__":
                         connected_roblox_instance.setRobloxEventCallback("onGameJoinInfo", onGameUserInfo)
                         connected_roblox_instance.setRobloxEventCallback("onGameDisconnected", onGameDisconnected)
                         connected_roblox_instance.setRobloxEventCallback("onGameLoading", onMainServer)
+                        connected_roblox_instance.setRobloxEventCallback("onGameLoadingNormal", onMainServer)
                         connected_roblox_instance.setRobloxEventCallback("onGameLoadingPrivate", onPrivateServer)
                         connected_roblox_instance.setRobloxEventCallback("onGameLoadingReserved", onReservedServer)
                         connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
@@ -3643,6 +3684,7 @@ if __name__ == "__main__":
                 connected_roblox_instance.setRobloxEventCallback("onGameJoinInfo", onGameUserInfo)
                 connected_roblox_instance.setRobloxEventCallback("onGameDisconnected", onGameDisconnected)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoading", onMainServer)
+                connected_roblox_instance.setRobloxEventCallback("onGameLoadingNormal", onMainServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingPrivate", onPrivateServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingReserved", onReservedServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)

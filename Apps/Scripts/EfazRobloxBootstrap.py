@@ -25,7 +25,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.3.6"}
+    current_version = {"version": "1.3.7"}
     main_os = platform.system()
     args = sys.argv
     pip_class = pip()
@@ -60,6 +60,29 @@ if __name__ == "__main__":
                 app_icon = os.path.join(local_app_data, "EfazRobloxBootstrap", "AppIcon.ico"),
                 timeout = 30,
             )
+
+    def getIfProcessIsOpened(process_name="", pid=""):
+        if main_os == "Windows":
+            process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        elif main_os == "Darwin":
+            process = subprocess.Popen(["ps", "aux"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        else:
+            printMainMessage("Get if process is opened is only supported for macOS and Windows.")
+            return
+
+        output, _ = process.communicate()
+        process_list = output.decode("utf-8")
+
+        if pid == "":
+            if process_list.rfind(process_name) == -1:
+                return False
+            else:
+                return True
+        else:
+            if process_list.rfind(pid) == -1:
+                return False
+            else:
+                return True
 
     if main_os == "Darwin":
         filtered_args = ""
@@ -194,6 +217,10 @@ if __name__ == "__main__":
             def createTkinterAppReplication():
                 try:
                     printMainMessage(f"Starting Tkinter App Replication..")
+                    while (getIfProcessIsOpened("Terminal.app") == False):
+                        if ended == True:
+                            break
+                        time.sleep(1)
                     time.sleep(1)
                     def getLatestTerminalID():
                         apple_script = '''
@@ -235,7 +262,7 @@ if __name__ == "__main__":
                             )
                             
                             latest_window_id = result.stdout.strip()
-                            if latest_window_id == "No Terminal windows are open.":
+                            if latest_window_id == "Unable to get terminal window ID" or latest_window_id == "No window ID found in the message.":
                                 return None
                             else:
                                 return latest_window_id
@@ -256,6 +283,9 @@ if __name__ == "__main__":
                             global app
 
                             class App:
+                                terminal_window = None
+                                master = None
+                                button = None
                                 def __init__(self, master: tk.Tk):
                                     try:
                                         self.master = master
@@ -268,8 +298,15 @@ if __name__ == "__main__":
                                         self.button.pack(pady=10)
                                         self.master.bind("<Activate>", self.on_window_activate)
                                         self.terminal_window = getLatestTerminalID()
-                                        self.check_end()
-                                        printMainMessage(f"Tkinter app finished launching! Terminal ID: {self.terminal_window}")
+                                        if not self.terminal_window:
+                                            printErrorMessage(f"Unable to get terminal window ID! Ending tkinter app.")
+                                            try:
+                                                self.master.quit()
+                                            except Exception as e:
+                                                printErrorMessage(f"Tkinter App Closing Failed! Error: {str(e)}")
+                                        else:
+                                            self.check_end()
+                                            printMainMessage(f"Tkinter app finished launching! Terminal ID: {self.terminal_window}")
                                     except Exception as e:
                                         printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
 
@@ -284,12 +321,11 @@ if __name__ == "__main__":
                                     try:
                                         global ended
                                         if ended == True:
-                                            self.master.quit() 
-                                            self.master.destroy()
+                                            self.master.quit()
                                         else:
                                             self.master.after(100, self.check_end)
                                     except Exception as e:
-                                        printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
+                                        printErrorMessage(f"Tkinter App Closing Failed! Error: {str(e)}")
 
                                 def activate_terminal_window(self):
                                     if self.terminal_window:
@@ -315,7 +351,7 @@ if __name__ == "__main__":
                                                 if result.returncode == 0:
                                                     printMainMessage("Successfully activated terminal!")
                                                 else:
-                                                    printMainMessage("Failed to activate Terminal window.")  
+                                                    printErrorMessage("Failed to activate Terminal window.")  
                                             threading.Thread(target=sendReq, daemon=True).start()
                                         except Exception as e:
                                             printErrorMessage(f"Error activating Terminal window: {str(e)}")
@@ -326,7 +362,7 @@ if __name__ == "__main__":
                                 app_root.after(1000, app_root.deiconify)
                                 app_root.mainloop()
                             except Exception as e:
-                                printErrorMessage(f"Error activating Terminal window: {str(e)}")
+                                printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
                         except Exception as e:
                             printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
                     else:

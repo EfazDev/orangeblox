@@ -54,7 +54,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git"]
-    current_version = {"version": "1.3.6"}
+    current_version = {"version": "1.3.7"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False

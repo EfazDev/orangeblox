@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import platform
+from PipHandler import pip
 
 def printMainMessage(mes):
     print(f"\033[38;5;255m{mes}\033[0m")
@@ -19,7 +20,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.3.6"}
+    current_version = {"version": "1.3.7"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         else:
             printErrorMessage("Bootstrap Run Failed: App is not installed.")
     elif main_os == "Windows":
-        generated_app_path = os.path.join(os.getenv('LOCALAPPDATA'), "EfazRobloxBootstrap")
+        generated_app_path = os.path.join(pip().getLocalAppData(), "EfazRobloxBootstrap")
         if os.path.exists(os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")):
             url_scheme_path = os.path.join(generated_app_path, "URLSchemeExchange")
             with open(url_scheme_path, "w") as f:

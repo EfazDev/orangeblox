@@ -28,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.5.0"
+fast_flag_installer_version = "1.5.1"
 
 class pip:
     executable = None
@@ -425,7 +425,7 @@ class Main():
                                     submitToThread(eventName="onGameStart", data=generated_data, isLine=False)
                             elif "[FLog::SingleSurfaceApp] launchUGCGameInternal" in line:
                                 submitToThread(eventName="onGameLoading", data=line, isLine=True)
-                            elif "[FLog::GameJoinUtil] GameJoinUtil::joinGamePostStandard" in line:
+                            elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToPlace" in line:
                                 url_start = line.find("URL: ") + len("URL: ")
                                 body_start = line.find("BODY: ")
                                 url = line[url_start:body_start].strip()
