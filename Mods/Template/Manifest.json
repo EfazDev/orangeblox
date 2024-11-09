@@ -1,0 +1,14 @@
+{
+    "name": "Template Mod!",
+    "version": "1.0.0",
+    "mod_script": true,
+    "mod_script_requirements": [
+        "onRobloxAppStart",
+        "onRobloxCrash",
+        "onBloxstrapSDK",
+        "onRobloxPassedUpdate",
+        "onGameDisconnected",
+        "onGameJoined"
+    ],
+    "needed_python_modules": []
+}
