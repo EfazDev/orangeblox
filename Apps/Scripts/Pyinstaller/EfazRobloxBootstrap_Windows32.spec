@@ -20,7 +20,7 @@ a = Analysis(
         "plyer",
         "plyer.platforms",
         "plyer.platforms.win.notification",
-        "plyer.platforms.win",
+        "plyer.platforms.win"
     ],
     hookspath=[],
     hooksconfig={},

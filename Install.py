@@ -54,7 +54,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git"]
-    current_version = {"version": "1.3.8"}
+    current_version = {"version": "1.4.0"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False
@@ -75,6 +75,15 @@ if __name__ == "__main__":
         rebuild_mode = True
         disable_remove_other_operating_systems = True
         instant_install = True
+    elif "--update-mode" in sys.argv:
+        silent_mode = True
+        instant_install = True
+        disable_remove_other_operating_systems = True
+        def printMainMessage(mes): silent_mode = True
+        def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m")
+        def printSuccessMessage(mes): silent_mode = True
+        def printWarnMessage(mes): silent_mode = True
+        def printDebugMessage(mes): silent_mode = True
     else:
         if "--install" in sys.argv:
             instant_install = True
@@ -304,11 +313,6 @@ if __name__ == "__main__":
                     # Prepare Contents of .app files
                     printMainMessage("Preparing Contents..")
                     if os.path.exists(stored_main_app[found_platform][0]):
-                        # Add App Icon for Finder to cache
-                        printMainMessage("Adding App Icon..")
-                        shutil.copy(f"AppIcon.icns", f"{stored_main_app[found_platform][0]}/Icon")
-                        shutil.copy(f"AppIcon.icns", f"{stored_main_app[found_platform][1]}/Icon")
-
                         # Export ./ to /Contents/Resources/
                         printMainMessage("Copying Main Resources..")
                         shutil.copytree(f"{current_path_location}/", f"{stored_main_app[found_platform][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func, symlinks=True)
@@ -406,31 +410,36 @@ if __name__ == "__main__":
                     printMainMessage("Creating paths..")
                     os.makedirs(stored_main_app[found_platform][0], exist_ok=True)
                     printMainMessage("Installing EXE File..")
-                    if is_x86_windows() or use_x86_windows == True:
-                        shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
-                        shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                        shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
-                    else:
-                        if os.path.exists(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
-                            shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
-                            shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                            shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                    try:
+                        if is_x86_windows() or use_x86_windows == True:
+                            shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
+                            shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                            shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
                         else:
-                            printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
-                            a = input("> ")
-                            if not (a.lower() == "n"):
-                                shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
-                                shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                                shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                            if os.path.exists(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
+                                shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
+                                shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                                shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
                             else:
-                                sys.exit(0)
+                                printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
+                                a = input("> ")
+                                if not (a.lower() == "n"):
+                                    shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
+                                    shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
+                                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                                else:
+                                    sys.exit(0)
+                    except Exception as e:
+                        printErrorMessage(f"There was an issue installing the EXE file: {str(e)}")
 
                     # Reduce Download Safety Measures
                     # This can prevent messages from Microsoft Smartscreen
                     if disable_download_for_app == True:
                         printMainMessage("Reducing Download Safety Measures for Allowing Runtime..")
-                        subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[found_platform][1]}"'], shell=True, stdout=subprocess.DEVNULL)
-                        subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
+                        unblock_1 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[found_platform][1]}"'], shell=True, stdout=subprocess.DEVNULL)
+                        if not (unblock_1.returncode == 0): printErrorMessage(f"Unable to unblock main bootstrap app: {unblock_1.returncode}")
+                        unblock_2 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
+                        if not (unblock_2.returncode == 0): printErrorMessage(f"Unable to unblock Play Roblox app: {unblock_2.returncode}")
 
                     # Setup URL Schemes
                     import winreg
@@ -438,10 +447,9 @@ if __name__ == "__main__":
                         if not (disabled_url_scheme_installation == True):
                             printMainMessage("Setting up URL Schemes..")
                             def set_url_scheme(protocol, exe_path):
-                                protocol_key = r"Software\Classes\{}".format(protocol)
-                                command_key = r"Software\Classes\{}\shell\open\command".format(protocol)
-
                                 try:
+                                    protocol_key = r"Software\Classes\{}".format(protocol)
+                                    command_key = r"Software\Classes\{}\shell\open\command".format(protocol)
                                     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, protocol_key) as key:
                                         winreg.SetValue(key, "", winreg.REG_SZ, "URL:{}".format(protocol))
                                         winreg.SetValueEx(key, "URL Protocol", 0, winreg.REG_SZ, protocol)
@@ -457,10 +465,9 @@ if __name__ == "__main__":
                         if not (fastFlagConfig.get("EFlagDisableURLSchemeInstall") == True):
                             printMainMessage("Setting up URL Schemes..")
                             def set_url_scheme(protocol, exe_path):
-                                protocol_key = r"Software\Classes\{}".format(protocol)
-                                command_key = r"Software\Classes\{}\shell\open\command".format(protocol)
-
                                 try:
+                                    protocol_key = r"Software\Classes\{}".format(protocol)
+                                    command_key = r"Software\Classes\{}\shell\open\command".format(protocol)
                                     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, protocol_key) as key:
                                         winreg.SetValue(key, "", winreg.REG_SZ, "URL:{}".format(protocol))
                                         winreg.SetValueEx(key, "URL Protocol", 0, winreg.REG_SZ, protocol)
@@ -548,7 +555,7 @@ if __name__ == "__main__":
 
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
                         with winreg.CreateKey(winreg.HKEY_CURRENT_USER, registry_path) as key:
-                            winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"py {os.path.join(stored_main_app[found_platform][0], "Uninstall.py")}")
+                            winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"{pip_class.findPython()} {os.path.join(stored_main_app[found_platform][0], "Uninstall.py")}")
                             winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Efaz's Roblox Bootstrap")
                             winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, "1.2.0")
                             winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, os.path.join(stored_main_app[found_platform][0], "AppIcon.ico"))

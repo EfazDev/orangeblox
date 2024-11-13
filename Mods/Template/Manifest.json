@@ -10,5 +10,6 @@
         "onGameDisconnected",
         "onGameJoined"
     ],
-    "needed_python_modules": []
+    "needed_python_modules": [],
+    "mod_script_supports": "1.3.0"
 }

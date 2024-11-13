@@ -1,12 +1,12 @@
 @echo off
 
 rem Build Pyinstaller Package
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Building Pyinstaller Package..\033[0m
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Building Pyinstaller Package..' -ForegroundColor Green"
 pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_Windows32.spec --clean --distpath Apps --noconfirm
 timeout 3
 
 rem Create EfazRobloxBootstrapWindows Folder
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Creating EfazRobloxBootstrapWindows.zip..\033[0m
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Creating EfazRobloxBootstrapWindows.zip..' -ForegroundColor Green"
 mkdir EfazRobloxBootstrapWindows
 if exist Apps\EfazRobloxBootstrap\ (
     xcopy /e Apps\EfazRobloxBootstrap\ EfazRobloxBootstrapWindows\EfazRobloxBootstrap\
@@ -24,15 +24,15 @@ powershell Compress-Archive -Path EfazRobloxBootstrapWindows\* -Update -Destinat
 rmdir /S /Q EfazRobloxBootstrapWindows
 
 rem Run Installer
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Running Installer..\033[0m
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Running Installer..' -ForegroundColor Green"
 python Install.py --rebuild-mode
 
 rem Cleaning Up
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Cleaning Up..\033[0m
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Cleaning Up..' -ForegroundColor Green"
 rmdir /S /Q __pycache__ Apps\EfazRobloxBootstrap Apps\EfazRobloxBootstrap32 build
 
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Successfully rebuilt EfazRobloxBootstrap!\033[0m
-echo \033[38;5;202mRebuild EfazRobloxBootstrap @ Check the Apps folder for the generated ZIP file! File: Apps\EfazRobloxBootstrapWindows.zip\033[0m
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Successfully rebuilt EfazRobloxBootstrap!' -ForegroundColor Green"
+powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Check the Apps folder for the generated ZIP file! File: Apps\EfazRobloxBootstrapWindows.zip' -ForegroundColor Green"
 set /p aaaaaa="> "
 
 @echo on

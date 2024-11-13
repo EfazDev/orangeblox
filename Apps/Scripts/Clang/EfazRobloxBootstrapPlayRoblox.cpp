@@ -27,7 +27,7 @@ void printWarnMessage(const std::string& mes) {
 }
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.3.8";
+    std::string current_version = "1.4.0";
     std::string main_os;
     
     #ifdef __APPLE__
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
             }
             printMainMessage("Created URL Exchange File: " + url_scheme_path);
             printMainMessage("Loading EfazRobloxBootstrap executable!");
-            int result = std::system("open -n -a /Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain");
+            int result = std::system("open -n -a \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/\"");
             if (result == 0) {
                 printSuccessMessage("Bootstrap Run Success: " + std::to_string(result));
                 return 0;

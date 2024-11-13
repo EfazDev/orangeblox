@@ -43,12 +43,9 @@ def printDebugMessage(mes): # Debug Console Text
 
 # Main Handler
 userInfo = None
-disconnected = True
+disconnected = False
 def onGameJoinInfo(data):
     global userInfo
-    global disconnected
-
-    disconnected = False
     if data and data.get("username") and data.get("userId"):
         thumbnail_res = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={data.get('userId')}&size=100x100&format=Png&isCircular=false")
         if thumbnail_res.ok:
@@ -69,15 +66,20 @@ def onGameJoinInfo(data):
         else:
             userInfo = None
             printErrorMessage(f"Failed to load thumbnail for @{data.get('username')} [User ID: {data.get('userId')}]! Status Code: {thumbnail_res.status_code}")
+def onGameJoined(data):
+    global disconnected
+    disconnected = False
+    while (disconnected == False):
+        time.sleep(0.1)
         if userInfo:
-            while (disconnected == False):
-                time.sleep(0.1)
-                EfazRobloxBootstrapAPI.sendBloxstrapRPC("SetRichPresence", {
-                    "smallImage": {
-                        "assetId": userInfo.get("thumbnail"),
-                        "hoverText": f"Playing @{userInfo.get('username')} as {userInfo.get('displayName')}!"
-                    }
-                }, True)
+            EfazRobloxBootstrapAPI.sendBloxstrapRPC("SetRichPresence", {
+                "smallImage": {
+                    "assetId": userInfo.get("thumbnail"),
+                    "hoverText": f"Playing @{userInfo.get('username')} as {userInfo.get('displayName')}!"
+                }
+            }, True)
+        else:
+            break
 def onGameDisconnected(data):
     global disconnected
     disconnected = True

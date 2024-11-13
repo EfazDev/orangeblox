@@ -111,6 +111,29 @@ class pip:
             return f'{os.path.expanduser("~")}/Library/'
         else:
             return f'{os.path.expanduser("~")}/'
+    def getIfProcessIsOpened(self, process_name="", pid=""):
+        import platform
+        import subprocess
+        ma_os = platform.system()
+        if ma_os == "Windows":
+            process = subprocess.run("tasklist", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        elif ma_os == "Darwin":
+            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+        process_list = process.stdout.decode("utf-8")
+
+        if pid == "":
+            if process_list.rfind(process_name) == -1:
+                return False
+            else:
+                return True
+        else:
+            if process_list.rfind(pid) == -1:
+                return False
+            else:
+                return True
     def findPython(self):
         import os
         import glob

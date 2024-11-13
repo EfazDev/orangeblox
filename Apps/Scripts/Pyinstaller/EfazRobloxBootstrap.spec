@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../AppIcon.icns"
-current_version = {"version": "1.3.8"}
+current_version = {"version": "1.4.0"}
 
 main_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrapMain",
@@ -95,10 +95,8 @@ main_exe = EXE(
     name="EfazRobloxBootstrapMain",
     debug=False,
     bootloader_ignore_signals=False,
-    argv_emulation=True,
     strip=False,
     target_arch="universal2",
-    console=False,
     windowed=True,
     upx=True,
     icon=os.path.join(os.getcwd(), icon_file),

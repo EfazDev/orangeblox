@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import platform
+import uuid
 from PipHandler import pip
 
 def printMainMessage(mes):
@@ -20,10 +21,12 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.3.8"}
+    current_version = {"version": "1.4.0"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
+    generated_app_id = str(uuid.uuid4())
+    pip_class = pip()
 
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader!")
@@ -39,8 +42,12 @@ if __name__ == "__main__":
                 with open(url_scheme_path, "w") as f:
                     f.write(args[1])
                 printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
+            if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):
+                printMainMessage("Opening Terminal.app in order for console to show..")
+                result = subprocess.run(f'open -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
+
             printMainMessage("Loading EfazRobloxBootstrap executable!")
-            result = subprocess.run(["open", "-n", "-a", "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"], cwd="/Applications/EfazRobloxBootstrap.app/Contents/Resources/", stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            result = subprocess.run(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
             if result.returncode == 0:
                 printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
             else:

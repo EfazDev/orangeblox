@@ -17,23 +17,23 @@ if !errorlevel! equ 0 (
     ) else (
         set "url=https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
     )
-    echo \033[38;5;202mInstall Python @ Download URL: !url!\033[0m
+    powershell -c "Write-Host 'Install Python: Download URL: !url!' -ForegroundColor Green"
     if defined url (
         set "tmp_exe=%TEMP%\python-installer-%RANDOM%.exe"
-        echo \033[38;5;202mInstall Python @ Generated Python Temp Path: !tmp_exe!\033[0m
+        powershell -c "Write-Host 'Install Python: Generated Python Temp Path: !tmp_exe!' -ForegroundColor Green"
         powershell -Command "(New-Object Net.WebClient).DownloadFile('!url!', '!tmp_exe!')"
         if exist "!tmp_exe!" (
             start "" "!tmp_exe!"
-            echo \033[38;5;202mInstall Python @ Python installer has been executed: !tmp_exe!\033[0m
+            powershell -c "Write-Host 'Install Python: Python installer has been executed: !tmp_exe!' -ForegroundColor Green"
         ) else (
-            echo \033[38;5;202mInstall Python @ Failed to download Python installer.\033[0m
+            powershell -c "Write-Host 'Install Python: Failed to download Python installer.' -ForegroundColor Green"
         )
 	timeout 5
     ) else (
-        echo \033[38;5;202mInstall Python @ Failed to set download URL.\033[0m
+        powershell -c "Write-Host 'Install Python: Failed to set download URL.' -ForegroundColor Green"
     )
 ) else (
-    echo \033[38;5;202mInstall Python @ Unsupported operating system: !os_name!\033[0m
+    powershell -c "Write-Host 'Install Python: Unsupported operating system: !os_name!' -ForegroundColor Green"
 )
 
 endlocal

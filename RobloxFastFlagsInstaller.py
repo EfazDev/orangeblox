@@ -28,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.5.2"
+fast_flag_installer_version = "1.5.3"
 
 class pip:
     executable = None
@@ -132,6 +132,39 @@ class pip:
                 print(f"Python installer has been executed: {exe_file_path}")
             else:
                 print("Failed to download Python installer.")
+    def getLocalAppData(self):
+        import platform
+        import os
+        ma_os = platform.system()
+        if ma_os == "Windows":
+            return os.path.expandvars(r'%LOCALAPPDATA%')
+        elif ma_os == "Darwin":
+            return f'{os.path.expanduser("~")}/Library/'
+        else:
+            return f'{os.path.expanduser("~")}/'
+    def getIfProcessIsOpened(self, process_name="", pid=""):
+        import platform
+        import subprocess
+        ma_os = platform.system()
+        if ma_os == "Windows":
+            process = subprocess.run("tasklist", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        elif ma_os == "Darwin":
+            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+        process_list = process.stdout.decode("utf-8")
+
+        if pid == "":
+            if process_list.rfind(process_name) == -1:
+                return False
+            else:
+                return True
+        else:
+            if process_list.rfind(pid) == -1:
+                return False
+            else:
+                return True
     def findPython(self):
         import os
         import glob
@@ -338,6 +371,9 @@ class Main():
         def awaitRobloxClosing(self):
             while True:
                 time.sleep(1)
+                if not self.pid:
+                    self.ended_process = True
+                    break
                 if (self.main_handler.getIfRobloxIsOpen(pid=self.pid) == False) or self.requested_end_tracking == True or (self.ended_process == True):
                     self.ended_process = True
                     break
@@ -994,10 +1030,10 @@ class Main():
                 if read_plist.get("CFBundleShortVersionString"):
                     version_channel = "LIVE"
                     try:
-                        if os.path.exists(f"{macOS_dir}/Contents/MacOS/RobloxPlayerLauncher.app/Contents/Info.plist"):
-                            read_install_plist = self.readPListFile(f"{macOS_dir}/Contents/Info.plist")
-                            if read_install_plist.get("RobloxChannel") and not read_install_plist.get("RobloxChannel") == "":
-                                version_channel = read_install_plist.get("RobloxChannel", "LIVE")
+                        if os.path.exists(f'{os.path.expanduser("~")}/Library/Preferences/com.roblox.RobloxPlayerChannel.plist'):
+                            read_install_plist = self.readPListFile(f'{os.path.expanduser("~")}/Library/Preferences/com.roblox.RobloxPlayerChannel.plist')
+                            if read_install_plist.get("www.roblox.com") and not read_install_plist.get("www.roblox.com") == "":
+                                version_channel = read_install_plist.get("www.roblox.com", "LIVE")
                     except Exception:
                         version_channel = "LIVE"
                     return {"success": True, "isClientVersion": False, "version": read_plist["CFBundleShortVersionString"], "channel": version_channel}
@@ -1393,9 +1429,9 @@ class Main():
             if most_recent_roblox_version_dir:
                 if debug == True: printDebugMessage("Running RobloxPlayerBeta.exe..")
                 if startData == "":
-                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True)
+                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True, stdout=subprocess.DEVNULL)
                 else:
-                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe '{startData}'", shell=True)
+                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe {startData}", shell=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
                         if makeDupe == True:
@@ -1485,7 +1521,7 @@ class Main():
                             break
                         else:
                             time.sleep(1)
-                    threading.Thread(target=waitForRobloxEnd).start()
+                    waitForRobloxEnd()
                 else:
                     if debug == True: printDebugMessage("Running RobloxPlayerInstaller executable..")
                     try:
@@ -1499,7 +1535,7 @@ class Main():
                             if debug == True: printDebugMessage("Installer has succeeded!")
                         else:
                             if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
-                        threading.Thread(target=waitForRobloxEnd).start()
+                        waitForRobloxEnd()
                     except Exception as e:
                         printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
             else:
