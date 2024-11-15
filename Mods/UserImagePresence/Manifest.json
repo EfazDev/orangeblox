@@ -1,0 +1,12 @@
+{
+    "version": "1.0.5",
+    "mod_script": true,
+    "mod_script_requirements": [
+        "sendBloxstrapRPC",
+        "onGameJoinInfo",
+        "onGameDisconnected",
+        "onGameJoined"
+    ],
+    "needed_python_modules": ["requests"],
+    "mod_script_supports": "1.3.0"
+}
