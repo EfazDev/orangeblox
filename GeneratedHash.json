@@ -1,0 +1,8 @@
+{
+    "main": "e85987fcb274bbbaa2e3b7c98ea4a8589ea33e38b38381b2629ce3f2435fcf28",
+    "fflag_install": "0d6a310c6cf06765b0a00c1271393c16819faebd52bfeec9049b3e4dd4616dc0",
+    "install": "ee0d06ee7beb841ed60e5b9129ce2dbc0bda599eb3380e1f98c285e4fc1038db",
+    "uninstall": "5972452ba8c8dc32c55a16f3c7953a62424421c90e7c4599d1af560c08123fce",
+    "bootstrap_api": "c92cce2102d1be4c5f4e074ea4b7b06ead4d5df8049c2c59e1440b299abad96e",
+    "discord_presence": "17190c394f73fc8d39c6dfab8e991fddb8fe5daa2be09e9601c5bfbb287dbcdc"
+}
