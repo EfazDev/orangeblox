@@ -47,7 +47,7 @@ if __name__ == "__main__":
                 subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
             printMainMessage("Loading EfazRobloxBootstrap executable!")
-            result = subprocess.run(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
+            result = subprocess.run(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
             if result.returncode == 0:
                 printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
             else:

@@ -54,7 +54,7 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 ## Hashes
 Main Bootstrap (Main.py): `e85987fcb274bbbaa2e3b7c98ea4a8589ea33e38b38381b2629ce3f2435fcf28`<br>
 FFlag Installer (RobloxFastFlagsInstaller.py): `0d6a310c6cf06765b0a00c1271393c16819faebd52bfeec9049b3e4dd4616dc0`<br>
-Installer (Install.py): `ee0d06ee7beb841ed60e5b9129ce2dbc0bda599eb3380e1f98c285e4fc1038db`<br>
+Installer (Install.py): `80ad249711b7e1b058541c7b85868f2240d08b24d34a8acc70899292984eba20`<br>
 Uninstaller (Uninstall.py): `5972452ba8c8dc32c55a16f3c7953a62424421c90e7c4599d1af560c08123fce`<br>
 Bootstrap API (EfazRobloxBootstrapAPI.py): `c92cce2102d1be4c5f4e074ea4b7b06ead4d5df8049c2c59e1440b299abad96e`<br>
 Discord Presence Handler (DiscordPresenceHandler.py): `17190c394f73fc8d39c6dfab8e991fddb8fe5daa2be09e9601c5bfbb287dbcdc`<br>
@@ -64,6 +64,6 @@ Discord Presence Handler (DiscordPresenceHandler.py): `17190c394f73fc8d39c6dfab8
 2. Old Death Sound and Cursors were sourced from <span style="color:#FF5FFF">[Bloxstrap files](https://github.com/pizzaboxer/bloxstrap)</span>
 3. AvatarEditorMaps were from <span style="color:#FF00FF">[Mielesgames's Map Files](https://github.com/Mielesgames/RobloxAvatarEditorMaps)</span> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
 4. Some files were exported from the main macOS Roblox.app or Bloxstrap files. <span style="color:#FF8700">(Logo was from the Apple Pages icon, recolored and then added the Roblox Logo)</span>
-5. macOS and Windows App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller --rebuild-clang`
+5. macOS and Windows App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller --rebuild-clang --full-rebuild-macOS-intel-arm64`
 > [!IMPORTANT]
-> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the EfazRobloxBootstrap folder as current path. In order to create a x86 exe file from x64 for Windows, use Python 3.13.0 in x86 (32-bit). Additionally, change `python3` to the Python Executable if python3 is not available as a command tool and --rebuild-clang is only available in macOS and requires Xcode Command Tools to be installed.
+> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the EfazRobloxBootstrap folder as current path. In order to create a x86 exe file from x64 for Windows, use Python 3.13.0 in x86 (32-bit). Additionally, change `python3` to the Python Executable if python3 is not available as a command tool and --rebuild-clang is only available in macOS and requires Xcode Command Tools to be installed while --full-rebuild-macOS-intel-arm64 is only available just in macOS.
