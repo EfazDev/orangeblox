@@ -456,6 +456,9 @@ if __name__ == "__main__":
                         if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip")):
                             os.remove(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip"))
                             deleted_other_os = True
+                        if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMacIntel.zip")):
+                            os.remove(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMacIntel.zip"))
+                            deleted_other_os = True
                         if deleted_other_os == True: printMainMessage("To help save space, the script has automatically deleted files made for other operating systems!")
 
                     # Convert All Mod Modes to Mods
