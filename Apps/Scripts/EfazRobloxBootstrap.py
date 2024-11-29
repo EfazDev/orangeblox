@@ -8,6 +8,8 @@ import uuid
 import time
 import traceback
 import datetime
+import logging
+import io
 import hashlib
 from PipHandler import pip
 
@@ -33,15 +35,23 @@ if __name__ == "__main__":
     def printErrorMessage(mes): 
         print(f"\033[38;5;196m{mes}\033[0m")
         logs.append((mes, 1))
-    def printSuccessMessage(mes): 
-        print(f"\033[38;5;82m{mes}\033[0m")
-        logs.append((mes, 4))
-    def printWarnMessage(mes): 
-        print(f"\033[38;5;202m{mes}\033[0m")
-        logs.append((mes, 3))
     def printDebugMessage(mes): 
         print(f"\033[38;5;226m{mes}\033[0m")
         logs.append((mes, 2))
+    def printWarnMessage(mes): 
+        print(f"\033[38;5;202m{mes}\033[0m")
+        logs.append((mes, 3))
+    def printSuccessMessage(mes): 
+        print(f"\033[38;5;82m{mes}\033[0m")
+        logs.append((mes, 4))
+
+    class LogCapture(io.StringIO):
+        def write(self, message):
+            super().write(message)
+            super().flush()
+            if not ("\033[38;5;" in message): logs.append((message, 0))
+    log_capture = LogCapture()
+    logging.basicConfig(level=logging.DEBUG, stream=log_capture, format="%(message)s")
 
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader!")
@@ -333,6 +343,8 @@ if __name__ == "__main__":
                                 last_checked_index = 0
                                 activate_cooldown = False
                                 requested_kill = False
+                                cocoa_app = None
+                                dock_menu = None
 
                                 def __init__(self, master: tk.Tk):
                                     try:
@@ -414,8 +426,7 @@ if __name__ == "__main__":
                                                     generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
                                         if len(generated_ui_options) > 0:
                                             for p in generated_ui_options:
-                                                def hand():
-                                                    self.new_bootstrap(f"shortcuts/{p['shortcut_info'].get('id')}", f"Open Shortcut ({p['message']})")
+                                                def hand(): self.new_bootstrap(f"shortcuts/{p['shortcut_info'].get('id')}", f"Open Shortcut ({p['message']})")
                                                 shortcuts_menu.add_command(label=p["message"], command=hand)
                                             shortcuts_menu.add_separator()
                                         shortcuts_menu.add_command(label="Open Shortcuts Menu", command=self.new_bootstrap_open_shortcuts)
@@ -423,6 +434,7 @@ if __name__ == "__main__":
                                         options_menu = tk.Menu(self.top_menu)
                                         self.top_menu.add_cascade(label="Options", menu=options_menu)
                                         options_menu.add_command(label="Clear Debug Window Logs", command=self.clear_logs)
+                                        options_menu.add_command(label="Force Load Debug Window Logs", command=self.force_load_logs)
                                         options_menu.add_command(label="Close App", command=self.on_close)
 
                                         help_menu = tk.Menu(self.top_menu)
@@ -436,8 +448,15 @@ if __name__ == "__main__":
                                         except Exception as e:
                                             printErrorMessage(f"Menu configuration error: {str(e)}")
 
-                                        if not self.terminal_window:
+                                        if not self.terminal_window: 
                                             printErrorMessage(f"Unable to get terminal window ID!")
+                                            self.master.quit()
+                                            self.master.destroy()
+                                            return
+                                        if ended == True: 
+                                            self.master.quit()
+                                            self.master.destroy()
+                                            return
                                         else:
                                             try:
                                                 if ended == False:
@@ -447,8 +466,9 @@ if __name__ == "__main__":
                                                     threading.Thread(target=self.generate_dock_menu, daemon=True).start()
                                                 else:
                                                     self.master.quit()
+                                                    self.master.destroy()
                                             except Exception as e:
-                                                printErrorMessage(f"Something went wrong checking! Error: {str(e)}")
+                                                printErrorMessage(f"Something went wrong with running functions! Error: {str(e)}")
                                             printMainMessage(f"Tkinter app finished launching! Terminal ID: {self.terminal_window}")
                                     except Exception as e:
                                         printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
@@ -463,78 +483,82 @@ if __name__ == "__main__":
                                 def prevent_minimize(self):
                                     printDebugMessage("Prevented minimizing main window in order to keep app running smoothly.")
                                 def generate_dock_menu(self):
-                                    from AppKit import NSApplication, NSMenu, NSMenuItem
-                                    from Foundation import NSObject
+                                    try:
+                                        from AppKit import NSApplication, NSMenu, NSMenuItem
+                                        from Foundation import NSObject
 
-                                    generated_ui_options = []
-                                    if type(fflag_configuration.get("EFlagRobloxLinkShortcuts")) is dict:
-                                        for i, v in fflag_configuration.get("EFlagRobloxLinkShortcuts").items():
-                                            if v and v.get("name") and v.get("id") and v.get("url"):
-                                                generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
+                                        generated_ui_options = []
+                                        if type(fflag_configuration.get("EFlagRobloxLinkShortcuts")) is dict:
+                                            for i, v in fflag_configuration.get("EFlagRobloxLinkShortcuts").items():
+                                                if v and v.get("name") and v.get("id") and v.get("url"):
+                                                    generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
 
-                                    main_app = self
-                                    class DockAppDelegate(NSObject):
-                                        def newBootstrapWindow_(self, sender):
-                                            main_app.new_bootstrap()
-                                        def runRoblox_(self, sender):
-                                            main_app.new_bootstrap_play_roblox()
-                                        def multiRunRoblox_(self, sender):
-                                            main_app.new_bootstrap_play_multi_roblox()
-                                        def reinstallRoblox_(self, sender):
-                                            main_app.new_bootstrap_reinstall_roblox()
-                                        def endAllRoblox_(self, sender):
-                                            main_app.new_bootstrap_end_roblox()
-                                        def runFFlagInstaller_(self, sender):
-                                            main_app.new_bootstrap_run_fflag_installer()
-                                        def enterDebugWindowMode_(self, sender):
-                                            main_app.instant_debug_window()
-                                        def shortcutmenu_(self, sender):
-                                            main_app.new_bootstrap_open_shortcuts()
-                                        def shortcut_(self, sender):
-                                            menu_title = sender.title()
-                                            for p in generated_ui_options:
-                                                if p["message"] == menu_title:
-                                                    main_app.new_bootstrap(f"shortcuts/{p['shortcut_info'].get('id')}", f"Open Shortcut ({p['message']})")
-                                                    break
-                                    self.cocoa_app = NSApplication.sharedApplication()
-                                    delegate = DockAppDelegate.alloc().init()
-                                    self.cocoa_app.setDelegate_(delegate)
+                                        main_app = self
+                                        class DockAppDelegate(NSObject):
+                                            def newBootstrapWindow_(self, sender):
+                                                main_app.new_bootstrap()
+                                            def runRoblox_(self, sender):
+                                                main_app.new_bootstrap_play_roblox()
+                                            def multiRunRoblox_(self, sender):
+                                                main_app.new_bootstrap_play_multi_roblox()
+                                            def reinstallRoblox_(self, sender):
+                                                main_app.new_bootstrap_reinstall_roblox()
+                                            def endAllRoblox_(self, sender):
+                                                main_app.new_bootstrap_end_roblox()
+                                            def runFFlagInstaller_(self, sender):
+                                                main_app.new_bootstrap_run_fflag_installer()
+                                            def enterDebugWindowMode_(self, sender):
+                                                main_app.instant_debug_window()
+                                            def shortcutmenu_(self, sender):
+                                                main_app.new_bootstrap_open_shortcuts()
+                                            def shortcut_(self, sender):
+                                                menu_title = sender.title()
+                                                for p in generated_ui_options:
+                                                    if p["message"] == menu_title:
+                                                        main_app.new_bootstrap(f"shortcuts/{p['shortcut_info'].get('id')}", f"Open Shortcut ({p['message']})")
+                                                        break
+                                        self.cocoa_app = NSApplication.sharedApplication()
+                                        delegate = DockAppDelegate.alloc().init()
+                                        self.cocoa_app.setDelegate_(delegate)
 
-                                    self.dock_menu = NSMenu.alloc().init()
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("New Bootstrap Window", "newBootstrapWindow:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Debug Window", "enterDebugWindowMode:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    self.dock_menu.addItem_(NSMenuItem.separatorItem())
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox in New Bootstrap Window", "runRoblox:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True: 
-                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Multi-Run Roblox in New Bootstrap Window", "multiRunRoblox:", "")
+                                        self.dock_menu = NSMenu.alloc().init()
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("New Bootstrap Window", "newBootstrapWindow:", "")
                                         menu_item.setEnabled_(True)
                                         self.dock_menu.addItem_(menu_item)
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox Fast Flags Installer", "runFFlagInstaller:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Reinstall Roblox", "reinstallRoblox:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("End All Roblox Windows", "endAllRoblox:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    self.dock_menu.addItem_(NSMenuItem.separatorItem())
-                                    if len(generated_ui_options) > 0:
-                                        for p in generated_ui_options:
-                                            menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(p["message"], "shortcut:", "")
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Debug Window", "enterDebugWindowMode:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        self.dock_menu.addItem_(NSMenuItem.separatorItem())
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox in New Bootstrap Window", "runRoblox:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True: 
+                                            menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Multi-Run Roblox in New Bootstrap Window", "multiRunRoblox:", "")
                                             menu_item.setEnabled_(True)
                                             self.dock_menu.addItem_(menu_item)
-                                    menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Shortcuts Menu", "shortcutmenu:", "")
-                                    menu_item.setEnabled_(True)
-                                    self.dock_menu.addItem_(menu_item)
-                                    self.cocoa_app.setDockMenu_(self.dock_menu)
-                                    self.cocoa_app.run()
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox Fast Flags Installer", "runFFlagInstaller:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Reinstall Roblox", "reinstallRoblox:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("End All Roblox Windows", "endAllRoblox:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        self.dock_menu.addItem_(NSMenuItem.separatorItem())
+                                        if len(generated_ui_options) > 0:
+                                            for p in generated_ui_options:
+                                                menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(p["message"], "shortcut:", "")
+                                                menu_item.setEnabled_(True)
+                                                self.dock_menu.addItem_(menu_item)
+                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Shortcuts Menu", "shortcutmenu:", "")
+                                        menu_item.setEnabled_(True)
+                                        self.dock_menu.addItem_(menu_item)
+                                        self.cocoa_app.setDockMenu_(self.dock_menu)
+                                        self.cocoa_app.run()
+                                    except Exception as e:
+                                        printErrorMessage("Unable to start Cocoa app for dock menu system")
+                                        printDebugMessage(str(e))
                                 def new_bootstrap(self, action="", action_name=""):
                                     if not (action == "") and type(action) is str:
                                         url_scheme_path = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange"
@@ -571,6 +595,8 @@ if __name__ == "__main__":
                                     self.output_area.config(state=tk.NORMAL)
                                     self.output_area.delete("1.0", tk.END)
                                     self.output_area.config(state=tk.DISABLED)
+                                def force_load_logs(self):
+                                    self.load_logs("oranges")
                                 def kill_bootstrap_window(self, event=""):
                                     try:
                                         if self.terminal_window:
@@ -646,18 +672,21 @@ if __name__ == "__main__":
                                     except Exception as e: 
                                         printErrorMessage(f"Unable to activate window: {str(e)}")
                                 def load_logs(self, e=""):
-                                    new_logs = logs[self.last_checked_index:]
-                                    for log, color_code in new_logs:
-                                        lines = [(log[i:i+75]) for i in range(0, len(log), 75)]
-                                        for line in lines:
-                                            color_tag = COLOR_CODES.get(color_code, "white")
-                                            self.output_area.config(state=tk.NORMAL)
-                                            self.output_area.insert(tk.END, f" {line}\n", color_tag)
-                                            self.output_area.config(state=tk.DISABLED)
-                                    self.last_checked_index = len(logs)
-                                    
-                                    if self.is_at_bottom:
-                                        self.output_area.see(tk.END)
+                                    try:
+                                        new_logs = logs[self.last_checked_index:]
+                                        for log, color_code in new_logs:
+                                            lines = [(log[i:i+75]) for i in range(0, len(log), 75)]
+                                            for line in lines:
+                                                color_tag = COLOR_CODES.get(color_code, "white")
+                                                self.output_area.config(state=tk.NORMAL)
+                                                self.output_area.insert(tk.END, f" {line}\n", color_tag)
+                                                self.output_area.config(state=tk.DISABLED)
+                                        self.last_checked_index = len(logs)
+                                        
+                                        if self.is_at_bottom:
+                                            self.output_area.see(tk.END)
+                                    except Exception as e:
+                                        printErrorMessage(f"There was an error loading logs! Error: {str(e)}")
                                     if e == "": self.master.after(100, self.load_logs)
                                 def on_mouse_wheel(self, event):
                                     if event.delta > 0:

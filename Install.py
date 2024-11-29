@@ -240,23 +240,52 @@ if __name__ == "__main__":
                 # Rebuild Main App from Source
                 if rebuild_from_source == True or (fastFlagConfig.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
                     printMainMessage("Running Pyinstaller Rebuild..")
-                    rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer", shell=True, cwd=current_path_location)
+                    if platform.machine() == "arm64":
+                        rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer", shell=True, cwd=current_path_location)
+                    else:
+                        rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer", shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Pyinstaller App succeeded! Continuing to installation..")
                     else:
                         printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
                         return
+                    if "--full-rebuild-macOS-intel-arm64" in sys.argv:
+                        if platform.machine() == "arm64":
+                            printMainMessage("Running Intel Pyinstaller Rebuild..")
+                            rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer", shell=True, cwd=current_path_location)
+                        else:
+                            printMainMessage("Running Arm64 Pyinstaller Rebuild..")
+                            rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer", shell=True, cwd=current_path_location)
+                        if rebuild_status.returncode == 0:
+                            if platform.machine() == "arm64":
+                                printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
+                            else:
+                                printSuccessMessage(f"Rebuilding Arm64 Pyinstaller App succeeded! Continuing to installation..")
+                        else:
+                            printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
 
-                if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip"):
-                    # Unzip Installation ZIP
-                    printMainMessage("Unzipping Installation ZIP File..")
-                    try:
-                        subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                    except Exception as e:
-                        printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
-                    time.sleep(1)
+                if platform.machine() == "arm64":
+                    if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip"):
+                        # Unzip Installation ZIP
+                        printMainMessage("Unzipping Installation ZIP File..")
+                        try:
+                            subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMac.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                        except Exception as e:
+                            printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
+                        time.sleep(1)
+                    else:
+                        printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
                 else:
-                    printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
+                    if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac32.zip"):
+                        # Unzip Installation ZIP
+                        printMainMessage("Unzipping Installation ZIP File..")
+                        try:
+                            subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMac32.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                        except Exception as e:
+                            printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
+                        time.sleep(1)
+                    else:
+                        printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac32.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
                 if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/"):
                     # Delete Other Operating System Files
                     if not (disable_remove_other_operating_systems == True or fastFlagConfig.get("EFlagDisableDeleteOtherOSApps") == True):

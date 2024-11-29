@@ -15,7 +15,7 @@ python3 ./Apps/Scripts/GenerateMainHash.py
 
 # Build Pyinstaller Package
 printMessage "Building Pyinstaller Package.."
-pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap.spec --distpath Apps --noconfirm
+pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_macOS.spec --distpath Apps --noconfirm
 
 # Sign Package
 printMessage "Signing Package.."
