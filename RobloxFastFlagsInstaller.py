@@ -279,6 +279,7 @@ class Main():
         "generateModsManifest": {"message": "Get information about all your installed mods", "level": 0},
         "displayNotification": {"message": "Send notifications through the bootstrap", "level": 1},
         "getRobloxLogFolderSize": {"message": "Get current size of the Roblox Logs folder", "level": 0},
+        "grantFileEditing": {"message": "Grant permissions to read/edit other files", "level": 3},
         "sendBloxstrapRPC": {"message": "Send requests through Bloxstrap RPC", "level": 2},
         "getLatestRobloxVersion": {"message": "Get the latest Roblox version", "level": 0},
         "getInstalledRobloxVersion": {"message": "Get the currently installed Roblox version", "level": 1},
@@ -1575,7 +1576,8 @@ class Main():
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
         def waitForRobloxEnd():
             if disableRobloxAutoOpen == True:
-                for i in range(300):
+                for i in range(150):
+                    if debug == True and (i % 10) == 0: printDebugMessage(f"Waited: {int(i/10)}/15 seconds")
                     if self.getIfRobloxIsOpen():
                         self.endRoblox()
                         break

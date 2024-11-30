@@ -8,13 +8,11 @@ import uuid
 import time
 import traceback
 import datetime
-import logging
-import io
 import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.4.2"}
+    current_version = {"version": "1.4.3"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -44,14 +42,6 @@ if __name__ == "__main__":
     def printSuccessMessage(mes): 
         print(f"\033[38;5;82m{mes}\033[0m")
         logs.append((mes, 4))
-
-    class LogCapture(io.StringIO):
-        def write(self, message):
-            super().write(message)
-            super().flush()
-            if not ("\033[38;5;" in message): logs.append((message, 0))
-    log_capture = LogCapture()
-    logging.basicConfig(level=logging.DEBUG, stream=log_capture, format="%(message)s")
 
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader!")
@@ -164,7 +154,7 @@ if __name__ == "__main__":
 
         if len(args) > 1:
             filtered_args = args[1]
-            if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args)) and not (loaded_json == True and fflag_configuration.get("EFlagEnableDebugMode") == True):
+            if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
                 use_shell = True
                 printMainMessage(f"Creating URL Exchange file..")
                 if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/"):
@@ -294,7 +284,7 @@ if __name__ == "__main__":
                         unable_to_validate.append("DiscordPresenceHandler.py")
 
                     if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
-                        if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your FFlag configuration and your mod scripts if this wasn't you!")
+                        if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
                         result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
                         printMainMessage("Ending Bootstrap..")
                         ended = True
@@ -305,8 +295,10 @@ if __name__ == "__main__":
                             printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
                             sys.exit(0)
                     else:
-                        printErrorMessage(f"Unable to validate hashes for files: {', '.join(unable_to_validate)}")
+                        printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
+                        printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
                         displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated and must be reinstalled! Please download a new copy from GitHub!")
+                        ended = True
                         sys.exit(0)
                 except Exception as e:
                     ended = True
@@ -795,12 +787,15 @@ if __name__ == "__main__":
                 threading.Thread(target=cool).start()
 
             if len(args) > 1:
-                cou = 0
-                filtered_args = ""
-                for i in args:
-                    if cou > 0:
-                        filtered_args = f"{i} "
-                    cou += 1
+                filtered_args = args[1]
+                if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
+                    printMainMessage(f"Creating URL Exchange file..")
+                    if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap")):
+                        with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "URLSchemeExchange"), "w") as f:
+                            f.write(filtered_args)
+                    else:
+                        with open("URLSchemeExchange", "w") as f:
+                            f.write(filtered_args)
 
             if pip_class.pythonInstalled() == False: pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython()
@@ -871,11 +866,9 @@ if __name__ == "__main__":
                             unable_to_validate.append("DiscordPresenceHandler.py")
 
                         if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
-                            if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your FFlag configuration and your mod scripts if this wasn't you!")
-                            if filtered_args == "":
-                                result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
-                            else:
-                                result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py"), filtered_args], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
+                            os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+                            if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
+                            result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
                             printMainMessage("Ending Bootstrap..")
                             ended = True
                             if result.returncode == 0:
@@ -883,7 +876,8 @@ if __name__ == "__main__":
                             else:
                                 printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
                         else:
-                            printErrorMessage(f"Unable to validate hashes for files: {', '.join(unable_to_validate)}")
+                            printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
+                            printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
                             displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated and must be reinstalled! Please download a new copy from GitHub!")
                         sys.exit(0)
                     except Exception as e:

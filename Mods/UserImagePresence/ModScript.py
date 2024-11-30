@@ -1,6 +1,6 @@
 #
 # UserImagePresence is a mod made by Efaz that would replace the Efaz's Roblox Bootstrap logo in the Discord Presence with your user profile image and name!
-# It is an idea that is referenced from Bloxstrap
+# It is an idea that is from Bloxstrap
 # 
 
 # Python Modules

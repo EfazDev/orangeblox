@@ -31,7 +31,7 @@ if __name__ == "__main__":
     multi_instance_enabled = False
     skip_modification_mode = False
     installed_update = False
-    current_version = {"version": "1.4.2"}
+    current_version = {"version": "1.4.3"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -2033,6 +2033,7 @@ if __name__ == "__main__":
                             given_args = ["Main.py"]
                             main_menu()
                         elif res == "2":
+                            given_args = ["efaz-bootstrap://continue"]
                             continueToRoblox()
                         else:
                             sys.exit(0)
@@ -2056,6 +2057,7 @@ if __name__ == "__main__":
                         given_args = ["Main.py"]
                         main_menu()
                     elif res == "2":
+                        given_args = ["efaz-bootstrap://continue"]
                         continueToRoblox()
                     else:
                         sys.exit(0)
@@ -2880,7 +2882,8 @@ if __name__ == "__main__":
                                             setattr(mod_mode_module, "print", handlePrint)
                                             setattr(mod_mode_module, "input", empty_str)
                                             setattr(mod_mode_module, "write", empty)
-                                            setattr(mod_mode_module, "open", open_config)
+                                            if not (("grantFileEditing" in approved_items_list) or (handler.robloxInstanceEventInfo.get("grantFileEditing", {"free": False}).get("free") == True)):
+                                                setattr(mod_mode_module, "open", open_config)
                                             setattr(mod_mode_module, "exec", None)
                                             setattr(mod_mode_module, "eval", None)
                                             setattr(mod_mode_module, "setattr", empty)
@@ -3953,55 +3956,52 @@ if __name__ == "__main__":
             elif main_os == "Windows":
                 url = given_args[1]
             if url:
-                if ("roblox-player:" in url) or ("roblox:" in url) or ("efaz-bootstrap" in url and "continue" in url) or ("efaz-bootstrap" in url and "new" in url) or ("efaz-bootstrap" in url and "menu" in url):
-                    if ("efaz-bootstrap" in url):
-                        connected_roblox_instance = handler.openRoblox(
-                            forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), 
-                            makeDupe=(fflag_configuration.get("EFlagEnableDuplicationOfClients") == True), 
-                            debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), 
-                            attachInstance=(not (fflag_configuration.get("EFlagAllowActivityTracking") == False)), 
-                            allowRobloxOtherLogDebug=(fflag_configuration.get("EFlagAllowFullDebugMode") == True)
-                        )
-                    else:
-                        printDebugMessage(f"Running using Roblox URL: {url}")
-                        connected_roblox_instance = handler.openRoblox(
-                            forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), 
-                            makeDupe=(fflag_configuration.get("EFlagEnableDuplicationOfClients") == True), 
-                            debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), 
-                            startData=url, 
-                            attachInstance=(not (fflag_configuration.get("EFlagAllowActivityTracking") == False)), 
-                            allowRobloxOtherLogDebug=(fflag_configuration.get("EFlagAllowFullDebugMode") == True)
-                        )
-                    if connected_roblox_instance:
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxAppStart", onRobloxAppStart)
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxAppLoginFailed", onRobloxAppLoginFailed)
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxExit", onRobloxExit)
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxCrash", onRobloxCrash)
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxChannel", onRobloxChannel)
-                        connected_roblox_instance.setRobloxEventCallback("onRobloxLog", onAllRobloxEvents)
-                        connected_roblox_instance.setRobloxEventCallback("onBloxstrapSDK", onBloxstrapMessage)
-                        connected_roblox_instance.setRobloxEventCallback("onLoadedFFlags", onLoadedFFlags)
-                        connected_roblox_instance.setRobloxEventCallback("onGameStart", onGameStart)
-                        connected_roblox_instance.setRobloxEventCallback("onGameJoined", onGameJoined)
-                        connected_roblox_instance.setRobloxEventCallback("onGameJoinInfo", onGameUserInfo)
-                        connected_roblox_instance.setRobloxEventCallback("onGameDisconnected", onGameDisconnected)
-                        connected_roblox_instance.setRobloxEventCallback("onGameLoading", onMainServer)
-                        connected_roblox_instance.setRobloxEventCallback("onGameLoadingNormal", onMainServer)
-                        connected_roblox_instance.setRobloxEventCallback("onGameLoadingPrivate", onPrivateServer)
-                        connected_roblox_instance.setRobloxEventCallback("onGameLoadingReserved", onReservedServer)
-                        connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
-                        connected_roblox_instance.setRobloxEventCallback("onGameTeleport", onTeleport)
-                        printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
-                        if connected_roblox_instance.created_mutex == True and main_os == "Windows":
-                            printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
-                    else:
-                        printDebugMessage("No RobloxInstance class was registered")
-                    check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
-                    check_update_thread.start()
+                if ("efaz-bootstrap" in url):
+                    connected_roblox_instance = handler.openRoblox(
+                        forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), 
+                        makeDupe=(fflag_configuration.get("EFlagEnableDuplicationOfClients") == True), 
+                        debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), 
+                        attachInstance=(not (fflag_configuration.get("EFlagAllowActivityTracking") == False)), 
+                        allowRobloxOtherLogDebug=(fflag_configuration.get("EFlagAllowFullDebugMode") == True)
+                    )
                 else:
-                    printDebugMessage(f"Unknown scheme: {url}")
+                    printDebugMessage(f"Running using Roblox URL: {url}")
+                    connected_roblox_instance = handler.openRoblox(
+                        forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), 
+                        makeDupe=(fflag_configuration.get("EFlagEnableDuplicationOfClients") == True), 
+                        debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), 
+                        startData=url, 
+                        attachInstance=(not (fflag_configuration.get("EFlagAllowActivityTracking") == False)), 
+                        allowRobloxOtherLogDebug=(fflag_configuration.get("EFlagAllowFullDebugMode") == True)
+                    )
+                if connected_roblox_instance:
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxAppStart", onRobloxAppStart)
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxAppLoginFailed", onRobloxAppLoginFailed)
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxExit", onRobloxExit)
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxCrash", onRobloxCrash)
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxChannel", onRobloxChannel)
+                    connected_roblox_instance.setRobloxEventCallback("onRobloxLog", onAllRobloxEvents)
+                    connected_roblox_instance.setRobloxEventCallback("onBloxstrapSDK", onBloxstrapMessage)
+                    connected_roblox_instance.setRobloxEventCallback("onLoadedFFlags", onLoadedFFlags)
+                    connected_roblox_instance.setRobloxEventCallback("onGameStart", onGameStart)
+                    connected_roblox_instance.setRobloxEventCallback("onGameJoined", onGameJoined)
+                    connected_roblox_instance.setRobloxEventCallback("onGameJoinInfo", onGameUserInfo)
+                    connected_roblox_instance.setRobloxEventCallback("onGameDisconnected", onGameDisconnected)
+                    connected_roblox_instance.setRobloxEventCallback("onGameLoading", onMainServer)
+                    connected_roblox_instance.setRobloxEventCallback("onGameLoadingNormal", onMainServer)
+                    connected_roblox_instance.setRobloxEventCallback("onGameLoadingPrivate", onPrivateServer)
+                    connected_roblox_instance.setRobloxEventCallback("onGameLoadingReserved", onReservedServer)
+                    connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
+                    connected_roblox_instance.setRobloxEventCallback("onGameTeleport", onTeleport)
+                    printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
+                    if connected_roblox_instance.created_mutex == True and main_os == "Windows":
+                        printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
+                else:
+                    printDebugMessage("No RobloxInstance class was registered")
+                check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
+                check_update_thread.start()
             else:
-                printDebugMessage(f"Unknown URL.")
+                printDebugMessage(f"Unable to format url scheme due to an issue.")
         else:
             if handler.getIfRobloxIsOpen():
                 printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect? (y/n)")

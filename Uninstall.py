@@ -17,7 +17,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 
 if __name__ == "__main__":
-    current_version = {"version": "1.4.2"}
+    current_version = {"version": "1.4.3"}
     handler = RobloxFastFlagsInstaller.Main()
     main_os = platform.system()
     pip_class = pip()
