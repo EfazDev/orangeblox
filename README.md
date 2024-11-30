@@ -52,10 +52,10 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 > Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app instead (Windows only, python Install.py --use-x86-windows) in order to allow use.
 
 ## Hashes
-Main Bootstrap (Main.py): `e85987fcb274bbbaa2e3b7c98ea4a8589ea33e38b38381b2629ce3f2435fcf28`<br>
-FFlag Installer (RobloxFastFlagsInstaller.py): `0d6a310c6cf06765b0a00c1271393c16819faebd52bfeec9049b3e4dd4616dc0`<br>
-Installer (Install.py): `d3d3e233f8a69e22ff9e02d5465327f1e84834504905eb07ba667ed6450017b5`<br>
-Uninstaller (Uninstall.py): `5972452ba8c8dc32c55a16f3c7953a62424421c90e7c4599d1af560c08123fce`<br>
+Main Bootstrap (Main.py): `5f15626c3ea393625b9db78db39860182ca3b08fc22c08f867c76ccde9ddb83d`<br>
+FFlag Installer (RobloxFastFlagsInstaller.py): `d309c3af71e17cf0455e73a50d00087f8f7732b8e0047b010e0246628ee89af4`<br>
+Installer (Install.py): `9d970dc77b4e6e208829d35b1691a69e55f3c49fc39949202a97e7d119d05968`<br>
+Uninstaller (Uninstall.py): `cbb2cd3997d2387d3edd7fb2c7a208a52c28318cf84153642065b357acf90bfb`<br>
 Bootstrap API (EfazRobloxBootstrapAPI.py): `c92cce2102d1be4c5f4e074ea4b7b06ead4d5df8049c2c59e1440b299abad96e`<br>
 Discord Presence Handler (DiscordPresenceHandler.py): `17190c394f73fc8d39c6dfab8e991fddb8fe5daa2be09e9601c5bfbb287dbcdc`<br>
 

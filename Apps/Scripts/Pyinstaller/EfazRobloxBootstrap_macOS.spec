@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../AppIcon.icns"
-current_version = {"version": "1.4.1"}
+current_version = {"version": "1.4.2"}
 
 main_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrapMain",

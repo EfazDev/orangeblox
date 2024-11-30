@@ -31,7 +31,7 @@ if __name__ == "__main__":
     multi_instance_enabled = False
     skip_modification_mode = False
     installed_update = False
-    current_version = {"version": "1.4.1"}
+    current_version = {"version": "1.4.2"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -3937,7 +3937,7 @@ if __name__ == "__main__":
                 connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
                 connected_roblox_instance.setRobloxEventCallback("onGameTeleport", onTeleport)
                 printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
-                if connected_roblox_instance.created_mutex == True:
+                if connected_roblox_instance.created_mutex == True and main_os == "Windows":
                     printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
             else:
                 printDebugMessage("No RobloxInstance class was registered")
@@ -3992,7 +3992,7 @@ if __name__ == "__main__":
                         connected_roblox_instance.setRobloxEventCallback("onGameLoadingParty", onPartyServer)
                         connected_roblox_instance.setRobloxEventCallback("onGameTeleport", onTeleport)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
-                        if connected_roblox_instance.created_mutex == True:
+                        if connected_roblox_instance.created_mutex == True and main_os == "Windows":
                             printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                     else:
                         printDebugMessage("No RobloxInstance class was registered")

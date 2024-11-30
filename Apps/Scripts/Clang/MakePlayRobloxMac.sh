@@ -7,7 +7,7 @@ printMessage() {
 
 # Build Package
 printMessage "Building Clang Package for EfazRobloxBootstrapPlayRoblox.."
-clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Contents/MacOS/EfazRobloxBootstrapPlayRoblox" ./Apps/Scripts/Clang/EfazRobloxBootstrapPlayRoblox.cpp
+clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Contents/MacOS/EfazRobloxBootstrapPlayRoblox" ./Apps/Scripts/Clang/EfazRobloxBootstrapPlayRoblox.cpp -g0
 
 # Sign Package
 printMessage "Signing Package.."

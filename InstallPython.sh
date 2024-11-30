@@ -18,7 +18,7 @@ if [ "$ma_os" = "Darwin" ]; then
     fi
 elif [[ "$ma_os" == *"MINGW"* || "$ma_os" == *"CYGWIN"* || "$ma_os" == *"MSYS"* ]]; then
     if [ "$arch" = "x86_64" ]; then
-        if [[ "$PROCESSOR_ARCHITECTURE" == "ARM64" || "$PROCESSOR_ARCHITEW6432" == "ARM64" ]]; then
+        if [ "$PROCESSOR_ARCHITEW6432" == "ARM64" ]; then
             url="https://www.python.org/ftp/python/3.13.0/python-3.13.0-arm64.exe"
         else
             url="https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.exe"

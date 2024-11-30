@@ -54,7 +54,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json"]
-    current_version = {"version": "1.4.1"}
+    current_version = {"version": "1.4.2"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     silent_mode = False
@@ -375,7 +375,7 @@ if __name__ == "__main__":
                     if os.path.exists(stored_main_app[found_platform][0]):
                         # Export ./ to /Contents/Resources/
                         printMainMessage("Copying Main Resources..")
-                        shutil.copytree(f"{current_path_location}/", f"{stored_main_app[found_platform][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func, symlinks=True)
+                        shutil.copytree(f"{current_path_location}/", f"{stored_main_app[found_platform][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
                         
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “EfazRobloxBootstrap.app” is free of malware that may harm your Mac or compromise your privacy.
@@ -431,9 +431,9 @@ if __name__ == "__main__":
                 if rebuild_from_source == True or (fastFlagConfig.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
                     printMainMessage("Running Pyinstaller Rebuild..")
                     if is_x86_windows():
-                        rebuild_status = subprocess.run("Apps\\Scripts\\Pyinstaller\\RecreateWindows32.bat installer", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run("Apps\\Scripts\\Pyinstaller\\RecreateWindows32.bat installer", shell=True, cwd=current_path_location)
                     else:
-                        rebuild_status = subprocess.run("Apps\\Scripts\\Pyinstaller\\RecreateWindows.bat installer", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run("Apps\\Scripts\\Pyinstaller\\RecreateWindows.bat installer", shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage("Rebuild success!")
                     else:

@@ -28,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.6.0"
+fast_flag_installer_version = "1.6.1"
 
 class pip:
     executable = None
@@ -881,19 +881,29 @@ class Main():
                                     if len(timestamp_str) > 0:
                                         timestamp_str = timestamp_str[0]
                                         if re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", timestamp_str):
-                                            timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-                                            current_time = datetime.datetime.utcnow()
-                                            if timestamp:
-                                                age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
-                                                if age_in_seconds < 60:
-                                                    res = handleLine(line)
-                                                    if res:
-                                                        if res.code == 0:
-                                                            threading.Thread(target=cleanLogs).start()
-                                                            break
-                                                        elif res.code == 1:
-                                                            self.ended_process = True
-                                                            return
+                                            try:
+                                                timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+                                                current_time = datetime.datetime.utcnow()
+                                                if timestamp:
+                                                    age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
+                                                    if age_in_seconds < 60:
+                                                        res = handleLine(line)
+                                                        if res:
+                                                            if res.code == 0:
+                                                                threading.Thread(target=cleanLogs).start()
+                                                                break
+                                                            elif res.code == 1:
+                                                                self.ended_process = True
+                                                                return
+                                            except Exception as e:
+                                                res = handleLine(line)
+                                                if res:
+                                                    if res.code == 0:
+                                                        threading.Thread(target=cleanLogs).start()
+                                                        break
+                                                    elif res.code == 1:
+                                                        self.ended_process = True
+                                                        return
                                         else:
                                             res = handleLine(line)
                                             if res:
@@ -1423,11 +1433,24 @@ class Main():
                             else:
                                 while True:
                                     time.sleep(1)
-                        except KeyboardInterrupt:
-                            if debug == True: printDebugMessage("Mutex holding was disrupted by an unexpected request.")
-                        finally:
+                            kernel32.ReleaseMutex(mutex)
+                        except Exception as e:
+                            kernel32.ReleaseMutex(mutex)
+                def hold_mutex2():
+                    mutex = kernel32.CreateMutexA(None, wintypes.BOOL(True), "ROBLOX_singletonMutex")
+                    if mutex:
+                        try:
+                            if awaitRobloxClosure == True:
+                                while self.getIfRobloxIsOpen():
+                                    time.sleep(1)
+                            else:
+                                while True:
+                                    time.sleep(1)
+                            kernel32.ReleaseMutex(mutex)
+                        except Exception as e:
                             kernel32.ReleaseMutex(mutex)
                 threading.Thread(target=hold_mutex).start()
+                threading.Thread(target=hold_mutex2).start()
                 return True
         else:
             self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
@@ -1508,6 +1531,13 @@ class Main():
             if not self.getIfRobloxIsOpen():
                 if makeDupe == True:
                    created_mutex = self.prepareMultiInstance(debug=debug)
+                   if created_mutex == True:
+                       if debug == True: printDebugMessage("Successfully attached the mutex! Once this window closes, all the other Roblox windows will close.")
+                   else:
+                       if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
+            else:
+                if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
+
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
             if most_recent_roblox_version_dir:
                 if debug == True: printDebugMessage("Running RobloxPlayerBeta.exe..")
@@ -1519,13 +1549,12 @@ class Main():
                     if attachInstance == True:
                         if makeDupe == True:
                             if self.getIfRobloxIsOpen() == True:
-                                self.prepareMultiInstance(debug=debug, required=True)
                                 pid = self.getLatestOpenedRobloxPid()
                                 if pid:
                                     if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, created_mutex=created_mutex, await_20_second_log_creation=True)
                                     else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, created_mutex=created_mutex, await_20_second_log_creation=True)
                         else:
                             time.sleep(2)
                             if self.getIfRobloxIsOpen() == True:
