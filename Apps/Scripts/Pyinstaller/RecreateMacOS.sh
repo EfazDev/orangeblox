@@ -19,18 +19,52 @@ pyinstaller ./Apps/Scripts/Pyinstaller/EfazRobloxBootstrap_macOS.spec --distpath
 
 # Sign Package
 printMessage "Signing Package.."
-
-rm -rf ./Apps/EfazRobloxBootstrapMain.app/Contents/_CodeSignature/
-sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapMain.app"
-sudo xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapMain.app"
-sudo xattr -cr "./Apps/EfazRobloxBootstrapMain.app"
-sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapMain.app"
-
-rm -rf ./Apps/EfazRobloxBootstrapLoad.app/Contents/_CodeSignature/
-sudo xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapLoad.app"
-sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapLoad.app"
-sudo xattr -cr "./Apps/EfazRobloxBootstrapLoad.app"
-sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapLoad.app"
+codesig1() {
+    while true; do
+    rm -rf ./Apps/EfazRobloxBootstrapMain.app/Contents/_CodeSignature/
+    if [ "$1" != "nosudo" ]; then
+        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapMain.app"
+        sudo xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapMain.app"
+        sudo xattr -cr "./Apps/EfazRobloxBootstrapMain.app"
+        sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapMain.app"
+    else
+        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapMain.app"
+        xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapMain.app"
+        xattr -cr "./Apps/EfazRobloxBootstrapMain.app"
+        codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapMain.app"
+    fi
+    STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            break
+        else
+            printMessage "Main Codesign Attempt Failed. Retrying.."
+        fi
+    done
+}
+codesig1 "$2"
+codesig2() {
+    while true; do
+        rm -rf ./Apps/EfazRobloxBootstrapLoad.app/Contents/_CodeSignature/
+        if [ "$1" != "nosudo" ]; then
+            sudo xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapLoad.app"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapLoad.app"
+            sudo xattr -cr "./Apps/EfazRobloxBootstrapLoad.app"
+            sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapLoad.app"
+        else
+            xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapLoad.app"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapLoad.app"
+            xattr -cr "./Apps/EfazRobloxBootstrapLoad.app"
+            codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapLoad.app"
+        fi
+        STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            break
+        else
+            printMessage "Loader Codesign Attempt Failed. Retrying.."
+        fi
+    done
+}
+codesig2 "$2"
 
 # Create EfazRobloxBootstrapMac.zip
 printMessage "Creating EfazRobloxBootstrapMac.zip.."

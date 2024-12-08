@@ -12,10 +12,28 @@ clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Conten
 # Sign Package
 printMessage "Signing Package.."
 rm -rf "./Apps/Play Roblox.app/Contents/_CodeSignature/"
-sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Play Roblox.app"
-sudo xattr -dr com.apple.FinderInfo "./Apps/Play Roblox.app"
-sudo xattr -cr "./Apps/Play Roblox.app"
-sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/Play Roblox.app"
+codesig() {
+    while true; do
+        if [ "$1" != "nosudo" ]; then
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Play Roblox.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/Play Roblox.app"
+            sudo xattr -cr "./Apps/Play Roblox.app"
+            sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/Play Roblox.app"
+        else
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Play Roblox.app"
+            xattr -dr com.apple.FinderInfo "./Apps/Play Roblox.app"
+            xattr -cr "./Apps/Play Roblox.app"
+            codesign -s - --force --all-architectures --timestamp --deep "./Apps/Play Roblox.app"
+        fi
+        STATUS=$?
+        if [ $STATUS -eq 0 ]; then
+            break
+        else
+            printMessage "Play Roblox Codesign Attempt Failed. Retrying.."
+        fi
+    done
+}
+codesig "$2"
 
 # Done!
 printMessage "Successfully rebuilt EfazRobloxBootstrapPlayRoblox!"

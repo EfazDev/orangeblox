@@ -1,6 +1,6 @@
 {
-    "version": "1.4.3",
-    "latest_version": "1.4.3",
+    "version": "1.4.5",
+    "latest_version": "1.4.5",
     "versions_required_install": { 
         "1.0.0": true, 
         "1.0.1": true, 
@@ -21,7 +21,8 @@
         "1.4.0": true,
         "1.4.1": true,
         "1.4.2": true,
-        "1.4.3": true
+        "1.4.3": true,
+        "1.4.5": true
     },
     "download_location": "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip"
 }

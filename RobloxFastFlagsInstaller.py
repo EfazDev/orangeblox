@@ -22,13 +22,13 @@ def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m")
 def printSuccessMessage(mes): print(f"\033[38;5;82m{mes}\033[0m")
 def printWarnMessage(mes): print(f"\033[38;5;202m{mes}\033[0m")
 def printYellowMessage(mes): print(f"\033[38;5;226m{mes}\033[0m")
-def printDebugMessage(mes): print(f"\033[38;5;226m{mes}\033[0m")
+def printDebugMessage(mes): print(f"\033[38;5;226m[Roblox FFlag Installer] [DEBUG]: {mes}\033[0m")
 def isYes(text): return text.lower() == "y" or text.lower() == "yes"
 def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.6.1"
+fast_flag_installer_version = "1.6.5"
 
 class pip:
     executable = None
@@ -165,6 +165,42 @@ class pip:
                 return False
             else:
                 return True
+    def getProcessWindows(self, pid: int):
+        import platform
+        if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
+            if platform.system() == "Windows":
+                try:
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                except Exception as e:
+                    self.install(["pywin32"])
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                system_windows = []
+                def callback(hwnd, _):
+                    if win32gui.IsWindowVisible(hwnd):
+                        _, window_pid = win32process.GetWindowThreadProcessId(hwnd)
+                        if window_pid == int(pid):
+                            system_windows.append(hwnd)
+                win32gui.EnumWindows(callback, None)
+                return system_windows
+            elif platform.system() == "Darwin":
+                try:
+                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                except Exception as e:
+                    self.install(["pyobjc"])
+                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                system_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, 0)
+                app_windows = [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(pid)]
+                new_set_of_system_windows = []
+                for win in app_windows:
+                    if win and win.get("kCGWindowOwnerPID"):
+                        new_set_of_system_windows.append(win)
+                return new_set_of_system_windows
+            else:
+                return []
+        else:
+            return []
     def findPython(self):
         import os
         import glob
@@ -229,45 +265,57 @@ class Main():
         "onGameJoinInfo", 
         "onGameJoined", 
         "onGameLeaving", 
-        "onGameDisconnected"
+        "onGameDisconnected",
+        "onRobloxVoiceChatMute",
+        "onRobloxVoiceChatUnmute",
+        "onRobloxVoiceChatStart",
+        "onRobloxVoiceChatLeft",
+        "onRobloxAudioDeviceStopRecording",
+        "onRobloxAudioDeviceStartRecording",
     ]
     robloxInstanceEventInfo = {
         # 0 = Safe, 1 = Caution, 2 = Warning, 3 = Dangerous
-        "onRobloxExit": {"message": "Allow detecting when Roblox closes", "level": 0}, 
-        "onRobloxLog": {"message": "Allow detecting every Roblox event", "level": 3},
-        "onRobloxSharedLogLaunch": {"message": "Allow detecting when Roblox was closed by the module due to a shared launch", "level": 2},
-        "onRobloxLauncherDestroyed": {"message": "Allow detecting when the Roblox Launcher is destroyed", "level": 0},
-        "onRobloxAppStart": {"message": "Allow detecting when Roblox starts", "level": 0}, 
-        "onRobloxAppLoginFailed": {"message": "Allow detecting when Roblox logging in fails", "level": 0},
-        "onRobloxPassedUpdate": {"message": "Allow detecting when Roblox passes update checks", "level": 0}, 
-        "onBloxstrapSDK": {"message": "Allow detecting when BloxstrapRPC is triggered", "level": 1}, 
-        "onLoadedFFlags": {"message": "Allow detecting when FFlags are loaded", "level": 0}, 
-        "onHttpResponse": {"message": "Allow detecting when Roblox HttpResponses are ran", "level": 2}, 
-        "onOtherRobloxLog": {"message": "Allow detecting when Unknown Roblox Handlers are detected", "level": 3},
-        "onRobloxCrash": {"message": "Allow detecting when Roblox crashes", "level": 1},
-        "onRobloxChannel": {"message": "Allow detecting the current Roblox channel", "level": 0},
-        "onRobloxTerminateInstance": {"message": "Allow detecting when Roblox closes an extra window.", "level": 1},
-        "onGameStart": {"message": "Allow getting Job ID, Place ID and Roblox IP", "level": 2}, 
-        "onGameLoading": {"message": "Allow detecting when loading any server", "level": 1}, 
-        "onGameLoadingNormal": {"message": "Allow detecting when loading public server", "level": 1}, 
-        "onGameLoadingPrivate": {"message": "Allow detecting when loading private server", "level": 2}, 
-        "onGameLoadingReserved": {"message": "Allow detecting when loading reserved server", "level": 2},
-        "onGameLoadingParty": {"message": "Allow detecting when loading party", "level": 1}, 
-        "onGameAudioDeviceAvailable": {"message": "Allow detecting when a new game audio device is available.", "level": 1},
-        "onGameUDMUXLoaded": {"message": "Allow detecting when Roblox Server IPs are loaded", "level": 2}, 
-        "onGameTeleport": {"message": "Allow detecting when you teleport places", "level": 1}, 
-        "onGameTeleportFailed": {"message": "Allow detecting when teleporting fails", "level": 1}, 
-        "onGameJoinInfo": {"message": "Allow getting join info for a game", "level": 2}, 
-        "onGameJoined": {"message": "Allow detecting when Roblox loads a game fully", "level": 0}, 
-        "onGameLeaving": {"message": "Allow detecting when you leave a game", "level": 0}, 
-        "onGameDisconnected": {"message": "Allow detecting when you disconnect from a game", "level": 0},
+        "onRobloxExit": {"message": "Allow detecting when Roblox closes", "level": 0, "robloxEvent": True}, 
+        "onRobloxLog": {"message": "Allow detecting every Roblox event", "level": 3, "robloxEvent": True},
+        "onRobloxSharedLogLaunch": {"message": "Allow detecting when Roblox was closed by the module due to a shared launch", "level": 2, "robloxEvent": True},
+        "onRobloxLauncherDestroyed": {"message": "Allow detecting when the Roblox Launcher is destroyed", "level": 0, "robloxEvent": True},
+        "onRobloxAppStart": {"message": "Allow detecting when Roblox starts", "level": 0, "robloxEvent": True}, 
+        "onRobloxAppLoginFailed": {"message": "Allow detecting when Roblox logging in fails", "level": 0, "robloxEvent": True},
+        "onRobloxPassedUpdate": {"message": "Allow detecting when Roblox passes update checks", "level": 0, "robloxEvent": True}, 
+        "onBloxstrapSDK": {"message": "Allow detecting when BloxstrapRPC is triggered", "level": 1, "robloxEvent": True}, 
+        "onLoadedFFlags": {"message": "Allow detecting when FFlags are loaded", "level": 0, "robloxEvent": True}, 
+        "onHttpResponse": {"message": "Allow detecting when Roblox HttpResponses are ran", "level": 2, "robloxEvent": True}, 
+        "onOtherRobloxLog": {"message": "Allow detecting when Unknown Roblox Handlers are detected", "level": 3, "robloxEvent": True},
+        "onRobloxCrash": {"message": "Allow detecting when Roblox crashes", "level": 1, "robloxEvent": True},
+        "onRobloxChannel": {"message": "Allow detecting the current Roblox channel", "level": 0, "robloxEvent": True},
+        "onRobloxTerminateInstance": {"message": "Allow detecting when Roblox closes an extra window.", "level": 1, "robloxEvent": True},
+        "onGameStart": {"message": "Allow getting Job ID, Place ID and Roblox IP", "level": 2, "robloxEvent": True}, 
+        "onGameLoading": {"message": "Allow detecting when loading any server", "level": 1, "robloxEvent": True}, 
+        "onGameLoadingNormal": {"message": "Allow detecting when loading public server", "level": 1, "robloxEvent": True}, 
+        "onGameLoadingPrivate": {"message": "Allow detecting when loading private server", "level": 2, "robloxEvent": True}, 
+        "onGameLoadingReserved": {"message": "Allow detecting when loading reserved server", "level": 2, "robloxEvent": True},
+        "onGameLoadingParty": {"message": "Allow detecting when loading party", "level": 1, "robloxEvent": True}, 
+        "onRobloxVoiceChatMute": {"message": "Detect when you mute your microphone during your Roblox Voice Chat", "level": 1, "robloxEvent": True}, 
+        "onRobloxVoiceChatUnmute": {"message": "Detect when you unmute your microphone during your Roblox Voice Chat", "level": 1, "robloxEvent": True}, 
+        "onRobloxVoiceChatStart": {"message": "Detect when Voice Chats on the client start", "level": 1, "robloxEvent": True}, 
+        "onRobloxVoiceChatLeft": {"message": "Detect when Voice Chats on the client end", "level": 1, "robloxEvent": True},
+        "onRobloxAudioDeviceStartRecording": {"message": "Allow detecting when a game audio device starts recording.", "level": 1, "robloxEvent": True},
+        "onRobloxAudioDeviceStopRecording": {"message": "Allow detecting when a game audio device stops recording.", "level": 1, "robloxEvent": True},
+        "onGameAudioDeviceAvailable": {"message": "Allow detecting when a new game audio device is available.", "level": 1, "robloxEvent": True},
+        "onGameUDMUXLoaded": {"message": "Allow detecting when Roblox Server IPs are loaded", "level": 2, "robloxEvent": True}, 
+        "onGameTeleport": {"message": "Allow detecting when you teleport places", "level": 1, "robloxEvent": True}, 
+        "onGameTeleportFailed": {"message": "Allow detecting when teleporting fails", "level": 1, "robloxEvent": True}, 
+        "onGameJoinInfo": {"message": "Allow getting join info for a game", "level": 2, "robloxEvent": True}, 
+        "onGameJoined": {"message": "Allow detecting when Roblox loads a game fully", "level": 0, "robloxEvent": True}, 
+        "onGameLeaving": {"message": "Allow detecting when you leave a game", "level": 0, "robloxEvent": True}, 
+        "onGameDisconnected": {"message": "Allow detecting when you disconnect from a game", "level": 0, "robloxEvent": True},
 
         # Efaz's Roblox Bootstrap Permissions
         "fastFlagConfiguration": {"message": "Edit or view your bootstrap configuration file", "level": 3, "detection": "FastFlagConfiguration.json"},
-        "editMainExecutable": {"message": "Edit the main bootstrap executable", "level": 3, "detection": "Main.py"},
-        "editRobloxFastFlagInstallerExecutable": {"message": "Edit the RobloxFastFlagInstaller executable", "level": 3, "detection": "RobloxFastFlagInstaller.py"},
-        "editEfazRobloxBootstrapAPIExecutable": {"message": "Edit the EfazRobloxBootstrapAPI executable", "level": 3, "detection": "EfazRobloxBootstrapAPI.py"},
-        "editModScript": {"message": "Edit ModScript.py executable", "level": 3, "detection": "ModScript.py"},
+        "editMainExecutable": {"message": "Edit the main bootstrap executable", "level": 4, "detection": "Main.py"},
+        "editRobloxFastFlagInstallerExecutable": {"message": "Edit the RobloxFastFlagInstaller executable", "level": 4, "detection": "RobloxFastFlagInstaller.py"},
+        "editEfazRobloxBootstrapAPIExecutable": {"message": "Edit the EfazRobloxBootstrapAPI executable", "level": 4, "detection": "EfazRobloxBootstrapAPI.py"},
+        "editModScript": {"message": "Edit ModScript.py executable", "level": 4, "detection": "ModScript.py"},
         "notifications": {"message": "Configure or send notifications through Bootstrap", "level": 1, "detection": "AppNotification"},
         "configureModModes": {"message": "Configure your mod modes", "level": 2, "detection": "Mods"},
         "configureRobloxBranding": {"message": "Configure your Roblox client's branding", "level": 1, "detection": "RobloxBrand"},
@@ -280,6 +328,7 @@ class Main():
         "displayNotification": {"message": "Send notifications through the bootstrap", "level": 1},
         "getRobloxLogFolderSize": {"message": "Get current size of the Roblox Logs folder", "level": 0},
         "grantFileEditing": {"message": "Grant permissions to read/edit other files", "level": 3},
+        "allowAccessingPythonFiles": {"message": "Allow access to other Python files", "level": 2},
         "sendBloxstrapRPC": {"message": "Send requests through Bloxstrap RPC", "level": 2},
         "getLatestRobloxVersion": {"message": "Get the latest Roblox version", "level": 0},
         "getInstalledRobloxVersion": {"message": "Get the currently installed Roblox version", "level": 1},
@@ -289,6 +338,7 @@ class Main():
         "setFastFlagConfiguration": {"message": "Set your bootstrap configuration within executable", "level": 2},
         "saveFastFlagConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
         "getLatestRobloxPid": {"message": "Get the current latest Roblox window's PID", "level": 1},
+        "getOpenedRobloxPids": {"message": "Get all the currently opened Roblox PIDs", "level": 1},
         "getConfiguration": {"message": "Get data in a separate configuration", "level": 0, "free": True},
         "setConfiguration": {"message": "Store data in a separate configuration", "level": 0, "free": True},
         "getDebugMode": {"message": "Get if the bootstrap is in Debug Mode", "level": 0, "free": True},
@@ -351,15 +401,12 @@ class Main():
         await_20_second_log_creation = False
         await_log_creation_attempts = 0
         windows_roblox_starter_launched_roblox = False
-
         class __ReadingLineResponse__():
             class EndRoblox(): code=0
             class EndWatchdog(): code=1
-
         class InvalidRobloxHandlerException(Exception):
             def __init__(self):            
                 super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Main class!")
-
         def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_20_second_log_creation=False, created_mutex=None):
             if type(main_handler) is Main:
                 self.main_handler = main_handler
@@ -397,6 +444,50 @@ class Main():
                     self.events.append({"name": eventName, "callback": eventCallback})
                     if self.watchdog_started == False:
                         self.startActivityTracking()
+        def getWindowsOpened(self):
+            if self.pid and not (self.pid == "") and self.pid.isnumeric():
+                try:
+                    if main_os == "Windows":
+                        try:
+                            import win32gui # type: ignore
+                            import win32process # type: ignore
+                        except Exception as e:
+                            pip().install(["pywin32"])
+                            import win32gui # type: ignore
+                            import win32process # type: ignore
+                        system_windows = []
+                        def callback(hwnd, _):
+                            if win32gui.IsWindowVisible(hwnd):
+                                _, window_pid = win32process.GetWindowThreadProcessId(hwnd)
+                                if window_pid == int(self.pid):
+                                    system_windows.append(hwnd)
+                        win32gui.EnumWindows(callback, None)
+                        roblox_windows_classes = []
+                        for i in system_windows:
+                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i))
+                        return roblox_windows_classes
+                    elif main_os == "Darwin":
+                        try:
+                            from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                        except Exception as e:
+                            pip().install(["pyobjc"])
+                            from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                        system_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, 0)
+                        app_windows = [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(self.pid)]
+                        new_set_of_system_windows = []
+                        for win in app_windows:
+                            if win and win.get("kCGWindowOwnerPID"):
+                                new_set_of_system_windows.append(win)
+                        roblox_windows_classes = []
+                        for i in new_set_of_system_windows:
+                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i))
+                        return roblox_windows_classes
+                    else:
+                        return []
+                except Exception as e:
+                    return []
+            else:
+                return []
         def clearRobloxEventCallbacks(self, eventName: str=""):
             if eventName == "":
                 self.events = []
@@ -512,7 +603,7 @@ class Main():
                                 generated_data = {"url": url, "data": body}
                                 if generated_data:
                                     submitToThread(eventName="onGameLoadingReserved", data=generated_data, isLine=False)
-                            elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToParty" in line:
+                            elif '"partyId":' in line:
                                 url_start = line.find("URL: ") + len("URL: ")
                                 body_start = line.find("Body: ")
                                 url = line[url_start:body_start].strip()
@@ -602,6 +693,18 @@ class Main():
                                 submitToThread(eventName="onGameTeleport", data=line, isLine=True)
                             elif "raiseTeleportInitFailedEvent" in line:
                                 submitToThread(eventName="onGameTeleportFailed", data=line, isLine=True)
+                            elif "RobloxAudioDevice::SetMicrophoneMute true" in line:
+                                submitToThread(eventName="onRobloxVoiceChatMute", data=line, isLine=True)
+                            elif "RobloxAudioDevice::SetMicrophoneMute false" in line:
+                                submitToThread(eventName="onRobloxVoiceChatUnmute", data=line, isLine=True)
+                            elif "VoiceChatSession::leave" in line and "leaveRequested:1" in line:
+                                submitToThread(eventName="onRobloxVoiceChatLeft", data=line, isLine=True)
+                            elif "VoiceChatSession::publishStart - JoinProfiling" in line:
+                                submitToThread(eventName="onRobloxVoiceChatStart", data=line, isLine=True)
+                            elif "RobloxAudioDevice::StopRecording" in line:
+                                submitToThread(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
+                            elif "RobloxAudioDevice::StartRecording" in line:
+                                submitToThread(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
                             elif "HttpResponse(" in line:
                                 def generate_arg():
                                     try:
@@ -976,6 +1079,57 @@ class Main():
                                                 return                           
                 threading.Thread(target=watchDog).start()
                 threading.Thread(target=self.awaitRobloxClosing).start()
+    class RobloxWindow():
+        pid = None
+        system_handler = None
+        def __init__(self, pid, system_handler):
+            self.pid = pid
+            self.system_handler = system_handler
+        def focusWindow(self):
+            if main_os == "Windows":
+                try:
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                except Exception as e:
+                    pip().install(["pywin32"])
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                win32gui.SetFocus(self.system_handler)
+            elif main_os == "Darwin":
+                import subprocess
+                subprocess.run(["osascript", "-e", f'tell application "System Events" to set frontmost of (every process whose unix id is {self.pid}) to true'])
+        def setWindowTitle(self, new_title):
+            if main_os == "Windows":
+                try:
+                    import win32gui # type: ignore
+                except Exception as e:
+                    pip().install(["pywin32"])
+                    import win32gui # type: ignore
+                win32gui.SetWindowText(self.system_handler, new_title)
+        def setWindowPositionAndSize(self, size_x, size_y, position_x, position_y):
+            if main_os == "Windows":
+                try:
+                    import win32gui # type: ignore
+                except Exception as e:
+                    pip().install(["pywin32"])
+                    import win32gui # type: ignore
+                win32gui.SetWindowPos(self.system_handler, win32gui.HWND_TOP, size_x, size_y, position_x, position_y, win32gui.SWP_SHOWWINDOW)
+            elif main_os == "Darwin":
+                try:
+                    process = subprocess.run(["osascript", "-e", f'''
+                    tell application "System Events"
+                        set theProcess to (first process whose unix id is {self.pid})
+                        if (count of windows of theProcess) > 0 then
+                            set theWindow to window 1 of theProcess
+                            set position of theWindow to {{{position_x}, {position_y}}}
+                            set size of theWindow to {{{size_x}, {size_y}}}
+                        end if
+                    end tell'''], capture_output=True, text=True)
+                    if process.stderr:
+                        print("Error:", process.stderr)
+                    print(process.stdout)
+                except Exception as e:
+                    print(f"Failed to execute AppleScript: {e}")
     def printLog(self, m):
         if __name__ == "__main__":
             printMainMessage(m)
@@ -1391,6 +1545,49 @@ class Main():
             except Exception as e:
                 printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
                 return None
+    def getOpenedRobloxPids(self):
+        if self.__main_os__ == "Darwin":
+            try:
+                result = subprocess.run(["ps", "axo", "pid,etime,command"], stdout=subprocess.PIPE, text=True)
+                processes = result.stdout
+                roblox_lines = [line for line in processes.splitlines() if "RobloxPlayer" in line]
+                if not roblox_lines:
+                    return None
+                pid_list = []
+                for i in roblox_lines:
+                    pid_list.append(i.split()[0])
+                return pid_list
+            except Exception as e:
+                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
+                return None
+        elif self.__main_os__ == "Windows":
+            try:
+                result = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, text=True)
+                processes = result.stdout.read()
+                program_lines = [line for line in processes.splitlines() if "RobloxPlayerBeta.exe" in line]
+                if not program_lines:
+                    return None
+                pid_list = []
+                for i in program_lines:
+                    pid_list.append(i.split()[1])
+                return pid_list
+            except Exception as e:
+                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
+                return None
+    def getAllOpenedRobloxWindows(self):
+        pids = self.getOpenedRobloxPids()
+        generated_window_instances = []
+        for i in pids:
+            process_windows = pip().getProcessWindows(i)
+            for e in process_windows:
+                generated_window_instances.append(self.RobloxWindow(int(i), e))
+        return generated_window_instances
+    def getOpenedRobloxWindows(self, pid):
+        generated_window_instance = None
+        process_windows = pip().getProcessWindows(pid)
+        for e in process_windows:
+            generated_window_instance =  self.RobloxWindow(int(pid), e)
+        return generated_window_instance
     def prepareMultiInstance(self, required=False, debug=False, awaitRobloxClosure=True):
         if self.__main_os__ == "Darwin":
             try:
@@ -1537,7 +1734,10 @@ class Main():
                    else:
                        if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
             else:
-                if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
+                if len(self.getAllOpenedRobloxWindows()) > 1:
+                    if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
+                elif makeDupe == True:
+                    self.endRoblox()
 
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
             if most_recent_roblox_version_dir:

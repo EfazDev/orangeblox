@@ -17,7 +17,7 @@ from typing import Union
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "1.4.1"}
+current_version = {"version": "1.4.5"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -461,6 +461,19 @@ class EfazRobloxBootstrapAPI:
         ```
         """
         return Request(self, "getLatestRobloxPid").generateResponse().response
+    def getOpenedRobloxPids(self): # Permission: getOpenedRobloxPids
+        """
+        Get all the currently opened Roblox PIDs
+
+        Permission: getOpenedRobloxPids | Level: 1 [Warning]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.4.1+**
+
+        ```python
+        roblox_pids = EfazRobloxBootstrapAPI.getOpenedRobloxPids() # -> ["6969", "1234"]
+        ```
+        """
+        return Request(self, "getOpenedRobloxPids").generateResponse().response
     def getDebugMode(self): # No Permission Needed
         """
         Get if the bootstrap is in Debug Mode

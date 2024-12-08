@@ -1,8 +1,7 @@
 {
-    "main": "7d5de668a4eb980a97209feec6e0a1dee180ff43f148308119d95bf8fc7e562f",
-    "fflag_install": "24fac30d4333fd102de275e584f37955d1bc05717173cc728db3fb34b522312a",
-    "install": "85594fce12b246bb95447a42411a0031f9afb9797cc8d2d0f02e1fde7d905481",
-    "uninstall": "98d4ebdff805c7f49783cd5e564d5a4b65bfac982145686efad4cd0c2ef8452b",
-    "bootstrap_api": "c92cce2102d1be4c5f4e074ea4b7b06ead4d5df8049c2c59e1440b299abad96e",
-    "discord_presence": "17190c394f73fc8d39c6dfab8e991fddb8fe5daa2be09e9601c5bfbb287dbcdc"
+    "main": "8f18cd3c68640a30b831c0f748c2d4aa0cbf17616ad916cca34657f6551e5875",
+    "fflag_install": "e3fb57b6c31d38f485361434b0bd02655c75bfd60dfd564dfa9f8cc1c3c9ed2d",
+    "install": "7a78761a6f46adbc2e70ae7b2e9c0cff553d385b867326cc5967af83797bbcd8",
+    "bootstrap_api": "ee03474923acc54c812930133d47cd9d35089a66f1dc0a9f565d1290cf4d7d41",
+    "discord_presence": "013c2a690f87e40b11370acbec4cb6c41e446522505ff827948362bd1188dec8"
 }

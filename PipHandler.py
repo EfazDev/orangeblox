@@ -134,6 +134,42 @@ class pip:
                 return False
             else:
                 return True
+    def getProcessWindows(self, pid: int):
+        import platform
+        if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
+            if platform.system() == "Windows":
+                try:
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                except Exception as e:
+                    self.install(["pywin32"])
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                system_windows = []
+                def callback(hwnd, _):
+                    if win32gui.IsWindowVisible(hwnd):
+                        _, window_pid = win32process.GetWindowThreadProcessId(hwnd)
+                        if window_pid == int(pid):
+                            system_windows.append(hwnd)
+                win32gui.EnumWindows(callback, None)
+                return system_windows
+            elif platform.system() == "Darwin":
+                try:
+                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                except Exception as e:
+                    self.install(["pyobjc"])
+                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
+                system_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, 0)
+                app_windows = [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(pid)]
+                new_set_of_system_windows = []
+                for win in app_windows:
+                    if win and win.get("kCGWindowOwnerPID"):
+                        new_set_of_system_windows.append(win)
+                return new_set_of_system_windows
+            else:
+                return []
+        else:
+            return []
     def findPython(self):
         import os
         import glob

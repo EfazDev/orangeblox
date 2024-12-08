@@ -54,9 +54,10 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json"]
-    current_version = {"version": "1.4.3"}
+    current_version = {"version": "1.4.5"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
+    repair_mode = False
     silent_mode = False
     rebuild_mode = False
     rebuild_from_source = False
@@ -221,16 +222,25 @@ if __name__ == "__main__":
                     fast_config_path = os.path.join(stored_main_app[found_platform][0], "Contents", "Resources", "FastFlagConfiguration.json")
                     if os.path.exists(fast_config_path):
                         with open(fast_config_path, "r") as f:
-                            fastFlagConfig = json.load(f)
+                            fflag_configuration = json.load(f)
                     else:
-                        fastFlagConfig = {}
+                        fflag_configuration = {}
+                        if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
+                            with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r") as f:
+                                fflag_configuration = json.load(f)
                 else:
-                    fastFlagConfig = {}
+                    fflag_configuration = {}
+                    if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
+                        with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r") as f:
+                            fflag_configuration = json.load(f)
 
                 # Rebuild Play Roblox App from Source
-                if rebuild_from_source_clang == True or (fastFlagConfig.get("EFlagRebuildClangAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
+                if rebuild_from_source_clang == True or (fflag_configuration.get("EFlagRebuildClangAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
                     printMainMessage("Running Clang Rebuild..")
-                    rebuild_status = subprocess.run("sh ./Apps/Scripts/Clang/MakePlayRobloxMac.sh installer", shell=True, cwd=current_path_location)
+                    extra_detail = " nosudo"
+                    if "--use-sudo-for-codesign" in sys.argv:
+                        extra_detail = ""
+                    rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMac.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Clang App succeeded! Continuing to installation..")
                     else:
@@ -238,29 +248,25 @@ if __name__ == "__main__":
                         return
 
                 # Rebuild Main App from Source
-                if rebuild_from_source == True or (fastFlagConfig.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
+                if rebuild_from_source == True or (fflag_configuration.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
+                    extra_detail = " nosudo"
+                    if "--use-sudo-for-codesign" in sys.argv:
+                        extra_detail = ""
                     printMainMessage("Running Pyinstaller Rebuild..")
                     if platform.machine() == "arm64":
-                        rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer", shell=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     else:
-                        rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer", shell=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Pyinstaller App succeeded! Continuing to installation..")
                     else:
                         printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
                         return
-                    if "--full-rebuild-macOS-intel-arm64" in sys.argv:
-                        if platform.machine() == "arm64":
-                            printMainMessage("Running Intel Pyinstaller Rebuild..")
-                            rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer", shell=True, cwd=current_path_location)
-                        else:
-                            printMainMessage("Running Arm64 Pyinstaller Rebuild..")
-                            rebuild_status = subprocess.run("sh ./Apps/Scripts/Pyinstaller/RecreateMacOS.sh installer", shell=True, cwd=current_path_location)
+                    if "--full-rebuild-macOS-intel-arm64" in sys.argv and platform.machine() == "arm64":
+                        printMainMessage("Running Intel Pyinstaller Rebuild..")
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Pyinstaller/RecreateMacOSIntel.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                         if rebuild_status.returncode == 0:
-                            if platform.machine() == "arm64":
-                                printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
-                            else:
-                                printSuccessMessage(f"Rebuilding Arm64 Pyinstaller App succeeded! Continuing to installation..")
+                            printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
                         else:
                             printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
 
@@ -288,7 +294,7 @@ if __name__ == "__main__":
                         printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac32.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
                 if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/"):
                     # Delete Other Operating System Files
-                    if not (disable_remove_other_operating_systems == True or fastFlagConfig.get("EFlagDisableDeleteOtherOSApps") == True):
+                    if not (disable_remove_other_operating_systems == True or fflag_configuration.get("EFlagDisableDeleteOtherOSApps") == True):
                         deleted_other_os = False
                         if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapWindows.zip"):
                             os.remove(f"{current_path_location}/Apps/EfazRobloxBootstrapWindows.zip")
@@ -395,15 +401,10 @@ if __name__ == "__main__":
 
                         # Sync FastFlagConfiguration.json files
                         printMainMessage("Copying Configuration Files..")
-                        fast_config_path = os.path.join(stored_main_app[found_platform][0], "Contents", "Resources", "FastFlagConfiguration.json")
-                        if os.path.exists(fast_config_path):
-                            if not ("EfazRobloxBootstrap.app" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
-                            with open(fast_config_path, "w") as f:
-                                json.dump(fastFlagConfig, f, indent=4)
-                        else:
-                            if not ("EfazRobloxBootstrap.app" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
-                            with open(fast_config_path, "w") as f:
-                                json.dump(fastFlagConfig, f, indent=4)
+                        fast_config_path = os.path.join(stored_main_app[found_platform][1], "Contents", "Resources", "FastFlagConfiguration.json")
+                        if not ("EfazRobloxBootstrap.app" in current_path_location): fflag_configuration["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
+                        with open(fast_config_path, "w") as f:
+                            json.dump(fflag_configuration, f, indent=4)
 
                         # Success!
                         if overwrited == True:
@@ -421,14 +422,20 @@ if __name__ == "__main__":
                     printMainMessage("Getting Configuration File Data..")
                     if os.path.exists(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json")):
                         with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "r") as f:
-                            fastFlagConfig = json.load(f)
+                            fflag_configuration = json.load(f)
                     else:
-                        fastFlagConfig = {}
+                        fflag_configuration = {}
+                        if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
+                            with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r") as f:
+                                fflag_configuration = json.load(f)
                 else:
-                    fastFlagConfig = {}
+                    fflag_configuration = {}
+                    if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
+                        with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r") as f:
+                            fflag_configuration = json.load(f)
 
                 # Rebuild Pyinstaller Apps
-                if rebuild_from_source == True or (fastFlagConfig.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
+                if rebuild_from_source == True or (fflag_configuration.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and "--update-mode" in sys.argv):
                     printMainMessage("Running Pyinstaller Rebuild..")
                     if is_x86_windows():
                         rebuild_status = subprocess.run("Apps\\Scripts\\Pyinstaller\\RecreateWindows32.bat installer", shell=True, cwd=current_path_location)
@@ -452,7 +459,7 @@ if __name__ == "__main__":
                 if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapWindows/"):
                     # Delete Other Operating System Files
                     deleted_other_os = False
-                    if not (disable_remove_other_operating_systems == True or fastFlagConfig.get("EFlagDisableDeleteOtherOSApps") == True):
+                    if not (disable_remove_other_operating_systems == True or fflag_configuration.get("EFlagDisableDeleteOtherOSApps") == True):
                         if os.path.exists(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip")):
                             os.remove(os.path.join(current_path_location, "/Apps/EfazRobloxBootstrapMac.zip"))
                             deleted_other_os = True
@@ -537,7 +544,7 @@ if __name__ == "__main__":
                             set_url_scheme("roblox-player", stored_main_app[found_platform][1])
                             set_url_scheme("roblox", stored_main_app[found_platform][1])
                     else:
-                        if not (fastFlagConfig.get("EFlagDisableURLSchemeInstall") == True):
+                        if not (fflag_configuration.get("EFlagDisableURLSchemeInstall") == True):
                             printMainMessage("Setting up URL Schemes..")
                             def set_url_scheme(protocol, exe_path):
                                 try:
@@ -556,7 +563,7 @@ if __name__ == "__main__":
                             set_url_scheme("roblox", stored_main_app[found_platform][1])
 
                     # Setup Shortcuts
-                    if not (disabled_shortcuts_installation == True or fastFlagConfig.get("EFlagDisableShortcutsInstall") == True):
+                    if not (disabled_shortcuts_installation == True or fflag_configuration.get("EFlagDisableShortcutsInstall") == True):
                         printMainMessage("Setting up shortcuts..")
                         try:
                             import win32com.client # type: ignore
@@ -583,34 +590,19 @@ if __name__ == "__main__":
 
                         # Handle Existing Configuration Files
                         printMainMessage("Copying Configuration Files..")
-                        if os.path.exists(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json")):
-                            if disabled_url_scheme_installation == True:
-                                fastFlagConfig["EFlagDisableURLSchemeInstall"] = True
-                            elif disabled_url_scheme_installation == False:
-                                fastFlagConfig["EFlagDisableURLSchemeInstall"] = False
-                            if disabled_shortcuts_installation == True:
-                                fastFlagConfig["EFlagDisableShortcutsInstall"] = True
-                            elif disabled_shortcuts_installation == False:
-                                fastFlagConfig["EFlagDisableShortcutsInstall"] = False
+                        if disabled_url_scheme_installation == True:
+                            fflag_configuration["EFlagDisableURLSchemeInstall"] = True
+                        elif disabled_url_scheme_installation == False:
+                            fflag_configuration["EFlagDisableURLSchemeInstall"] = False
+                        if disabled_shortcuts_installation == True:
+                            fflag_configuration["EFlagDisableShortcutsInstall"] = True
+                        elif disabled_shortcuts_installation == False:
+                            fflag_configuration["EFlagDisableShortcutsInstall"] = False
 
-                            if use_installation_syncing == True:
-                                if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
-                            with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
-                                json.dump(fastFlagConfig, f, indent=4)
-                        else:
-                            if disabled_url_scheme_installation == True:
-                                fastFlagConfig["EFlagDisableURLSchemeInstall"] = True
-                            elif disabled_url_scheme_installation == False:
-                                fastFlagConfig["EFlagDisableURLSchemeInstall"] = False
-                            if disabled_shortcuts_installation == True:
-                                fastFlagConfig["EFlagDisableShortcutsInstall"] = True
-                            elif disabled_shortcuts_installation == False:
-                                fastFlagConfig["EFlagDisableShortcutsInstall"] = False
-
-                            if use_installation_syncing == True:
-                                if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fastFlagConfig["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
-                            with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
-                                json.dump(fastFlagConfig, f, indent=4)
+                        if use_installation_syncing == True:
+                            if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fflag_configuration["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
+                        with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
+                            json.dump(fflag_configuration, f, indent=4)
 
                         # Remove Apps Folder in Installed Folder
                         printMainMessage("Removing Apps Folder in Installed Folder to save space.")
@@ -630,9 +622,9 @@ if __name__ == "__main__":
 
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
                         with winreg.CreateKey(winreg.HKEY_CURRENT_USER, registry_path) as key:
-                            winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"{pip_class.findPython()} {os.path.join(stored_main_app[found_platform][0], "Uninstall.py")}")
+                            winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f"{pip_class.findPython()} {os.path.join(stored_main_app[found_platform][0], "Install.py")} --uninstall-mode")
                             winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Efaz's Roblox Bootstrap")
-                            winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, "1.2.0")
+                            winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, current_version["version"])
                             winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, os.path.join(stored_main_app[found_platform][0], "AppIcon.ico"))
 
                         # Success!
@@ -707,76 +699,75 @@ if __name__ == "__main__":
                     printErrorMessage("Ending installation..")
                     sys.exit(0)
             
-            printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
-            a = input("> ")
-            if isYes(a) == True:
-                try:
-                    import requests
-                except Exception as e:
-                    printMainMessage("Some modules are not installed. Do you want to install all the modules required now? (y/n)")
-                    pip_class.install(["requests"])
-                    import requests
-                    printSuccessMessage("Successfully installed modules!")
-                version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
-                if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
-                latest_vers_res = requests.get(f"{version_server}")
-                if latest_vers_res.ok:
-                    latest_vers = latest_vers_res.json()
-                    if current_version.get("version"):
-                        if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                            download_location = latest_vers.get("download_location", "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip")
-                            printWarnMessage("--- New Bootstrap Update ---")
-                            printMainMessage(f"We have detected a new version of Efaz's Roblox Bootstrap! Would you like to install it? (y/n)")
-                            if download_location == "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip":
-                                printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
-                            elif download_location == "https://cdn.efaz.dev/cdn/py/roblox-bootstrap-beta.zip":
-                                printYellowMessage("⚠️ This version is a beta and may cause issues with your installation.")
-                            else:
-                                printErrorMessage("❌ The download location for this version is different from the official GitHub download link!! You may be downloading an unofficial Efaz's Roblox Bootstrap version!")
-                            printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
-                            if isYes(input("> ")) == True:
-                                printMainMessage("Downloading latest version..")
-                                download_update = subprocess.run(["curl", "-L", download_location, "-o", "./Update.zip"], check=True)
-                                if download_update.returncode == 0:
-                                    printMainMessage("Download Success! Extracting ZIP now!")
-                                    if main_os == "Darwin":
-                                        zip_extract = subprocess.run(["unzip", "-o", "Update.zip", "-d", "./Update/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                                    elif main_os == "Windows":
-                                        zip_extract = subprocess.run(["powershell", "-command", f"Expand-Archive -Path 'Update.zip' -DestinationPath './Update/' -Force"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                                    if zip_extract.returncode == 0:
-                                        printMainMessage("Extracted successfully! Installing Files!")
-                                        for file in os.listdir("./Update/roblox-bootstrap-main/"):
-                                            src_path = os.path.join("./Update/roblox-bootstrap-main/", file)
-                                            dest_path = os.path.join("./", file)
-                                            
-                                            if os.path.isdir(src_path):
-                                                shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
-                                            else:
-                                                if not file.endswith(".json"):
-                                                    shutil.copy2(src_path, dest_path)
-                                        printMainMessage("Cleaning up files..")
-                                        os.remove("Update.zip")
-                                        shutil.rmtree("./Update/")
-                                        printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting installer..")
-                                        subprocess.run(args=[sys.executable] + sys.argv)
-                                        sys.exit(0)
-                                    else:
-                                        printMainMessage("Cleaning up files..")
-                                        os.remove("Update.zip")
-                                        shutil.rmtree("./Update/")
-                                        printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
-                                        if isYes(input("> ")) == False: sys.exit(0)
-                                else:
-                                    printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
-                                    if isYes(input("> ")) == False: sys.exit(0)
-                        elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"):
-                            printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
-                        else:
-                            printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
-                else:
-                    printErrorMessage("There was an issue while checking for updates.")
-            
             if overwrited == False:
+                printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
+                a = input("> ")
+                if isYes(a) == True:
+                    try:
+                        import requests
+                    except Exception as e:
+                        printMainMessage("Some modules are not installed. Do you want to install all the modules required now? (y/n)")
+                        pip_class.install(["requests"])
+                        import requests
+                        printSuccessMessage("Successfully installed modules!")
+                    version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
+                    if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/Version.json"
+                    latest_vers_res = requests.get(f"{version_server}")
+                    if latest_vers_res.ok:
+                        latest_vers = latest_vers_res.json()
+                        if current_version.get("version"):
+                            if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
+                                download_location = latest_vers.get("download_location", "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip")
+                                printWarnMessage("--- New Bootstrap Update ---")
+                                printMainMessage(f"We have detected a new version of Efaz's Roblox Bootstrap! Would you like to install it? (y/n)")
+                                if download_location == "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip":
+                                    printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
+                                elif download_location == "https://cdn.efaz.dev/cdn/py/roblox-bootstrap-beta.zip":
+                                    printYellowMessage("⚠️ This version is a beta and may cause issues with your installation.")
+                                else:
+                                    printErrorMessage("❌ The download location for this version is different from the official GitHub download link!! You may be downloading an unofficial Efaz's Roblox Bootstrap version!")
+                                printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
+                                if isYes(input("> ")) == True:
+                                    printMainMessage("Downloading latest version..")
+                                    download_update = subprocess.run(["curl", "-L", download_location, "-o", f"{current_path_location}/Update.zip"], check=True)
+                                    if download_update.returncode == 0:
+                                        printMainMessage("Download Success! Extracting ZIP now!")
+                                        if main_os == "Darwin":
+                                            zip_extract = subprocess.run(["unzip", "-o", "Update.zip", "-d", f"{current_path_location}/Update/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                                        elif main_os == "Windows":
+                                            zip_extract = subprocess.run(["powershell", "-command", f"Expand-Archive -Path 'Update.zip' -DestinationPath '{current_path_location}/Update/' -Force"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                                        if zip_extract.returncode == 0:
+                                            printMainMessage("Extracted successfully! Installing Files!")
+                                            for file in os.listdir(f"{current_path_location}/Update/roblox-bootstrap-main/"):
+                                                src_path = os.path.join(f"{current_path_location}/Update/roblox-bootstrap-main/", file)
+                                                dest_path = os.path.join(current_path_location, file)
+                                                
+                                                if os.path.isdir(src_path):
+                                                    shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
+                                                else:
+                                                    if not file.endswith(".json"):
+                                                        shutil.copy2(src_path, dest_path)
+                                            printMainMessage("Cleaning up files..")
+                                            os.remove("Update.zip")
+                                            shutil.rmtree(f"{current_path_location}/Update/")
+                                            printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting installer..")
+                                            subprocess.run(args=[sys.executable] + sys.argv)
+                                            sys.exit(0)
+                                        else:
+                                            printMainMessage("Cleaning up files..")
+                                            os.remove("Update.zip")
+                                            shutil.rmtree(f"{current_path_location}/Update/")
+                                            printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                            if isYes(input("> ")) == False: sys.exit(0)
+                                    else:
+                                        printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                        if isYes(input("> ")) == False: sys.exit(0)
+                            elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"):
+                                printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
+                            else:
+                                printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
+                    else:
+                        printErrorMessage("There was an issue while checking for updates.")
                 if main_os == "Windows":
                     printMainMessage("Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
                     a = input("> ")
@@ -796,14 +787,15 @@ if __name__ == "__main__":
                 if isYes(a) == False:
                     use_installation_syncing = False
                 printMainMessage("Would you like to rebuild the main app based on source code? (y/n)")
-                if main_os == "Darwin":
-                    printYellowMessage("Admin permissions is needed for signing, prepare your password for a fill in the blank during the installation if you enabled this.")
+                printYellowMessage("Pyinstaller is required to be installed for this to work.")
                 a = input("> ")
                 if isYes(a) == True:
+                    if not pip_class.installed(["pyinstaller"]):
+                        pip_class.install(["pyinstaller"])
                     rebuild_from_source = True
                 if main_os == "Darwin":
                     printMainMessage("Would you like to rebuild the Play Roblox app based on source code? (y/n)")
-                    printYellowMessage("Clang is required to be installed on your computer and admin permissions is needed for signing, prepare your password for a fill in the blank during the installation if you enabled this.")
+                    printYellowMessage("Clang is required to be installed on your computer.")
                     a = input("> ")
                     if isYes(a) == True:
                         rebuild_from_source_clang = True
@@ -827,21 +819,225 @@ if __name__ == "__main__":
                 else:
                     if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
             else:
-                printMainMessage("Would you like to delete other operating system versions? (This may save 30MB+ of space) (y/n)")
-                a = input("> ")
-                if isYes(a) == False:
-                    disable_remove_other_operating_systems = True
-                printMainMessage("Do you want to update Efaz's Roblox Bootstrap? (This will reupdate all files based on this Installation folder.) (y/n)")
-                res = input("> ")
-                if isYes(res) == True:
-                    if remove_unneeded_messages == False: printMainMessage("Yippieee!!!")
-                    try:
-                        install()
-                    except Exception as e:
-                        printErrorMessage(f"Something went wrong during installation: {str(e)}")
-                    input("> ")
+                def requestUpdate():
+                    global disable_remove_other_operating_systems
+                    printMainMessage("Would you like to delete other operating system versions? (This may save 30MB+ of space) (y/n)")
+                    a = input("> ")
+                    if isYes(a) == False:
+                        disable_remove_other_operating_systems = True
+                    printMainMessage("Do you want to update Efaz's Roblox Bootstrap? (This will reupdate all files based on this Installation folder.) (y/n)")
+                    res = input("> ")
+                    if isYes(res) == True:
+                        if remove_unneeded_messages == False: printMainMessage("Yippieee!!!")
+                        try:
+                            install()
+                        except Exception as e:
+                            printErrorMessage(f"Something went wrong during installation: {str(e)}")
+                        input("> ")
+                    else:
+                        if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                def requestUninstall():
+                    if main_os == "Darwin":
+                        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
+                            printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
+                            input("> ")
+                            sys.exit(0)
+                    elif main_os == "Windows":
+                        if not os.path.exists(f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"):
+                            printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
+                            input("> ")
+                            sys.exit(0)
+                    printMainMessage("Are you sure you want to uninstall Efaz's Roblox Bootstrap from your system? (This will remove the app from your system and reinstall Roblox.) (y/n)")
+                    if repair_mode == False: 
+                        res = input("> ")
+                    else:
+                        res = "y"
+                    if isYes(res) == True:
+                        if main_os == "Darwin":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.app"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.app first before continuing to uninstall!")
+                                input("> ")
+                                sys.exit(0)
+                            else:
+                                # Remove Apps
+                                if os.path.exists(stored_main_app[found_platform][0]):
+                                    printMainMessage("Removing from Applications Folder (Main Bootstrap)..")
+                                    shutil.rmtree(stored_main_app[found_platform][0])
+                                if os.path.exists(stored_main_app[found_platform][1]):
+                                    printMainMessage("Removing from Applications Folder (Play Roblox)..")
+                                    shutil.rmtree(stored_main_app[found_platform][1])
+                        elif main_os == "Windows":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.exe"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.exe first before continuing to uninstall!")
+                                input("> ")
+                                sys.exit(0)
+                            else:
+                                # Remove URL Schemes
+                                printMainMessage("Resetting URL Schemes..")
+                                try:
+                                    import winreg
+                                    def set_url_scheme(protocol, exe_path):
+                                        protocol_key = r"Software\Classes\{}".format("")
+                                        command_key = r"Software\Classes\{}\shell\open\command".format(protocol)
+                                        try:
+                                            with winreg.CreateKey(winreg.HKEY_CURRENT_USER, protocol_key) as key:
+                                                winreg.SetValue(key, "", winreg.REG_SZ, "URL:{}".format(protocol))
+                                                winreg.SetValueEx(key, "URL Protocol", 0, winreg.REG_SZ, protocol)
+                                            with winreg.CreateKey(winreg.HKEY_CURRENT_USER, command_key) as key:
+                                                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, '"{}" "%1"'.format(exe_path))
+                                            printSuccessMessage(f'URL scheme "{protocol}" has been set for "{exe_path}"')
+                                        except Exception as e:
+                                            printErrorMessage(f"An error occurred: {e}")
+                                    set_url_scheme("efaz-bootstrap", "")
+                                    cur = handler.getCurrentClientVersion()
+                                    if cur:
+                                        if cur["success"] == True:
+                                            set_url_scheme("roblox-player", f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe")
+                                            set_url_scheme("roblox", f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe")
+                                except Exception as e:
+                                    printErrorMessage(f"Unable to reset URL schemes: {str(e)}")
+
+                                # Remove Shortcuts
+                                printMainMessage("Removing shortcuts..")
+                                try:
+                                    def remove_path(pat):
+                                        if os.path.exists(pat): 
+                                            os.remove(pat)
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                                except Exception as e:
+                                    printErrorMessage(f"Unable to remove shortcuts: {str(e)}")
+
+                                # Remove from Windows' Program List
+                                printMainMessage("Unmarking from Windows Program List..")
+                                app_key = r"Software\EfazRobloxBootstrap"
+                                uninstall_key = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
+                                try:
+                                    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, app_key, 0, winreg.KEY_WRITE) as key:
+                                        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, app_key)
+                                except FileNotFoundError:
+                                    printErrorMessage(f'Registry key "{app_key}" not found.')
+                                try:
+                                    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, uninstall_key, 0, winreg.KEY_WRITE) as key:
+                                        winreg.DeleteKey(winreg.HKEY_CURRENT_USER, uninstall_key)
+                                except FileNotFoundError:
+                                    printErrorMessage(f'Registry key "{uninstall_key}" not found.')
+
+                                # Remove App
+                                if os.path.exists(stored_main_app[found_platform][0]):
+                                    printMainMessage("Removing App Folder..")
+                                    shutil.rmtree(stored_main_app[found_platform][0])
+                        if repair_mode == False:
+                            printMainMessage("Preparing to reinstall Roblox..")
+                            handler.installRoblox(True, True)
+                            printSuccessMessage("Successfully uninstalled Efaz's Roblox Bootstrap and reinstalled Roblox!")
+                            input("> ")
+                    else:
+                        if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                def requestRepair():
+                    global instant_install
+                    global repair_mode
+                    global overwrited
+                    printMainMessage("Are you sure you want to repair/reinstall the bootstrap? (y/n)")
+                    res = input("> ")
+                    if isYes(res) == True:
+                        repair_mode = True
+                        if not os.path.exists(f"{current_path_location}/Apps/"):
+                            printErrorMessage("Please use an installation folder to install a new version from before continuing to repair!")
+                            input("> ")
+                            sys.exit(0)
+                        if main_os == "Darwin":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.app"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.app first before continuing to repair!")
+                                input("> ")
+                                sys.exit(0)
+                        elif main_os == "Windows":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.exe"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.exe first before continuing to repair!")
+                                input("> ")
+                                sys.exit(0)
+                        app_location = f"{current_path_location}/"
+                        repair_path = f"{current_path_location}/RepairData/"
+                        if os.path.exists(repair_path):
+                            printYellowMessage("Repair Data already exists!")
+                            shutil.rmtree(repair_path, ignore_errors=True)
+                        else:
+                            printMainMessage("Making Repair Data Folder..")
+                            os.mkdir(repair_path)
+                        printMainMessage("Finding app..")
+                        if main_os == "Darwin":
+                            app_location = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/"
+                        elif main_os == "Windows":
+                            app_location = f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"
+                        if not os.path.exists(app_location):
+                            printErrorMessage("Efaz's Roblox Bootstrap is not installed!")
+                            input("> ")
+                            sys.exit(0)
+                        printMainMessage("Copying FastFlagConfiguration.json..")
+                        shutil.copy(os.path.join(app_location, "FastFlagConfiguration.json"), os.path.join(repair_path, "FastFlagConfiguration.json"))
+                        printMainMessage("Copying AvatarEditorMaps..")
+                        shutil.copytree(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(repair_path, "AvatarEditorMaps"), dirs_exist_ok=True)
+                        printMainMessage("Copying Cursors..")
+                        shutil.copytree(os.path.join(app_location, "Cursors"), os.path.join(repair_path, "Cursors"), dirs_exist_ok=True)
+                        printMainMessage("Copying DeathSounds..")
+                        shutil.copytree(os.path.join(app_location, "DeathSounds"), os.path.join(repair_path, "DeathSounds"), dirs_exist_ok=True)
+                        printMainMessage("Copying Mods..")
+                        shutil.copytree(os.path.join(app_location, "Mods"), os.path.join(repair_path, "Mods"), dirs_exist_ok=True)
+                        printMainMessage("Copying RobloxBrand..")
+                        shutil.copytree(os.path.join(app_location, "RobloxBrand"), os.path.join(repair_path, "RobloxBrand"), dirs_exist_ok=True)
+                        printMainMessage("Uninstalling Bootstrap..")
+                        try:
+                            requestUninstall()
+                            printMainMessage("Redirecting to install mode.")
+                            instant_install = True
+                            overwrited = False
+                            try:
+                                install()
+                                printMainMessage("Installation was a success! Preparing data..")
+                                printMainMessage("Copying FastFlagConfiguration.json..")
+                                shutil.copy(os.path.join(repair_path, "FastFlagConfiguration.json"), os.path.join(app_location, "FastFlagConfiguration.json"))
+                                printMainMessage("Copying AvatarEditorMaps..")
+                                shutil.copytree(os.path.join(repair_path, "AvatarEditorMaps"), os.path.join(app_location, "AvatarEditorMaps"), dirs_exist_ok=True)
+                                printMainMessage("Copying Cursors..")
+                                shutil.copytree(os.path.join(repair_path, "Cursors"), os.path.join(app_location, "Cursors"), dirs_exist_ok=True)
+                                printMainMessage("Copying DeathSounds..")
+                                shutil.copytree(os.path.join(repair_path, "DeathSounds"), os.path.join(app_location, "DeathSounds"), dirs_exist_ok=True)
+                                printMainMessage("Copying Mods..")
+                                shutil.copytree(os.path.join(repair_path, "Mods"), os.path.join(app_location, "Mods"), dirs_exist_ok=True)
+                                printMainMessage("Copying RobloxBrand..")
+                                shutil.copytree(os.path.join(repair_path, "RobloxBrand"), os.path.join(app_location, "RobloxBrand"), dirs_exist_ok=True)
+                                printMainMessage("Finished transferring! Deleting repair data..")
+                                if os.path.exists(repair_path):
+                                    shutil.rmtree(repair_path, ignore_errors=True)
+                                printSuccessMessage("Successfully repaired Efaz's Roblox Bootstrap!")
+                                input("> ")
+                            except Exception as e:
+                                printErrorMessage(f"Something went wrong during installation: {str(e)}")
+                                printErrorMessage("Your data is saved inside the RepairData folder.")
+                                input("> ")
+                        except Exception as e:
+                            printErrorMessage(f"Something went wrong during uninstallation: {str(e)}")
+                            printErrorMessage("Your data is saved inside the RepairData folder.")
+                            input("> ")
+                if "--uninstall-mode" in sys.argv:
+                    requestUninstall()
+                elif "--repair-mode" in sys.argv:
+                    requestRepair()
                 else:
-                    if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                    printMainMessage("Please select an installer option you want to do!")
+                    printMainMessage("[1] = Update Bootstrap")
+                    printMainMessage("[2] = Uninstall Bootstrap")
+                    printMainMessage("[3] = Repair Bootstrap")
+                    printMainMessage("[*] = Exit Installer")
+                    res = input("> ")
+                    if res == "1":
+                        requestUpdate()
+                    elif res == "2":
+                        requestUninstall()
+                    elif res == "3":
+                        requestRepair()
     sys.exit(0)
 else:
     class EfazRobloxBootstrapNotModule(Exception):

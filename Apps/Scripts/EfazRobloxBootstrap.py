@@ -12,7 +12,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.4.3"}
+    current_version = {"version": "1.4.5"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -236,7 +236,7 @@ if __name__ == "__main__":
                             os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification")
                             if notification.get("title") and notification.get("message"):
                                 displayNotification(notification["title"], notification["message"])
-                                printSuccessMessage("Successfully pinged notification!")
+                                printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
                         if os.path.exists(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}"):
                             with open(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}", "r") as f:
                                 try:
@@ -258,9 +258,8 @@ if __name__ == "__main__":
                     a_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/Main.py")
                     b_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxFastFlagsInstaller.py")
                     c_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/Install.py")
-                    d_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/Uninstall.py")
-                    e_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/EfazRobloxBootstrapAPI.py")
-                    f_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/DiscordPresenceHandler.py")
+                    d_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/EfazRobloxBootstrapAPI.py")
+                    e_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/DiscordPresenceHandler.py")
 
                     validated = True
                     unable_to_validate = []
@@ -273,13 +272,10 @@ if __name__ == "__main__":
                     if not (c_file_hash == integrated_app_hashes["install"]):
                         validated = False
                         unable_to_validate.append("Install.py")
-                    if not (d_file_hash == integrated_app_hashes["uninstall"]):
-                        validated = False
-                        unable_to_validate.append("Uninstall.py")
-                    if not (e_file_hash == integrated_app_hashes["bootstrap_api"]):
+                    if not (d_file_hash == integrated_app_hashes["bootstrap_api"]):
                         validated = False
                         unable_to_validate.append("EfazRobloxBootstrapAPI.py")
-                    if not (f_file_hash == integrated_app_hashes["discord_presence"]):
+                    if not (e_file_hash == integrated_app_hashes["discord_presence"]):
                         validated = False
                         unable_to_validate.append("DiscordPresenceHandler.py")
 
@@ -400,6 +396,7 @@ if __name__ == "__main__":
                                         file_menu.add_separator()
                                         file_menu.add_command(label="Run Roblox in New Bootstrap Window", command=self.new_bootstrap_play_roblox)
                                         if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True: file_menu.add_command(label="Multi-Run Roblox in New Bootstrap Window", command=self.new_bootstrap_play_multi_roblox)
+                                        if fflag_configuration.get("EFlagAllowActivityTracking") == True: file_menu.add_command(label="Connect to Existing Roblox in New Bootstrap Window", command=self.new_bootstrap_play_reconnect)
                                         file_menu.add_command(label="Run Roblox Fast Flags Installer", command=self.new_bootstrap_run_fflag_installer)
                                         file_menu.add_command(label="Clear Roblox Logs", command=self.new_bootstrap_clear_roblox_logs)
                                         file_menu.add_command(label="Reinstall Roblox", command=self.new_bootstrap_reinstall_roblox)
@@ -499,6 +496,8 @@ if __name__ == "__main__":
                                                 main_app.new_bootstrap_end_roblox()
                                             def runFFlagInstaller_(self, sender):
                                                 main_app.new_bootstrap_run_fflag_installer()
+                                            def reconnectRoblox_(self, sender):
+                                                main_app.new_bootstrap_play_reconnect()
                                             def enterDebugWindowMode_(self, sender):
                                                 main_app.instant_debug_window()
                                             def shortcutmenu_(self, sender):
@@ -565,6 +564,8 @@ if __name__ == "__main__":
                                     self.new_bootstrap("continue", "Play Roblox")
                                 def new_bootstrap_play_multi_roblox(self):
                                     self.new_bootstrap("new", "Multi-Play Roblox")
+                                def new_bootstrap_play_reconnect(self):
+                                    self.new_bootstrap("reconnect", "Connect to Existing Roblox Window")
                                 def new_bootstrap_clear_roblox_logs(self):
                                     self.new_bootstrap("clear-logs", "Clear Roblox Logs")
                                 def new_bootstrap_reinstall_roblox(self):
@@ -828,7 +829,7 @@ if __name__ == "__main__":
                                 os.remove(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification"))
                                 if notification.get("title") and notification.get("message"):
                                     displayNotification(notification["title"], notification["message"])
-                                    printSuccessMessage("Successfully pinged notification!")
+                                    printSuccessMessage("Successfully pinged app notification!")
                             seconds += 1
                         except Exception as e:
                             printErrorMessage(f"There was an issue making a notification: {str(e)}")
@@ -840,9 +841,8 @@ if __name__ == "__main__":
                         a_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py"))
                         b_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "RobloxFastFlagsInstaller.py"))
                         c_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "Install.py"))
-                        d_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "Uninstall.py"))
-                        e_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "EfazRobloxBootstrapAPI.py"))
-                        f_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "DiscordPresenceHandler.py"))
+                        d_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "EfazRobloxBootstrapAPI.py"))
+                        e_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "DiscordPresenceHandler.py"))
 
                         validated = True
                         unable_to_validate = []
@@ -855,13 +855,10 @@ if __name__ == "__main__":
                         if not (c_file_hash == integrated_app_hashes["install"]):
                             validated = False
                             unable_to_validate.append("Install.py")
-                        if not (d_file_hash == integrated_app_hashes["uninstall"]):
-                            validated = False
-                            unable_to_validate.append("Uninstall.py")
-                        if not (e_file_hash == integrated_app_hashes["bootstrap_api"]):
+                        if not (d_file_hash == integrated_app_hashes["bootstrap_api"]):
                             validated = False
                             unable_to_validate.append("EfazRobloxBootstrapAPI.py")
-                        if not (f_file_hash == integrated_app_hashes["discord_presence"]):
+                        if not (e_file_hash == integrated_app_hashes["discord_presence"]):
                             validated = False
                             unable_to_validate.append("DiscordPresenceHandler.py")
 
