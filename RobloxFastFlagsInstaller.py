@@ -1734,7 +1734,7 @@ class Main():
                    else:
                        if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
             else:
-                if len(self.getAllOpenedRobloxWindows()) > 0:
+                if len(self.getAllOpenedRobloxWindows()) > 1:
                     if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
                 elif makeDupe == True:
                     self.endRoblox()
