@@ -1786,12 +1786,36 @@ class Main():
                         else:
                             time.sleep(2)
                             if self.getIfRobloxIsOpen() == True:
-                                pid = self.getLatestOpenedRobloxPid()
-                                if pid:
-                                    if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, created_mutex=created_mutex, await_20_second_log_creation=True)
+                                cur_open_pid = self.getLatestOpenedRobloxPid()
+                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                while True:
+                                    if test_instance.ended_process == True:
+                                        break
+                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                        test_instance.requestThreadClosing()
+                                        break
                                     else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, created_mutex=created_mutex, await_20_second_log_creation=True)
+                                        time.sleep(1)
+                                cur_open_pid = self.getLatestOpenedRobloxPid()
+                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                while True:
+                                    if test_instance.ended_process == True:
+                                        break
+                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                        test_instance.requestThreadClosing()
+                                        break
+                                    else:
+                                        time.sleep(1)
+                                if self.getIfRobloxIsOpen() == True:
+                                    self.prepareMultiInstance(debug=debug, required=True)
+                                    pid = self.getLatestOpenedRobloxPid()
+                                    if pid:
+                                        if not (mainLogFile == ""):
+                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                        else:
+                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
             else:
                 self.printLog("Roblox couldn't be found.")
         else:
