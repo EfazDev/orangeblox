@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.4.5"}
+    current_version = {"version": "1.4.6"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -1016,6 +1016,18 @@ if __name__ == "__main__":
                         return "Settings was closed."
                     elif isNo(d) == True:
                         fflag_configuration["EFlagDisableBootstrapCooldown"] = False
+                        printDebugMessage("User selected: False")
+
+                    printMainMessage("Would you like to enable showing the Game Name in the Roblox title window? (y/n)")
+                    d = input("> ")
+                    if isYes(d) == True:
+                        fflag_configuration["EFlagShowRunningGameInTitle"] = True
+                        printDebugMessage("User selected: True")
+                    elif isRequestClose(d) == True:
+                        printMainMessage("Closing settings..")
+                        return "Settings was closed."
+                    elif isNo(d) == True:
+                        fflag_configuration["EFlagShowRunningGameInTitle"] = False
                         printDebugMessage("User selected: False")
             def debugging():
                 printWarnMessage("--- Debugging ---")
@@ -2707,6 +2719,18 @@ if __name__ == "__main__":
                 printErrorMessage(f"There was an error preparing Roblox: {str(e)}")
         threading.Thread(target=prepareRobloxWithErrorCatcher, daemon=True).start()
 
+    # Event Variables
+    setTypeOfServer = 0
+    rpc = None
+    rpc_info = None
+    set_current_private_server_key = None
+    current_place_info = None
+    is_teleport = False
+    is_app_login_fail = False
+    connected_user_info = None
+    updated_count = 0
+    connected_roblox_instance = None
+
     # Mod Mode Scripts
     mod_mode_module = None
     mod_mode_json = None
@@ -2809,7 +2833,7 @@ if __name__ == "__main__":
                                                                                                 for i, v in js.items():
                                                                                                     if not ("EFlag" in i): fflag_configuration[i] = v
                                                                                             saveSettings()
-                                                                                    def sendBloxstrapRPC(info, disableWebhook=True):
+                                                                                    def sendBloxstrapRPC(info: dict, disableWebhook: bool=True):
                                                                                         onBloxstrapMessage(info, disableWebhook)
                                                                                     def getDebugMode():
                                                                                         return (fflag_configuration.get("EFlagEnableDebugMode") == True)
@@ -2829,6 +2853,42 @@ if __name__ == "__main__":
                                                                                                 return mod_mode_config.get(name)
                                                                                         else:
                                                                                             return None
+                                                                                    def setRobloxWindowTitle(title: str):
+                                                                                        if type(title) is str:
+                                                                                            if connected_roblox_instance:
+                                                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                                                if len(windows_opened) > 0:
+                                                                                                    for win in windows_opened:
+                                                                                                        win.setWindowTitle(title)
+                                                                                                else:
+                                                                                                    raise Exception("No Roblox Windows found!")
+                                                                                            else:
+                                                                                                raise Exception("Connected Roblox Instance is not found!")
+                                                                                        else:
+                                                                                            raise Exception("Provided arguments are invalid!")
+                                                                                    def focusRobloxWindow():
+                                                                                        if connected_roblox_instance:
+                                                                                            windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                                            if len(windows_opened) > 0:
+                                                                                                for win in windows_opened:
+                                                                                                    win.focusWindow()
+                                                                                            else:
+                                                                                                raise Exception("No Roblox Windows found!")
+                                                                                        else:
+                                                                                            raise Exception("Connected Roblox Instance is not found!")
+                                                                                    def changeRobloxWindowSizeAndPosition(size_x: int, size_y: int, position_x: int, position_y: int):
+                                                                                        if type(size_x) is int and type(size_y) is int and type(position_x) is int and type(position_y) is int:
+                                                                                            if connected_roblox_instance:
+                                                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                                                if len(windows_opened) > 0:
+                                                                                                    for win in windows_opened:
+                                                                                                        win.setWindowPositionAndSize(size_x, size_y, position_x, position_y)
+                                                                                                else:
+                                                                                                    raise Exception("No Roblox Windows found!")
+                                                                                            else:
+                                                                                                raise Exception("Connected Roblox Instance is not found!")
+                                                                                        else:
+                                                                                            raise Exception("Provided arguments are invalid!")
                                                                                     def setConfiguration(name: str="*", data=None):
                                                                                         if type(name) is str:
                                                                                             mod_mode_config = {}
@@ -2873,6 +2933,9 @@ if __name__ == "__main__":
                                                                                         "getRobloxInstallFolder": handler.getRobloxInstallFolder,
                                                                                         "getLatestRobloxPid": handler.getLatestOpenedRobloxPid,
                                                                                         "getOpenedRobloxPids": handler.getOpenedRobloxPids,
+                                                                                        "changeRobloxWindowSizeAndPosition": changeRobloxWindowSizeAndPosition,
+                                                                                        "setRobloxWindowTitle": setRobloxWindowTitle,
+                                                                                        "focusRobloxWindow": focusRobloxWindow,
                                                                                         "getFastFlagConfiguration": getFF,
                                                                                         "setFastFlagConfiguration": setFF,
                                                                                         "saveFastFlagConfiguration": saveFF,
@@ -3022,18 +3085,6 @@ if __name__ == "__main__":
     # Roblox is ready!
     printSuccessMessage("Done! Roblox is ready!")
     printWarnMessage("--- Running Roblox ---")
-
-    # Event Variables
-    setTypeOfServer = 0
-    rpc = None
-    rpc_info = None
-    set_current_private_server_key = None
-    current_place_info = None
-    is_teleport = False
-    is_app_login_fail = False
-    connected_user_info = None
-    updated_count = 0
-    connected_roblox_instance = None
 
     # Event Functions
     def onGameJoined(info):
@@ -3381,6 +3432,13 @@ if __name__ == "__main__":
                                             printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
                             except Exception as e:
                                 printDebugMessage("Unable to send Discord Webhook. Please check if the link is valid.")
+                            try:
+                                if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
+                                    windows_opened = connected_roblox_instance.getWindowsOpened()
+                                    for i in windows_opened:
+                                        i.setWindowTitle(f"Roblox - Playing {current_place_info.get('place_info', {'name': 'Unknown'}).get('name')}")
+                            except Exception as e:
+                                printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
                         else:
                             printDebugMessage("Provided place info is not found.")
                     else:
@@ -3538,6 +3596,13 @@ if __name__ == "__main__":
             except Exception as e:
                 printDebugMessage(f"There was an error setting your Discord Embed: {str(e)}")
             rpc_info = None
+        try:
+            if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
+                windows_opened = connected_roblox_instance.getWindowsOpened()
+                for i in windows_opened:
+                    i.setWindowTitle(f"Roblox")
+        except Exception as e:
+            printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
     def onTeleport(consoleLine):
         global is_teleport
         is_teleport = True

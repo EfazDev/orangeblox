@@ -28,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.6.5"
+fast_flag_installer_version = "1.7.0"
 
 class pip:
     executable = None
@@ -339,6 +339,9 @@ class Main():
         "saveFastFlagConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
         "getLatestRobloxPid": {"message": "Get the current latest Roblox window's PID", "level": 1},
         "getOpenedRobloxPids": {"message": "Get all the currently opened Roblox PIDs", "level": 1},
+        "changeRobloxWindowSizeAndPosition": {"message": "Change the Roblox Window Size and Position", "level": 2},
+        "setRobloxWindowTitle": {"message": "Set the Roblox Window Title [Windows Only]", "level": 1},
+        "focusRobloxWindow": {"message": "Focus the Roblox Window to the top window", "level": 2},
         "getConfiguration": {"message": "Get data in a separate configuration", "level": 0, "free": True},
         "setConfiguration": {"message": "Store data in a separate configuration", "level": 0, "free": True},
         "getDebugMode": {"message": "Get if the bootstrap is in Debug Mode", "level": 0, "free": True},
@@ -444,7 +447,7 @@ class Main():
                     self.events.append({"name": eventName, "callback": eventCallback})
                     if self.watchdog_started == False:
                         self.startActivityTracking()
-        def getWindowsOpened(self):
+        def getWindowsOpened(self) -> "list[Main.RobloxWindow]":
             if self.pid and not (self.pid == "") and self.pid.isnumeric():
                 try:
                     if main_os == "Windows":
@@ -1098,14 +1101,14 @@ class Main():
             elif main_os == "Darwin":
                 import subprocess
                 subprocess.run(["osascript", "-e", f'tell application "System Events" to set frontmost of (every process whose unix id is {self.pid}) to true'])
-        def setWindowTitle(self, new_title):
+        def setWindowTitle(self, title):
             if main_os == "Windows":
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
                     pip().install(["pywin32"])
                     import win32gui # type: ignore
-                win32gui.SetWindowText(self.system_handler, new_title)
+                win32gui.SetWindowText(self.system_handler, title)
         def setWindowPositionAndSize(self, size_x, size_y, position_x, position_y):
             if main_os == "Windows":
                 try:
@@ -1574,7 +1577,7 @@ class Main():
             except Exception as e:
                 printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
                 return None
-    def getAllOpenedRobloxWindows(self):
+    def getAllOpenedRobloxWindows(self) -> "list[RobloxWindow]":
         pids = self.getOpenedRobloxPids()
         generated_window_instances = []
         for i in pids:
@@ -1734,7 +1737,7 @@ class Main():
                    else:
                        if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
             else:
-                if len(self.getAllOpenedRobloxWindows()) > 1:
+                if len(self.getAllOpenedRobloxWindows()) > 0:
                     if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
                 elif makeDupe == True:
                     self.endRoblox()
@@ -1750,12 +1753,36 @@ class Main():
                     if attachInstance == True:
                         if makeDupe == True:
                             if self.getIfRobloxIsOpen() == True:
-                                pid = self.getLatestOpenedRobloxPid()
-                                if pid:
-                                    if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, created_mutex=created_mutex, await_20_second_log_creation=True)
+                                cur_open_pid = self.getLatestOpenedRobloxPid()
+                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                while True:
+                                    if test_instance.ended_process == True:
+                                        break
+                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                        test_instance.requestThreadClosing()
+                                        break
                                     else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, created_mutex=created_mutex, await_20_second_log_creation=True)
+                                        time.sleep(1)
+                                cur_open_pid = self.getLatestOpenedRobloxPid()
+                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                while True:
+                                    if test_instance.ended_process == True:
+                                        break
+                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                        test_instance.requestThreadClosing()
+                                        break
+                                    else:
+                                        time.sleep(1)
+                                if self.getIfRobloxIsOpen() == True:
+                                    self.prepareMultiInstance(debug=debug, required=True)
+                                    pid = self.getLatestOpenedRobloxPid()
+                                    if pid:
+                                        if not (mainLogFile == ""):
+                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                        else:
+                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
                         else:
                             time.sleep(2)
                             if self.getIfRobloxIsOpen() == True:

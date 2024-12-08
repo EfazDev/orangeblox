@@ -17,7 +17,7 @@ from typing import Union
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "1.4.5"}
+current_version = {"version": "1.4.6"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -474,6 +474,45 @@ class EfazRobloxBootstrapAPI:
         ```
         """
         return Request(self, "getOpenedRobloxPids").generateResponse().response
+    def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int): # Permission: changeRobloxWindowSizeAndPosition
+        """
+        Change the Roblox Window Size and Position
+
+        Permission: changeRobloxWindowSizeAndPosition | Level: 2 [Warning]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.4.6+**
+
+        ```python
+        response = EfazRobloxBootstrapAPI.changeRobloxWindowSizeAndPosition(400, 300, 0, 0) # -> Response
+        ```
+        """
+        return Request(self, "changeRobloxWindowSizeAndPosition", {"size_x": size_x, "size_y": size_y, "position_x": position_x, "position_y": position_y}).generateResponse()
+    def setRobloxWindowTitle(self, title): # Permission: setRobloxWindowTitle
+        """
+        Set the Roblox Window Title [Windows Only]
+
+        Permission: setRobloxWindowTitle | Level: 1 [Warning]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.4.6+**
+
+        ```python
+        response = EfazRobloxBootstrapAPI.setRobloxWindowTitle("Roblox - Playing GUESTY") # -> Response
+        ```
+        """
+        return Request(self, "setRobloxWindowTitle", {"title": title}).generateResponse()
+    def focusRobloxWindow(self): # Permission: getOpenedRobloxPids
+        """
+        Focus the Roblox Window to the top window
+
+        Permission: focusRobloxWindow | Level: 2 [Warning]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.4.6+**
+
+        ```python
+        response = EfazRobloxBootstrapAPI.focusRobloxWindow() # -> Response
+        ```
+        """
+        return Request(self, "focusRobloxWindow").generateResponse()
     def getDebugMode(self): # No Permission Needed
         """
         Get if the bootstrap is in Debug Mode

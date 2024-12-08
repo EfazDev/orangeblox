@@ -12,7 +12,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.4.5"}
+    current_version = {"version": "1.4.6"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
