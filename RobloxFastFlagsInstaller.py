@@ -544,7 +544,7 @@ class Main():
                                     return self.__ReadingLineResponse__.EndWatchdog()
                                 else:
                                     submitToThread(eventName="onRobloxLauncherDestroyed", data=line)
-                            elif "[FLog::RobloxStarter] Roblox stage ReadyForDataModel completed" in line:
+                            elif "[FLog::RobloxStarter] Roblox stage" in line and "completed" in line:
                                 self.windows_roblox_starter_launched_roblox = True
                             elif "[FLog::UpdateController] Update check thread: updateRequired FALSE" in line:
                                 submitToThread(eventName="onRobloxPassedUpdate", data=line)
@@ -1776,13 +1776,12 @@ class Main():
                                     else:
                                         time.sleep(1)
                                 if self.getIfRobloxIsOpen() == True:
-                                    self.prepareMultiInstance(debug=debug, required=True)
                                     pid = self.getLatestOpenedRobloxPid()
                                     if pid:
                                         if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
                                         else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
                         else:
                             time.sleep(2)
                             if self.getIfRobloxIsOpen() == True:
@@ -1809,13 +1808,12 @@ class Main():
                                     else:
                                         time.sleep(1)
                                 if self.getIfRobloxIsOpen() == True:
-                                    self.prepareMultiInstance(debug=debug, required=True)
                                     pid = self.getLatestOpenedRobloxPid()
                                     if pid:
                                         if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
                                         else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
             else:
                 self.printLog("Roblox couldn't be found.")
         else:
