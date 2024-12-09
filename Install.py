@@ -219,7 +219,7 @@ if __name__ == "__main__":
                 # Get FastFlagConfiguration.json Data
                 if overwrited == True:
                     printMainMessage("Getting Configuration File Data..")
-                    fast_config_path = os.path.join(stored_main_app[found_platform][0], "Contents", "Resources", "FastFlagConfiguration.json")
+                    fast_config_path = os.path.join(stored_main_app[found_platform][1], "Contents", "Resources", "FastFlagConfiguration.json")
                     if os.path.exists(fast_config_path):
                         with open(fast_config_path, "r") as f:
                             fflag_configuration = json.load(f)

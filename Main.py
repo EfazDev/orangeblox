@@ -1748,27 +1748,29 @@ if __name__ == "__main__":
                             input("> ")
                             sys.exit(0)
 
+                    information_num = 0
                     printMainMessage("Before we get started, there's some information you may need to know.")
-                    printWarnMessage("--- Information 1 ---")
                     if main_os == "Darwin":
-                        printMainMessage("First, you may need to know that after you go to Roblox through this bootstrap, Roblox will not be able to be opened normally.")
-                        printMainMessage("This is because of macOS trying to scan signatures but failing.")
-                        printMainMessage("Don't worry though, you will be able to join through your web browser since the app will sync.")
-                        printYellowMessage("Additionally, if you want to uninstall this bootstrap, you may run Install.py where you ran to be here and select Uninstall! However, you can use the Reinstall Roblox option in the bootstrap menu to prevent uninstalling this.")
-                    else:
-                        printMainMessage("This info is only for macOS and you may continue!")
-                    input("> ")
-                    printWarnMessage("--- Information 2 ---")
-                    printMainMessage("Second, some features are based on Activity Tracking on your Roblox Client.")
+                        information_num += 1
+                        printWarnMessage(f"--- Information {information_num} ---")
+                        printMainMessage("You may need to know that after you go to Roblox through this bootstrap, Roblox may not be able to be opened normally.")
+                        printMainMessage("This may because of macOS trying to scan signatures but failing.")
+                        printMainMessage("Don't worry though, you will be able to enable Ad-hoc Code Signing in the settings menu and this will prevent the issue.")
+                        input("> ")
+                    information_num += 1
+                    printWarnMessage(f"--- Information {information_num} ---")
+                    printMainMessage("Some features are based on Activity Tracking on your Roblox Client.")
                     printMainMessage("This app will use your Roblox logs to track data such as Game Join Data, Discord Presences, BloxstrapRPC and more!")
                     printYellowMessage("Don't worry, your Roblox account is safely secured and this won't get you banned.")
                     input("> ")
-                    printWarnMessage("--- Information 3 ---")
-                    displayNotification("Hello!", "If you see this, your notifications are set up! Good job!")
-                    printMainMessage("We have just sent a notification to your device so that you can enable notifications.")
+                    information_num += 1
+                    printWarnMessage(f"--- Information {information_num} ---")
+                    displayNotification("Hello!", "If you see this, your notifications are set up! Great job!")
+                    printMainMessage("We have just sent a notification to your computer, so you can enable notifications.")
                     printYellowMessage("Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!")
                     input("> ")
-                    printWarnMessage("--- Information 4 ---")
+                    information_num += 1
+                    printWarnMessage(f"--- Information {information_num} ---")
                     printMainMessage("If you haven't noticed, we have installed a Play Roblox app into your system!")
                     printMainMessage("This will allow you to skip the main menu and launch Roblox instantly through the bootstrap!")
                     if main_os == "Darwin":
@@ -1776,15 +1778,22 @@ if __name__ == "__main__":
                     elif main_os == "Windows":
                         printMainMessage("You may find this in your Start Menu or Desktop!")
                     input("> ")
+                    information_num += 1
+                    printWarnMessage(f"--- Information {information_num} ---")
+                    printMainMessage("Alright, now, if you have issues with the bootstrap, you may report it on GitHub using the issues page:")
+                    printMainMessage("https://github.com/EfazDev/roblox-bootstrap/issues")
+                    printErrorMessage("However, please check if you're on the latest bootstrap version first. If you're not, please update!!")
+                    printYellowMessage("If you want to uninstall this bootstrap, you may run the Install.py script which you ran to be here and select Uninstall!")
+                    printYellowMessage("Additionally, you can use the Reinstall Roblox option in the bootstrap menu to prevent uninstalling this.")
                     printWarnMessage("--- Step 1 ---")
-                    printMainMessage("Alright, now to the actual stuff, firstly, it's important you best understand on how the choosing works.")
+                    printMainMessage("Alright, now off to the actual stuff. First, it's important you best understand on how the choosing works.")
                     printMainMessage('Let\'s start off with a quick input! Let\'s say you want to enable this option (use the prompt here for the example), enter "y" or "yes"!')
                     def a():
                         b = input("> ")
                         if isYes(b) == True:
                             return
                         else:
-                            printErrorMessage("Uhm, not quite, try again!")
+                            printErrorMessage("Uhm, not quite. Try again!")
                             a()
                     a()
                     printWarnMessage("--- Step 2 ---")
@@ -1795,7 +1804,7 @@ if __name__ == "__main__":
                         if isNo(b) == True:
                             return
                         else:
-                            printErrorMessage("Uhm, not quite, try again!")
+                            printErrorMessage("Uhm, not quite. Try again!")
                             a()
                     a()
                     printWarnMessage("--- Step 3 ---")
@@ -1804,12 +1813,12 @@ if __name__ == "__main__":
                     printMainMessage("Try selecting a number that is next to that option!")
                     generated_ui_options = []
                     main_ui_options = {}
-                    generated_ui_options.append({"index": 1, "message": "Do jumping-jacks", "func": continueToRoblox})
-                    generated_ui_options.append({"index": 2, "message": "Do push-ups", "func": continueToRoblox})
-                    generated_ui_options.append({"index": 3, "message": "Do curl-ups", "func": continueToRoblox})
-                    generated_ui_options.append({"index": 4, "message": "Do weight-lifting", "func": continueToRoblox})
-                    generated_ui_options.append({"index": 5, "message": "Do neither", "func": continueToRoblox})
-                    generated_ui_options.append({"index": 6, "message": "Do all of the above", "func": continueToRoblox})
+                    generated_ui_options.append({"index": 1, "message": "Do jumping-jacks"})
+                    generated_ui_options.append({"index": 2, "message": "Do push-ups"})
+                    generated_ui_options.append({"index": 3, "message": "Do curl-ups"})
+                    generated_ui_options.append({"index": 4, "message": "Do weight-lifting"})
+                    generated_ui_options.append({"index": 5, "message": "Do neither"})
+                    generated_ui_options.append({"index": 6, "message": "Do all of the above"})
                     generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
                     printWarnMessage("--- Select Option ---")
                     count = 1
@@ -1830,7 +1839,7 @@ if __name__ == "__main__":
                     printMainMessage("Nice job! Oh yea, during the tutorial, it will repeat with a \"Not quite\". However, it will close the window in future prompts like in main menu.")
                     printYellowMessage("Additionally, if you do meet with an option with a *, this means that any input will result with that option.")
                     printMainMessage("Anyways, welcome to step 4! Here, you can select your settings!")
-                    printMainMessage("[In the settings area, you can just input nothing or anything else instead of y or n to skip the option without affecting the current state of it.]")
+                    printMainMessage("In the settings menu, you can just input nothing or anything else instead of y or n to skip the option without affecting the current state of it.")
                     printMainMessage("See you after a little bit!")
                     input("> ")
                     continueToSettings()

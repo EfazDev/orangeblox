@@ -113,6 +113,7 @@ if __name__ == "__main__":
     
     with open(os.path.join(os.path.dirname(__file__), "GeneratedHash.json"), "r") as f:
         integrated_app_hashes = json.load(f)
+        f.close()
 
     if main_os == "Darwin":
         filtered_args = ""
