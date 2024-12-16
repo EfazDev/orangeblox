@@ -111,6 +111,22 @@ class pip:
             return f'{os.path.expanduser("~")}/Library/'
         else:
             return f'{os.path.expanduser("~")}/'
+    def restartScript(self):
+        import sys
+        import subprocess
+        subprocess.run([self.findPython()] + sys.argv, shell=True)
+        sys.exit(0)
+    def importModule(self, module_name: str, install_module_if_not_found: bool=False):
+        import importlib
+        import subprocess
+        try:
+            return importlib.import_module(module_name)
+        except ModuleNotFoundError:
+            try:
+                if install_module_if_not_found == True: self.install([module_name])
+                return importlib.import_module(module_name)
+            except subprocess.CalledProcessError as e:
+                raise ImportError(f'Unable to find module "{module_name}" in Python environment.')
     def getIfProcessIsOpened(self, process_name="", pid=""):
         import platform
         import subprocess

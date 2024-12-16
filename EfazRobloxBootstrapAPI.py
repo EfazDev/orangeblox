@@ -1,7 +1,7 @@
 # 
 # Efaz's Roblox Bootstrap API
 # Made by Efaz from efaz.dev
-# v1.4.1
+# v1.5.0
 # 
 # Provided to Mod Mode Scripts using variable EfazRobloxBootstrapAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -17,7 +17,7 @@ from typing import Union
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "1.4.6"}
+current_version = {"version": "1.5.0"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -541,6 +541,36 @@ class EfazRobloxBootstrapAPI:
             return True
         else:
             return False
+    def requestInput(self, question, prompt: str="> "): # No Permission Needed
+        """
+        Request an input from the user with a question [Takes effect if Roblox is not launched.]
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.5.0+**
+
+        ```python
+        response = EfazRobloxBootstrapAPI.requestInput("What's your favorite ice cream?", "> ") # -> str | None
+        ```
+        """
+        if Request(self, "getIfRobloxLaunched").generateResponse().response == False:
+            print(f"\033[38;5;226m[MOD SCRIPT]: {question}\033[0m")
+            return input(prompt)
+        else:
+            return None
+    def getIfRobloxLaunched(self): # No Permission Needed
+        """
+        Get if Roblox was launched by the bootstrap yet. [Useful for determining before interrupting the main loop]
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in EfazRobloxBootstrapAPI v1.5.0+**
+
+        ```python
+        is_roblox_launched = EfazRobloxBootstrapAPI.getIfRobloxLaunched() # -> False
+        ```
+        """
+        return Request(self, "getIfRobloxLaunched").generateResponse().response
     def printMainMessage(self, mes): # No Permission Needed
         """
         Print a message on the python console using the bootstrap.
@@ -650,9 +680,9 @@ class EfazRobloxBootstrapAPI:
                 a = json.dumps(data)
                 return Request(self, "setConfiguration", {"name": name, "data": data}).generateResponse().response
             except Exception as e:
-                raise self.InvalidRequest()
+                raise InvalidRequest()
         else:
-            raise self.InvalidRequest()
+            raise InvalidRequest()
     def about(self): # No Permission Needed
         """
         Get basic info about the bootstrap such as version of both API and bootstrap itself!

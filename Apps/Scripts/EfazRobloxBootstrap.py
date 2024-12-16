@@ -12,7 +12,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.4.6"}
+    current_version = {"version": "1.5.0"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -42,6 +42,9 @@ if __name__ == "__main__":
     def printSuccessMessage(mes): 
         print(f"\033[38;5;82m{mes}\033[0m")
         logs.append((mes, 4))
+    def isYes(text): return text.lower() == "y" or text.lower() == "yes"
+    def isNo(text): return text.lower() == "n" or text.lower() == "no"
+    def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 
     printWarnMessage("-----------")
     printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader!")
@@ -863,20 +866,31 @@ if __name__ == "__main__":
                             validated = False
                             unable_to_validate.append("DiscordPresenceHandler.py")
 
-                        if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
-                            os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
-                            if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
-                            result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
-                            printMainMessage("Ending Bootstrap..")
-                            ended = True
-                            if result.returncode == 0:
-                                printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")
-                            else:
-                                printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
-                        else:
+                        if not (validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True):
                             printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
-                            printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
-                            displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated and must be reinstalled! Please download a new copy from GitHub!")
+                            printErrorMessage(f"Would you like to skip verification? Hashes that are unable to be validated are listed below:")
+                            if not (a_file_hash == integrated_app_hashes["main"]): 
+                                printMainMessage(f'Main.py | {integrated_app_hashes["main"]} => {a_file_hash}')
+                            if not (b_file_hash == integrated_app_hashes["fflag_install"]):
+                                printMainMessage(f'RobloxFastFlagsInstaller.py | {integrated_app_hashes["fflag_install"]} => {b_file_hash}')
+                            if not (c_file_hash == integrated_app_hashes["install"]):
+                                printMainMessage(f'Install.py | {integrated_app_hashes["install"]} => {c_file_hash}')
+                            if not (d_file_hash == integrated_app_hashes["bootstrap_api"]):
+                                printMainMessage(f'EfazRobloxBootstrapAPI.py | {integrated_app_hashes["bootstrap_api"]} => {d_file_hash}')
+                            if not (e_file_hash == integrated_app_hashes["discord_presence"]):
+                                printMainMessage(f'DiscordPresenceHandler.py | {integrated_app_hashes["discord_presence"]} => {e_file_hash}')
+                            if isYes(input("> ")) == False:
+                                sys.exit(0)
+                            displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated!")
+                        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+                        if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
+                        result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
+                        printMainMessage("Ending Bootstrap..")
+                        ended = True
+                        if result.returncode == 0:
+                            printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")
+                        else:
+                            printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
                         sys.exit(0)
                     except Exception as e:
                         printErrorMessage(f"Bootstrap Run Failed: {str(e)}")

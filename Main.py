@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.4.6"}
+    current_version = {"version": "1.5.0"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -144,7 +144,7 @@ if __name__ == "__main__":
                             import objc
                         except Exception as e:
                             pip_class.install(["pyobjc"])
-                            import objc
+                            objc = pip_class.importModule("objc")
                         NSUserNotification = objc.lookUpClass("NSUserNotification")
                         NSUserNotificationCenter = objc.lookUpClass("NSUserNotificationCenter")
 
@@ -166,7 +166,7 @@ if __name__ == "__main__":
                             from plyer import notification
                         except Exception as e:
                             pip_class.install(["plyer"])
-                            from plyer import notification
+                            notification = pip_class.importModule("plyer").notification
                         notification.notify(
                             title = title,
                             message = message,
@@ -754,6 +754,18 @@ if __name__ == "__main__":
                     elif isNo(d) == True:
                         fflag_configuration["EFlagEnableAdhocSigning"] = False
                         printDebugMessage("User selected: False")
+                
+                printMainMessage("Would you like to enable showing the Game Name in the Roblox title window? (y/n)")
+                d = input("> ")
+                if isYes(d) == True:
+                    fflag_configuration["EFlagShowRunningGameInTitle"] = True
+                    printDebugMessage("User selected: True")
+                elif isRequestClose(d) == True:
+                    printMainMessage("Closing settings..")
+                    return "Settings was closed."
+                elif isNo(d) == True:
+                    fflag_configuration["EFlagShowRunningGameInTitle"] = False
+                    printDebugMessage("User selected: False")
             def activityTracking():
                 printWarnMessage("--- Activity Tracking ---")
                 global fflag_configuration
@@ -1017,18 +1029,6 @@ if __name__ == "__main__":
                     elif isNo(d) == True:
                         fflag_configuration["EFlagDisableBootstrapCooldown"] = False
                         printDebugMessage("User selected: False")
-
-                    printMainMessage("Would you like to enable showing the Game Name in the Roblox title window? (y/n)")
-                    d = input("> ")
-                    if isYes(d) == True:
-                        fflag_configuration["EFlagShowRunningGameInTitle"] = True
-                        printDebugMessage("User selected: True")
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return "Settings was closed."
-                    elif isNo(d) == True:
-                        fflag_configuration["EFlagShowRunningGameInTitle"] = False
-                        printDebugMessage("User selected: False")
             def debugging():
                 printWarnMessage("--- Debugging ---")
                 global fflag_configuration
@@ -1077,6 +1077,19 @@ if __name__ == "__main__":
                     fflag_configuration["EFlagDisableRobloxUpdateChecks"] = False
                     printDebugMessage("User selected: False")
 
+                printMainMessage("Would you like to disable Hash Verification? (y/n)")
+                printYellowMessage("This is a security measure used to validate bootstrap scripts.")
+                d = input("> ")
+                if isYes(d) == True:
+                    fflag_configuration["EFlagDisableSecureHashSecurity"] = False
+                    printDebugMessage("User selected: False")
+                elif isRequestClose(d) == True:
+                    printMainMessage("Closing settings..")
+                    return "Settings was closed."
+                elif isNo(d) == True:
+                    fflag_configuration["EFlagDisableSecureHashSecurity"] = False
+                    printDebugMessage("User selected: False")
+
                 printMainMessage("Would you like to enable Debug Mode? (y/n)")
                 printYellowMessage("[WARNING! This will expose information like login to Roblox.]")
                 printYellowMessage("[DO NOT EVER ENABLE IF SOMEONE TOLD YOU SO OR YOU USUALLY RECORD!!]")
@@ -1105,7 +1118,6 @@ if __name__ == "__main__":
                         printDebugMessage("User selected: False")
             def extras():
                 printWarnMessage("--- Extras ---")
-
                 global fflag_configuration
                 if main_os == "Windows":
                     printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
@@ -1730,6 +1742,35 @@ if __name__ == "__main__":
         if (not (fflag_configuration.get("EFlagRemoveMenuAndSkipToRoblox") == True)) or (len(given_args) > 1 and "efaz-bootstrap:" in given_args[1]):
             if (len(given_args) < 2):
                 if not (fflag_configuration.get("EFlagCompletedTutorial") == True): # Tutorial
+                    if os.path.exists(f"./BackupData/"):
+                        printWarnMessage("--- Backup Assistant ---")
+                        printMainMessage("It seems that you have installed the bootstrap with a backup included.")
+                        printMainMessage("Would you like to restore the data on it? (y/n)")
+                        back = input("> ")
+                        if isYes(back) == True:
+                            backup_path = "./BackupData/"
+                            printMainMessage("Copying FastFlagConfiguration.json..")
+                            shutil.copy(os.path.join(backup_path, "FastFlagConfiguration.json"), os.path.join("./", "FastFlagConfiguration.json"))
+                            printMainMessage("Copying AvatarEditorMaps..")
+                            shutil.copytree(os.path.join(backup_path, "AvatarEditorMaps"), os.path.join("./", "AvatarEditorMaps"), dirs_exist_ok=True)
+                            printMainMessage("Copying Cursors..")
+                            shutil.copytree(os.path.join(backup_path, "Cursors"), os.path.join("./", "Cursors"), dirs_exist_ok=True)
+                            printMainMessage("Copying DeathSounds..")
+                            shutil.copytree(os.path.join(backup_path, "DeathSounds"), os.path.join("./", "DeathSounds"), dirs_exist_ok=True)
+                            printMainMessage("Copying Mods..")
+                            shutil.copytree(os.path.join(backup_path, "Mods"), os.path.join("./", "Mods"), dirs_exist_ok=True)
+                            printMainMessage("Copying RobloxBrand..")
+                            shutil.copytree(os.path.join(backup_path, "RobloxBrand"), os.path.join("./", "RobloxBrand"), dirs_exist_ok=True)
+                            printMainMessage("Finished transferring! Deleting backup data..")
+                            if os.path.exists(backup_path):
+                                shutil.rmtree(backup_path, ignore_errors=True)
+                            printSuccessMessage("Successfully restored Efaz's Roblox Bootstrap data! Would you to restart the app? (y/n)")
+                            a = input("> ")
+                            if isYes(a) == True:
+                                pip_class.restartScript()
+                            else:
+                                sys.exit(0)
+                    
                     printWarnMessage("--- Tutorial ---")
                     printMainMessage("Welcome to Efaz's Roblox Bootstrap!")
                     printMainMessage("Efaz's Roblox Bootstrap is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
@@ -2377,8 +2418,11 @@ if __name__ == "__main__":
         if handler.getIfRobloxIsOpen():
             if main_os == "Windows":
                 if multi_instance_enabled == True or len(given_args) > 1:
-                    printYellowMessage("Roblox is currently open which prevents file changing by Windows or the hard drive's file system.")
-                    return
+                    if len(handler.getAllOpenedRobloxWindows()) > 0:
+                        printYellowMessage("Roblox is currently open which prevents file changing by Windows or the hard drive's file system.")
+                        return
+                    elif multi_instance_enabled == True:
+                        handler.endRoblox()
                 else:
                     handler.endRoblox()
                     time.sleep(2)
@@ -2717,15 +2761,14 @@ if __name__ == "__main__":
                 winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Efaz's Roblox Bootstrap")
                 winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, current_version["version"])
                 winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, os.path.join(bootstrap_folder_path, "AppIcon.ico"))
-
+    def prepareRobloxWithErrorCatcher():
+        try:
+            prepareRoblox()
+        except Exception as e:
+            printErrorMessage(f"There was an error preparing Roblox: {str(e)}")
     if skip_modification_mode == False:
-        prepareRoblox()
+        prepareRobloxWithErrorCatcher()
     else:
-        def prepareRobloxWithErrorCatcher():
-            try:
-                prepareRoblox()
-            except Exception as e:
-                printErrorMessage(f"There was an error preparing Roblox: {str(e)}")
         threading.Thread(target=prepareRobloxWithErrorCatcher, daemon=True).start()
 
     # Event Variables
@@ -2745,6 +2788,7 @@ if __name__ == "__main__":
     mod_mode_json = None
     selected_mod_mode = fflag_configuration.get('EFlagSelectedModMode')
     fflag_modified_locally = False
+    roblox_launched_affect_mod_script = False
     def loadModScripts():
         global mod_mode_module
         global mod_mode_json
@@ -2885,6 +2929,11 @@ if __name__ == "__main__":
                                                                                                 raise Exception("No Roblox Windows found!")
                                                                                         else:
                                                                                             raise Exception("Connected Roblox Instance is not found!")
+                                                                                    def getIfRobloxLaunched():
+                                                                                        if roblox_launched_affect_mod_script == True:
+                                                                                            return True
+                                                                                        else:
+                                                                                            return False
                                                                                     def changeRobloxWindowSizeAndPosition(size_x: int, size_y: int, position_x: int, position_y: int):
                                                                                         if type(size_x) is int and type(size_y) is int and type(position_x) is int and type(position_y) is int:
                                                                                             if connected_roblox_instance:
@@ -2945,6 +2994,7 @@ if __name__ == "__main__":
                                                                                         "changeRobloxWindowSizeAndPosition": changeRobloxWindowSizeAndPosition,
                                                                                         "setRobloxWindowTitle": setRobloxWindowTitle,
                                                                                         "focusRobloxWindow": focusRobloxWindow,
+                                                                                        "getIfRobloxLaunched": getIfRobloxLaunched,
                                                                                         "getFastFlagConfiguration": getFF,
                                                                                         "setFastFlagConfiguration": setFF,
                                                                                         "saveFastFlagConfiguration": saveFF,
@@ -3149,7 +3199,8 @@ if __name__ == "__main__":
                 if generated_universe_id_res.ok:
                     generated_universe_id_json = generated_universe_id_res.json()
                     if generated_universe_id_json and not (generated_universe_id_json.get("universeId") == None):
-                        current_place_info["universeId"] = generated_universe_id_json.get("universeId")
+                        if current_place_info:
+                            current_place_info["universeId"] = generated_universe_id_json.get("universeId")
                     else:
                         current_place_info = None
                 else:
@@ -3182,7 +3233,15 @@ if __name__ == "__main__":
                                     for i in generated_universe_api_json.keys():
                                         if not place_info.get(i) and (not (i == "id" or i == "name" or i == "description" or i == "universeId")):
                                             place_info[i] = generated_universe_api_json[i]
-                                    current_place_info["place_info"] = place_info
+                                    if current_place_info:
+                                        current_place_info["place_info"] = place_info
+                            try:
+                                if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
+                                    windows_opened = connected_roblox_instance.getWindowsOpened()
+                                    for i in windows_opened:
+                                        i.setWindowTitle(f"Roblox - Playing {place_info.get('name', 'Unknown')}")
+                            except Exception as e:
+                                printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
                             try:
                                 start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
                                 if fflag_configuration.get("EFlagSetDiscordRPCStart") and (type(fflag_configuration.get("EFlagSetDiscordRPCStart")) is float or type(fflag_configuration.get("EFlagSetDiscordRPCStart")) is int):
@@ -3441,13 +3500,6 @@ if __name__ == "__main__":
                                             printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
                             except Exception as e:
                                 printDebugMessage("Unable to send Discord Webhook. Please check if the link is valid.")
-                            try:
-                                if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
-                                    windows_opened = connected_roblox_instance.getWindowsOpened()
-                                    for i in windows_opened:
-                                        i.setWindowTitle(f"Roblox - Playing {current_place_info.get('place_info', {'name': 'Unknown'}).get('name')}")
-                            except Exception as e:
-                                printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
                         else:
                             printDebugMessage("Provided place info is not found.")
                     else:
@@ -3471,6 +3523,13 @@ if __name__ == "__main__":
             is_teleport = False
         else:
             printErrorMessage("User has disconnected from the server!")
+        try:
+            if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
+                windows_opened = connected_roblox_instance.getWindowsOpened()
+                for i in windows_opened:
+                    i.setWindowTitle(f"Roblox")
+        except Exception as e:
+            printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
         if fflag_configuration.get("EFlagUseDiscordWebhook") == True and fflag_configuration.get("EFlagDiscordWebhookDisconnect") == True:
             try:
                 import requests
@@ -3605,13 +3664,6 @@ if __name__ == "__main__":
             except Exception as e:
                 printDebugMessage(f"There was an error setting your Discord Embed: {str(e)}")
             rpc_info = None
-        try:
-            if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
-                windows_opened = connected_roblox_instance.getWindowsOpened()
-                for i in windows_opened:
-                    i.setWindowTitle(f"Roblox")
-        except Exception as e:
-            printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
     def onTeleport(consoleLine):
         global is_teleport
         is_teleport = True
@@ -3830,7 +3882,7 @@ if __name__ == "__main__":
                 pip_class.install(["requests"])
                 import requests
                 printSuccessMessage("Successfully installed modules!")
-            if fflag_configuration.get("EFlagDiscordWebhookURL"):
+            if connected_roblox_instance and not (connected_roblox_instance.main_log_file == "") and fflag_configuration.get("EFlagDiscordWebhookURL"):
                 title = "Roblox Closed!"
                 color = 16735838
                 thumbnail_url = "https://raw.githubusercontent.com/EfazDev/roblox-bootstrap/main/BootstrapImages/RobloxLogo.png"
@@ -4088,8 +4140,10 @@ if __name__ == "__main__":
 
     # Launch Roblox
     def runRoblox():
+        global roblox_launched_affect_mod_script
         global connected_roblox_instance
         global connect_instead
+        roblox_launched_affect_mod_script = True
         if connect_instead == True:
             connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(), debug_mode=(fflag_configuration.get("EFlagEnableDebugMode") == True), allow_other_logs=True, created_mutex=False)
             if connected_roblox_instance:
@@ -4271,7 +4325,7 @@ if __name__ == "__main__":
                 time.sleep(2)
                 printWarnMessage("--- Preparing Roblox ---")
                 skip_modification_mode = False
-                prepareRoblox()
+                prepareRobloxWithErrorCatcher()
                 printSuccessMessage("Done! Roblox is ready!")
                 time.sleep(2)
                 printWarnMessage("--- Running Roblox ---")

@@ -53,8 +53,8 @@ if __name__ == "__main__":
         "Darwin": ["/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app", "/Applications/EfazRobloxBootstrap.app", "/Applications/Play Roblox.app"],
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
-    ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json"]
-    current_version = {"version": "1.4.6"}
+    ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json", "RepairData"]
+    current_version = {"version": "1.5.0"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
@@ -201,15 +201,15 @@ if __name__ == "__main__":
                     pip_class.install(["posix-ipc", "pyobjc"])
                 elif main_os == "Windows":
                     pip_class.install(["pywin32"])
-                import requests
-                import plyer
-                import pypresence
-                import tkinter
+                requests = pip_class.importModule("requests")
+                plyer = pip_class.importModule("plyer")
+                pypresence = pip_class.importModule("pypresence")
+                tkinter = pip_class.importModule("tkinter")
                 if main_os == "Darwin":
-                    import posix_ipc
-                    import objc
+                    posix_ipc = pip_class.importModule("posix_ipc")
+                    objc = pip_class.importModule("objc")
                 elif main_os == "Windows":
-                    import win32com.client # type: ignore
+                    win32com = pip_class.importModule("win32com.client") # type: ignore
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Ending installation..")
@@ -496,19 +496,19 @@ if __name__ == "__main__":
                         if is_x86_windows() or use_x86_windows == True:
                             shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
                             shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                            shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                            shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, ignore_dangling_symlinks=True)
                         else:
                             if os.path.exists(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
                                 shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), stored_main_app[found_platform][1])
                                 shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                                shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                                shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, ignore_dangling_symlinks=True)
                             else:
                                 printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
                                 a = input("> ")
                                 if not (a.lower() == "n"):
                                     shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "EfazRobloxBootstrap32.exe"), stored_main_app[found_platform][1])
                                     shutil.copy(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows",  "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
-                                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True)
+                                    shutil.copytree(os.path.join(current_path_location, "Apps", "EfazRobloxBootstrapWindows", "EfazRobloxBootstrap32", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, ignore_dangling_symlinks=True)
                                 else:
                                     sys.exit(0)
                     except Exception as e:
@@ -685,15 +685,15 @@ if __name__ == "__main__":
                         pip_class.install(["posix-ipc", "pyobjc"])
                     elif main_os == "Windows":
                         pip_class.install(["pywin32"])
-                    import requests
-                    import plyer
-                    import pypresence
-                    import tkinter
+                    requests = pip_class.importModule("requests")
+                    plyer = pip_class.importModule("plyer")
+                    pypresence = pip_class.importModule("pypresence")
+                    tkinter = pip_class.importModule("tkinter")
                     if main_os == "Darwin":
-                        import posix_ipc
-                        import objc
+                        posix_ipc = pip_class.importModule("posix_ipc")
+                        objc = pip_class.importModule("objc")
                     elif main_os == "Windows":
-                        import win32com.client # type: ignore
+                        win32com = pip_class.importModule("win32com.client") # type: ignore
                     printSuccessMessage("Successfully installed modules!")
                 else:
                     printErrorMessage("Ending installation..")
@@ -1021,15 +1021,68 @@ if __name__ == "__main__":
                             printErrorMessage(f"Something went wrong during uninstallation: {str(e)}")
                             printErrorMessage("Your data is saved inside the RepairData folder.")
                             input("> ")
+                def requestBackup():
+                    global instant_install
+                    global repair_mode
+                    global overwrited
+                    printMainMessage("Are you sure you want to backup bootstrap data? This will save to a new folder called BackupData (y/n)")
+                    res = input("> ")
+                    if isYes(res) == True:
+                        if main_os == "Darwin":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.app"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.app first before continuing to repair!")
+                                input("> ")
+                                sys.exit(0)
+                        elif main_os == "Windows":
+                            if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.exe"):
+                                printErrorMessage("Please close EfazRobloxBootstrap.exe first before continuing to repair!")
+                                input("> ")
+                                sys.exit(0)
+                        app_location = f"{current_path_location}/"
+                        backup_path = f"{current_path_location}/BackupData/"
+                        if os.path.exists(backup_path):
+                            printYellowMessage("Backup Folder already exists!")
+                            shutil.rmtree(backup_path, ignore_errors=True)
+                        else:
+                            printMainMessage("Making Backup Folder..")
+                            os.mkdir(backup_path)
+                        printMainMessage("Finding app..")
+                        if main_os == "Darwin":
+                            app_location = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/"
+                        elif main_os == "Windows":
+                            app_location = f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"
+                        if not os.path.exists(app_location):
+                            printErrorMessage("Efaz's Roblox Bootstrap is not installed!")
+                            input("> ")
+                            sys.exit(0)
+                        printMainMessage("Copying FastFlagConfiguration.json..")
+                        shutil.copy(os.path.join(app_location, "FastFlagConfiguration.json"), os.path.join(backup_path, "FastFlagConfiguration.json"))
+                        printMainMessage("Copying AvatarEditorMaps..")
+                        shutil.copytree(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(backup_path, "AvatarEditorMaps"), dirs_exist_ok=True)
+                        printMainMessage("Copying Cursors..")
+                        shutil.copytree(os.path.join(app_location, "Cursors"), os.path.join(backup_path, "Cursors"), dirs_exist_ok=True)
+                        printMainMessage("Copying DeathSounds..")
+                        shutil.copytree(os.path.join(app_location, "DeathSounds"), os.path.join(backup_path, "DeathSounds"), dirs_exist_ok=True)
+                        printMainMessage("Copying Mods..")
+                        shutil.copytree(os.path.join(app_location, "Mods"), os.path.join(backup_path, "Mods"), dirs_exist_ok=True)
+                        printMainMessage("Copying RobloxBrand..")
+                        shutil.copytree(os.path.join(app_location, "RobloxBrand"), os.path.join(backup_path, "RobloxBrand"), dirs_exist_ok=True)
+                        printSuccessMessage(f"Successfully backed up Efaz's Roblox Bootstrap data!")
+                        printSuccessMessage(f"Application Path: {app_location}")
+                        printSuccessMessage(f"Folder Path: {backup_path}")
+                        input("> ")
                 if "--uninstall-mode" in sys.argv:
                     requestUninstall()
                 elif "--repair-mode" in sys.argv:
                     requestRepair()
+                elif "--backup-mode" in sys.argv:
+                    requestBackup()
                 else:
                     printMainMessage("Please select an installer option you want to do!")
                     printMainMessage("[1] = Update Bootstrap")
                     printMainMessage("[2] = Uninstall Bootstrap")
                     printMainMessage("[3] = Repair Bootstrap")
+                    printMainMessage("[4] = Backup Bootstrap")
                     printMainMessage("[*] = Exit Installer")
                     res = input("> ")
                     if res == "1":
@@ -1038,6 +1091,8 @@ if __name__ == "__main__":
                         requestUninstall()
                     elif res == "3":
                         requestRepair()
+                    elif res == "4":
+                        requestBackup()
     sys.exit(0)
 else:
     class EfazRobloxBootstrapNotModule(Exception):

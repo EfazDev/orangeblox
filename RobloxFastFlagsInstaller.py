@@ -337,6 +337,7 @@ class Main():
         "getFastFlagConfiguration": {"message": "View your bootstrap configuration file", "level": 1},
         "setFastFlagConfiguration": {"message": "Set your bootstrap configuration within executable", "level": 2},
         "saveFastFlagConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
+        "getIfRobloxLaunched": {"message": "Get if Roblox has launched from the bootstrap", "level": 0, "free": True},
         "getLatestRobloxPid": {"message": "Get the current latest Roblox window's PID", "level": 1},
         "getOpenedRobloxPids": {"message": "Get all the currently opened Roblox PIDs", "level": 1},
         "changeRobloxWindowSizeAndPosition": {"message": "Change the Roblox Window Size and Position", "level": 2},
@@ -1228,52 +1229,55 @@ class Main():
             else:
                 printErrorMessage("Returning back to application.")
                 return {"success": False, "message": "User rejected need of module."}
-            
-        if self.__main_os__ == "Darwin":
-            if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-            if channel:
-                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer/channel/{channel}")
-            else:
-                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer")
-            if res.ok:
-                jso = res.json()
-                if jso.get("clientVersionUpload") and jso.get("version"):
-                    if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
-                    return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
+
+        try:    
+            if self.__main_os__ == "Darwin":
+                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                if channel:
+                    res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer/channel/{channel}")
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                    return {"success": False, "message": "Something went wrong."}
-            else:
-                if not (channel == "LIVE"):
-                    if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
-                    return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                    res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer")
+                if res.ok:
+                    jso = res.json()
+                    if jso.get("clientVersionUpload") and jso.get("version"):
+                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                        return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                    return {"success": False, "message": "Something went wrong."}
-        elif self.__main_os__ == "Windows":
-            if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-            if channel:
-                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer/channel/{channel}")
-            else:
-                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer")
-            if res.ok:
-                jso = res.json()
-                if jso.get("clientVersionUpload") and jso.get("version"):
-                    if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
-                    return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
+                    if not (channel == "LIVE"):
+                        if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                        return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                        return {"success": False, "message": "Something went wrong."}
+            elif self.__main_os__ == "Windows":
+                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                if channel:
+                    res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer/channel/{channel}")
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                    return {"success": False, "message": "Something went wrong."}
-            else:
-                if not (channel == "LIVE"):
-                    if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
-                    return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                    res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer")
+                if res.ok:
+                    jso = res.json()
+                    if jso.get("clientVersionUpload") and jso.get("version"):
+                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        return {"success": True, "client_version": jso.get("clientVersionUpload"), "short_version": jso.get("version")}
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                        return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
-                    return {"success": False, "message": "Something went wrong."}
-        else:
-            self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
-            return {"success": False, "message": "OS not compatible."}
+                    if not (channel == "LIVE"):
+                        if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                        return self.getLatestClientVersion(debug=debug, channel="LIVE")
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text}")
+                        return {"success": False, "message": "Something went wrong."}
+            else:
+                self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
+                return {"success": False, "message": "OS not compatible."}
+        except Exception as e:
+            return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
     def getCurrentClientVersion(self):
         if self.__main_os__ == "Darwin":
             if os.path.exists(f"{macOS_dir}/Contents/Info.plist"):
