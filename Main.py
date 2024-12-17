@@ -2321,9 +2321,9 @@ if __name__ == "__main__":
                                                     printDebugMessage(f"Update Error for file ({src_path}): {str(e)}")
                                     printMainMessage("Running Installer..")
                                     if main_os == "Windows":
-                                        if len(sys.argv) > 1:
+                                        if len(given_args) > 1:
                                             local_app_data = pip_class.getLocalAppData()
-                                            filtered_args = sys.argv[1]
+                                            filtered_args = given_args[1]
                                             if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
                                                 printMainMessage(f"Creating URL Exchange file..")
                                                 if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap")):
