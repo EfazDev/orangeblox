@@ -3238,9 +3238,10 @@ if __name__ == "__main__":
                 else:
                     current_place_info = None
                 if current_place_info:
-                    generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={current_place_info.get('universeId')}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false")
-                    generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{current_place_info.get('universeId')}/places?isUniverseCreation=false&limit=50&sortOrder=Asc")
-                    generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={current_place_info.get('universeId')}")
+                    universeId = current_place_info.get('universeId')
+                    generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false")
+                    generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc")
+                    generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}")
                     if generated_thumbnail_api_res.ok and generated_place_api_res.ok and generated_universe_api_res.ok:
                         generated_thumbnail_api_json = generated_thumbnail_api_res.json()
                         generated_place_api_json = generated_place_api_res.json()

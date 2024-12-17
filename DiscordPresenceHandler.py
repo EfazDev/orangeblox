@@ -92,7 +92,6 @@ class Presence(pypresence.Presence):
                                         if self.connected == True:
                                             if self.current_presence:
                                                 self.presence_class.update(**(self.current_presence))
-                                                self.printDebugMode(f"[Connection Handler]: Updated Discord Presence!")
                                             else:
                                                 self.presence_class.clear()
                                     except:
