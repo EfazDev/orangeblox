@@ -2321,7 +2321,7 @@ if __name__ == "__main__":
                                                     printDebugMessage(f"Update Error for file ({src_path}): {str(e)}")
                                     printMainMessage("Running Installer..")
                                     if main_os == "Windows":
-                                        silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"')
+                                        silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"', shell=True)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                         sys.exit(0)
                                     else:
