@@ -3276,8 +3276,9 @@ if __name__ == "__main__":
                             generated_universe_api_json = generated_universe_api_json.get("data")[0]
                             place_info = {}
                             for place_under_experience in generated_place_api_json.get("data"):
-                                if str(place_under_experience.get("id")) == str(current_place_info.get("placeId")):
-                                    place_info = place_under_experience
+                                if current_place_info:
+                                    if str(place_under_experience.get("id")) == str(current_place_info.get("placeId")):
+                                        place_info = place_under_experience
                             if current_place_info:
                                 if place_info:
                                     generated_universe_api_json["rootPlaceName"] = generated_universe_api_json["name"]
