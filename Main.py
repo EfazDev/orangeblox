@@ -2334,6 +2334,13 @@ if __name__ == "__main__":
                                                         f.write(filtered_args)
                                         silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"', shell=True)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
+                                        try:
+                                            printMainMessage("Cleaning up files..")
+                                            os.remove("Update.zip")
+                                            shutil.rmtree("./Update/")
+                                        except Exception as e:
+                                            printErrorMessage("Something went wrong while cleaning the files for the bootstrap update!")
+                                            printDebugMessage(f"Update Error: {str(e)}")
                                         sys.exit(0)
                                     else:
                                         silent_install = subprocess.run(args=[sys.executable, "Install.py", "--update-mode"])
