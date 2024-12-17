@@ -2321,6 +2321,17 @@ if __name__ == "__main__":
                                                     printDebugMessage(f"Update Error for file ({src_path}): {str(e)}")
                                     printMainMessage("Running Installer..")
                                     if main_os == "Windows":
+                                        if len(sys.argv) > 1:
+                                            local_app_data = pip_class.getLocalAppData()
+                                            filtered_args = sys.argv[1]
+                                            if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
+                                                printMainMessage(f"Creating URL Exchange file..")
+                                                if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap")):
+                                                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "URLSchemeExchange"), "w") as f:
+                                                        f.write(filtered_args)
+                                                else:
+                                                    with open("URLSchemeExchange", "w") as f:
+                                                        f.write(filtered_args)
                                         silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"', shell=True)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                         sys.exit(0)
