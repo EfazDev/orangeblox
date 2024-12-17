@@ -758,17 +758,42 @@ if __name__ == "__main__":
                         fflag_configuration["EFlagEnableAdhocSigning"] = False
                         printDebugMessage("User selected: False")
                 
-                printMainMessage("Would you like to enable showing the Game Name in the Roblox title window? (y/n)")
-                d = input("> ")
-                if isYes(d) == True:
-                    fflag_configuration["EFlagShowRunningGameInTitle"] = True
-                    printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return "Settings was closed."
-                elif isNo(d) == True:
-                    fflag_configuration["EFlagShowRunningGameInTitle"] = False
-                    printDebugMessage("User selected: False")
+                if main_os == "Windows":
+                    printMainMessage("Would you like to enable showing the Account Name in the Roblox title window? (y/n)")
+                    d = input("> ")
+                    if isYes(d) == True:
+                        fflag_configuration["EFlagShowRunningAccountNameInTitle"] = True
+                        printDebugMessage("User selected: True")
+                    elif isRequestClose(d) == True:
+                        printMainMessage("Closing settings..")
+                        return "Settings was closed."
+                    elif isNo(d) == True:
+                        fflag_configuration["EFlagShowRunningAccountNameInTitle"] = False
+                        printDebugMessage("User selected: False")
+                    if not (fflag_configuration.get("EFlagShowRunningAccountNameInTitle") == True):
+                        printMainMessage("Would you like to enable showing the Game Name in the Roblox title window instead? (y/n)")
+                        d = input("> ")
+                        if isYes(d) == True:
+                            fflag_configuration["EFlagShowRunningGameInTitle"] = True
+                            printDebugMessage("User selected: True")
+                        elif isRequestClose(d) == True:
+                            printMainMessage("Closing settings..")
+                            return "Settings was closed."
+                        elif isNo(d) == True:
+                            fflag_configuration["EFlagShowRunningGameInTitle"] = False
+                            printDebugMessage("User selected: False")
+                    else:
+                        printMainMessage("Would you like to like to include the Display Name as apart of the title? (y/n)")
+                        d = input("> ")
+                        if isYes(d) == True:
+                            fflag_configuration["EFlagShowDisplayNameInTitle"] = True
+                            printDebugMessage("User selected: True")
+                        elif isRequestClose(d) == True:
+                            printMainMessage("Closing settings..")
+                            return "Settings was closed."
+                        elif isNo(d) == True:
+                            fflag_configuration["EFlagShowDisplayNameInTitle"] = False
+                            printDebugMessage("User selected: False")
             def activityTracking():
                 printWarnMessage("--- Activity Tracking ---")
                 global fflag_configuration
@@ -3288,10 +3313,19 @@ if __name__ == "__main__":
                                     if current_place_info:
                                         current_place_info["place_info"] = place_info
                             try:
-                                if main_os == "Windows" and connected_roblox_instance and fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
-                                    windows_opened = connected_roblox_instance.getWindowsOpened()
-                                    for i in windows_opened:
-                                        i.setWindowTitle(f"Roblox - Playing {place_info.get('name', 'Unknown')}")
+                                if main_os == "Windows" and connected_roblox_instance:
+                                    if fflag_configuration.get("EFlagShowRunningAccountNameInTitle") == True:
+                                        windows_opened = connected_roblox_instance.getWindowsOpened()
+                                        for i in windows_opened:
+                                            if connected_user_info:
+                                                if fflag_configuration.get("EFlagShowDisplayNameInTitle") == True:
+                                                    i.setWindowTitle(f"Roblox - Playing @{connected_user_info.get('name', 'Unknown')} [ID: {connected_user_info.get('id', 'Unknown')}] as {connected_user_info.get('display', 'Unknown')}!")
+                                                else:
+                                                    i.setWindowTitle(f"Roblox - Playing @{connected_user_info.get('name', 'Unknown')} [ID: {connected_user_info.get('id', 'Unknown')}]!")
+                                    elif fflag_configuration.get("EFlagShowRunningGameInTitle") == True:
+                                        windows_opened = connected_roblox_instance.getWindowsOpened()
+                                        for i in windows_opened:
+                                            i.setWindowTitle(f"Roblox - Playing {place_info.get('name', 'Unknown')}")
                             except Exception as e:
                                 printDebugMessage(f"Something went wrong setting the Window Title: {str(e)}")
                             try:
