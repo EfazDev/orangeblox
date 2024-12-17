@@ -54,11 +54,12 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json", "RepairData"]
-    current_version = {"version": "1.5.0"}
+    current_version = {"version": "1.5.1"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
     silent_mode = False
+    update_mode = False
     rebuild_mode = False
     rebuild_from_source = False
     rebuild_from_source_clang = False
@@ -82,6 +83,7 @@ if __name__ == "__main__":
         silent_mode = True
         instant_install = True
         disable_remove_other_operating_systems = True
+        update_mode = True
         def printMainMessage(mes): silent_mode = True
         def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m")
         def printSuccessMessage(mes): silent_mode = True
@@ -201,15 +203,7 @@ if __name__ == "__main__":
                     pip_class.install(["posix-ipc", "pyobjc"])
                 elif main_os == "Windows":
                     pip_class.install(["pywin32"])
-                requests = pip_class.importModule("requests")
-                plyer = pip_class.importModule("plyer")
-                pypresence = pip_class.importModule("pypresence")
-                tkinter = pip_class.importModule("tkinter")
-                if main_os == "Darwin":
-                    posix_ipc = pip_class.importModule("posix_ipc")
-                    objc = pip_class.importModule("objc")
-                elif main_os == "Windows":
-                    win32com = pip_class.importModule("win32com.client") # type: ignore
+                pip_class.restartScript()
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Ending installation..")
@@ -608,10 +602,6 @@ if __name__ == "__main__":
                         printMainMessage("Removing Apps Folder in Installed Folder to save space.")
                         if os.path.exists(os.path.join(stored_main_app[found_platform][0], "Apps")):
                             shutil.rmtree(os.path.join(stored_main_app[found_platform][0], "Apps"))
-                        if os.path.exists(os.path.join(stored_main_app[found_platform][1], "Apps")):
-                            shutil.rmtree(os.path.join(stored_main_app[found_platform][1], "Apps"))
-                        if os.path.exists(os.path.join(stored_main_app[found_platform][2], "Apps")):
-                            shutil.rmtree(os.path.join(stored_main_app[found_platform][2], "Apps"))
 
                         # Mark Installation in Windows
                         printMainMessage("Marking Program Installation into Windows..")
@@ -685,15 +675,7 @@ if __name__ == "__main__":
                         pip_class.install(["posix-ipc", "pyobjc"])
                     elif main_os == "Windows":
                         pip_class.install(["pywin32"])
-                    requests = pip_class.importModule("requests")
-                    plyer = pip_class.importModule("plyer")
-                    pypresence = pip_class.importModule("pypresence")
-                    tkinter = pip_class.importModule("tkinter")
-                    if main_os == "Darwin":
-                        posix_ipc = pip_class.importModule("posix_ipc")
-                        objc = pip_class.importModule("objc")
-                    elif main_os == "Windows":
-                        win32com = pip_class.importModule("win32com.client") # type: ignore
+                    pip_class.restartScript()
                     printSuccessMessage("Successfully installed modules!")
                 else:
                     printErrorMessage("Ending installation..")
@@ -1093,6 +1075,23 @@ if __name__ == "__main__":
                         requestRepair()
                     elif res == "4":
                         requestBackup()
+    if update_mode == True:
+        if main_os == "Darwin":
+            if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
+                if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):
+                    printMainMessage("Opening Terminal.app in order for console to show..")
+                    subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                printMainMessage("Loading EfazRobloxBootstrap executable!")
+                subprocess.Popen(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            else:
+                printErrorMessage("Bootstrap Launch Failed: App is not installed.")
+        elif main_os == "Windows":
+            generated_app_path = os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")
+            if os.path.exists(os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")):
+                printMainMessage("Loading EfazRobloxBootstrap.exe!")
+                subprocess.Popen(f'{os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")}')
+            else:
+                printErrorMessage("Bootstrap Launch Failed: App is not installed.")
     sys.exit(0)
 else:
     class EfazRobloxBootstrapNotModule(Exception):

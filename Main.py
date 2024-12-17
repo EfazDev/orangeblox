@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.0"}
+    current_version = {"version": "1.5.1"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -414,6 +414,9 @@ if __name__ == "__main__":
     def continueToRoblox(): # Continue to Roblox
         printWarnMessage("--- Continue to Roblox ---")
         printMainMessage("Continuing to next stage!")
+        if (main_os == "Windows" and fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
+            global multi_instance_enabled
+            multi_instance_enabled = True
     def continueToMultiRoblox(): # Multiple Instances
         global multi_instance_enabled
         multi_instance_enabled = True
@@ -1907,12 +1910,13 @@ if __name__ == "__main__":
                         startMessage()
                     generated_ui_options = []
                     main_ui_options = {}
-                    generated_ui_options.append({
-                        "index": 1, 
-                        "message": "Continue to Roblox", 
-                        "func": continueToRoblox, 
-                        "include_go_to_roblox": False
-                    })
+                    if not (main_os == "Windows" and fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
+                        generated_ui_options.append({
+                            "index": 1, 
+                            "message": "Continue to Roblox", 
+                            "func": continueToRoblox, 
+                            "include_go_to_roblox": False
+                        })
                     generated_ui_options.append({
                         "index": 4, 
                         "message": "Run Fast Flag Installer", 
@@ -1987,12 +1991,20 @@ if __name__ == "__main__":
                     })
                     if main_os == "Darwin" or main_os == "Windows":
                         if (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
-                            generated_ui_options.append({
-                                "index": 2, 
-                                "message": "Generate Another Roblox Instance", 
-                                "func": continueToMultiRoblox, 
-                                "include_go_to_roblox": False
-                            })
+                            if main_os == "Windows":
+                                generated_ui_options.append({
+                                    "index": 2, 
+                                    "message": "Continue to Roblox [Multi-Instance Mode]", 
+                                    "func": continueToMultiRoblox, 
+                                    "include_go_to_roblox": False
+                                })
+                            else:
+                                generated_ui_options.append({
+                                    "index": 2, 
+                                    "message": "Generate Another Roblox Instance", 
+                                    "func": continueToMultiRoblox, 
+                                    "include_go_to_roblox": False
+                                })
                         if (fflag_configuration.get("EFlagAllowActivityTracking") == True):
                             generated_ui_options.append({
                                 "index": 3, 
@@ -2307,11 +2319,14 @@ if __name__ == "__main__":
                                                     shutil.copy2(src_path, dest_path)
                                                 except Exception as e:
                                                     printDebugMessage(f"Update Error for file ({src_path}): {str(e)}")
-                                    if latest_vers.get("versions_required_install"):
-                                        if latest_vers.get("versions_required_install").get(current_version.get('version', '1.0.0')) == True:
-                                            printMainMessage("Running Installer..")
-                                            silent_install = subprocess.run(args=[sys.executable, "Install.py", "--update-mode"])
-                                            if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
+                                    printMainMessage("Running Installer..")
+                                    if main_os == "Windows":
+                                        silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"')
+                                        if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
+                                        sys.exit(0)
+                                    else:
+                                        silent_install = subprocess.run(args=[sys.executable, "Install.py", "--update-mode"])
+                                        if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                 except Exception as e:
                                     printErrorMessage("Something went wrong while updating the files for the bootstrap!")
                                     printDebugMessage(f"Update Error: {str(e)}")
@@ -2582,13 +2597,30 @@ if __name__ == "__main__":
                         copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
                     printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
                 elif main_os == "Windows":
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon@2x.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@2x.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon@3x.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/MenuIcon@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@3x.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo@2x.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@2x.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo@3x.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxLogo@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@3x.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxNameIcon.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxNameIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/RobloxNameIcon.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTilt.png")
+                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png"):
+                        copyFile(f"{os.path.curdir}/RobloxBrand/{fflag_configuration['EFlagSelectedBrandLogo']}/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
+
                     icon_pa = f"{os.path.curdir}\\RobloxBrand\\{fflag_configuration['EFlagSelectedBrandLogo']}\\AppIcon.ico"
                     exe_pa = os.path.join(stored_content_folder_destinations["Windows"], "RobloxPlayerBeta.exe")
                     if os.path.exists(icon_pa):
                         # DO NOT USE ICON FOR WINDOWS. IT MAY BREAK THE INSTALLATION
                         printDebugMessage("Icon for Windows is not available due to Windows security purposes.")
-                    else:
-                        printDebugMessage("Icon for Windows is not available.")
                 else:
                     printDebugMessage("Change App Icon while on an another operating system..?")
             else:
@@ -2596,25 +2628,41 @@ if __name__ == "__main__":
                     printMainMessage("Changing Current App Icon..")
                     if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/AppIcon.icns"):
                         copyFile(f"{os.path.curdir}/RobloxBrand/Original/AppIcon.icns", f"{stored_content_folder_destinations[found_platform]}AppIcon.icns")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@2x.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@2x.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@3x.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@3x.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@2x.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@2x.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@3x.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@3x.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxNameIcon.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxNameIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/RobloxNameIcon.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTilt.png")
-                    if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
-                        copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
-                    printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
+                        printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@2x.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@2x.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@3x.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/MenuIcon@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/TopBar/coloredlogo@3x.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@2x.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@2x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@2x.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@3x.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxLogo@3x.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/ScreenshotHud/RobloxLogo@3x.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxNameIcon.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxNameIcon.png", f"{stored_content_folder_destinations[found_platform]}content/textures/ui/RobloxNameIcon.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTilt.png")
+                if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
+                    copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
+
+            printMainMessage("Installing Fast Flags..")
+            if fast_config_loaded == True:
+                filtered_fast_flags = {}
+                for i, v in fflag_configuration.items():
+                    if not i.startswith("EFlag"):
+                        filtered_fast_flags[i] = v
+                if not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True or multi_instance_enabled == True):
+                    if handler.getIfRobloxIsOpen():
+                        handler.endRoblox()
+                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
+                else:
+                    filtered_fast_flags["FFlagEnableSingleInstanceRobloxClient"] = False
+                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), endRobloxInstances=False)
+            else:
+                printErrorMessage("There was an error reading your configuration file.")
 
             if main_os == "Darwin":
                 if os.path.exists("/Applications/Roblox.app/Contents/Info.plist"):
@@ -2677,22 +2725,6 @@ if __name__ == "__main__":
                         printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
                 else:
                     printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
-
-            printMainMessage("Installing Fast Flags..")
-            if fast_config_loaded == True:
-                filtered_fast_flags = {}
-                for i, v in fflag_configuration.items():
-                    if not i.startswith("EFlag"):
-                        filtered_fast_flags[i] = v
-                if not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True or multi_instance_enabled == True):
-                    if handler.getIfRobloxIsOpen():
-                        handler.endRoblox()
-                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
-                else:
-                    filtered_fast_flags["FFlagEnableSingleInstanceRobloxClient"] = False
-                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), endRobloxInstances=False)
-            else:
-                printErrorMessage("There was an error reading your configuration file.")
         except Exception as e:
             printErrorMessage(f"There was a problem applying mods to the Roblox Client!")
             printDebugMessage(f"Error Message: {str(e)}")

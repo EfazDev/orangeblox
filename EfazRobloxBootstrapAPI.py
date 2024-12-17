@@ -1,7 +1,7 @@
 # 
 # Efaz's Roblox Bootstrap API
 # Made by Efaz from efaz.dev
-# v1.4.1
+# v1.5.0
 # 
 # Provided to Mod Mode Scripts using variable EfazRobloxBootstrapAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
