@@ -84,11 +84,6 @@ if __name__ == "__main__":
         instant_install = True
         disable_remove_other_operating_systems = True
         update_mode = True
-        def printMainMessage(mes): silent_mode = True
-        def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m")
-        def printSuccessMessage(mes): silent_mode = True
-        def printWarnMessage(mes): silent_mode = True
-        def printDebugMessage(mes): silent_mode = True
     else:
         if "--install" in sys.argv:
             instant_install = True
