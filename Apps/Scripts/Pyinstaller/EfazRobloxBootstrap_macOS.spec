@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../AppIcon.icns"
-current_version = {"version": "1.5.1"}
+current_version = {"version": "1.5.2"}
 
 main_plist = {
     "CFBundleExecutable": "EfazRobloxBootstrapMain",
@@ -58,7 +58,7 @@ main_analysis = Analysis(
     ["../EfazRobloxBootstrap.py", "../PipHandler.py"],
     pathex=[],
     binaries=[],
-    datas=collect_data_files("EfazRobloxBootstrapMain") + [("../../../GeneratedHash.json", ".")],
+    datas=collect_data_files("EfazRobloxBootstrapMain") + [("../../../Version.json", ".")],
     hiddenimports=["pyobjc", "tkinter"],
     hookspath=[],
     hooksconfig={},

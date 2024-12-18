@@ -1,31 +1,15 @@
 {
-    "version": "1.5.1",
-    "latest_version": "1.5.1",
-    "versions_required_install": { 
-        "1.0.0": true, 
-        "1.0.1": true, 
-        "1.0.3": true, 
-        "1.1.0": true, 
-        "1.1.5": true, 
-        "1.2.0": true, 
-        "1.2.1": true, 
-        "1.2.2": true, 
-        "1.2.3": true, 
-        "1.2.5": true, 
-        "1.3.0": true, 
-        "1.3.1": true, 
-        "1.3.5": true, 
-        "1.3.6": true,
-        "1.3.7": true,
-        "1.3.8": true,
-        "1.4.0": true,
-        "1.4.1": true,
-        "1.4.2": true,
-        "1.4.3": true,
-        "1.4.5": true,
-        "1.4.6": true,
-        "1.5.0": true,
-        "1.5.1": true
+    "version": "1.5.2",
+    "latest_version": "1.5.2",
+    "versions_required_install": {
+        "1.5.2": true
+    },
+    "hashes": {
+        "main": "d13cf7bb176bd9e4ab29bb03d5f7fb07c6006e521c7022af52736d7ea6f3d927",
+        "fflag_install": "4e834bff72e8e8955df4ba87b08a93cd53d0ba92c3b4644854e40d0831840eaf",
+        "install": "6e9a1f9e62d8dd9519307f0f68d60ea6e5d7af7f1fad67623d5249d6b4c34d23",
+        "bootstrap_api": "819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8",
+        "discord_presence": "fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a"
     },
     "download_location": "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip"
 }

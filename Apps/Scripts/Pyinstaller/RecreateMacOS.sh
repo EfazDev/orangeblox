@@ -11,7 +11,7 @@ rm -f ./Apps/EfazRobloxBootstrapMac.zip
 
 # Generate Hash
 printMessage "Generating Main.py Hash.."
-python3 ./Apps/Scripts/GenerateMainHash.py
+python3 ./Apps/Scripts/GenerateHash.py
 
 # Build Pyinstaller Package
 printMessage "Building Pyinstaller Package.."

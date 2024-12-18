@@ -1,7 +1,7 @@
 @echo off
 
 rem Generate Main.py Hash
-python Apps\Scripts\GenerateMainHash.py
+python Apps\Scripts\GenerateHash.py
 
 rem Build Pyinstaller Package
 powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Building Pyinstaller Package..' -ForegroundColor Green"

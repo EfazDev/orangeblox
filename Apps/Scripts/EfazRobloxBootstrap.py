@@ -12,7 +12,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.5.1"}
+    current_version = {"version": "1.5.2"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -114,8 +114,8 @@ if __name__ == "__main__":
                 hasher.update(chunk)
         return hasher.hexdigest()
     
-    with open(os.path.join(os.path.dirname(__file__), "GeneratedHash.json"), "r") as f:
-        integrated_app_hashes = json.load(f)
+    with open(os.path.join(os.path.dirname(__file__), "Version.json"), "r") as f:
+        current_version = json.load(f)
         f.close()
 
     if main_os == "Darwin":
@@ -267,19 +267,20 @@ if __name__ == "__main__":
 
                     validated = True
                     unable_to_validate = []
-                    if not (a_file_hash == integrated_app_hashes["main"]): 
+                    integrated_app_hashes = current_version.get("hashes", {})
+                    if not (a_file_hash == integrated_app_hashes.get("main")): 
                         validated = False
                         unable_to_validate.append("Main.py")
-                    if not (b_file_hash == integrated_app_hashes["fflag_install"]):
+                    if not (b_file_hash == integrated_app_hashes.get("fflag_install")):
                         validated = False
                         unable_to_validate.append("RobloxFastFlagsInstaller.py")
-                    if not (c_file_hash == integrated_app_hashes["install"]):
+                    if not (c_file_hash == integrated_app_hashes.get("install")):
                         validated = False
                         unable_to_validate.append("Install.py")
-                    if not (d_file_hash == integrated_app_hashes["bootstrap_api"]):
+                    if not (d_file_hash == integrated_app_hashes.get("bootstrap_api")):
                         validated = False
                         unable_to_validate.append("EfazRobloxBootstrapAPI.py")
-                    if not (e_file_hash == integrated_app_hashes["discord_presence"]):
+                    if not (e_file_hash == integrated_app_hashes.get("discord_presence")):
                         validated = False
                         unable_to_validate.append("DiscordPresenceHandler.py")
 
@@ -850,19 +851,20 @@ if __name__ == "__main__":
 
                         validated = True
                         unable_to_validate = []
-                        if not (a_file_hash == integrated_app_hashes["main"]): 
+                        integrated_app_hashes = current_version.get("hashes", {})
+                        if not (a_file_hash == integrated_app_hashes.get("main")): 
                             validated = False
                             unable_to_validate.append("Main.py")
-                        if not (b_file_hash == integrated_app_hashes["fflag_install"]):
+                        if not (b_file_hash == integrated_app_hashes.get("fflag_install")):
                             validated = False
                             unable_to_validate.append("RobloxFastFlagsInstaller.py")
-                        if not (c_file_hash == integrated_app_hashes["install"]):
+                        if not (c_file_hash == integrated_app_hashes.get("install")):
                             validated = False
                             unable_to_validate.append("Install.py")
-                        if not (d_file_hash == integrated_app_hashes["bootstrap_api"]):
+                        if not (d_file_hash == integrated_app_hashes.get("bootstrap_api")):
                             validated = False
                             unable_to_validate.append("EfazRobloxBootstrapAPI.py")
-                        if not (e_file_hash == integrated_app_hashes["discord_presence"]):
+                        if not (e_file_hash == integrated_app_hashes.get("discord_presence")):
                             validated = False
                             unable_to_validate.append("DiscordPresenceHandler.py")
 

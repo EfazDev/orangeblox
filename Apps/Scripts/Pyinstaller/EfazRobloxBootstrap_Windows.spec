@@ -13,7 +13,7 @@ a = Analysis(
     ["../EfazRobloxBootstrap.py", "../EfazRobloxBootstrapPlayRoblox.py", "../PipHandler.py"],
     pathex=[],
     binaries=[],
-    datas=collect_data_files("EfazRobloxBootstrap") + [("../../../GeneratedHash.json", ".")],
+    datas=collect_data_files("EfazRobloxBootstrap") + [("../../../Version.json", ".")],
     hiddenimports=[
         "pyobjc", 
         "tkinter", 

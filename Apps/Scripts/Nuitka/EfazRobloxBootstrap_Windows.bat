@@ -19,15 +19,15 @@ if not exist "%EF_BOOTSTRAP_PLAY%" (
 )
 
 rem Generate Main.py Hash
-python Apps\Scripts\GenerateMainHash.py
+python Apps\Scripts\GenerateHash.py
 
 powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Compiling EfazRobloxBootstrap with Nuitka using Python 3.12..' -ForegroundColor Green"
 rem Compile EfazRobloxBootstrap
-python3.12 -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=./Apps/Scripts/PipHandler.py=PipHandler.py+./GeneratedHash.json=eneratedHash.json --output-dir="dist" --windows-icon-from-ico="./Apps/Scripts/AppIcon.ico" --target="EfazRobloxBootstrap" "./Apps/Scripts/EfazRobloxBootstrap.py"
+python3.12 -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=./Apps/Scripts/PipHandler.py=PipHandler.py+./Version.json=Version.json --output-dir="dist" --windows-icon-from-ico="./Apps/Scripts/AppIcon.ico" --target="EfazRobloxBootstrap" "./Apps/Scripts/EfazRobloxBootstrap.py"
 
 powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Compiling EfazRobloxBootstrapPlayRoblox with Nuitka using Python 3.12..' -ForegroundColor Green"
 rem Compile PlayRoblox (EfazRobloxBootstrapPlayRoblox.py)
-python3.12 -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=./Apps/Scripts/PipHandler.py=PipHandler.py+./GeneratedHash.json=eneratedHash.json --output-dir="dist" --windows-icon-from-ico="./Apps/Scripts/AppIcon.ico" --target="EfazRobloxBootstrapPlayRoblox" "./Apps/Scripts/EfazRobloxBootstrapPlayRoblox.py"
+python3.12 -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=./Apps/Scripts/PipHandler.py=PipHandler.py+./Version.json=Version.json --output-dir="dist" --windows-icon-from-ico="./Apps/Scripts/AppIcon.ico" --target="EfazRobloxBootstrapPlayRoblox" "./Apps/Scripts/EfazRobloxBootstrapPlayRoblox.py"
 
 powershell -c "Write-Host 'Rebuild EfazRobloxBootstrap: Combining PlayRoblox.exe and EfazRobloxBootstrap.exe into one folder..' -ForegroundColor Green"
 rem Optionally combine both executables in one folder

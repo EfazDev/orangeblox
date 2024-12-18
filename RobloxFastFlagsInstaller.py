@@ -541,7 +541,6 @@ class Main():
                             elif "[FLog::RobloxStarter] RobloxStarter destroyed" in line:
                                 if self.windows_roblox_starter_launched_roblox == False:
                                     submitToThread(eventName="onRobloxSharedLogLaunch", data=line)
-                                    submitToThread(eventName="onRobloxExit", data=line)
                                     return self.__ReadingLineResponse__.EndWatchdog()
                                 else:
                                     submitToThread(eventName="onRobloxLauncherDestroyed", data=line)
@@ -978,40 +977,30 @@ class Main():
                                     write_file.writelines(end_lines)
                             while True:
                                 line = file.readline()
-                                if self.ended_process == True:
-                                    submitToThread(eventName="onRobloxExit", data=line)
-                                    return
                                 if not line:
                                     threading.Thread(target=cleanLogs).start()
                                     break
+                                if self.ended_process == True:
+                                    submitToThread(eventName="onRobloxExit", data=line)
+                                    return
                                 if not (line in passed_lines):
                                     timestamp_str = line.split(",")
                                     if len(timestamp_str) > 0:
                                         timestamp_str = timestamp_str[0]
                                         if re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", timestamp_str):
-                                            try:
-                                                timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-                                                current_time = datetime.datetime.utcnow()
-                                                if timestamp:
-                                                    age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
-                                                    if age_in_seconds < 60:
-                                                        res = handleLine(line)
-                                                        if res:
-                                                            if res.code == 0:
-                                                                threading.Thread(target=cleanLogs).start()
-                                                                break
-                                                            elif res.code == 1:
-                                                                self.ended_process = True
-                                                                return
-                                            except Exception as e:
-                                                res = handleLine(line)
-                                                if res:
-                                                    if res.code == 0:
-                                                        threading.Thread(target=cleanLogs).start()
-                                                        break
-                                                    elif res.code == 1:
-                                                        self.ended_process = True
-                                                        return
+                                            timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+                                            current_time = datetime.datetime.now(datetime.timezone.utc)
+                                            if timestamp:
+                                                age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
+                                                if age_in_seconds < 60:
+                                                    res = handleLine(line)
+                                                    if res:
+                                                        if res.code == 0:
+                                                            threading.Thread(target=cleanLogs).start()
+                                                            break
+                                                        elif res.code == 1:
+                                                            self.ended_process = True
+                                                            return
                                         else:
                                             res = handleLine(line)
                                             if res:
@@ -1035,13 +1024,13 @@ class Main():
                             file.seek(0, os.SEEK_END)
                             while True:
                                 line = file.readline()
+                                if not line:
+                                    time.sleep(0.01)
+                                    continue
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
                                     threading.Thread(target=cleanLogs).start()
                                     break
-                                if not line:
-                                    time.sleep(0.01)
-                                    continue
                                 if not (line in passed_lines):
                                     timestamp_str = line.split(",")
                                     if len(timestamp_str) > 0:

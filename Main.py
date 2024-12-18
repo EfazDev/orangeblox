@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.1"}
+    current_version = {"version": "1.5.2"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -2854,6 +2854,7 @@ if __name__ == "__main__":
     current_place_info = None
     is_teleport = False
     is_app_login_fail = False
+    roblox_closure_pending = False
     connected_user_info = None
     updated_count = 0
     connected_roblox_instance = None
@@ -3942,6 +3943,12 @@ if __name__ == "__main__":
                             printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
     def onRobloxExit(consoleLine):
         global is_app_login_fail
+        global roblox_closure_pending
+        was_already_pended = False
+        if roblox_closure_pending == True:
+            was_already_pended = True
+        else:
+            roblox_closure_pending = True
         if is_app_login_fail == True:
             printDebugMessage("Roblox failed to launch login!")
         else:
@@ -3968,6 +3975,8 @@ if __name__ == "__main__":
                 pip_class.install(["requests"])
                 import requests
                 printSuccessMessage("Successfully installed modules!")
+            if was_already_pended == True:
+                return
             if connected_roblox_instance and not (connected_roblox_instance.main_log_file == "") and fflag_configuration.get("EFlagDiscordWebhookURL"):
                 title = "Roblox Closed!"
                 color = 16735838

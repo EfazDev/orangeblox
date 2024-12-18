@@ -53,8 +53,8 @@ if __name__ == "__main__":
         "Darwin": ["/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app", "/Applications/EfazRobloxBootstrap.app", "/Applications/Play Roblox.app"],
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
-    ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "GeneratedHash.json", "RepairData"]
-    current_version = {"version": "1.5.1"}
+    ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "RepairData"]
+    current_version = {"version": "1.5.2"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
@@ -271,16 +271,16 @@ if __name__ == "__main__":
                     else:
                         printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
                 else:
-                    if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac32.zip"):
+                    if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMacIntel.zip"):
                         # Unzip Installation ZIP
                         printMainMessage("Unzipping Installation ZIP File..")
                         try:
-                            subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMac32.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+                            subprocess.run(["unzip", "-o", f"{current_path_location}/Apps/EfazRobloxBootstrapMacIntel.zip", "-d", f"{current_path_location}/Apps/EfazRobloxBootstrapMac"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                         except Exception as e:
                             printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
                         time.sleep(1)
                     else:
-                        printYellowMessage("Something went wrong finding EfazRobloxBootstrapMac32.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
+                        printYellowMessage("Something went wrong finding EfazRobloxBootstrapMacIntel.zip. It will require a EfazRobloxBootstrapMac folder in order for installation to finish.")
                 if os.path.exists(f"{current_path_location}/Apps/EfazRobloxBootstrapMac/"):
                     # Delete Other Operating System Files
                     if not (disable_remove_other_operating_systems == True or fflag_configuration.get("EFlagDisableDeleteOtherOSApps") == True):
