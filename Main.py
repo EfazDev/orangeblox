@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.2"}
+    current_version = {"version": "1.5.3"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -2695,15 +2695,14 @@ if __name__ == "__main__":
             if fast_config_loaded == True:
                 filtered_fast_flags = {}
                 for i, v in fflag_configuration.items():
-                    if not i.startswith("EFlag"):
+                    if i and (not i.startswith("EFlag")):
                         filtered_fast_flags[i] = v
                 if not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True or multi_instance_enabled == True):
-                    if handler.getIfRobloxIsOpen():
-                        handler.endRoblox()
-                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
+                    handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), endRobloxInstances=True)
                 else:
                     filtered_fast_flags["FFlagEnableSingleInstanceRobloxClient"] = False
                     handler.installFastFlagsJSON(filtered_fast_flags, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), endRobloxInstances=False)
+                printSuccessMessage("Successfully installed FFlags to the Roblox files!")
             else:
                 printErrorMessage("There was an error reading your configuration file.")
 
@@ -3944,6 +3943,8 @@ if __name__ == "__main__":
     def onRobloxExit(consoleLine):
         global is_app_login_fail
         global roblox_closure_pending
+        if "mutex result" in consoleLine:
+            return
         was_already_pended = False
         if roblox_closure_pending == True:
             was_already_pended = True
@@ -4117,6 +4118,8 @@ if __name__ == "__main__":
                 except Exception as e:
                     printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
     def onRobloxAppStart(consoleLine):
+        global roblox_closure_pending
+        roblox_closure_pending = False
         if fflag_configuration.get("EFlagUseDiscordWebhook") == True and fflag_configuration.get("EFlagDiscordWebhookRobloxAppStart") == True:
             try:
                 import requests

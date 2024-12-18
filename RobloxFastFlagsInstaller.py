@@ -1310,22 +1310,21 @@ class Main():
             self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
             return {"success": False, "message": "OS not compatible."}
     def installFastFlagsJSON(self, fastflagJSON: object, askForPerms=False, merge=True, flat=False, endRobloxInstances=True, isBootstrapper=False, debug=False):
-        fastFlagFileName = "ClientAppSettings.json"
         if __name__ == "__main__":
             if self.__main_os__ == "Darwin":
                 if endRobloxInstances == True:
                     printMainMessage(f"Closing any open Roblox windows..")
                     self.endRoblox()
-                if efaz_bootstrap_mode == False:
+                if isBootstrapper == False:
                     printMainMessage(f"Generating Client Settings Folder..")
                     if not os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings"):
                         os.mkdir(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings")
                         printSuccessMessage(f"Created {macOS_dir}{macOS_beforeClientServices}ClientSettings..")
                     else:
                         printWarnMessage(f"Client Settings is already created. Skipping Folder Creation..")
-                printMainMessage(f"Writing {fastFlagFileName}")
+                printMainMessage(f"Writing ClientAppSettings.json")
                 if merge == True:
-                    if os.path.exists("FastFlagConfiguration.json"):
+                    if isBootstrapper == True and os.path.exists("FastFlagConfiguration.json"):
                         try:
                             printMainMessage("Reading Previous Configurations..")
                             with open(f"FastFlagConfiguration.json", "r") as f:
@@ -1334,17 +1333,17 @@ class Main():
                             fastflagJSON = merge_json
                         except Exception as e:
                             printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
-                    elif os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}"):
+                    elif os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json"):
                         try:
                             printMainMessage("Reading Previous Client App Settings..")
-                            with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "r") as f:
+                            with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json", "r") as f:
                                 merge_json = json.load(f)
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
                         except Exception as e:
                             printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
-                set_location = f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}"
-                if os.path.exists("FastFlagConfiguration.json"):
+                set_location = f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json"
+                if isBootstrapper == True and os.path.exists("FastFlagConfiguration.json"):
                     set_location = "FastFlagConfiguration.json"
                 with open(set_location, "w") as f:
                     if flat == True:
@@ -1352,7 +1351,7 @@ class Main():
                     else:
                         json.dump(fastflagJSON, f, indent=4)
                 printSuccessMessage("DONE!")
-                if efaz_bootstrap_mode == True:
+                if isBootstrapper == True:
                     printSuccessMessage("Your fast flags was successfully saved into your Fast Flag Settings!")
                     printSuccessMessage(f"If you like to update your fast flags, go to: {set_location}")
                 else:
@@ -1370,14 +1369,14 @@ class Main():
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
                 if most_recent_roblox_version_dir:
                     printMainMessage(f"Found version: {most_recent_roblox_version_dir}")
-                    if efaz_bootstrap_mode == False:
+                    if isBootstrapper == False:
                         printMainMessage(f"Generating Client Settings Folder..")
                         if not os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings"):
                             os.mkdir(f"{most_recent_roblox_version_dir}ClientSettings")
                             printSuccessMessage(f"Created {most_recent_roblox_version_dir}ClientSettings..")
                         else:
                             printWarnMessage(f"Client Settings is already created. Skipping Folder Creation..")
-                    printMainMessage(f"Writing {fastFlagFileName}")
+                    printMainMessage(f"Writing ClientAppSettings.json")
                     if merge == True:
                         if os.path.exists("FastFlagConfiguration.json"):
                             try:
@@ -1388,18 +1387,18 @@ class Main():
                                 fastflagJSON = merge_json
                             except Exception as e:
                                 printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
-                        elif os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}"):
+                        elif os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json"):
                             try:
                                 printMainMessage("Reading Previous Client App Settings..")
-                                with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "r") as f:
+                                with open(f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json", "r") as f:
                                     merge_json = json.load(f)
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
                             except Exception as e:
                                 printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                     
-                    set_location = f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}"
-                    if os.path.exists("FastFlagConfiguration.json"):
+                    set_location = f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json"
+                    if isBootstrapper == True and os.path.exists("FastFlagConfiguration.json"):
                         set_location = "FastFlagConfiguration.json"
                     with open(set_location, "w") as f:
                         if flat == True:
@@ -1407,7 +1406,7 @@ class Main():
                         else:
                             json.dump(fastflagJSON, f, indent=4)
                     printSuccessMessage("DONE!")
-                    if efaz_bootstrap_mode == True:
+                    if isBootstrapper == True:
                         printSuccessMessage("Your fast flags was successfully saved into your Fast Flag Settings!")
                         printSuccessMessage(f"If you like to update your fast flags, go to: {set_location}")
                     else:
@@ -1436,21 +1435,21 @@ class Main():
                     os.mkdir(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings")
                     if debug == True: printDebugMessage("Created ClientSettings folder..")
                 if merge == True:
-                    if os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}"):
+                    if os.path.exists(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json"):
                         try:
-                            with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "r") as f:
+                            with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json", "r") as f:
                                 merge_json = json.load(f)
                             merge_json.update(fastflagJSON)
                             fastflagJSON = merge_json
                             if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                         except Exception as e:
                             self.printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
-                with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/{fastFlagFileName}", "w") as f:
+                with open(f"{macOS_dir}{macOS_beforeClientServices}ClientSettings/ClientAppSettings.json", "w") as f:
                     if flat == True:
                         json.dump(fastflagJSON, f)
                     else:
                         json.dump(fastflagJSON, f, indent=4)
-                if debug == True: printDebugMessage(f"Saved to {fastFlagFileName} successfully!")
+                if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
             elif self.__main_os__ == "Windows":
                 self.endRoblox()
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
@@ -1460,21 +1459,21 @@ class Main():
                         os.mkdir(f"{most_recent_roblox_version_dir}ClientSettings")
                         if debug == True: printDebugMessage("Created ClientSettings folder..")
                     if merge == True:
-                        if os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}"):
+                        if os.path.exists(f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json"):
                             try:
-                                with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "r") as f:
+                                with open(f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json", "r") as f:
                                     merge_json = json.load(f)
                                 merge_json.update(fastflagJSON)
                                 fastflagJSON = merge_json
                                 if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                             except Exception as e:
                                 self.printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
-                    with open(f"{most_recent_roblox_version_dir}ClientSettings\\{fastFlagFileName}", "w") as f:
+                    with open(f"{most_recent_roblox_version_dir}ClientSettings\\ClientAppSettings.json", "w") as f:
                         if flat == True:
                             json.dump(fastflagJSON, f)
                         else:
                             json.dump(fastflagJSON, f, indent=4)
-                    if debug == True: printDebugMessage(f"Saved to {fastFlagFileName} successfully!")
+                    if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
                 else:
                     self.printLog("Roblox couldn't be found.")
             else:
@@ -2368,7 +2367,7 @@ if __name__ == "__main__":
                 printMainMessage("Are you sure you would like to save these FFlags in the bootstrap system?")
                 install_now = input("> ")
                 if isYes(install_now) == True:
-                    handler.installFastFlagsJSON(generated_json, endRobloxInstances=False)
+                    handler.installFastFlagsJSON(generated_json, endRobloxInstances=False, isBootstrapper=True)
                 else:
                     printMainMessage("Ending installation..")
                     exit()
