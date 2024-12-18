@@ -882,6 +882,7 @@ if __name__ == "__main__":
                             if not (e_file_hash == integrated_app_hashes["discord_presence"]):
                                 printMainMessage(f'DiscordPresenceHandler.py | {integrated_app_hashes["discord_presence"]} => {e_file_hash}')
                             if isYes(input("> ")) == False:
+                                ended = True
                                 sys.exit(0)
                             displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated!")
                         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
