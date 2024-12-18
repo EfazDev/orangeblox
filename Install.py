@@ -229,7 +229,10 @@ if __name__ == "__main__":
                     extra_detail = " nosudo"
                     if "--use-sudo-for-codesign" in sys.argv:
                         extra_detail = ""
-                    rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMac.sh installer" + extra_detail, shell=True, cwd=current_path_location)
+                    if platform.machine() == "arm64":
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMac.sh installer" + extra_detail, shell=True, cwd=current_path_location)
+                    else:
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMacIntel.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Clang App succeeded! Continuing to installation..")
                     else:

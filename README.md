@@ -54,7 +54,7 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 ## Hashes
 Main Bootstrap (Main.py): `d13cf7bb176bd9e4ab29bb03d5f7fb07c6006e521c7022af52736d7ea6f3d927`<br>
 Roblox FFlag Installer (RobloxFastFlagsInstaller.py): `4e834bff72e8e8955df4ba87b08a93cd53d0ba92c3b4644854e40d0831840eaf`<br>
-Installer (Install.py): `6e9a1f9e62d8dd9519307f0f68d60ea6e5d7af7f1fad67623d5249d6b4c34d23`<br>
+Installer (Install.py): `fcb251e2b7f9c9a225dc59d8e771adcb65443d76150b6876524fc74057cd5da1`<br>
 Bootstrap API (EfazRobloxBootstrapAPI.py): `819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8`<br>
 Discord Presence Handler (DiscordPresenceHandler.py): `fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a`<br>
 
