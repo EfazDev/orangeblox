@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.3"}
+    current_version = {"version": "1.5.4"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -1935,7 +1935,7 @@ if __name__ == "__main__":
                         startMessage()
                     generated_ui_options = []
                     main_ui_options = {}
-                    if not (main_os == "Windows" and fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
+                    if not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
                         generated_ui_options.append({
                             "index": 1, 
                             "message": "Continue to Roblox", 
@@ -2014,29 +2014,20 @@ if __name__ == "__main__":
                         "include_new_message": "",
                         "clear_console": True
                     })
-                    if main_os == "Darwin" or main_os == "Windows":
-                        if (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
-                            if main_os == "Windows":
-                                generated_ui_options.append({
-                                    "index": 2, 
-                                    "message": "Continue to Roblox [Multi-Instance Mode]", 
-                                    "func": continueToMultiRoblox, 
-                                    "include_go_to_roblox": False
-                                })
-                            else:
-                                generated_ui_options.append({
-                                    "index": 2, 
-                                    "message": "Generate Another Roblox Instance", 
-                                    "func": continueToMultiRoblox, 
-                                    "include_go_to_roblox": False
-                                })
-                        if (fflag_configuration.get("EFlagAllowActivityTracking") == True):
-                            generated_ui_options.append({
-                                "index": 3, 
-                                "message": "Connect to Existing Roblox Window", 
-                                "func": connectExistingRobloxWindow, 
-                                "include_go_to_roblox": False
-                            })
+                    if (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True):
+                        generated_ui_options.append({
+                            "index": 2, 
+                            "message": "Continue to Roblox [Multi-Instance Mode]", 
+                            "func": continueToMultiRoblox, 
+                            "include_go_to_roblox": False
+                        })
+                    if (fflag_configuration.get("EFlagAllowActivityTracking") == True):
+                        generated_ui_options.append({
+                            "index": 3, 
+                            "message": "Connect to Existing Roblox Window", 
+                            "func": connectExistingRobloxWindow, 
+                            "include_go_to_roblox": False
+                        })
                     if (fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir") and os.path.exists(fflag_configuration.get("EFlagEfazRobloxBootStrapSyncDir"))):
                         generated_ui_options.append({
                             "index": 97, 
@@ -2357,7 +2348,7 @@ if __name__ == "__main__":
                                                 else:
                                                     with open("URLSchemeExchange", "w") as f:
                                                         f.write(filtered_args)
-                                        silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\Install.py --update-mode"', shell=True)
+                                        silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\\Install.py --update-mode"', shell=True)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                         try:
                                             printMainMessage("Cleaning up files..")
@@ -2415,11 +2406,13 @@ if __name__ == "__main__":
                 if (multi_instance_enabled == True or fflag_configuration.get("EFlagEnableDuplicationOfClients") == True) and handler.getIfRobloxIsOpen():
                     printMainMessage("Skipping Roblox Reinstall due to Multi-Instancing enabled.")
                 else:
+                    printMainMessage(f"Update check was skipped due to Fresh Copy being enabled.")
                     printWarnMessage("--- Installing Latest Roblox Version ---")
                     handler.installRoblox(forceQuit=True, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True))
                     installed_update = True
                     time.sleep(3)
             else:
+                printMainMessage(f"Update check was skipped due to Fresh Copy being enabled.")
                 printWarnMessage("--- Installing Latest Roblox Version ---")
                 handler.installRoblox(forceQuit=False, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
                 installed_update = True
@@ -2432,6 +2425,7 @@ if __name__ == "__main__":
                         if current_roblox_version["version"] == latest_roblox_version["client_version"]:
                             printMainMessage("Running latest version of Roblox!")
                         else:
+                            printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['client_version']}")
                             printWarnMessage("--- Installing Latest Roblox Version ---")
                             handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
                             if main_os == "Darwin":
@@ -2449,6 +2443,7 @@ if __name__ == "__main__":
                         if current_roblox_version["version"] == latest_roblox_version["short_version"]:
                             printMainMessage("Running latest version of Roblox!")
                         else:
+                            printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['short_version']}")
                             printWarnMessage("--- Installing Latest Roblox Version ---")
                             handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
                             if main_os == "Darwin":
@@ -2818,8 +2813,11 @@ if __name__ == "__main__":
                         if working_directory: shortcut.WorkingDirectory = working_directory
                         if icon_path: shortcut.IconLocation = icon_path
                         shortcut.save()
-                    create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
                     create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+                    create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
+                    create_shortcut(os.path.join(bootstrap_folder_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"))
+                    create_shortcut(os.path.join(bootstrap_folder_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                    create_shortcut(os.path.join(bootstrap_folder_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
                 except Exception as e:
                     printErrorMessage(f"Something went wrong setting up shortcuts: {str(e)}")
 

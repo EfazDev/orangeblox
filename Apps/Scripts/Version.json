@@ -1,13 +1,13 @@
 {
-    "version": "1.5.3",
-    "latest_version": "1.5.3",
+    "version": "1.5.4",
+    "latest_version": "1.5.4",
     "versions_required_install": {
-        "1.5.3": true
+        "1.5.4": true
     },
     "hashes": {
-        "main": "7dc8cdb91d29d72cbea0ea73a0565786e0a47e5cb8594a11f861b5cf58326294",
-        "fflag_install": "f605232daf438fa503056f361f3f10fb45318a54976d02ebb32b63346e773afa",
-        "install": "2cdace7344115a44fe7215bf321a4d22e79617f56a574f8a320fb1a940dbe946",
+        "main": "87d7ad615173a2108f301ecc78cc9a26a88b361a4024e0bf3c3f94d37e9c601b",
+        "fflag_install": "5b35ec50175cc45a7ebba37d4bd7ffe42a9797fd4fa0db9263b2e22677b05f6e",
+        "install": "f1c7f6d6b8700864d00dcdb025dd0b0fc01c67fd32e212896ff003c0720f31fc",
         "bootstrap_api": "819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8",
         "discord_presence": "fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a"
     },

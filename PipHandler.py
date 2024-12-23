@@ -132,24 +132,31 @@ class pip:
         import subprocess
         ma_os = platform.system()
         if ma_os == "Windows":
-            process = subprocess.run("tasklist", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        elif ma_os == "Darwin":
-            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        else:
-            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, _ = process.communicate()
+            process_list = output.decode("utf-8")
 
-        process_list = process.stdout.decode("utf-8")
-
-        if pid == "":
-            if process_list.rfind(process_name) == -1:
-                return False
+            if pid == "" or pid == None:
+                if process_list.rfind(process_name) == -1:
+                    return False
+                else:
+                    return True
             else:
-                return True
+                if process_list.rfind(pid) == -1:
+                    return False
+                else:
+                    return True
         else:
-            if process_list.rfind(pid) == -1:
-                return False
+            if pid == "" or pid == None:
+                if subprocess.run(f"pgrep -f '{process_name}' > /dev/null 2>&1", shell=True).returncode == 0:
+                    return True
+                else:
+                    return False
             else:
-                return True
+                if subprocess.run(f"ps -p {pid} > /dev/null 2>&1", shell=True).returncode == 0:
+                    return True
+                else:
+                    return False
     def getProcessWindows(self, pid: int):
         import platform
         if (type(pid) is str and pid.isnumeric()) or type(pid) is int:

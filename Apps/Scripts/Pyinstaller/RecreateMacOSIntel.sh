@@ -42,29 +42,6 @@ codesig1() {
     done
 }
 codesig1 "$2"
-codesig2() {
-    while true; do
-        rm -rf ./Apps/EfazRobloxBootstrapLoad.app/Contents/_CodeSignature/
-        if [ "$1" != "nosudo" ]; then
-            sudo xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapLoad.app"
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapLoad.app"
-            sudo xattr -cr "./Apps/EfazRobloxBootstrapLoad.app"
-            sudo codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapLoad.app"
-        else
-            xattr -dr com.apple.FinderInfo "./Apps/EfazRobloxBootstrapLoad.app"
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/EfazRobloxBootstrapLoad.app"
-            xattr -cr "./Apps/EfazRobloxBootstrapLoad.app"
-            codesign -s - --force --all-architectures --timestamp --deep "./Apps/EfazRobloxBootstrapLoad.app"
-        fi
-        STATUS=$?
-        if [ $STATUS -eq 0 ]; then
-            break
-        else
-            printMessage "Loader Codesign Attempt Failed. Retrying.."
-        fi
-    done
-}
-codesig2 "$2"
 
 # Create EfazRobloxBootstrapMac.zip
 printMessage "Creating EfazRobloxBootstrapMacIntel.zip.."
@@ -72,7 +49,7 @@ zip -r -y ./Apps/EfazRobloxBootstrapMacIntel.zip "./Apps/EfazRobloxBootstrapMain
 
 # Remove Build and EfazRobloxBootstrapLoad folder
 printMessage "Partial Cleaning.."
-rm -rf ./build/ ./Apps/EfazRobloxBootstrapLoad/ 
+rm -rf ./build/
 
 # Install EfazRobloxBootstrap
 if [ "$1" != "installer" ]; then
@@ -82,7 +59,7 @@ fi
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/EfazRobloxBootstrapMain.app/ ./Apps/EfazRobloxBootstrapLoad.app/ ./Apps/EfazRobloxBootstrapMain/ ./__pycache__/
+rm -rf ./Apps/EfazRobloxBootstrapMain.app/ ./Apps/EfazRobloxBootstrapMain/ ./__pycache__/
 
 # Done!
 printMessage "Successfully rebuilt EfazRobloxBootstrap!"

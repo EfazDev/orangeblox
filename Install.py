@@ -54,7 +54,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "RepairData"]
-    current_version = {"version": "1.5.3"}
+    current_version = {"version": "1.5.4"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
@@ -230,9 +230,9 @@ if __name__ == "__main__":
                     if "--use-sudo-for-codesign" in sys.argv:
                         extra_detail = ""
                     if platform.machine() == "arm64":
-                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMac.sh installer" + extra_detail, shell=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakeLoadersMac.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     else:
-                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakePlayRobloxMacIntel.sh installer" + extra_detail, shell=True, cwd=current_path_location)
+                        rebuild_status = subprocess.run(f"sh {current_path_location}/Apps/Scripts/Clang/MakeLoadersMacIntel.sh installer" + extra_detail, shell=True, cwd=current_path_location)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Clang App succeeded! Continuing to installation..")
                     else:
@@ -568,10 +568,11 @@ if __name__ == "__main__":
                                 if icon_path:
                                     shortcut.IconLocation = icon_path
                                 shortcut.save()
-                            create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
                             create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
+                            create_shortcut(stored_main_app[found_platform][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
+                            create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"))
                             create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                            create_shortcut(os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
                         except Exception as e:
                             printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
@@ -774,7 +775,7 @@ if __name__ == "__main__":
                         pip_class.install(["pyinstaller"])
                     rebuild_from_source = True
                 if main_os == "Darwin":
-                    printMainMessage("Would you like to rebuild the Play Roblox app based on source code? (y/n)")
+                    printMainMessage("Would you like to rebuild the Bootstrap Loader and Play Roblox app based on source code? (y/n)")
                     printYellowMessage("Clang is required to be installed on your computer.")
                     a = input("> ")
                     if isYes(a) == True:
@@ -883,10 +884,22 @@ if __name__ == "__main__":
                                     def remove_path(pat):
                                         if os.path.exists(pat): 
                                             os.remove(pat)
-                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
-                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+                                    import win32com.client # type: ignore
+                                    def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                                        shell = win32com.client.Dispatch('WScript.Shell')
+                                        shortcut = shell.CreateShortcut(shortcut_path)
+                                        shortcut.TargetPath = target_path
+                                        if working_directory:
+                                            shortcut.WorkingDirectory = working_directory
+                                        if icon_path:
+                                            shortcut.IconLocation = icon_path
+                                        shortcut.save()
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Efaz's Roblox Bootstrap.lnk"))
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "Efaz's Roblox Bootstrap.lnk"))
+                                    create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Player.lnk'))
+                                    create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
                                 except Exception as e:
                                     printErrorMessage(f"Unable to remove shortcuts: {str(e)}")
 

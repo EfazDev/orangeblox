@@ -142,29 +142,52 @@ class pip:
             return f'{os.path.expanduser("~")}/Library/'
         else:
             return f'{os.path.expanduser("~")}/'
+    def restartScript(self):
+        import sys
+        import subprocess
+        subprocess.run([self.findPython()] + sys.argv, shell=True)
+        sys.exit(0)
+    def importModule(self, module_name: str, install_module_if_not_found: bool=False):
+        import importlib
+        import subprocess
+        try:
+            return importlib.import_module(module_name)
+        except ModuleNotFoundError:
+            try:
+                if install_module_if_not_found == True: self.install([module_name])
+                return importlib.import_module(module_name)
+            except subprocess.CalledProcessError as e:
+                raise ImportError(f'Unable to find module "{module_name}" in Python environment.')
     def getIfProcessIsOpened(self, process_name="", pid=""):
         import platform
         import subprocess
         ma_os = platform.system()
         if ma_os == "Windows":
-            process = subprocess.run("tasklist", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        elif ma_os == "Darwin":
-            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        else:
-            process = subprocess.run("ps aux", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, _ = process.communicate()
+            process_list = output.decode("utf-8")
 
-        process_list = process.stdout.decode("utf-8")
-
-        if pid == "":
-            if process_list.rfind(process_name) == -1:
-                return False
+            if pid == "" or pid == None:
+                if process_list.rfind(process_name) == -1:
+                    return False
+                else:
+                    return True
             else:
-                return True
+                if process_list.rfind(pid) == -1:
+                    return False
+                else:
+                    return True
         else:
-            if process_list.rfind(pid) == -1:
-                return False
+            if pid == "" or pid == None:
+                if subprocess.run(f"pgrep -f '{process_name}' > /dev/null 2>&1", shell=True).returncode == 0:
+                    return True
+                else:
+                    return False
             else:
-                return True
+                if subprocess.run(f"ps -p {pid} > /dev/null 2>&1", shell=True).returncode == 0:
+                    return True
+                else:
+                    return False
     def getProcessWindows(self, pid: int):
         import platform
         if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
@@ -234,7 +257,7 @@ class pip:
                     if os.path.isfile(path):
                         return path
             return None
-class Main():
+class Main:
     # System Functions
     def __init__(self):
         self.__main_os__ = main_os
@@ -881,7 +904,7 @@ class Main():
                                     submitToThread(eventName="onGameJoined", data=generated_data, isLine=False)
                             elif "[FLog::SingleSurfaceApp] leaveUGCGameInternal" in line:
                                 submitToThread(eventName="onGameLeaving", data=line, isLine=True)
-                            elif "RBXCRASH:" in line:
+                            elif "RBXCRASH:" in line or "[FLog::CrashReportLog] Terminated" in line:
                                 submitToThread(eventName="onRobloxCrash", data=line, isLine=True)
                             elif "Roblox::terminateWaiter" in line:
                                 submitToThread(eventName="onRobloxTerminateInstance", data=line, isLine=True)
@@ -1167,28 +1190,10 @@ class Main():
     def getIfRobloxIsOpen(self, installer=False, pid=""):
         if self.__main_os__ == "Windows":
             process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        elif self.__main_os__ == "Darwin":
-            process = subprocess.Popen(["ps", "aux"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        else:
-            self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
-            return
+            output, _ = process.communicate()
+            process_list = output.decode("utf-8")
 
-        output, _ = process.communicate()
-        process_list = output.decode("utf-8")
-
-        if pid == "":
-            if main_os == "Darwin":
-                if installer == False:
-                    if process_list.rfind("/RobloxPlayer") == -1:
-                        return False
-                    else:
-                        return True
-                else:
-                    if process_list.rfind("/RobloxPlayerInstaller") == -1:
-                        return False
-                    else:
-                        return True
-            else:
+            if pid == "" or pid == None:
                 if installer == False:
                     if process_list.rfind("RobloxPlayerBeta.exe") == -1:
                         return False
@@ -1199,11 +1204,31 @@ class Main():
                         return False
                     else:
                         return True
-        else:
-            if process_list.rfind(pid) == -1:
-                return False
             else:
-                return True
+                if process_list.rfind(pid) == -1:
+                    return False
+                else:
+                    return True
+        elif self.__main_os__ == "Darwin":
+            if pid == "" or pid == None:
+                if installer == False:
+                    if subprocess.run(f"pgrep -f {macOS_dir}{macOS_beforeClientServices}RobloxPlayer > /dev/null 2>&1", shell=True).returncode == 0:
+                        return True
+                    else:
+                        return False
+                else:
+                    if subprocess.run(f"pgrep -f {macOS_dir}{macOS_beforeClientServices}RobloxPlayerInstaller > /dev/null 2>&1", shell=True).returncode == 0:
+                        return True
+                    else:
+                        return False
+            else:
+                if subprocess.run(f"ps -p {pid} > /dev/null 2>&1", shell=True).returncode == 0:
+                    return True
+                else:
+                    return False
+        else:
+            self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
+            return
     def getLatestClientVersion(self, debug=False, channel="LIVE"):
         # Mac: https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer
         # Windows: https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer
@@ -1734,6 +1759,11 @@ class Main():
                     if debug == True and makeDupe == False: printDebugMessage("Roblox is currently open right now and multiple instance is disabled!")
                 elif makeDupe == True:
                     self.endRoblox()
+                    created_mutex = self.prepareMultiInstance(debug=debug)
+                    if created_mutex == True:
+                        if debug == True: printDebugMessage("Successfully attached the mutex! Once this window closes, all the other Roblox windows will close.")
+                    else:
+                        if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
 
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(f"{windows_dir}\\Versions")
             if most_recent_roblox_version_dir:

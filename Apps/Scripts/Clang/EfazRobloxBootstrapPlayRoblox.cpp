@@ -26,8 +26,14 @@ void printWarnMessage(const std::string& mes) {
     std::cout << "\033[38;5;202m" << mes << "\033[0m" << std::endl;
 }
 
+bool isProcessOpened(const std::string& processName) {
+    std::string command = "pgrep -f " + processName + " > /dev/null 2>&1";
+    int result = system(command.c_str());
+    return (result == 0);
+}
+
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.5.3";
+    std::string current_version = "1.5.4";
     std::string main_os;
     
     #ifdef __APPLE__
@@ -55,8 +61,15 @@ int main(int argc, char* argv[]) {
                 file.close();
             }
             printMainMessage("Created URL Exchange File: " + url_scheme_path);
+            if (!isProcessOpened("/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal")) {
+                printMainMessage("Opening Terminal.app in order for console to show..");
+                int result = system("open -j -F -a /System/Applications/Utilities/Terminal.app");
+                if (result != 0) {
+                    printErrorMessage("Unable to start Terminal.app!");
+                }
+            }
             printMainMessage("Loading EfazRobloxBootstrap executable!");
-            int result = std::system("open -n -a \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/\"");
+            int result = std::system("open -n -a \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain\"");
             if (result == 0) {
                 printSuccessMessage("Bootstrap Run Success: " + std::to_string(result));
                 return 0;
