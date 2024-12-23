@@ -15,9 +15,9 @@ def generateFileHash(file_path, algorithm="sha256"):
 
 # Load Version.json
 version_json = {
-    "version": "1.5.4",
-    "latest_version": "1.5.4",
-    "versions_required_install": {"1.5.4": True},
+    "version": "1.5.5",
+    "latest_version": "1.5.5",
+    "versions_required_install": {"1.5.5": True},
     "hashes": {},
     "download_location": "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip"
 }

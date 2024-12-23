@@ -20,7 +20,7 @@ def printDebugMessage(mes):
     print(f"\033[38;5;226m{mes}\033[0m")
 
 if __name__ == "__main__":
-    current_version = {"version": "1.5.4"}
+    current_version = {"version": "1.5.5"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv

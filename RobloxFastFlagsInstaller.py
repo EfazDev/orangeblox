@@ -568,8 +568,6 @@ class Main:
                                     return self.__ReadingLineResponse__.EndWatchdog()
                                 else:
                                     submitToThread(eventName="onRobloxLauncherDestroyed", data=line)
-                            elif "[FLog::RobloxStarter] Roblox stage" in line and "completed" in line:
-                                self.windows_roblox_starter_launched_roblox = True
                             elif "[FLog::UpdateController] Update check thread: updateRequired FALSE" in line:
                                 submitToThread(eventName="onRobloxPassedUpdate", data=line)
                             elif "[FLog::SingleSurfaceApp] initializeWithAppStarter" in line:
@@ -714,6 +712,7 @@ class Main:
                                 generated_data = generate_arg()
                                 if generated_data:
                                     submitToThread(eventName="onRobloxChannel", data=generated_data, isLine=False)
+                                    self.windows_roblox_starter_launched_roblox = True
                             elif "[FLog::Warning] WebLogin authentication is failed and App is quitting" in line:
                                 submitToThread(eventName="onRobloxAppLoginFailed", data=line, isLine=True)
                             elif "[FLog::UgcExperienceController] UgcExperienceController: doTeleport: joinScriptUrl" in line:
