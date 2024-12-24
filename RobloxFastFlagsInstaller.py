@@ -142,10 +142,10 @@ class pip:
             return f'{os.path.expanduser("~")}/Library/'
         else:
             return f'{os.path.expanduser("~")}/'
-    def restartScript(self):
+    def restartScript(self, argv: list):
         import sys
         import subprocess
-        subprocess.run([self.findPython()] + sys.argv, shell=True)
+        subprocess.run([self.findPython()] + argv, shell=True)
         sys.exit(0)
     def importModule(self, module_name: str, install_module_if_not_found: bool=False):
         import importlib

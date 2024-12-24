@@ -15,9 +15,9 @@ def generateFileHash(file_path, algorithm="sha256"):
 
 # Load Version.json
 version_json = {
-    "version": "1.5.6",
-    "latest_version": "1.5.6",
-    "versions_required_install": {"1.5.6": True},
+    "version": "1.5.7",
+    "latest_version": "1.5.7",
+    "versions_required_install": {"1.5.7": True},
     "hashes": {},
     "download_location": "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip"
 }
@@ -31,12 +31,14 @@ roblox_fflag_installer_hash = generateFileHash("./RobloxFastFlagsInstaller.py")
 install_hash = generateFileHash("./Install.py")
 bootstrap_api_hash = generateFileHash("./EfazRobloxBootstrapAPI.py")
 discord_presence_handler_hash = generateFileHash("./DiscordPresenceHandler.py")
+pip_handler_hash = generateFileHash("./PipHandler.py")
 generated_hash_json = {
     "main": main_py_hash,
     "fflag_install": roblox_fflag_installer_hash,
     "install": install_hash,
     "bootstrap_api": bootstrap_api_hash,
-    "discord_presence": discord_presence_handler_hash
+    "discord_presence": discord_presence_handler_hash,
+    "pip_handler": pip_handler_hash
 }
 previous_hashes = version_json["hashes"]
 version_json["hashes"] = generated_hash_json
@@ -55,5 +57,6 @@ read_me_contents = read_me_contents.replace(previous_hashes["fflag_install"], ro
 read_me_contents = read_me_contents.replace(previous_hashes["install"], install_hash)
 read_me_contents = read_me_contents.replace(previous_hashes["bootstrap_api"], bootstrap_api_hash)
 read_me_contents = read_me_contents.replace(previous_hashes["discord_presence"], discord_presence_handler_hash)
+read_me_contents = read_me_contents.replace(previous_hashes["pip_handler"], pip_handler_hash)
 with open("README.md", "w") as f:
     f.write(read_me_contents)

@@ -46,6 +46,45 @@ def copy_with_symlinks(src, dest, ignore_files=[]):
                 shutil.copy2(src, dest)
         except Exception as e:
             printDebugMessage(f"An error occurred while transferring a file, a reinstallation may be needed: {str(e)}")
+def getInstalledAppPath():
+    if main_os == "Darwin":
+        macos_preference_expected = f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist'
+        if os.path.exists(macos_preference_expected):
+            plist_info = handler.readPListFile(macos_preference_expected)
+            if plist_info:
+                return plist_info.get("InstalledAppPath", "/Applications/"), "/Applications/"
+            else:
+                return "/Applications/", "/Applications/"
+        else:
+            return "/Applications/", "/Applications/"
+    elif main_os == "Windows":
+        import winreg as reg
+        try:
+            reg_key = reg.OpenKey(reg.HKEY_CURRENT_USER, r"SOFTWARE\\EfazRobloxBootstrap")
+            value_data, reg_type = reg.QueryValueEx(reg_key, "InstalledAppPath")
+            reg.CloseKey(reg_key)
+            if value_data and type(value_data) is str:
+                return value_data, pip_class.getLocalAppData()
+            else:
+                return pip_class.getLocalAppData(), pip_class.getLocalAppData()
+        except Exception as e:
+            return pip_class.getLocalAppData(), pip_class.getLocalAppData()
+def setInstalledAppPath(install_app_path):
+    if main_os == "Darwin":
+        macos_preference_expected = f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist'
+        plist_info = {}
+        if os.path.exists(macos_preference_expected):
+            plist_info = handler.readPListFile(macos_preference_expected)
+        plist_info["InstalledAppPath"] = install_app_path
+        handler.writePListFile(macos_preference_expected, plist_info)
+    elif main_os == "Windows":
+        import winreg as reg
+        try:
+            reg_key = reg.CreateKey(reg.HKEY_CURRENT_USER, r"SOFTWARE\\EfazRobloxBootstrap")
+            reg.SetValueEx(reg_key, "InstalledAppPath", 0, reg.REG_SZ, install_app_path)
+            reg.CloseKey(reg_key)
+        except Exception as e:
+            printErrorMessage("There was an error saving the assigned installed path!")
 
 if __name__ == "__main__":
     main_os = platform.system()
@@ -54,7 +93,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "RepairData"]
-    current_version = {"version": "1.5.6"}
+    current_version = {"version": "1.5.7"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
@@ -165,8 +204,29 @@ if __name__ == "__main__":
             sys.exit(0)
     printMainMessage(f"Installation Folder: {current_path_location}")
     overwrited = False
-    if os.path.exists(stored_main_app[found_platform][0]) and os.path.exists(stored_main_app[found_platform][1]):
+
+    expected_app_path, default_app_path = getInstalledAppPath()
+    expected_app_paths = {}
+    if expected_app_path:
+        expected_app_paths["OverallInstall"] = expected_app_path
+        if main_os == "Darwin":
+            expected_app_paths["Darwin"] = [
+                os.path.join(expected_app_path, "EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app"), 
+                os.path.join(expected_app_path, "EfazRobloxBootstrap.app"), 
+                os.path.join(expected_app_path, "Play Roblox.app")
+            ]
+        elif main_os == "Windows":
+            expected_app_paths["Windows"] = [
+                os.path.join(expected_app_path, "EfazRobloxBootstrap"), 
+                os.path.join(expected_app_path, "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), 
+                os.path.join(expected_app_path, "EfazRobloxBootstrap")
+            ]
+    else:
+        expected_app_paths = stored_main_app
+
+    if os.path.exists(expected_app_paths[found_platform][0]) and os.path.exists(expected_app_paths[found_platform][1]):
         overwrited = True
+        stored_main_app = expected_app_paths
     def install():
         global disabled_url_scheme_installation
         global use_x86_windows
@@ -198,11 +258,12 @@ if __name__ == "__main__":
                     pip_class.install(["posix-ipc", "pyobjc"])
                 elif main_os == "Windows":
                     pip_class.install(["pywin32"])
-                pip_class.restartScript()
+                pip_class.restartScript(sys.argv)
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Ending installation..")
                 sys.exit(0)
+
         if os.path.exists(f"{current_path_location}/Apps/"):
             if main_os == "Darwin":
                 # Get FastFlagConfiguration.json Data
@@ -295,49 +356,49 @@ if __name__ == "__main__":
 
                     # Insert New Display Names
                     printMainMessage("Adding Display Names..")
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist"):
-                        dis = handler.readPListFile("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist")
+                    if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist"):
+                        dis = handler.readPListFile(f"{stored_main_app[found_platform][1]}/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist")
                         dis["CFBundleDisplayName"] = "Efaz's Roblox Bootstrap"
                         dis["CFBundleShortVersionString"] = current_version["version"]
                         dis["CFBundleVersion"] = current_version["version"]
-                        handler.writePListFile("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist", dis)
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Info.plist"):
-                        dis = handler.readPListFile("/Applications/EfazRobloxBootstrap.app/Contents/Info.plist")
+                        handler.writePListFile(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Info.plist", dis)
+                    if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/Info.plist"):
+                        dis = handler.readPListFile(f"{stored_main_app[found_platform][1]}/Contents/Info.plist")
                         dis["CFBundleDisplayName"] = "Efaz's Roblox Bootstrap"
                         dis["CFBundleShortVersionString"] = current_version["version"]
                         dis["CFBundleVersion"] = current_version["version"]
-                        handler.writePListFile("/Applications/EfazRobloxBootstrap.app/Contents/Info.plist", dis)
-                    if os.path.exists("/Applications/Play Roblox.app/Contents/Info.plist"):
-                        dis = handler.readPListFile("/Applications/Play Roblox.app/Contents/Info.plist")
+                        handler.writePListFile(f"{stored_main_app[found_platform][1]}/Contents/Info.plist", dis)
+                    if os.path.exists(f"{stored_main_app[found_platform][2]}/Contents/Info.plist"):
+                        dis = handler.readPListFile(f"{stored_main_app[found_platform][2]}/Contents/Info.plist")
                         dis["CFBundleDisplayName"] = "Play Roblox"
                         dis["CFBundleShortVersionString"] = current_version["version"]
                         dis["CFBundleVersion"] = current_version["version"]
-                        handler.writePListFile("/Applications/Play Roblox.app/Contents/Info.plist", dis)
+                        handler.writePListFile(f"{stored_main_app[found_platform][2]}/Contents/Info.plist", dis)
 
                     # Remove Old Versions of Loader
-                    if os.path.exists("/Applications/EfazRobloxBootstrapLoader.app/"):
+                    if os.path.exists(f"/Applications/EfazRobloxBootstrapLoader.app/"):
                         printMainMessage("Removing Older Versions of Bootstrap Loader..")
-                        shutil.rmtree("/Applications/EfazRobloxBootstrapLoader.app/")
-                    elif os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/"):
+                        shutil.rmtree(f"/Applications/EfazRobloxBootstrapLoader.app/")
+                    elif os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/MacOS/EfazRobloxBootstrap.app/"):
                         printMainMessage("Removing Older Versions of Bootstrap Loader..")
-                        shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/EfazRobloxBootstrap.app/")
+                        shutil.rmtree(f"{stored_main_app[found_platform][1]}/Contents/MacOS/EfazRobloxBootstrap.app/")
                     
-                    # Remove Installed Loader
+                    # Remove Installed Bootstrap
                     if os.path.exists(stored_main_app[found_platform][0]):
                         try:
-                            printMainMessage("Removing Installed Bootstrap Loader..")
+                            printMainMessage("Removing Installed Bootstrap..")
                             shutil.rmtree(stored_main_app[found_platform][0])
                         except Exception as e:
-                            printErrorMessage("Something went wrong removing installed bootstrap loader!")
+                            printErrorMessage("Something went wrong removing installed bootstrap!")
 
                     # Delete frameworks if there's extra
                     printMainMessage("Clearing App Frameworks..")
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Frameworks/"):
-                        shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Frameworks/")
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/"):
-                        shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/Frameworks/")
-                    if os.path.exists("/Applications/Play Roblox.app/Contents/Frameworks/"):
-                        shutil.rmtree("/Applications/Play Roblox.app/Contents/Frameworks/")
+                    if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Frameworks/"):
+                        shutil.rmtree(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Frameworks/")
+                    if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/Frameworks/"):
+                        shutil.rmtree(f"{stored_main_app[found_platform][1]}/Contents/Frameworks/")
+                    if os.path.exists(f"{stored_main_app[found_platform][2]}/Contents/Frameworks/"):
+                        shutil.rmtree(f"{stored_main_app[found_platform][2]}/Contents/Frameworks/")
 
                     # Convert All Mod Modes to Mods
                     if os.path.exists(f"{current_path_location}/ModModes/"):
@@ -349,15 +410,15 @@ if __name__ == "__main__":
                                     os.makedirs(f"{current_path_location}/Mods/{i}/", exist_ok=True)
                                 shutil.copytree(mod_mode_path, f"{current_path_location}/Mods/{i}/", dirs_exist_ok=True)
                         shutil.rmtree(f"{current_path_location}/ModModes/")
-                    if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/"):
+                    if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/Resources/ModModes/"):
                         printMainMessage("Converting Mod Modes to Mods..")
-                        for i in os.listdir("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/"):
-                            mod_mode_path = os.path.join("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/", i)
+                        for i in os.listdir(f"{stored_main_app[found_platform][1]}/Contents/Resources/ModModes/"):
+                            mod_mode_path = os.path.join(f"{stored_main_app[found_platform][1]}/Contents/Resources/ModModes/", i)
                             if os.path.isdir(mod_mode_path):
-                                if not os.path.exists(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Mods/{i}/"):
-                                    os.makedirs(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Mods/{i}/", exist_ok=True)
-                                shutil.copytree(mod_mode_path, f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Mods/{i}/", dirs_exist_ok=True)
-                        shutil.rmtree("/Applications/EfazRobloxBootstrap.app/Contents/Resources/ModModes/")
+                                if not os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/Resources/Mods/{i}/"):
+                                    os.makedirs(f"{stored_main_app[found_platform][1]}/Contents/Resources/Mods/{i}/", exist_ok=True)
+                                shutil.copytree(mod_mode_path, f"{stored_main_app[found_platform][1]}/Contents/Resources/Mods/{i}/", dirs_exist_ok=True)
+                        shutil.rmtree(f"{stored_main_app[found_platform][1]}/Contents/Resources/ModModes/")
                     
                     # Install to /Applications/
                     printMainMessage("Installing to Applications Folder..")
@@ -379,8 +440,8 @@ if __name__ == "__main__":
                         # This can prevent messages like: Apple could not verify “EfazRobloxBootstrap.app” is free of malware that may harm your Mac or compromise your privacy.
                         if disable_download_for_app == True:
                             printMainMessage("Reducing Download Safety Measures for Allowing Runtime..")
-                            subprocess.run(f"xattr -rd com.apple.quarantine \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz's Roblox Bootstrap.app/\"", shell=True, stdout=subprocess.DEVNULL)
-                            subprocess.run(f"xattr -rd com.apple.quarantine \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz's Roblox Bootstrap.app/\"", shell=True, stdout=subprocess.DEVNULL)
+                            subprocess.run(f"xattr -rd com.apple.quarantine \"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz's Roblox Bootstrap.app/\"", shell=True, stdout=subprocess.DEVNULL)
+                            subprocess.run(f"xattr -rd com.apple.quarantine \"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz's Roblox Bootstrap.app/\"", shell=True, stdout=subprocess.DEVNULL)
 
                         # Remove Apps Folder in /Contents/Resources/
                         printMainMessage("Removing Apps Folder in /Contents/Resources/ to save space.")
@@ -391,12 +452,16 @@ if __name__ == "__main__":
                         if os.path.exists(os.path.join(stored_main_app[found_platform][2], "Contents", "Resources", "Apps")):
                             shutil.rmtree(os.path.join(stored_main_app[found_platform][2], "Contents", "Resources", "Apps"))
 
-                        # Sync FastFlagConfiguration.json files
+                        # Sync Configuration Files
                         printMainMessage("Copying Configuration Files..")
                         fast_config_path = os.path.join(stored_main_app[found_platform][1], "Contents", "Resources", "FastFlagConfiguration.json")
                         if not ("EfazRobloxBootstrap.app" in current_path_location): fflag_configuration["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
+                        fflag_configuration["EFlagAvailableInstalledDirectories"] = stored_main_app
                         with open(fast_config_path, "w") as f:
                             json.dump(fflag_configuration, f, indent=4)
+                        with open(os.path.join(stored_main_app[found_platform][2], "Contents", "Resources", "LocatedAppDirectory"), "w") as f:
+                            f.write(os.path.join(stored_main_app[found_platform][1], "Contents"))
+                        if stored_main_app.get("OverallInstall"): setInstalledAppPath(stored_main_app.get("OverallInstall"))
 
                         # Success!
                         if overwrited == True:
@@ -594,6 +659,7 @@ if __name__ == "__main__":
 
                         if use_installation_syncing == True:
                             if not ("/Local/EfazRobloxBootstrap/" in current_path_location): fflag_configuration["EFlagEfazRobloxBootStrapSyncDir"] = current_path_location
+                        fflag_configuration["EFlagAvailableInstalledDirectories"] = stored_main_app
                         with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w") as f:
                             json.dump(fflag_configuration, f, indent=4)
 
@@ -615,6 +681,8 @@ if __name__ == "__main__":
                             winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Efaz's Roblox Bootstrap")
                             winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, current_version["version"])
                             winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, os.path.join(stored_main_app[found_platform][0], "AppIcon.ico"))
+
+                        if stored_main_app.get("OverallInstall"): setInstalledAppPath(stored_main_app.get("OverallInstall"))
 
                         # Success!
                         if overwrited == True:
@@ -674,7 +742,7 @@ if __name__ == "__main__":
                         pip_class.install(["posix-ipc", "pyobjc"])
                     elif main_os == "Windows":
                         pip_class.install(["pywin32"])
-                    pip_class.restartScript()
+                    pip_class.restartScript(sys.argv)
                     printSuccessMessage("Successfully installed modules!")
                 else:
                     printErrorMessage("Ending installation..")
@@ -780,6 +848,49 @@ if __name__ == "__main__":
                     a = input("> ")
                     if isYes(a) == True:
                         rebuild_from_source_clang = True
+                if main_os == "Windows":
+                    printMainMessage("Would you like to set an install location for the bootstrap? (y/n)")
+                    printYellowMessage("Once you have selected, you CANNOT change it after you install until you have uninstalled fully.")
+                    a = input("> ")
+                    if isYes(a) == True:
+                        try:
+                            import tkinter as tk
+                            from tkinter import filedialog
+                            root = tk.Tk()
+                            root.withdraw()
+                            folder_path = filedialog.askdirectory(title="Select an installation path to install the Bootstrap!", initialdir=default_app_path)
+                            if folder_path and os.path.isdir(folder_path):
+                                printMainMessage(f"You have selected the following folder to install the bootstrap into: {folder_path}")
+                                printYellowMessage(f"PLEASE DO NOT EVER REMOVE THIS FOLDER UNLESS YOU RUN THE UNINSTALL ACTION AFTER YOU INSTALL!")
+                                printMainMessage("Would you like to install into this folder? (y/n):")
+                                if isYes(input("> ")):
+                                    if folder_path and os.path.isdir(folder_path):
+                                        if os.path.exists(os.path.join(folder_path, "EfazRobloxBootstrap")):
+                                            printErrorMessage("An Efaz's Roblox Bootstrap instance already exists in this folder!")
+                                        else:
+                                            if main_os == "Darwin":
+                                                stored_main_app["OverallInstall"] = folder_path
+                                                stored_main_app["Darwin"] = [
+                                                    os.path.join(folder_path, "EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app"), 
+                                                    os.path.join(folder_path, "EfazRobloxBootstrap.app"), 
+                                                    os.path.join(folder_path, "Play Roblox.app")
+                                                ]
+                                            elif main_os == "Windows":
+                                                stored_main_app["OverallInstall"] = folder_path
+                                                stored_main_app["Windows"] = [
+                                                    os.path.join(folder_path, "EfazRobloxBootstrap"), 
+                                                    os.path.join(folder_path, "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), 
+                                                    os.path.join(folder_path, "EfazRobloxBootstrap")
+                                                ]
+                                    else:
+                                        printMainMessage("Alright, it's your choice! In order to reselect, please restart setup!")
+                                else:
+                                    printMainMessage("Alright, it's your choice! In order to reselect, please restart setup!")
+                            else:
+                                printMainMessage("No folder was selected.")
+                        except Exception as e:
+                            printErrorMessage("There was an error selecting a folder!")
+                    
                 printMainMessage("Would you like to delete other operating system versions? (This may save 30MB+ of space) (y/n)")
                 a = input("> ")
                 if isYes(a) == False:
@@ -819,12 +930,12 @@ if __name__ == "__main__":
                         if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
                 def requestUninstall():
                     if main_os == "Darwin":
-                        if not os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
+                        if not os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
                             printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
                             input("> ")
                             sys.exit(0)
                     elif main_os == "Windows":
-                        if not os.path.exists(f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"):
+                        if not os.path.exists(f"{stored_main_app[found_platform][0]}"):
                             printMainMessage("Efaz's Roblox Bootstrap is not installed on this system.")
                             input("> ")
                             sys.exit(0)
@@ -841,12 +952,12 @@ if __name__ == "__main__":
                                 sys.exit(0)
                             else:
                                 # Remove Apps
-                                if os.path.exists(stored_main_app[found_platform][0]):
-                                    printMainMessage("Removing from Applications Folder (Main Bootstrap)..")
-                                    shutil.rmtree(stored_main_app[found_platform][0])
                                 if os.path.exists(stored_main_app[found_platform][1]):
-                                    printMainMessage("Removing from Applications Folder (Play Roblox)..")
+                                    printMainMessage("Removing from Applications Folder (Main Bootstrap)..")
                                     shutil.rmtree(stored_main_app[found_platform][1])
+                                if os.path.exists(stored_main_app[found_platform][2]):
+                                    printMainMessage("Removing from Applications Folder (Play Roblox)..")
+                                    shutil.rmtree(stored_main_app[found_platform][2])
                         elif main_os == "Windows":
                             if pip_class.getIfProcessIsOpened("EfazRobloxBootstrap.exe"):
                                 printErrorMessage("Please close EfazRobloxBootstrap.exe first before continuing to uninstall!")
@@ -961,9 +1072,9 @@ if __name__ == "__main__":
                             os.mkdir(repair_path)
                         printMainMessage("Finding app..")
                         if main_os == "Darwin":
-                            app_location = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/"
+                            app_location = f"{stored_main_app[found_platform][1]}/Contents/Resources/"
                         elif main_os == "Windows":
-                            app_location = f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"
+                            app_location = f"{stored_main_app[found_platform][0]}"
                         if not os.path.exists(app_location):
                             printErrorMessage("Efaz's Roblox Bootstrap is not installed!")
                             input("> ")
@@ -1041,9 +1152,9 @@ if __name__ == "__main__":
                             os.mkdir(backup_path)
                         printMainMessage("Finding app..")
                         if main_os == "Darwin":
-                            app_location = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/"
+                            app_location = f"{stored_main_app[found_platform][1]}/Contents/Resources/"
                         elif main_os == "Windows":
-                            app_location = f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"
+                            app_location = f"{stored_main_app[found_platform][0]}"
                         if not os.path.exists(app_location):
                             printErrorMessage("Efaz's Roblox Bootstrap is not installed!")
                             input("> ")
@@ -1088,16 +1199,16 @@ if __name__ == "__main__":
                         requestBackup()
     if update_mode == True:
         if main_os == "Darwin":
-            if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
+            if os.path.exists(f"{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/"):
                 if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):
                     printMainMessage("Opening Terminal.app in order for console to show..")
                     subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 printMainMessage("Loading EfazRobloxBootstrap executable!")
-                subprocess.Popen(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                subprocess.Popen(f'open -n -a "{stored_main_app[found_platform][1]}/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             else:
                 printErrorMessage("Bootstrap Launch Failed: App is not installed.")
         elif main_os == "Windows":
-            generated_app_path = os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")
+            generated_app_path = stored_main_app[found_platform][0]
             if os.path.exists(os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")):
                 printMainMessage("Loading EfazRobloxBootstrap.exe!")
                 subprocess.Popen(f'{os.path.join(generated_app_path, "EfazRobloxBootstrap.exe")}')

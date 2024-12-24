@@ -26,13 +26,14 @@ if __name__ == "__main__":
     stored_robux_folder_destinations = {
         "Darwin": f"{stored_content_folder_destinations['Darwin']}content/textures/ui/common/"
     }
+    current_path_location = os.path.dirname(os.path.abspath(__file__))
     handler = RobloxFastFlagsInstaller.Main()
     fast_config_loaded = True
     multi_instance_enabled = False
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.6"}
+    current_version = {"version": "1.5.7"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -134,9 +135,9 @@ if __name__ == "__main__":
         return None
     def displayNotification(title="Unknown Title", message="Unknown Message"):
         if main_os == "Darwin":
-            if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/"):
+            if not os.path.exists("AppNotification"):
                 try:
-                    with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification", "w") as f:
+                    with open("AppNotification", "w") as f:
                         json.dump({"title": title, "message": message}, f)
                 except Exception as e:
                     try:
@@ -156,9 +157,9 @@ if __name__ == "__main__":
                     except Exception as e:
                         printErrorMessage(f"There was an error sending a notification. Error: {str(e)}")
         elif main_os == "Windows":
-            if os.path.exists(os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")):
+            if not os.path.exists("AppNotification"):
                 try:
-                    with open(os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap", "AppNotification"), "w") as f:
+                    with open("AppNotification", "w") as f:
                         json.dump({"title": title, "message": message}, f)
                 except Exception as e:
                     try:
@@ -170,7 +171,7 @@ if __name__ == "__main__":
                         notification.notify(
                             title = title,
                             message = message,
-                            app_icon = os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap", "AppIcon.ico"),
+                            app_icon = "AppIcon.ico",
                             timeout = 30,
                         )
                     except Exception as e:
@@ -392,23 +393,13 @@ if __name__ == "__main__":
     startMessage()
 
     # URL Scheme Exchange between Loader and Main.py
-    if main_os == "Darwin":
-        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange"):
-            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange", "r") as f:
-                filtered_args = f.read()
-            if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)) and not (fast_config_loaded == True and fflag_configuration.get("EFlagEnableDebugMode") == True):
-                if fflag_configuration.get("EFlagEnableDebugMode"): printDebugMessage("Moved command execution to file args to prevent user from showing the command with private info.")
-            given_args = ["Main.py", filtered_args]
-            os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange")
-    elif main_os == "Windows":
-        generated_app_path = os.path.join(pip_class.getLocalAppData(), "EfazRobloxBootstrap")
-        if os.path.exists(os.path.join(generated_app_path, "URLSchemeExchange")):
-            with open(os.path.join(generated_app_path, "URLSchemeExchange"), "r") as f:
-                filtered_args = f.read()
-            if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)) and not (fast_config_loaded == True and fflag_configuration.get("EFlagEnableDebugMode") == True):
-                if fflag_configuration.get("EFlagEnableDebugMode"): printDebugMessage("Moved command execution to file args to prevent user from showing the command with private info.")
-            given_args = ["Main.py", filtered_args]
-            os.remove("./URLSchemeExchange")
+    if os.path.exists("./URLSchemeExchange"):
+        with open("./URLSchemeExchange", "r") as f:
+            filtered_args = f.read()
+        if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)) and not (fast_config_loaded == True and fflag_configuration.get("EFlagEnableDebugMode") == True):
+            if fflag_configuration.get("EFlagEnableDebugMode"): printDebugMessage("Moved command execution to file args to prevent user from showing the command with private info.")
+        given_args = ["Main.py", filtered_args]
+        os.remove("./URLSchemeExchange")
 
     # Handle Option Functions
     def continueToRoblox(): # Continue to Roblox
@@ -1018,6 +1009,7 @@ if __name__ == "__main__":
                     elif isNo(d) == True:
                         fflag_configuration["EFlagRebuildClangAppFromSourceDuringUpdates"] = False
                         printDebugMessage("User selected: False")
+
                 printMainMessage("Would you like to disable Bootstrap Update Checks? (y/n)")
                 d = input("> ")
                 if isYes(d) == True:
@@ -1042,6 +1034,31 @@ if __name__ == "__main__":
                     return "Settings was closed."
                 elif isNo(d) == True:
                     fflag_configuration["EFlagEnableSkipModificationMode"] = False
+                    printDebugMessage("User selected: False")
+
+                printMainMessage("Would you like to disable Roblox Reinstall checks? (y/n)")
+                printMainMessage("This may ignore when a Roblox reinstall is needed due to signing.")
+                d = input("> ")
+                if isYes(d) == True:
+                    fflag_configuration["EFlagDisableRobloxReinstallNeededChecks"] = True
+                    printDebugMessage("User selected: True")
+                elif isRequestClose(d) == True:
+                    printMainMessage("Closing settings..")
+                    return "Settings was closed."
+                elif isNo(d) == True:
+                    fflag_configuration["EFlagDisableRobloxReinstallNeededChecks"] = False
+                    printDebugMessage("User selected: False")
+
+                printMainMessage("Would you like to disable the new Bootstrap Main Menu? (y/n)")
+                d = input("> ")
+                if isYes(d) == True:
+                    fflag_configuration["EFlagDisableNewMainMenu"] = True
+                    printDebugMessage("User selected: True")
+                elif isRequestClose(d) == True:
+                    printMainMessage("Closing settings..")
+                    return "Settings was closed."
+                elif isNo(d) == True:
+                    fflag_configuration["EFlagDisableNewMainMenu"] = False
                     printDebugMessage("User selected: False")
 
                 if main_os == "Windows":
@@ -1307,7 +1324,7 @@ if __name__ == "__main__":
             printYellowMessage("WARNING! This will force-quit any open Roblox windows!")
         a = input("> ")
         if isYes(a) == True:
-            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
             return "Roblox has been reinstalled!"
         else:
             return "Roblox reinstallation has been canceled!"
@@ -1669,9 +1686,9 @@ if __name__ == "__main__":
                         d = input("> ")
                         if isYes(d) == True:
                             if main_os == "Windows":
-                                handler.installRoblox(forceQuit=True, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                                handler.installRoblox(forceQuit=True, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                             else:
-                                handler.installRoblox(debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                                handler.installRoblox(debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                         elif isNo(d) == True:
                             saveSettings()
                             printDebugMessage("User selected: False")
@@ -1795,7 +1812,7 @@ if __name__ == "__main__":
                             printSuccessMessage("Successfully restored Efaz's Roblox Bootstrap data! Would you to restart the app? (y/n)")
                             a = input("> ")
                             if isYes(a) == True:
-                                pip_class.restartScript()
+                                pip_class.restartScript(sys.argv)
                             else:
                                 sys.exit(0)
                     
@@ -1803,14 +1820,14 @@ if __name__ == "__main__":
                     printMainMessage("Welcome to Efaz's Roblox Bootstrap!")
                     printMainMessage("Efaz's Roblox Bootstrap is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
                     if main_os == "Darwin":
-                        if os.path.exists("/Applications/EfazRobloxBootstrap.app"):
+                        if os.path.exists("../MacOS/EfazRobloxBootstrapLoad"):
                             printSuccessMessage("It seems like everything is working, so you can reach the next part!")
                         else:
                             printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
                             input("> ")
                             sys.exit(0)
                     elif main_os == "Windows":
-                        if os.path.exists(f"{pip_class.getLocalAppData()}\\EfazRobloxBootstrap\\"):
+                        if os.path.exists(f"EfazRobloxBootstrap.exe"):
                             printSuccessMessage("It seems like everything is working, so you can reach the next part!")
                         else:
                             printErrorMessage("I'm sorry, but you're not quite finished yet. Please run Install.py instead of Main.py!!")
@@ -2338,16 +2355,11 @@ if __name__ == "__main__":
                                     printMainMessage("Running Installer..")
                                     if main_os == "Windows":
                                         if len(given_args) > 1:
-                                            local_app_data = pip_class.getLocalAppData()
                                             filtered_args = given_args[1]
                                             if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
                                                 printMainMessage(f"Creating URL Exchange file..")
-                                                if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap")):
-                                                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "URLSchemeExchange"), "w") as f:
-                                                        f.write(filtered_args)
-                                                else:
-                                                    with open("URLSchemeExchange", "w") as f:
-                                                        f.write(filtered_args)
+                                                with open("URLSchemeExchange", "w") as f:
+                                                    f.write(filtered_args)
                                         silent_install = subprocess.run(f'start cmd.exe /c "{sys.executable} {os.path.dirname(os.path.abspath(__file__))}\\Install.py --update-mode"', shell=True)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                         try:
@@ -2414,7 +2426,7 @@ if __name__ == "__main__":
             else:
                 printMainMessage(f"Update check was skipped due to Fresh Copy being enabled.")
                 printWarnMessage("--- Installing Latest Roblox Version ---")
-                handler.installRoblox(forceQuit=False, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                handler.installRoblox(forceQuit=False, debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                 installed_update = True
                 time.sleep(3)
         elif current_roblox_version["success"] == True:
@@ -2427,7 +2439,7 @@ if __name__ == "__main__":
                         else:
                             printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['client_version']}")
                             printWarnMessage("--- Installing Latest Roblox Version ---")
-                            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                             if main_os == "Darwin":
                                 while not os.path.exists("/Applications/Roblox.app"):
                                     time.sleep(0.1)
@@ -2445,7 +2457,7 @@ if __name__ == "__main__":
                         else:
                             printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['short_version']}")
                             printWarnMessage("--- Installing Latest Roblox Version ---")
-                            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                            handler.installRoblox(forceQuit=main_os == "Windows", debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                             if main_os == "Darwin":
                                 while not os.path.exists("/Applications/Roblox.app"):
                                     time.sleep(0.1)
@@ -2767,11 +2779,11 @@ if __name__ == "__main__":
             printErrorMessage(f"There was a problem applying mods to the Roblox Client!")
             printDebugMessage(f"Error Message: {str(e)}")
 
-        if main_os == "Windows" and os.path.exists(os.path.join(f"{pip_class.getLocalAppData()}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe")):
+        if main_os == "Windows" and os.path.exists("EfazRobloxBootstrap.exe"):
             # Reapply URL Schemes
             if not (fflag_configuration.get("EFlagDisableURLSchemeInstall") == True):
                 printWarnMessage("--- Configuring Windows Registry ---")
-                bootstrap_folder_path = os.path.join(f"{pip_class.getLocalAppData()}", "EfazRobloxBootstrap")
+                bootstrap_folder_path = current_path_location
                 bootstrap_path = os.path.join(bootstrap_folder_path, "EfazRobloxBootstrap.exe")
                 try:
                     import requests
@@ -3087,7 +3099,7 @@ if __name__ == "__main__":
                                                                                                     else:
                                                                                                         val = func_list.get(v.requested)()
                                                                                                     if v:
-                                                                                                        if val:
+                                                                                                        if not type(val) is None:
                                                                                                             v.value = val
                                                                                                         v.success = True
                                                                                                         v.code = 0
@@ -4393,6 +4405,7 @@ if __name__ == "__main__":
             check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
             check_update_thread.start()
     def checkIfUpdateWasNeeded():
+        if fflag_configuration.get("EFlagDisableRobloxReinstallNeededChecks") == True: return
         global updated_count
         global skip_modification_mode
         updated_count += 1
@@ -4405,7 +4418,7 @@ if __name__ == "__main__":
                 time.sleep(3)
             if not (handler.getIfRobloxIsOpen()):
                 printMainMessage("Uh oh! An fresh reinstall is needed. Downloading a fresh copy of Roblox!")
-                handler.installRoblox(forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxPlayerInstaller.app")
+                handler.installRoblox(forceQuit=(not (fflag_configuration.get("EFlagEnableDuplicationOfClients") == True)), debug=(fflag_configuration.get("EFlagEnableDebugMode") == True), copyRobloxInstallationPath="./RobloxPlayerInstaller.app")
                 time.sleep(2)
                 printWarnMessage("--- Preparing Roblox ---")
                 skip_modification_mode = False

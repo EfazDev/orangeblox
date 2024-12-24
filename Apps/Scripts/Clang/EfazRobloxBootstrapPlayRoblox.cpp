@@ -8,6 +8,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <mach-o/dyld.h>
 #endif
 
 void printMainMessage(const std::string& mes) {
@@ -32,9 +34,52 @@ bool isProcessOpened(const std::string& processName) {
     return (result == 0);
 }
 
+bool isAppRunningBundled() {
+    #ifdef _WIN32
+        char executablePath[MAX_PATH];
+        GetModuleFileNameA(NULL, executablePath, MAX_PATH);
+        std::string path = std::filesystem::path(executablePath).parent_path().string();
+        return path.find("AppData\\Local") != std::string::npos;
+    #elif __APPLE__
+        char exePath[1024];
+        uint32_t size = sizeof(exePath);
+        if (_NSGetExecutablePath(exePath, &size) == 0) {
+            std::string path = std::filesystem::path(exePath).string();
+            return path.find(".app") != std::string::npos;
+        }
+        return false;
+    #else
+        return false;
+    #endif
+}
+
+std::string getAppPath() {
+    std::string appPath;
+    #ifdef _WIN32
+        if (isAppRunningBundled()) {
+            char executablePath[MAX_PATH];
+            GetModuleFileNameA(NULL, executablePath, MAX_PATH);
+            appPath = std::filesystem::path(executablePath).parent_path().string();
+        }
+    #else
+        if (isAppRunningBundled()) {
+            char exePath[1024];
+            uint32_t size = sizeof(exePath);
+            if (_NSGetExecutablePath(exePath, &size) == 0) {
+                appPath = std::filesystem::path(exePath).parent_path().string();
+            } else {
+                printErrorMessage("Buffer size too small for executable path");
+            }
+            appPath = std::filesystem::path(appPath).parent_path().string();
+        }
+    #endif
+    return appPath;
+}
+
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.5.6";
+    std::string current_version = "1.5.7";
     std::string main_os;
+    std::string app_path;
     
     #ifdef __APPLE__
         main_os = "Darwin";
@@ -45,16 +90,28 @@ int main(int argc, char* argv[]) {
     #endif
 
     printWarnMessage("-----------");
-    printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader!");
+    printWarnMessage("Welcome to Efaz's Roblox Bootstrap Loader (Play Roblox)!");
     printWarnMessage("Made by Efaz from efaz.dev!");
     printWarnMessage("v" + current_version);
     printWarnMessage("-----------");
     printMainMessage("Determining System OS...");
 
     if (main_os == "Darwin") {
-        std::string app_path = "/Applications/EfazRobloxBootstrap.app/";
+        std::string app_path = getAppPath();
+        std::string locatedFile = app_path + "/Resources/LocatedAppDirectory";
+
+        if (std::filesystem::exists(locatedFile)) {
+            std::ifstream file(locatedFile);
+            if (file.is_open()) {
+                std::string newAppPath;
+                std::getline(file, newAppPath);
+                file.close();
+                app_path = newAppPath;
+            }
+        }
+
         if (std::filesystem::exists(app_path)) {
-            std::string url_scheme_path = app_path + "Contents/Resources/URLSchemeExchange";
+            std::string url_scheme_path = app_path + "/Resources/URLSchemeExchange";
             std::ofstream file(url_scheme_path);
             if (file.is_open()) {
                 file << "efaz-bootstrap://continue";
@@ -69,7 +126,8 @@ int main(int argc, char* argv[]) {
                 }
             }
             printMainMessage("Loading EfazRobloxBootstrap executable!");
-            int result = std::system("open -n -a \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain\"");
+            std::string command = "open -n -a \"" + app_path + "/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain\"";
+            int result = std::system(command.c_str());
             if (result == 0) {
                 printSuccessMessage("Bootstrap Run Success: " + std::to_string(result));
                 return 0;
@@ -84,10 +142,10 @@ int main(int argc, char* argv[]) {
     } else if (main_os == "Windows") {
         char* localAppData = std::getenv("LOCALAPPDATA");
         if (localAppData) {
-            std::string generated_app_path = std::string(localAppData) + "\\EfazRobloxBootstrap";
-            std::string exe_path = generated_app_path + "\\EfazRobloxBootstrap.exe";
+            std::string app_path = getAppPath();
+            std::string exe_path = app_path + "\\EfazRobloxBootstrap.exe";
             if (std::filesystem::exists(exe_path)) {
-                std::string url_scheme_path = generated_app_path + "\\URLSchemeExchange";
+                std::string url_scheme_path = app_path + "\\URLSchemeExchange";
                 std::ofstream file(url_scheme_path);
                 if (file.is_open()) {
                     file << "efaz-bootstrap://continue";

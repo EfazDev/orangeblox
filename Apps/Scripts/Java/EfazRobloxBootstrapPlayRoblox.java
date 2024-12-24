@@ -1,10 +1,12 @@
 package Apps.Scripts.Java;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class EfazRobloxBootstrapPlayRoblox {
-    public static String current_version = "1.5.6";
+    public static String current_version = "1.5.7";
     public static String main_os = "Windows";
     public static void main(String[] args) throws IOException {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -24,7 +26,7 @@ public class EfazRobloxBootstrapPlayRoblox {
         if (main_os == "Windows") {
             String local_app_data = System.getenv("LOCALAPPDATA");
             if (!(local_app_data == "") && exists(local_app_data)) {
-                final String bootstrap_location = local_app_data + "\\EfazRobloxBootstrap";
+                final String bootstrap_location = getAppPath();
                 if (exists(bootstrap_location)) {
                     // Write URLSchemeExchange File
                     final String file_path = bootstrap_location + "\\URLSchemeExchange";
@@ -40,17 +42,17 @@ public class EfazRobloxBootstrapPlayRoblox {
                 }
             }
         } else if (main_os == "Darwin") {
-            String app_location = "/Applications/EfazRobloxBootstrap.app/";
+            String app_location = getAppPath();
             if (exists(app_location)) {
                 // Write URLSchemeExchange File
-                String file_path = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange";
+                String file_path = app_location + "/Resources/URLSchemeExchange";
                 FileWriter file_writer = new FileWriter(file_path);
                 file_writer.write("efaz-bootstrap://continue");
                 file_writer.close();
                 printMainMessage("Created URL Exchange File: " + file_path);
 
                 // Start Bootstrap
-                String executable_command = "open -n -a \"/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/\"";
+                String executable_command = "open -n -a \"" + app_location + "/MacOS/Efaz\'s Roblox Bootstrap.app/\"";
                 ProcessBuilder process_builder = new ProcessBuilder("bash", "-c", executable_command);
                 printMainMessage("Loading EfazRobloxBootstrap executable!");
                 process_builder.start();
@@ -70,6 +72,22 @@ public class EfazRobloxBootstrapPlayRoblox {
     }
     public static void printWarnMessage(String mes) {
         System.out.println(ascii_escape + "[38;5;202m" + mes + ascii_escape + "[0m");
+    }
+    public static String getAppPath() {
+        File located_app = new File("../LocatedAppDirectory");
+        if (located_app.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(located_app))) {
+                String line = reader.readLine();
+                if (line != null) {
+                    return line;
+                } else {
+                    printErrorMessage("File is empty.");
+                }
+            } catch (IOException e) {
+                printErrorMessage("Error reading located app path!");
+            }
+        }
+        return "";
     }
     public static boolean exists(String path) {
         final File FileObject = new File(path);

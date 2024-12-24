@@ -12,11 +12,12 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.5.6"}
+    current_version = {"version": "1.5.7"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
     pip_class = pip()
+    app_path = ""
     logs = []
 
     COLOR_CODES = {
@@ -77,7 +78,7 @@ if __name__ == "__main__":
                 notification.notify(
                     title = title,
                     message = message,
-                    app_icon = os.path.join(local_app_data, "EfazRobloxBootstrap", "AppIcon.ico"),
+                    app_icon = os.path.join(app_path, "AppIcon.ico"),
                     timeout = 30,
                 )
             except Exception as e:
@@ -118,14 +119,20 @@ if __name__ == "__main__":
         current_version = json.load(f)
         f.close()
 
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if main_os == "Windows":
+            app_path = os.path.dirname(sys.executable)
+        else:
+            app_path = os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4])
+
     if main_os == "Darwin":
         filtered_args = ""
         loaded_json = True
         use_shell = False
 
         printMainMessage(f"Loading Configuration File..")
-        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json"):
-            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/FastFlagConfiguration.json", "r") as f:
+        if os.path.exists(f"{app_path}/Resources/FastFlagConfiguration.json"):
+            with open(f"{app_path}/Resources/FastFlagConfiguration.json", "r") as f:
                 try:
                     fflag_configuration = json.load(f)
                 except Exception as e:
@@ -153,7 +160,7 @@ if __name__ == "__main__":
 
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
 
-        execute_command = f"unset HISTFILE && cd /Applications/EfazRobloxBootstrap.app/Contents/Resources/ && {pythonExecutable} Main.py && exit"
+        execute_command = f"unset HISTFILE && cd {app_path}/Resources/ && {pythonExecutable} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -161,8 +168,8 @@ if __name__ == "__main__":
             if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
                 use_shell = True
                 printMainMessage(f"Creating URL Exchange file..")
-                if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/"):
-                    with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange", "w") as f:
+                if os.path.exists(f"{app_path}/Resources/"):
+                    with open(f"{app_path}/Resources/URLSchemeExchange", "w") as f:
                         f.write(filtered_args)
                 else:
                     with open("URLSchemeExchange", "w") as f:
@@ -192,7 +199,7 @@ if __name__ == "__main__":
                 end if
             end try
             activate
-            do shell script "echo " & terminal_id & " > " & quoted form of "/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}"
+            do shell script "echo " & terminal_id & " > " & quoted form of "{app_path}/Resources/Terminal_{generated_app_id}"
             activate
             
             repeat
@@ -226,8 +233,8 @@ if __name__ == "__main__":
                 while True:
                     try:
                         if ended == True: break
-                        if os.path.exists("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification"):
-                            with open("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification", "r") as f:
+                        if os.path.exists(f"{app_path}/Resources/AppNotification"):
+                            with open(f"{app_path}/Resources/AppNotification", "r") as f:
                                 try:
                                     notification = json.load(f)
                                     if type(notification) is list:
@@ -237,19 +244,19 @@ if __name__ == "__main__":
                                 except Exception as e:
                                     printDebugMessage(str(e))
                                     notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                            os.remove("/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppNotification")
+                            os.remove(f"{app_path}/Resources/AppNotification")
                             if notification.get("title") and notification.get("message"):
                                 displayNotification(notification["title"], notification["message"])
                                 printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
-                        if os.path.exists(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}"):
-                            with open(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}", "r") as f:
+                        if os.path.exists(f"{app_path}/Resources/Terminal_{generated_app_id}"):
+                            with open(f"{app_path}/Resources/Terminal_{generated_app_id}", "r") as f:
                                 try:
                                     cont = f.read().replace(" ", "").replace("\n", "")
                                     if cont.isnumeric() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                 except Exception as e:
                                     printDebugMessage(str(e))
-                            os.remove(f"/Applications/EfazRobloxBootstrap.app/Contents/Resources/Terminal_{generated_app_id}")
+                            os.remove(f"{app_path}/Resources/Terminal_{generated_app_id}")
                             printDebugMessage(f"Received Terminal ID from Receiver: {associated_terminal_pid}")
                         seconds += 1
                     except Exception as e:
@@ -259,11 +266,11 @@ if __name__ == "__main__":
                 global ended
                 printMainMessage(f"Starting Bootstrap..")
                 try:
-                    a_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/Main.py")
-                    b_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/RobloxFastFlagsInstaller.py")
-                    c_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/Install.py")
-                    d_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/EfazRobloxBootstrapAPI.py")
-                    e_file_hash = generateFileHash("/Applications/EfazRobloxBootstrap.app/Contents/Resources/DiscordPresenceHandler.py")
+                    a_file_hash = generateFileHash(f"{app_path}/Resources/Main.py")
+                    b_file_hash = generateFileHash(f"{app_path}/Resources/RobloxFastFlagsInstaller.py")
+                    c_file_hash = generateFileHash(f"{app_path}/Resources/Install.py")
+                    d_file_hash = generateFileHash(f"{app_path}/Resources/EfazRobloxBootstrapAPI.py")
+                    e_file_hash = generateFileHash(f"{app_path}/Resources/DiscordPresenceHandler.py")
 
                     validated = True
                     unable_to_validate = []
@@ -313,8 +320,8 @@ if __name__ == "__main__":
                     if associated_terminal_pid:
                         try:
                             if getattr(sys, "frozen", False):
-                                os.environ["TCL_LIBRARY"] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tcl_data"
-                                os.environ["TK_LIBRARY"] = "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tk_data"
+                                os.environ["TCL_LIBRARY"] = f"{app_path}/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tcl_data"
+                                os.environ["TK_LIBRARY"] = f"{app_path}/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/Resources/_tk_data"
                             else:
                                 os.environ["TCL_LIBRARY"] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tcl.framework/Versions/8.6/Resources/Scripts/"
                                 os.environ["TK_LIBRARY"] = "/Library/Frameworks/Python.framework/Versions/3.13/Frameworks/Tk.framework/Versions/8.6/Resources/Scripts/"
@@ -351,11 +358,11 @@ if __name__ == "__main__":
                                         self.holding_frame = tk.Frame(self.master)
                                         self.holding_frame.pack(fill="both", expand=True)
                                         self.holding_frame.place(relx=0.5, rely=0.5, anchor="center")
-                                        app_icon_url = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapImages/AppIcon64.png"
+                                        app_icon_url = f"{app_path}/Resources/BootstrapImages/AppIcon64.png"
                                         if os.path.exists(app_icon_url):
                                             self.app_icon = tk.PhotoImage(file=app_icon_url)
                                         else:
-                                            self.app_icon = tk.PhotoImage(file="/Applications/EfazRobloxBootstrap.app/Contents/Resources/AppIcon.icns")
+                                            self.app_icon = tk.PhotoImage(file=f"{app_path}/Resources/AppIcon.icns")
                                         icon_label = tk.Label(self.holding_frame, image=self.app_icon)
                                         icon_label.image = self.app_icon
                                         icon_label.pack()
@@ -557,10 +564,10 @@ if __name__ == "__main__":
                                         printDebugMessage(str(e))
                                 def new_bootstrap(self, action="", action_name=""):
                                     if not (action == "") and type(action) is str:
-                                        url_scheme_path = "/Applications/EfazRobloxBootstrap.app/Contents/Resources/URLSchemeExchange"
+                                        url_scheme_path = f"{app_path}/Resources/URLSchemeExchange"
                                         with open(url_scheme_path, "w") as f:
                                             f.write(f"efaz-bootstrap://{action}?quick-action=true")
-                                    subprocess.Popen(f'open -n -a "/Applications/EfazRobloxBootstrap.app/Contents/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                                    subprocess.Popen(f'open -n -a "{app_path}/MacOS/Efaz\'s Roblox Bootstrap.app/Contents/MacOS/EfazRobloxBootstrapMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                                     if not (action_name == "") and type(action_name) is str:
                                         printMainMessage(f"Launched Bootstrap with action: {action_name}")
                                     else:
@@ -765,39 +772,39 @@ if __name__ == "__main__":
         loaded_json = True
         local_app_data = pip_class.getLocalAppData()
         
-        if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")):
+        if os.path.exists(os.path.join(app_path, "Main.py")):
             os.system("title Efaz's Roblox Bootstrap")
             printMainMessage(f"Loading Configuration File..")
-            with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "FastFlagConfiguration.json"), "r") as f:
+            with open(os.path.join(app_path, "FastFlagConfiguration.json"), "r") as f:
                 try:
                     fflag_configuration = json.load(f)
                 except Exception as e:
                     loaded_json = False
 
-            if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown")):
+            if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
                 if not fflag_configuration.get("EFlagDisableBootstrapCooldown") == True:
-                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"), "r") as f:
+                    with open(os.path.join(app_path, "BootstrapCooldown"), "r") as f:
                         te = f.read()
                         if te.isnumeric():
                             if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
                                 printErrorMessage("You're starting the booldown too fast! Please wait 3 seconds!")
-                                printDebugMessage(f'If this message is still here after 3 seconds, delete the file "/Applications/EfazRobloxBootstrap.app/Contents/Resources/BootstrapCooldown"')
+                                printDebugMessage(f'If this message is still here after 3 seconds, delete the file "{app_path}/Resources/BootstrapCooldown"')
                                 sys.exit(0)
             else:
                 def cool():
-                    with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"), "w") as f:
+                    with open(os.path.join(app_path, "BootstrapCooldown"), "w") as f:
                         f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 3))
                     time.sleep(fflag_configuration.get("EFlagBootstrapCooldownAmount", 3))
-                    if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown")):
-                        os.remove(os.path.join(local_app_data, "EfazRobloxBootstrap", "BootstrapCooldown"))
+                    if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
+                        os.remove(os.path.join(app_path, "BootstrapCooldown"))
                 threading.Thread(target=cool).start()
 
             if len(args) > 1:
                 filtered_args = args[1]
                 if (("roblox-player:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args)):
                     printMainMessage(f"Creating URL Exchange file..")
-                    if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap")):
-                        with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "URLSchemeExchange"), "w") as f:
+                    if os.path.exists(app_path):
+                        with open(os.path.join(app_path, "URLSchemeExchange"), "w") as f:
                             f.write(filtered_args)
                     else:
                         with open("URLSchemeExchange", "w") as f:
@@ -820,8 +827,8 @@ if __name__ == "__main__":
                         try:
                             if ended == True:
                                 break
-                            if os.path.exists(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification")):
-                                with open(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification"), "r") as f:
+                            if os.path.exists(os.path.join(app_path, "AppNotification")):
+                                with open(os.path.join(app_path, "AppNotification"), "r") as f:
                                     try:
                                         notification = json.load(f)
                                         if type(notification) is list:
@@ -831,7 +838,7 @@ if __name__ == "__main__":
                                     except Exception as e:
                                         printDebugMessage(str(e))
                                         notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                                os.remove(os.path.join(local_app_data, "EfazRobloxBootstrap", "AppNotification"))
+                                os.remove(os.path.join(app_path, "AppNotification"))
                                 if notification.get("title") and notification.get("message"):
                                     displayNotification(notification["title"], notification["message"])
                                     printSuccessMessage("Successfully pinged app notification!")
@@ -843,11 +850,12 @@ if __name__ == "__main__":
                     global ended
                     try:
                         printMainMessage(f"Starting Bootstrap..")
-                        a_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py"))
-                        b_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "RobloxFastFlagsInstaller.py"))
-                        c_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "Install.py"))
-                        d_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "EfazRobloxBootstrapAPI.py"))
-                        e_file_hash = generateFileHash(os.path.join(local_app_data, "EfazRobloxBootstrap", "DiscordPresenceHandler.py"))
+                        a_file_hash = generateFileHash(os.path.join(app_path, "Main.py"))
+                        b_file_hash = generateFileHash(os.path.join(app_path, "RobloxFastFlagsInstaller.py"))
+                        c_file_hash = generateFileHash(os.path.join(app_path, "Install.py"))
+                        d_file_hash = generateFileHash(os.path.join(app_path, "EfazRobloxBootstrapAPI.py"))
+                        e_file_hash = generateFileHash(os.path.join(app_path, "DiscordPresenceHandler.py"))
+                        f_file_hash = generateFileHash(os.path.join(app_path, "PipHandler.py"))
 
                         validated = True
                         unable_to_validate = []
@@ -867,6 +875,9 @@ if __name__ == "__main__":
                         if not (e_file_hash == integrated_app_hashes.get("discord_presence")):
                             validated = False
                             unable_to_validate.append("DiscordPresenceHandler.py")
+                        if not (f_file_hash == integrated_app_hashes.get("pip_handler")):
+                            validated = False
+                            unable_to_validate.append("PipHandler.py")
 
                         if not (validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True):
                             printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
@@ -881,13 +892,15 @@ if __name__ == "__main__":
                                 printMainMessage(f'EfazRobloxBootstrapAPI.py | {integrated_app_hashes["bootstrap_api"]} => {d_file_hash}')
                             if not (e_file_hash == integrated_app_hashes["discord_presence"]):
                                 printMainMessage(f'DiscordPresenceHandler.py | {integrated_app_hashes["discord_presence"]} => {e_file_hash}')
+                            if not (f_file_hash == integrated_app_hashes["pip_handler"]):
+                                printMainMessage(f'PipHandler.py | {integrated_app_hashes["pip_handler"]} => {f_file_hash}')
                             if isYes(input("> ")) == False:
                                 ended = True
                                 sys.exit(0)
                             displayNotification("Uh oh!", "Your copy of Efaz's Roblox Bootstrap was unable to be validated!")
                         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
                         if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
-                        result = subprocess.run([pythonExecutable, os.path.join(local_app_data, "EfazRobloxBootstrap", "Main.py")], shell=True, cwd=os.path.join(local_app_data, "EfazRobloxBootstrap"))
+                        result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], shell=True, cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0:

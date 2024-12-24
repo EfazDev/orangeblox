@@ -42,15 +42,18 @@ alleged_path = EfazRobloxBootstrapAPI.getConfiguration("saveFolderPath")
 if alleged_path and os.path.isdir(alleged_path):
     recording_folder_path = alleged_path
 else:
-    printMainMessage("Please select a directory to save voice chat recordings to!")
-    prompter = promptlib.Files()
-    selected_dir = prompter.dir()
-    if selected_dir:
-        recording_folder_path = selected_dir
-        EfazRobloxBootstrapAPI.setConfiguration("saveFolderPath", recording_folder_path)
-        printSuccessMessage(f"Saved selected directory to settings! Path: {recording_folder_path}")
+    if EfazRobloxBootstrapAPI.getIfRobloxLaunched() == False:
+        printMainMessage("Please select a directory to save voice chat recordings to!")
+        prompter = promptlib.Files()
+        selected_dir = prompter.dir()
+        if selected_dir:
+            recording_folder_path = selected_dir
+            EfazRobloxBootstrapAPI.setConfiguration("saveFolderPath", recording_folder_path)
+            printSuccessMessage(f"Saved selected directory to settings! Path: {recording_folder_path}")
+        else:
+            printErrorMessage("No directory was given. Disabled voice chat recording.")
     else:
-        printErrorMessage("No directory was given. Disabled voice chat recording.")
+        printErrorMessage("Directory is unable to be asked for. Disabled voice chat recording.")
 
 def onRobloxVoiceChatStart(data):
     global streaming_file_path
