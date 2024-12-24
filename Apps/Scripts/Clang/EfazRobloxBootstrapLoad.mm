@@ -85,7 +85,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.5.5";
+    std::string current_version = "1.5.6";
     std::string main_os;
     
     #ifdef __APPLE__

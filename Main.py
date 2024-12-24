@@ -32,7 +32,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.5"}
+    current_version = {"version": "1.5.6"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -2736,9 +2736,10 @@ if __name__ == "__main__":
                                 def check_codesign():
                                     try:
                                         result = subprocess.run(
-                                            "codesign -v /Applications/Roblox.app",
+                                            "cat /Applications/Roblox.app/Contents/MacOS/RobloxPlayer > /dev/null && \
+                                             codesign -v --no-strict /Applications/Roblox.app/Contents/MacOS/RobloxPlayer",
                                             shell=True
-                                        )
+                                        )   
                                         printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
                                         if result.returncode == 0:
                                             return True
@@ -2851,7 +2852,6 @@ if __name__ == "__main__":
     current_place_info = None
     is_teleport = False
     is_app_login_fail = False
-    roblox_closure_pending = False
     connected_user_info = None
     updated_count = 0
     connected_roblox_instance = None
@@ -3940,19 +3940,11 @@ if __name__ == "__main__":
                             printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
     def onRobloxExit(consoleLine):
         global is_app_login_fail
-        global roblox_closure_pending
-        if "mutex result" in consoleLine:
-            return
-        was_already_pended = False
-        if roblox_closure_pending == True:
-            was_already_pended = True
-        else:
-            roblox_closure_pending = True
         if is_app_login_fail == True:
             printDebugMessage("Roblox failed to launch login!")
         else:
             printDebugMessage("User has closed the Roblox window!")
-        if connected_roblox_instance.created_mutex == True and handler.getIfRobloxIsOpen(pid=connected_roblox_instance.pid):
+        if connected_roblox_instance and connected_roblox_instance.created_mutex == True:
             printYellowMessage("This process is handling multi-instance for all open Roblox windows. If you close this window, all Roblox windows may close.")
         else:
             printErrorMessage("Roblox window was closed! Closing Bootstrap App..")
@@ -3974,8 +3966,6 @@ if __name__ == "__main__":
                 pip_class.install(["requests"])
                 import requests
                 printSuccessMessage("Successfully installed modules!")
-            if was_already_pended == True:
-                return
             if connected_roblox_instance and not (connected_roblox_instance.main_log_file == "") and fflag_configuration.get("EFlagDiscordWebhookURL"):
                 title = "Roblox Closed!"
                 color = 16735838
@@ -4116,8 +4106,6 @@ if __name__ == "__main__":
                 except Exception as e:
                     printErrorMessage("There was an issue sending your webhook message. Is the webhook link valid?")
     def onRobloxAppStart(consoleLine):
-        global roblox_closure_pending
-        roblox_closure_pending = False
         if fflag_configuration.get("EFlagUseDiscordWebhook") == True and fflag_configuration.get("EFlagDiscordWebhookRobloxAppStart") == True:
             try:
                 import requests

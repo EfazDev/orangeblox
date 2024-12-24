@@ -556,12 +556,9 @@ class Main:
                                 else:
                                     if self.debug_mode == True: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
                             for i in self.events:
-                                if i and callable(i.get("callback")) and i.get("name") == eventName: threading.Thread(target=i.get("callback"), args=[data], daemon=True).start()
+                                if i and callable(i.get("callback")) and i.get("name") == eventName: threading.Thread(target=i.get("callback"), args=[data]).start()
                         def handleLine(line=""):
-                            if "The crash manager ends the monitor thread at exit." in line or "[FLog::SingleSurfaceApp] destroy controllers" in line:
-                                submitToThread(eventName="onRobloxExit", data=line)
-                                return self.__ReadingLineResponse__.EndRoblox()
-                            elif "[FLog::RobloxStarter] RobloxStarter destroyed" in line:
+                            if "[FLog::RobloxStarter] RobloxStarter destroyed" in line:
                                 if self.windows_roblox_starter_launched_roblox == False:
                                     submitToThread(eventName="onRobloxExit", data=line)
                                     submitToThread(eventName="onRobloxSharedLogLaunch", data=line)
@@ -1001,7 +998,7 @@ class Main:
                             while True:
                                 line = file.readline()
                                 if not line:
-                                    threading.Thread(target=cleanLogs, daemon=True).start()
+                                    threading.Thread(target=cleanLogs).start()
                                     break
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
@@ -1019,27 +1016,17 @@ class Main:
                                                     res = handleLine(line)
                                                     if res:
                                                         if res.code == 0:
-                                                            threading.Thread(target=cleanLogs, daemon=True).start()
+                                                            threading.Thread(target=cleanLogs).start()
                                                             break
                                                         elif res.code == 1:
                                                             self.ended_process = True
                                                             return
-                                        else:
-                                            res = handleLine(line)
-                                            if res:
-                                                if res.code == 0:
-                                                    self.ended_process = True
-                                                    threading.Thread(target=cleanLogs, daemon=True).start()
-                                                    break     
-                                                elif res.code == 1:
-                                                    self.ended_process = True
-                                                    return
                                     else:
                                         res = handleLine(line)
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
-                                                threading.Thread(target=cleanLogs, daemon=True).start()
+                                                threading.Thread(target=cleanLogs).start()
                                                 break     
                                             elif res.code == 1:
                                                 self.ended_process = True
@@ -1049,7 +1036,7 @@ class Main:
                                 line = file.readline()
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
-                                    threading.Thread(target=cleanLogs, daemon=True).start()
+                                    threading.Thread(target=cleanLogs).start()
                                     break
                                 if not line:
                                     time.sleep(0.01)
@@ -1068,7 +1055,7 @@ class Main:
                                                     if res:
                                                         if res.code == 0:
                                                             self.ended_process = True
-                                                            threading.Thread(target=cleanLogs, daemon=True).start()
+                                                            threading.Thread(target=cleanLogs).start()
                                                             break     
                                                         elif res.code == 1:
                                                             self.ended_process = True
@@ -1078,7 +1065,7 @@ class Main:
                                             if res:
                                                 if res.code == 0:
                                                     self.ended_process = True
-                                                    threading.Thread(target=cleanLogs, daemon=True).start()
+                                                    threading.Thread(target=cleanLogs).start()
                                                     break     
                                                 elif res.code == 1:
                                                     self.ended_process = True
@@ -1088,7 +1075,7 @@ class Main:
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
-                                                threading.Thread(target=cleanLogs, daemon=True).start()
+                                                threading.Thread(target=cleanLogs).start()
                                                 break     
                                             elif res.code == 1:
                                                 self.ended_process = True
