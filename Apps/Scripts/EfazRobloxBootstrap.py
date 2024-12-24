@@ -271,6 +271,7 @@ if __name__ == "__main__":
                     c_file_hash = generateFileHash(f"{app_path}/Resources/Install.py")
                     d_file_hash = generateFileHash(f"{app_path}/Resources/EfazRobloxBootstrapAPI.py")
                     e_file_hash = generateFileHash(f"{app_path}/Resources/DiscordPresenceHandler.py")
+                    f_file_hash = generateFileHash(f"{app_path}/Resources/PipHandler.py")
 
                     validated = True
                     unable_to_validate = []
@@ -290,6 +291,9 @@ if __name__ == "__main__":
                     if not (e_file_hash == integrated_app_hashes.get("discord_presence")):
                         validated = False
                         unable_to_validate.append("DiscordPresenceHandler.py")
+                    if not (f_file_hash == integrated_app_hashes.get("pip_handler")):
+                        validated = False
+                        unable_to_validate.append("PipHandler.py")
 
                     if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
                         if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
