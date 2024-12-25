@@ -93,7 +93,7 @@ if __name__ == "__main__":
         "Windows": [os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap", "EfazRobloxBootstrap.exe"), os.path.join(f"{os.getenv('LOCALAPPDATA')}", "EfazRobloxBootstrap")]
     }
     ignore_files = ["build", "__pycache__", "LICENSE", "README.md", "README_Template.md", "InstallPython.sh", "FastFlagConfiguration.json", ".git", "RepairData"]
-    current_version = {"version": "1.5.7"}
+    current_version = {"version": "1.5.8"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     instant_install = False
     repair_mode = False
@@ -862,7 +862,7 @@ if __name__ == "__main__":
                             if folder_path and os.path.isdir(folder_path):
                                 printMainMessage(f"You have selected the following folder to install the bootstrap into: {folder_path}")
                                 printYellowMessage(f"PLEASE DO NOT EVER REMOVE THIS FOLDER UNLESS YOU RUN THE UNINSTALL ACTION AFTER YOU INSTALL!")
-                                printMainMessage("Would you like to install into this folder? (y/n):")
+                                printMainMessage("Would you like to install into this folder? (y/n)")
                                 if isYes(input("> ")):
                                     if folder_path and os.path.isdir(folder_path):
                                         if os.path.exists(os.path.join(folder_path, "EfazRobloxBootstrap")):

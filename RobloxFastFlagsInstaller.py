@@ -28,7 +28,7 @@ def isNo(text): return text.lower() == "n" or text.lower() == "no"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
 if os.path.exists("FastFlagConfiguration.json") and os.path.exists("Main.py") and os.path.exists("PipHandler.py"):
     efaz_bootstrap_mode = True
-fast_flag_installer_version = "1.7.0"
+fast_flag_installer_version = "1.7.5"
 
 class pip:
     executable = None
@@ -1654,8 +1654,8 @@ class Main:
                             kernel32.ReleaseMutex(mutex)
                         except Exception as e:
                             kernel32.ReleaseMutex(mutex)
-                threading.Thread(target=hold_mutex, daemon=True).start()
-                threading.Thread(target=hold_mutex2, daemon=True).start()
+                threading.Thread(target=hold_mutex).start()
+                threading.Thread(target=hold_mutex2).start()
                 return True
         else:
             self.printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
@@ -1948,6 +1948,7 @@ if __name__ == "__main__":
                     printErrorMessage("Something went wrong trying to determine your current Roblox version.")
                     input("> ")
                     sys.exit(0)
+        printWarnMessage("-----------")
     else:
         if main_os == "Windows":
             printWarnMessage(f"Starting Roblox Fast Flags Installer v{fast_flag_installer_version}!")
@@ -1956,11 +1957,10 @@ if __name__ == "__main__":
         else:
             printErrorMessage("Please run this script on macOS/Windows.")
             exit()
-    printWarnMessage("-----------")
+        printWarnMessage("--------------------")
 
     def getUserId():
         printMainMessage("Please input your User ID! This can be found on your profile in the URL: https://www.roblox.com/users/XXXXXXXX/profile")
-        printMainMessage("This will be used for items that require a User ID.")
         id = input("> ")
         if id.isnumeric():
             return id
@@ -1971,420 +1971,439 @@ if __name__ == "__main__":
             printWarnMessage("Let's try again!")
             return getUserId()
     
-    id = getUserId()
-    if id:
-        # Based JSON
-        generated_json = {}
+    # Based JSON
+    generated_json = {}
 
-        # FPS Unlocker
-        printWarnMessage("--- FPS Unlocker ---")
-        printMainMessage("Would you like to use an FPS Unlocker? (y/n)")
-        installFPSUnlocker = input("> ")
-        def getFPSCap():
-            printWarnMessage("- FPS Cap -")
-            printMainMessage("Enter the FPS cap to install on your client. (Leave blank for no cap)")
-            cap = input("> ")
-            if cap.isnumeric():
-                return cap
-            elif isRequestClose(cap):
-                printMainMessage("Ending installation..")
-                exit()
-            else:
-                return None
-        if isYes(installFPSUnlocker) == True:
-            # FPS Cap
-            fpsCap = getFPSCap()
-
-            # Roblox Vulkan Rendering
-            printWarnMessage("- Roblox Vulkan Rendering -")
-            printMainMessage("Would you like to use Vulkan Rendering? (It will remove the cap fully but may cause issues) (y/n)")
-            useVulkan = input("> ")
-            generated_json["FFlagTaskSchedulerLimitTargetFpsTo2402"] = "false"
-
-            if main_os == "Darwin":
-                generated_json["FFlagDebugGraphicsDisableMetal"] =  "true"
-
-            if fpsCap == None:
-                generated_json["DFIntTaskSchedulerTargetFps"] = 99999
-            else:
-                generated_json["DFIntTaskSchedulerTargetFps"] = int(fpsCap)
-
-            if isYes(useVulkan) == True:
-                generated_json["FFlagDebugGraphicsPreferVulkan"] = "true"
-            elif isNo(useVulkan) == True:
-                generated_json["FFlagDebugGraphicsPreferVulkan"] = "false"
-            elif isRequestClose(useVulkan) == True:
-                printMainMessage("Ending installation..")
-                exit()
-        elif isRequestClose(installFPSUnlocker) == True:
+    # FPS Unlocker
+    printWarnMessage("--- FPS Unlocker ---")
+    printMainMessage("Would you like to use an FPS Unlocker? (y/n)")
+    installFPSUnlocker = input("> ")
+    def getFPSCap():
+        printWarnMessage("- FPS Cap -")
+        printMainMessage("Enter the FPS cap to install on your client. (Leave blank for no cap)")
+        cap = input("> ")
+        if cap.isnumeric():
+            return cap
+        elif isRequestClose(cap):
             printMainMessage("Ending installation..")
             exit()
-        elif isNo(installFPSUnlocker) == True:
+        else:
+            return None
+    if isYes(installFPSUnlocker) == True:
+        # FPS Cap
+        fpsCap = getFPSCap()
+
+        # Roblox Vulkan Rendering
+        printWarnMessage("- Roblox Vulkan Rendering -")
+        printMainMessage("Would you like to use Vulkan Rendering? (It will remove the cap fully but may cause issues) (y/n)")
+        useVulkan = input("> ")
+        generated_json["FFlagTaskSchedulerLimitTargetFpsTo2402"] = "false"
+
+        if main_os == "Darwin":
+            generated_json["FFlagDebugGraphicsDisableMetal"] =  "true"
+
+        if fpsCap == None:
+            generated_json["DFIntTaskSchedulerTargetFps"] = 99999
+        else:
+            generated_json["DFIntTaskSchedulerTargetFps"] = int(fpsCap)
+
+        if isYes(useVulkan) == True:
+            generated_json["FFlagDebugGraphicsPreferVulkan"] = "true"
+        elif isNo(useVulkan) == True:
             generated_json["FFlagDebugGraphicsPreferVulkan"] = "false"
-            generated_json["DFIntTaskSchedulerTargetFps"] = 60
-            generated_json["FFlagDebugGraphicsDisableMetal"] = "false"
-
-            # Roblox FPS Unlocker
-            printWarnMessage("- Roblox FPS Unlocker -")
-            printMainMessage("Would you like the Roblox FPS Unlocker in your settings? (This may not work depending on your Roblox client version.) (y/n)")
-            robloxFPSUnlocker = input("> ")
-            if isYes(robloxFPSUnlocker) == True:
-                generated_json["FFlagGameBasicSettingsFramerateCap5"] = "true" # If roblox decides to change, I won't need to :)
-                generated_json["FFlagGameBasicSettingsFramerateCap6"] = "true"
-                generated_json["FFlagGameBasicSettingsFramerateCap7"] = "true"
-                generated_json["FFlagGameBasicSettingsFramerateCap8"] = "true"
-                generated_json["FFlagGameBasicSettingsFramerateCap9"] = "true"
-                generated_json["FFlagGameBasicSettingsFramerateCap10"] = "true" # If roblox decides to change, I won't need to :)
-                generated_json["DFIntTaskSchedulerTargetFps"] = 0
-            elif isRequestClose(robloxFPSUnlocker) == True:
-                printMainMessage("Ending installation..")
-                exit()
-
-        # Verified Badge
-        printWarnMessage("--- Verified Badge ---")
-        printMainMessage("Would you like to use a verified badge during Roblox Games? (y/n)")
-        installVerifiedBadge = input("> ")
-        if isYes(installVerifiedBadge) == True:
-            generated_json["FStringWhitelistVerifiedUserId"] = str(id)
-        elif isRequestClose(installVerifiedBadge) == True:
+        elif isRequestClose(useVulkan) == True:
             printMainMessage("Ending installation..")
             exit()
-        elif isNo(installVerifiedBadge) == True:
-            generated_json["FStringWhitelistVerifiedUserId"] = ""
+    elif isRequestClose(installFPSUnlocker) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installFPSUnlocker) == True:
+        generated_json["FFlagDebugGraphicsPreferVulkan"] = "false"
+        generated_json["DFIntTaskSchedulerTargetFps"] = 60
+        generated_json["FFlagDebugGraphicsDisableMetal"] = "false"
 
-        # Rename Charts to Discover
-        printWarnMessage("--- Replace Charts ---")
-        printMainMessage("Would you like to rename Charts back to Discover (may work)? (y/n)")
-        installRenameCharts = input("> ")
-        if isYes(installRenameCharts) == True:
-            generated_json["FFlagLuaAppChartsPageRenameIXP"] = "false"
-        elif isRequestClose(installRenameCharts) == True:
+        # Roblox FPS Unlocker
+        printWarnMessage("- Roblox FPS Unlocker -")
+        printMainMessage("Would you like the Roblox FPS Unlocker in your settings? (This may not work depending on your Roblox client version.) (y/n)")
+        robloxFPSUnlocker = input("> ")
+        if isYes(robloxFPSUnlocker) == True:
+            generated_json["FFlagGameBasicSettingsFramerateCap1"] = "true" # If roblox decides to change, I won't need to :)
+            generated_json["FFlagGameBasicSettingsFramerateCap2"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap3"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap4"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap5"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap6"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap7"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap8"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap9"] = "true"
+            generated_json["FFlagGameBasicSettingsFramerateCap10"] = "true" # If roblox decides to change, I won't need to :)
+            generated_json["DFIntTaskSchedulerTargetFps"] = 0
+        elif isRequestClose(robloxFPSUnlocker) == True:
             printMainMessage("Ending installation..")
             exit()
-        elif isNo(installRenameCharts) == True:
-            generated_json["FFlagLuaAppChartsPageRenameIXP"] = "true"
+        elif isNo(robloxFPSUnlocker) == True:
+            generated_json["FFlagGameBasicSettingsFramerateCap1"] = "false" # If roblox decides to change, I won't need to :)
+            generated_json["FFlagGameBasicSettingsFramerateCap2"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap3"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap4"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap5"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap6"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap7"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap8"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap9"] = "false"
+            generated_json["FFlagGameBasicSettingsFramerateCap10"] = "false" # If roblox decides to change, I won't need to :)
+            generated_json["DFIntTaskSchedulerTargetFps"] = None
 
+    # Verified Badge
+    printWarnMessage("--- Verified Badge ---")
+    printMainMessage("Would you like to use a verified badge during Roblox Games? (y/n)")
+    installVerifiedBadge = input("> ")
+    if isYes(installVerifiedBadge) == True:
+        id = getUserId()
+        if id: generated_json["FStringWhitelistVerifiedUserId"] = str(id)
+    elif isRequestClose(installVerifiedBadge) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installVerifiedBadge) == True:
+        generated_json["FStringWhitelistVerifiedUserId"] = ""
+
+    # Rename Charts to Discover
+    printWarnMessage("--- Replace Charts ---")
+    printMainMessage("Would you like to rename Charts back to Discover (may work)? (y/n)")
+    installRenameCharts = input("> ")
+    if isYes(installRenameCharts) == True:
+        generated_json["FFlagLuaAppChartsPageRenameIXP"] = "false"
+    elif isRequestClose(installRenameCharts) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installRenameCharts) == True:
+        generated_json["FFlagLuaAppChartsPageRenameIXP"] = "true"
+
+    if main_os == "Windows":
+        # Enable Developer Tools
+        printWarnMessage("--- Enable Developer Tools ---")
+        printMainMessage("Would you like to enable Developer Tools inside of the Roblox App (when website frame is opened) (Ctrl+Shift+I)? (y/n)")
+        installEnableDeveloper = input("> ")
+        if isYes(installEnableDeveloper) == True:
+            generated_json["FFlagDebugEnableNewWebView2DevTool"] = "true"
+        elif isRequestClose(installEnableDeveloper) == True:
+            printMainMessage("Ending installation..")
+            exit()
+
+    # Display FPS
+    printWarnMessage("--- Display FPS ---")
+    printMainMessage("Would you like your client to display the FPS? (y/n)")
+    installFPSViewer = input("> ")
+    if isYes(installFPSViewer) == True:
+        generated_json["FFlagDebugDisplayFPS"] = "true"
+    elif isRequestClose(installFPSViewer) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installFPSViewer) == True:
+        generated_json["FFlagDebugDisplayFPS"] = "false"
+
+    # Disable Ads
+    printWarnMessage("--- Disable Ads ---")
+    printMainMessage("Would you like your client to disable ads? (y/n)")
+    installRemoveAds = input("> ")
+    if isYes(installRemoveAds) == True:
+        generated_json["FFlagAdServiceEnabled"] = "false"
+    elif isRequestClose(installRemoveAds) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installRemoveAds) == True:
+        generated_json["FFlagAdServiceEnabled"] = "true"
+
+    # Increase Max Assets Loading
+    printWarnMessage("--- Increase Max Assets Loading ---")
+    printMainMessage("Would you like to increase the limit on Max Assets loading from 100 to 999,999? (this will make loading into games faster depending on your computer) (y/n)")
+    printYellowMessage("WARNING! This can crash your Roblox session!")
+    installRemoveMaxAssets = input("> ")
+    if isYes(installRemoveMaxAssets) == True:
+        generated_json["DFIntNumAssetsMaxToPreload"] = "999999"
+    elif isRequestClose(installRemoveMaxAssets) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installRemoveMaxAssets) == True:
+        generated_json["DFIntNumAssetsMaxToPreload"] = "100"
+
+    # Enable Genre System
+    printWarnMessage("--- Enable New Genre System Under Making ---")
+    printMainMessage("Would you like to enable the new genre system in beta? (y/n)")
+    installGenreSystem = input("> ")
+    if isYes(installGenreSystem) == True:
+        generated_json["FFlagLuaAppGenreUnderConstruction"] = "false"
+        generated_json["FFlagLuaAppGenreUnderConstructionDesktopFix"] = "false"
+    elif isRequestClose(installGenreSystem) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installGenreSystem) == True:
+        generated_json["FFlagLuaAppGenreUnderConstruction"] = "true"
+        generated_json["FFlagLuaAppGenreUnderConstructionDesktopFix"] = "true"
+
+    # Enable Freecam
+    printWarnMessage("--- Enable Freecam ---")
+    printMainMessage("Would you like to enable freecam on the Roblox client (only works if you're a Roblox Developer of a game or a Star Creator)? (y/n)")
+    installFreecam = input("> ")
+    if isYes(installFreecam) == True:
+        generated_json["FFlagLoadFreecamModule"] = "true"
+    elif isRequestClose(installFreecam) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installFreecam) == True:
+        generated_json["FFlagLoadFreecamModule"] = "false"
+
+    # Enable New Camera Controls
+    printWarnMessage("--- Enable New Camera Controls ---")
+    printMainMessage("Would you like to enable new camera controls? (y/n)")
+    installNewCamera = input("> ")
+    if isYes(installNewCamera) == True:
+        generated_json["FFlagNewCameraControls"] = "true"
+    elif isRequestClose(installNewCamera) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installNewCamera) == True:
+        generated_json["FFlagNewCameraControls"] = "false"
+
+    # Hide Internet Disconnect Message
+    printWarnMessage("--- Hide Internet Disconnect Message ---")
+    printMainMessage("Would you like to hide the Internet Disconnect message when you're kicked? (You will still be kicked, jsut the message will not show.) (y/n)")
+    installHideDisconnect = input("> ")
+    if isYes(installHideDisconnect) == True:
+        generated_json["DFFlagDebugDisableTimeoutDisconnect"] = "true"
+    elif isRequestClose(installHideDisconnect) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installHideDisconnect) == True:
+        generated_json["DFFlagDebugDisableTimeoutDisconnect"] = "false"
+
+    # Disable In-Game Purchases
+    printWarnMessage("--- Disable In-Game Purchases ---")
+    printMainMessage("Would you like to disable in-game purchases (game-passes, developer products, etc.)? (You will still be kicked, jsut the message will not show.) (y/n)")
+    installDisablePurchases = input("> ")
+    if isYes(installDisablePurchases) == True:
+        generated_json["DFFlagOrder66"] = "true"
+    elif isRequestClose(installDisablePurchases) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installDisablePurchases) == True:
+        generated_json["DFFlagOrder66"] = "false"
+
+    # Remove Automatically Translated
+    printWarnMessage("--- Remove Automatically Translated ---")
+    printMainMessage("Would you like to remove the chat automatically translated message in the chat? (y/n)")
+    installRemoveAutoTranslate = input("> ")
+    if isYes(installRemoveAutoTranslate) == True:
+        generated_json["FFlagChatTranslationEnableSystemMessage"] = "false"
+    elif isRequestClose(installRemoveAutoTranslate) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installRemoveAutoTranslate) == True:
+        generated_json["FFlagChatTranslationEnableSystemMessage"] = "true"
+
+    # Darker Mode
+    printWarnMessage("--- Darker Mode ---")
+    printMainMessage("Would you like to enable Darker mode on your client? (Recently, this may not work.) (y/n)")
+    installDarkerMode = input("> ")
+    if isYes(installDarkerMode) == True:
+        generated_json["FFlagLuaAppUseUIBloxColorPalettes1"] = "true"
+        generated_json["FFlagUIBloxUseNewThemeColorPalettes"] = "true"
+    elif isRequestClose(installDarkerMode) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installDarkerMode) == True:
+        generated_json["FFlagLuaAppUseUIBloxColorPalettes1"] = "false"
+        generated_json["FFlagUIBloxUseNewThemeColorPalettes"] = "false"
+
+    # Blue Foundation Colors
+    printWarnMessage("--- Blue Foundation Colors ---")
+    printMainMessage("Would you like to enable new blue foundation colors on the Roblox client? (y/n)")
+    installBlueColors = input("> ")
+    if isYes(installBlueColors) == True:
+        generated_json["FFlagLuaAppEnableFoundationColors3"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors4"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors5"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors6"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors7"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors8"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors9"] = "true"
+        generated_json["FFlagLuaAppEnableFoundationColors10"] = "true"
+    elif isRequestClose(installBlueColors) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installBlueColors) == True:
+        generated_json["FFlagLuaAppEnableFoundationColors3"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors4"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors5"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors6"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors7"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors8"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors9"] = "false"
+        generated_json["FFlagLuaAppEnableFoundationColors10"] = "false"
+
+    # Custom Disconnect Message
+    printWarnMessage("--- Custom Disconnect Message ---")
+    printMainMessage("Would you like to use your own disconnect message? (disconnect button will disappear) (y/n)")
+    installCustomDisconnect = input("> ")
+    if isYes(installCustomDisconnect) == True:
+        generated_json["FFlagReconnectDisabled"] = "true"
+        printMainMessage("Enter the Disconnect Message below:")
+        generated_json["FStringReconnectDisabledReason"] = input("> ")
+    elif isRequestClose(installCustomDisconnect) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installCustomDisconnect) == True:
+        generated_json["FFlagReconnectDisabled"] = "false"
+        generated_json["FStringReconnectDisabledReason"] = ""
+
+    # Ability to Hide UI
+    printWarnMessage("--- Hide UI ---")
+    printMainMessage("Would you like to enable the ability to hide GUIs? (y/n)")
+    installHideUI = input("> ")
+    if isYes(installHideUI) == True:
+        printMainMessage("Enter a Group ID that you're currently in so this flag can work:")
+        generated_json["DFIntCanHideGuiGroupId"] = input("> ")
         if main_os == "Windows":
-            # Enable Developer Tools
-            printWarnMessage("--- Enable Developer Tools ---")
-            printMainMessage("Would you like to enable Developer Tools inside of the Roblox App (when website frame is opened) (Ctrl+Shift+I)? (y/n)")
-            installEnableDeveloper = input("> ")
-            if isYes(installEnableDeveloper) == True:
-                generated_json["FFlagDebugEnableNewWebView2DevTool"] = "true"
-            elif isRequestClose(installEnableDeveloper) == True:
-                printMainMessage("Ending installation..")
-                exit()
-
-        # Display FPS
-        printWarnMessage("--- Display FPS ---")
-        printMainMessage("Would you like your client to display the FPS? (y/n)")
-        installFPSViewer = input("> ")
-        if isYes(installFPSViewer) == True:
-            generated_json["FFlagDebugDisplayFPS"] = "true"
-        elif isRequestClose(installFPSViewer) == True:
+            printMainMessage("Combinations for hiding:")
+            printMainMessage("Ctrl+Shift+B = Toggles BillboardGuis and SurfaceGuis")
+            printMainMessage("Ctrl+Shift+C = Toggles PlayerGui")
+            printMainMessage("Ctrl+Shift+G = Toggles CoreGui")
+            printMainMessage("Ctrl+Shift+N = Toggles GUIs that appear above players")
+        elif main_os == "Darwin":
+            printMainMessage("Combinations for hiding:")
+            printMainMessage("Command+Shift+B = Toggles BillboardGuis and SurfaceGuis")
+            printMainMessage("Command+Shift+C = Toggles PlayerGui")
+            printMainMessage("Command+Shift+G = Toggles CoreGui")
+            printMainMessage("Command+Shift+N = Toggles GUIs that appear above players")
+        else:
             printMainMessage("Ending installation..")
             exit()
-        elif isNo(installFPSViewer) == True:
-            generated_json["FFlagDebugDisplayFPS"] = "false"
+    elif isRequestClose(installHideUI) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installHideUI) == True:
+        generated_json["DFIntCanHideGuiGroupId"] = ""
 
-        # Disable Ads
-        printWarnMessage("--- Disable Ads ---")
-        printMainMessage("Would you like your client to disable ads? (y/n)")
-        installRemoveAds = input("> ")
-        if isYes(installRemoveAds) == True:
-            generated_json["FFlagAdServiceEnabled"] = "false"
-        elif isRequestClose(installRemoveAds) == True:
+    # Quick Connect
+    printWarnMessage("--- Quick Connect ---")
+    printMainMessage("Would you like to install Quick Connect on your client? (y/n)")
+    printErrorMessage("WARNING! This can be buggy and may cause issues on your Roblox experience!!!")
+    installQuickConnect = input("> ")
+    if isYes(installQuickConnect) == True:
+        generated_json["FFlagEnableQuickGameLaunch"] = "true"
+    elif isRequestClose(installQuickConnect) == True:
+        printMainMessage("Ending installation..")
+        exit()
+    elif isNo(installQuickConnect) == True:
+        generated_json["FFlagEnableQuickGameLaunch"] = "false"
+
+    # Custom Fast Flags
+    printWarnMessage("--- Custom Fast Flags ---")
+    def custom():
+        def loop():
+            printMainMessage("Enter Key Name: ")
+            key = input("> ")
+            if isRequestClose(key) or key == "":
+                return {"success": False, "key": "", "value": ""}
+            if efaz_bootstrap_mode == True and key.startswith("EFlag"):
+                printMainMessage("Are you sure you want to set this Efaz's Roblox Bootstrap setting?")
+                con = input("> ")
+                if isYes(con) == False:
+                    return loop()
+            printMainMessage("Enter Key Value: ")
+            value = input("> ")
+            if isRequestClose(value):
+                return {"success": False, "key": "", "value": ""}
+            if value.isnumeric():
+                printMainMessage("Would you like this value to be a number value or do you want to keep it as a string? (y/n)")
+                isNum = input("> ")
+                if isNum == True:
+                    value = int(value)
+            elif value == "true" or value == "false":
+                printMainMessage("Would you like this value to be a boolean value or do you want to keep it as a string? (y/n)")
+                isBool = input("> ")
+                if isBool == True:
+                    value = value=="true"
+            return {"success": True, "key": key, "value": value}
+        completeLoop = loop()
+        if completeLoop["success"] == True:
+            generated_json[completeLoop["key"]] = completeLoop["value"]
+            printMainMessage("Would you like to add more fast flags? (y/n)")
+            more = input("> ")
+            if isYes(more) == True:
+                custom()
+    printMainMessage("Would you like to use custom fast flags? (y/n)")
+    installCustom = input("> ")
+    if isYes(installCustom) == True:
+        custom()
+    elif isRequestClose(installCustom) == True:
+        printMainMessage("Ending installation..")
+        exit()
+
+    # Installation Mode
+    if efaz_bootstrap_mode == False:
+        printWarnMessage("--- Installation Mode ---")
+        printMainMessage("[y/yes] = Install/Reinstall Flags")
+        printMainMessage("[n/no/(*)] = Cancel Install")
+        printMainMessage("[j/json] = Get JSON Settings")
+        printMainMessage("[nm/no-merge] = Don't Merge Settings with Previous Settings")
+        printMainMessage("[f/flat] = Flat JSON Install")
+        printMainMessage("[fnm/flat-no-merge] = Flat-No-Merge Install")
+        printMainMessage("[r/reset] = Reset Settings")
+        select_mode = input("> ")
+        if isYes(select_mode) == True:
+            printMainMessage("Selected Mode: Install/Reinstall Flags")
+        elif select_mode.lower() == "j" or select_mode.lower() == "json":
+            printMainMessage("Selected Mode: Get JSON Settings")
+        elif select_mode.lower() == "nm" or select_mode.lower() == "no-merge":
+            printMainMessage("Selected Mode: Don't Merge Settings with Previous Settings")
+        elif select_mode.lower() == "f" or select_mode.lower() == "flat":
+            printMainMessage("Selected Mode: Flat JSON Install")
+        elif select_mode.lower() == "fnm" or select_mode.lower() == "flat-no-merge":
+            printMainMessage("Selected Mode: Flat-No-Merge Install")
+        elif select_mode.lower() == "r" or select_mode.lower() == "reset":
+            printMainMessage("Selected Mode: Reset Settings")
+        else:
             printMainMessage("Ending installation..")
             exit()
-        elif isNo(installRemoveAds) == True:
-            generated_json["FFlagAdServiceEnabled"] = "true"
+    else:
+        select_mode = "y"
 
-        # Increase Max Assets Loading
-        printWarnMessage("--- Increase Max Assets Loading ---")
-        printMainMessage("Would you like to increase the limit on Max Assets loading from 100 to 1,000? (this will make loading into games faster depending on your computer) (y/n)")
-        printYellowMessage("WARNING! This can crash your Roblox session!")
-        installRemoveMaxAssets = input("> ")
-        if isYes(installRemoveMaxAssets) == True:
-            generated_json["DFIntNumAssetsMaxToPreload"] = "1000"
-        elif isRequestClose(installRemoveMaxAssets) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installRemoveMaxAssets) == True:
-            generated_json["DFIntNumAssetsMaxToPreload"] = "100"
-
-        # Enable Genre System
-        printWarnMessage("--- Enable New Genre System Under Making ---")
-        printMainMessage("Would you like to enable the new genre system in beta? (y/n)")
-        installGenreSystem = input("> ")
-        if isYes(installGenreSystem) == True:
-            generated_json["FFlagLuaAppGenreUnderConstruction"] = "false"
-            generated_json["FFlagLuaAppGenreUnderConstructionDesktopFix"] = "false"
-        elif isRequestClose(installGenreSystem) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installGenreSystem) == True:
-            generated_json["FFlagLuaAppGenreUnderConstruction"] = "true"
-            generated_json["FFlagLuaAppGenreUnderConstructionDesktopFix"] = "true"
-
-        # Enable Freecam
-        printWarnMessage("--- Enable Freecam ---")
-        printMainMessage("Would you like to enable freecam on the Roblox client (only works if you're a Roblox Developer of a game or a Star Creator)? (y/n)")
-        installFreecam = input("> ")
-        if isYes(installFreecam) == True:
-            generated_json["FFlagLoadFreecamModule"] = "true"
-        elif isRequestClose(installFreecam) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installFreecam) == True:
-            generated_json["FFlagLoadFreecamModule"] = "false"
-
-        # Enable Text Size Scaling
-        printWarnMessage("--- Enable Text Size Scaling ---")
-        printMainMessage("Would you like to enable the text size scaling in beta? (y/n)")
-        installTextSizeScale = input("> ")
-        if isYes(installTextSizeScale) == True:
-            generated_json["FFlagEnablePreferredTextSizeScale"] = "true"
-            generated_json["FFlagEnablePreferredTextSizeSettingInMenus2"] = "true"
-        elif isRequestClose(installTextSizeScale) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installTextSizeScale) == True:
-            generated_json["FFlagEnablePreferredTextSizeScale"] = "false"
-            generated_json["FFlagEnablePreferredTextSizeSettingInMenus2"] = "false"
-
-        # Remove Automatically Translated
-        printWarnMessage("--- Remove Automatically Translated ---")
-        printMainMessage("Would you like to remove the chat automatically translated message in the chat? (y/n)")
-        installRemoveAutoTranslate = input("> ")
-        if isYes(installRemoveAutoTranslate) == True:
-            generated_json["FFlagChatTranslationEnableSystemMessage"] = "false"
-        elif isRequestClose(installRemoveAutoTranslate) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installRemoveAutoTranslate) == True:
-            generated_json["FFlagChatTranslationEnableSystemMessage"] = "true"
-
-        # Darker Mode
-        printWarnMessage("--- Darker Mode ---")
-        printMainMessage("Would you like to enable Darker mode on your client? (y/n)")
-        installDarkerMode = input("> ")
-        if isYes(installDarkerMode) == True:
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes1"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes2"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes3"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes4"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes5"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes6"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes7"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes8"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes9"] = "true"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes10"] = "true"
-            generated_json["FFlagUIBloxUseNewThemeColorPalettes"] = "true"
-        elif isRequestClose(installDarkerMode) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installDarkerMode) == True:
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes1"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes2"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes3"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes4"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes5"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes6"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes7"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes8"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes9"] = "false"
-            generated_json["FFlagLuaAppUseUIBloxColorPalettes10"] = "false"
-            generated_json["FFlagUIBloxUseNewThemeColorPalettes"] = "false"
-
-        # Blue Foundation Colors
-        printWarnMessage("--- Blue Foundation Colors ---")
-        printMainMessage("Would you like to enable new blue foundation colors on the Roblox client? (y/n)")
-        installBlueColors = input("> ")
-        if isYes(installBlueColors) == True:
-            generated_json["FFlagLuaAppEnableFoundationColors3"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors4"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors5"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors6"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors7"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors8"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors9"] = "true"
-            generated_json["FFlagLuaAppEnableFoundationColors10"] = "true"
-        elif isRequestClose(installBlueColors) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installBlueColors) == True:
-            generated_json["FFlagLuaAppEnableFoundationColors3"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors4"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors5"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors6"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors7"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors8"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors9"] = "false"
-            generated_json["FFlagLuaAppEnableFoundationColors10"] = "false"
-
-        # Custom Disconnect Message
-        printWarnMessage("--- Custom Disconnect Message ---")
-        printMainMessage("Would you like to use your own disconnect message? (disconnect button will disappear) (y/n)")
-        installCustomDisconnect = input("> ")
-        if isYes(installCustomDisconnect) == True:
-            generated_json["FFlagReconnectDisabled"] = "true"
-            printMainMessage("Enter the Disconnect Message below:")
-            generated_json["FStringReconnectDisabledReason"] = input("> ")
-        elif isRequestClose(installCustomDisconnect) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installCustomDisconnect) == True:
-            generated_json["FFlagReconnectDisabled"] = "false"
-            generated_json["FStringReconnectDisabledReason"] = ""
-
-        # Ability to Hide UI
-        printWarnMessage("--- Hide UI ---")
-        printMainMessage("Would you like to enable the ability to hide GUIs? (y/n)")
-        installHideUI = input("> ")
-        if isYes(installHideUI) == True:
-            printMainMessage("Enter a Group ID that you're currently in so this flag can work:")
-            generated_json["DFIntCanHideGuiGroupId"] = input("> ")
-            if main_os == "Windows":
-                printMainMessage("Combinations for hiding:")
-                printMainMessage("Ctrl+Shift+B = Toggles BillboardGuis and SurfaceGuis")
-                printMainMessage("Ctrl+Shift+C = Toggles PlayerGui")
-                printMainMessage("Ctrl+Shift+G = Toggles CoreGui")
-                printMainMessage("Ctrl+Shift+N = Toggles GUIs that appear above players")
-            elif main_os == "Darwin":
-                printMainMessage("Combinations for hiding:")
-                printMainMessage("Command+Shift+B = Toggles BillboardGuis and SurfaceGuis")
-                printMainMessage("Command+Shift+C = Toggles PlayerGui")
-                printMainMessage("Command+Shift+G = Toggles CoreGui")
-                printMainMessage("Command+Shift+N = Toggles GUIs that appear above players")
-            else:
-                printMainMessage("Ending installation..")
-                exit()
-        elif isRequestClose(installHideUI) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installHideUI) == True:
-            generated_json["DFIntCanHideGuiGroupId"] = ""
-
-        # Quick Connect
-        printWarnMessage("--- Quick Connect ---")
-        printMainMessage("Would you like to install Quick Connect on your client? (y/n)")
-        printErrorMessage("WARNING! This can be buggy and may cause issues on your Roblox experience!!!")
-        installQuickConnect = input("> ")
-        if isYes(installQuickConnect) == True:
-            generated_json["FFlagEnableQuickGameLaunch"] = "true"
-        elif isRequestClose(installQuickConnect) == True:
-            printMainMessage("Ending installation..")
-            exit()
-        elif isNo(installQuickConnect) == True:
-            generated_json["FFlagEnableQuickGameLaunch"] = "false"
-
-        # Custom Fast Flags
-        printWarnMessage("--- Custom Fast Flags ---")
-        def custom():
-            def loop():
-                printMainMessage("Enter Key Name: ")
-                key = input("> ")
-                if isRequestClose(key) or key == "":
-                    return {"success": False, "key": "", "value": ""}
-                if efaz_bootstrap_mode == True and key.startswith("EFlag"):
-                    printMainMessage("Are you sure you want to set this Efaz's Roblox Bootstrap setting?")
-                    con = input("> ")
-                    if isYes(con) == False:
-                        return loop()
-                printMainMessage("Enter Key Value: ")
-                value = input("> ")
-                if isRequestClose(value):
-                    return {"success": False, "key": "", "value": ""}
-                if value.isnumeric():
-                    printMainMessage("Would you like this value to be a number value or do you want to keep it as a string? (y/n)")
-                    isNum = input("> ")
-                    if isNum == True:
-                        value = int(value)
-                elif value == "true" or value == "false":
-                    printMainMessage("Would you like this value to be a boolean value or do you want to keep it as a string? (y/n)")
-                    isBool = input("> ")
-                    if isBool == True:
-                        value = value=="true"
-                return {"success": True, "key": key, "value": value}
-            completeLoop = loop()
-            if completeLoop["success"] == True:
-                generated_json[completeLoop["key"]] = completeLoop["value"]
-                printMainMessage("Would you like to add more fast flags? (y/n)")
-                more = input("> ")
-                if isYes(more) == True:
-                    custom()
-        printMainMessage("Would you like to use custom fast flags? (y/n)")
-        installCustom = input("> ")
-        if isYes(installCustom) == True:
-            custom()
-        elif isRequestClose(installCustom) == True:
-            printMainMessage("Ending installation..")
-            exit()
-
-        # Installation Mode
+    # Installation
+    if not (select_mode.lower() == "j" or select_mode.lower() == "json"):
         if efaz_bootstrap_mode == False:
-            printWarnMessage("--- Installation Mode ---")
-            printMainMessage("[y/yes] = Install/Reinstall Flags")
-            printMainMessage("[n/no/(*)] = Cancel Install")
-            printMainMessage("[j/json] = Get JSON Settings")
-            printMainMessage("[nm/no-merge] = Don't Merge Settings with Previous Settings")
-            printMainMessage("[f/flat] = Flat JSON Install")
-            printMainMessage("[fnm/flat-no-merge] = Flat-No-Merge Install")
-            printMainMessage("[r/reset] = Reset Settings")
-            select_mode = input("> ")
-            if isYes(select_mode) == True:
-                printMainMessage("Selected Mode: Install/Reinstall Flags")
-            elif select_mode.lower() == "j" or select_mode.lower() == "json":
-                printMainMessage("Selected Mode: Get JSON Settings")
-            elif select_mode.lower() == "nm" or select_mode.lower() == "no-merge":
-                printMainMessage("Selected Mode: Don't Merge Settings with Previous Settings")
-            elif select_mode.lower() == "f" or select_mode.lower() == "flat":
-                printMainMessage("Selected Mode: Flat JSON Install")
-            elif select_mode.lower() == "fnm" or select_mode.lower() == "flat-no-merge":
-                printMainMessage("Selected Mode: Flat-No-Merge Install")
-            elif select_mode.lower() == "r" or select_mode.lower() == "reset":
-                printMainMessage("Selected Mode: Reset Settings")
+            printWarnMessage("--- Installation Ready! ---")
+            printMainMessage("Settings are now finished and now ready for setup!")
+            printMainMessage("Would you like to continue with the fast flag installation? (y/n)")
+            printErrorMessage("WARNING! This will force-quit any open Roblox windows! Please close them now before continuing in order to prevent data loss!")
+            install_now = input("> ")
+            if isYes(install_now) == True:
+                if isYes(select_mode) == True:
+                    handler.installFastFlagsJSON(generated_json)
+                elif select_mode.lower() == "j" or select_mode.lower() == "json":
+                    printMainMessage("Generated JSON:")
+                    printMainMessage(json.dumps(generated_json))
+                    exit()
+                elif select_mode.lower() == "nm" or select_mode.lower() == "no-merge":
+                    handler.installFastFlagsJSON(generated_json, merge=False)
+                elif select_mode.lower() == "f" or select_mode.lower() == "flat":
+                    handler.installFastFlagsJSON(generated_json, flat=True)
+                elif select_mode.lower() == "fnm" or select_mode.lower() == "flat-no-merge":
+                    handler.installFastFlagsJSON(generated_json, merge=False, flat=True)
+                elif select_mode.lower() == "r" or select_mode.lower() == "reset":
+                    handler.installFastFlagsJSON({})
+                else:
+                    printMainMessage("Ending installation..")
+                    exit()
             else:
                 printMainMessage("Ending installation..")
                 exit()
         else:
-            select_mode = "y"
-
-        # Installation
-        if not (select_mode.lower() == "j" or select_mode.lower() == "json"):
-            if efaz_bootstrap_mode == False:
-                printWarnMessage("--- Installation Ready! ---")
-                printMainMessage("Settings are now finished and now ready for setup!")
-                printMainMessage("Would you like to continue with the fast flag installation? (y/n)")
-                printErrorMessage("WARNING! This will force-quit any open Roblox windows! Please close them now before continuing in order to prevent data loss!")
-                install_now = input("> ")
-                if isYes(install_now) == True:
-                    if isYes(select_mode) == True:
-                        handler.installFastFlagsJSON(generated_json)
-                    elif select_mode.lower() == "j" or select_mode.lower() == "json":
-                        printMainMessage("Generated JSON:")
-                        printMainMessage(json.dumps(generated_json))
-                        exit()
-                    elif select_mode.lower() == "nm" or select_mode.lower() == "no-merge":
-                        handler.installFastFlagsJSON(generated_json, merge=False)
-                    elif select_mode.lower() == "f" or select_mode.lower() == "flat":
-                        handler.installFastFlagsJSON(generated_json, flat=True)
-                    elif select_mode.lower() == "fnm" or select_mode.lower() == "flat-no-merge":
-                        handler.installFastFlagsJSON(generated_json, merge=False, flat=True)
-                    elif select_mode.lower() == "r" or select_mode.lower() == "reset":
-                        handler.installFastFlagsJSON({})
-                    else:
-                        printMainMessage("Ending installation..")
-                        exit()
-                else:
-                    printMainMessage("Ending installation..")
-                    exit()
+            printWarnMessage("--- Saving Ready! ---")
+            printMainMessage("Are you sure you would like to save these FFlags in the bootstrap system?")
+            install_now = input("> ")
+            if isYes(install_now) == True:
+                handler.installFastFlagsJSON(generated_json, endRobloxInstances=False, isBootstrapper=True)
             else:
-                printWarnMessage("--- Saving Ready! ---")
-                printMainMessage("Are you sure you would like to save these FFlags in the bootstrap system?")
-                install_now = input("> ")
-                if isYes(install_now) == True:
-                    handler.installFastFlagsJSON(generated_json, endRobloxInstances=False, isBootstrapper=True)
-                else:
-                    printMainMessage("Ending installation..")
-                    exit()
+                printMainMessage("Ending installation..")
+                exit()

@@ -8,6 +8,7 @@ import importlib.util
 import subprocess
 import threading
 import time
+import uuid
 import re
 import RobloxFastFlagsInstaller
 from PipHandler import pip
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     skip_modification_mode = False
     installed_update = False
     connect_instead = False
-    current_version = {"version": "1.5.7"}
+    current_version = {"version": "1.5.8"}
     given_args = list(filter(None, sys.argv))
 
     with open("FastFlagConfiguration.json", "r") as f:
@@ -430,7 +431,7 @@ if __name__ == "__main__":
             sys.exit(0)
     def continueToFFlagInstaller(): # Run Fast Flag Installer
         global fflag_configuration
-        printWarnMessage("-----------")
+        printWarnMessage("--------------------")
         subprocess.run(args=[sys.executable, "RobloxFastFlagsInstaller.py"])
 
         global fast_config_loaded
@@ -709,6 +710,19 @@ if __name__ == "__main__":
                 elif isNo(c) == True:
                     fflag_configuration["EFlagEnableDuplicationOfClients"] = False
                     printDebugMessage("User selected: False")
+
+                if main_os == "Darwin":
+                    printMainMessage("Would you like to remove the Dock shortcut that Roblox automatically adds? (y/n)")
+                    c = input("> ")
+                    if isYes(c) == True:
+                        fflag_configuration["EFlagRemoveRobloxAppDockShortcut"] = True
+                        printDebugMessage("User selected: True")
+                    elif isRequestClose(c) == True:
+                        printMainMessage("Closing settings..")
+                        return "Settings was closed."
+                    elif isNo(c) == True:
+                        fflag_configuration["EFlagRemoveRobloxAppDockShortcut"] = False
+                        printDebugMessage("User selected: False")
 
                 printMainMessage("Would you like to reinstall a fresh copy of Roblox every launch? (y/n)")
                 d = input("> ")
@@ -2697,7 +2711,6 @@ if __name__ == "__main__":
                     copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTilt.png")
                 if os.path.exists(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png"):
                     copyFile(f"{os.path.curdir}/RobloxBrand/Original/RobloxTilt.png", f"{stored_content_folder_destinations[found_platform]}content/textures/loading/robloxTiltRed.png")
-
             printMainMessage("Installing Fast Flags..")
             if fast_config_loaded == True:
                 filtered_fast_flags = {}
@@ -2775,6 +2788,27 @@ if __name__ == "__main__":
                         printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
                 else:
                     printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
+                if fflag_configuration.get("EFlagRemoveRobloxAppDockShortcut") == True:
+                    dock_path = f'{os.path.expanduser("~")}/Library/Preferences/com.apple.dock.plist'
+                    dock_data = {}
+                    shortcut_replaced = False
+                    if os.path.exists(dock_path):
+                        dock_data = handler.readPListFile(dock_path)
+                        printMainMessage("Overwriting Dock..")
+                        if dock_data.get("persistent-apps"):
+                            for i in dock_data["persistent-apps"]:
+                                if i and i.get("tile-data"):
+                                    if i["tile-data"].get("bundle-identifier") == "com.roblox.RobloxPlayer":
+                                        dock_data["persistent-apps"].remove(i)
+                                        shortcut_replaced = True
+                    if shortcut_replaced == True:
+                        handler.writePListFile(dock_path, dock_data)
+                        time.sleep(1)
+                        subprocess.run("killall cfprefsd", shell=True)
+                        subprocess.run("killall Dock", shell=True)
+                        printSuccessMessage("Successfully removed Roblox.app Dock Shortcut!")
+                    else:
+                        printSuccessMessage("No changes were made to the dock!")
         except Exception as e:
             printErrorMessage(f"There was a problem applying mods to the Roblox Client!")
             printDebugMessage(f"Error Message: {str(e)}")
