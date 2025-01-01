@@ -1,8 +1,9 @@
 <h1 align="center"><img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/AppIcon.png?raw=true" width="40" height="40"> Efaz's Roblox Bootstrap</h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
-    <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/roblox-bootstrap?color=7a39fb" alt="Version"></a>
-    <a href="https://github.com/EfazDev/roblox-bootstrap"><img src="https://img.shields.io/github/stars/EfazDev/roblox-bootstrap?style=plastic&label=%E2%AD%90%20Stars&color=ffff00" alt="Stars"></a>    
+    <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/roblox-bootstrap?color=ff4b00&label=🔄 Version" alt="Version"></a>
+    <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/downloads/EfazDev/roblox-bootstrap/total?color=ff4b00&label=📥 Downloads" alt="Downloads"></a>
+    <a href="https://github.com/EfazDev/roblox-bootstrap"><img src="https://img.shields.io/github/stars/EfazDev/roblox-bootstrap?style=smooth&label=%E2%AD%90%20Stars&color=ff4b00" alt="Stars"></a>    
     <a href="https://twitter.efaz.dev"><img src="https://img.shields.io/twitter/follow/EfazDev?style=social&labelColor=00ffff&color=00ffff" alt="Twitter"></a>
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
@@ -52,9 +53,9 @@ Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made f
 > Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app instead (Windows only, python Install.py --use-x86-windows) in order to allow use.
 
 ## Hashes
-Main Bootstrap (Main.py): `f7bbb1b803be4f340054e8ba0f14c82e0ba3fceb0cadfac5689f57fe43204c1e`<br>
-Roblox FFlag Installer (RobloxFastFlagsInstaller.py): `5271baa4599f333eb6be5f23e000a3c6941cef3a7abc963d246f0b71205e67f5`<br>
-Installer (Install.py): `f713144f571a174f605edf8e55502a2966d6324ee75073b52b88c2102fa13b3c`<br>
+Main Bootstrap (Main.py): `bcc86c1bb584633835773e6fb44911ebb1574e33e8d1c7eac22a7a3645b4172b`<br>
+Roblox FFlag Installer (RobloxFastFlagsInstaller.py): `7e9297c81a006fed51b4c9b9e8e59d20c32a1364d3ae3ecfa55c7e819d0e0dd1`<br>
+Installer (Install.py): `aa9de98e88c2c42f8cf5b7cb9dc402588d77dda9ef163f0d4b2f8cc42849a262`<br>
 Bootstrap API (EfazRobloxBootstrapAPI.py): `819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8`<br>
 Discord Presence Handler (DiscordPresenceHandler.py): `fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a`<br>
 Pip Handler (PipHandler.py): `5e0c53133e054ebd8a2a6325ccdcc5fd47f3222b06d44e5523e569b95c67b686`<br>
