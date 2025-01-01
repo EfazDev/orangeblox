@@ -131,7 +131,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "1.5.8";
+    std::string current_version = "1.5.9";
     std::string main_os;
     std::string app_path;
     

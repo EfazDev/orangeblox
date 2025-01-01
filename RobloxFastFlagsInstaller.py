@@ -1757,7 +1757,7 @@ class Main:
                 if startData == "":
                     a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe", shell=True, stdout=subprocess.DEVNULL)
                 else:
-                    a = subprocess.run(f"start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe {startData}", shell=True, stdout=subprocess.DEVNULL)
+                    a = subprocess.run(f'start {most_recent_roblox_version_dir}RobloxPlayerBeta.exe "{startData}"', shell=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
                         if makeDupe == True:

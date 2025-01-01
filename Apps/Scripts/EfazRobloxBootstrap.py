@@ -12,7 +12,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "1.5.8"}
+    current_version = {"version": "1.5.9"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -129,26 +129,31 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
+        fflag_configuration = {}
 
-        printMainMessage(f"Loading Configuration File..")
-        if os.path.exists(f"{app_path}/Resources/FastFlagConfiguration.json"):
-            with open(f"{app_path}/Resources/FastFlagConfiguration.json", "r") as f:
-                try:
-                    fflag_configuration = json.load(f)
-                except Exception as e:
-                    loaded_json = False
-        else:
-            with open("FastFlagConfiguration.json", "r") as f:
-                try:
-                    fflag_configuration = json.load(f)
-                except Exception as e:
-                    loaded_json = False
+        def loadConfiguration():
+            global fflag_configuration
+            global loaded_json
+            printMainMessage(f"Loading Configuration File..")
+            if os.path.exists(f"{app_path}/Resources/FastFlagConfiguration.json"):
+                with open(f"{app_path}/Resources/FastFlagConfiguration.json", "r") as f:
+                    try:
+                        fflag_configuration = json.load(f)
+                    except Exception as e:
+                        loaded_json = False
+            else:
+                with open("FastFlagConfiguration.json", "r") as f:
+                    try:
+                        fflag_configuration = json.load(f)
+                    except Exception as e:
+                        loaded_json = False
 
         def printDebugMessage(mes): 
             if fflag_configuration.get("EFlagEnableDebugMode") == True: 
                 print(f"\033[38;5;226m{mes}\033[0m")
                 logs.append((mes, 2))
 
+        loadConfiguration()
         if pip_class.pythonInstalled() == False: pip_class.pythonInstall()
         pythonExecutable = pip_class.findPython()
         if not pythonExecutable:
@@ -226,9 +231,7 @@ if __name__ == "__main__":
             ended = False
             associated_terminal_pid = None
 
-            def awake():
-                global associated_terminal_pid
-                seconds = 0
+            def notificationLoop():
                 printMainMessage("Starting Notification Loop..")
                 while True:
                     try:
@@ -237,7 +240,7 @@ if __name__ == "__main__":
                             with open(f"{app_path}/Resources/AppNotification", "r") as f:
                                 try:
                                     notification = json.load(f)
-                                    if type(notification) is list:
+                                    if not (type(notification) is dict):
                                         class InvalidNotificationException(Exception):
                                             pass
                                         raise InvalidNotificationException("The following data for notification is not valid.")
@@ -248,6 +251,15 @@ if __name__ == "__main__":
                             if notification.get("title") and notification.get("message"):
                                 displayNotification(notification["title"], notification["message"])
                                 printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
+                    except Exception as e:
+                        printErrorMessage(f"There was an issue making a notification: {str(e)}")
+                    time.sleep(0.05)
+            def terminalAwaitLoop():
+                global associated_terminal_pid
+                printMainMessage("Starting Terminal ID Loop..")
+                while True:
+                    try:
+                        if ended == True: break
                         if os.path.exists(f"{app_path}/Resources/Terminal_{generated_app_id}"):
                             with open(f"{app_path}/Resources/Terminal_{generated_app_id}", "r") as f:
                                 try:
@@ -258,10 +270,20 @@ if __name__ == "__main__":
                                     printDebugMessage(str(e))
                             os.remove(f"{app_path}/Resources/Terminal_{generated_app_id}")
                             printDebugMessage(f"Received Terminal ID from Receiver: {associated_terminal_pid}")
-                        seconds += 1
                     except Exception as e:
-                        printErrorMessage(f"There was an issue making a notification: {str(e)}")
+                        printErrorMessage(f"There was an issue getting Terminal ID: {str(e)}")
                     time.sleep(0.05)
+            def loadConfigurationLoop():
+                seconds = 0
+                printMainMessage("Starting Configuration Loop..")
+                while True:
+                    try:
+                        if ended == True: break
+                        seconds += 1
+                        if seconds % 15 == 0: loadConfiguration()
+                    except Exception as e:
+                        printErrorMessage(f"There was an issue during the configuration loop: {str(e)}")
+                    time.sleep(1)
             def startBootstrap():
                 global ended
                 printMainMessage(f"Starting Bootstrap..")
@@ -297,7 +319,10 @@ if __name__ == "__main__":
 
                     if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
                         if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
-                        result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
+                        try:
+                            result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
+                        except Exception as e:
+                            printErrorMessage(f"An error was issued by subprocess: {str(e)}")
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0:
@@ -410,8 +435,10 @@ if __name__ == "__main__":
                                         file_menu.add_command(label="New Bootstrap Window", command=self.new_bootstrap)
                                         file_menu.add_command(label="Open Debug Window", command=self.instant_debug_window)
                                         file_menu.add_separator()
-                                        file_menu.add_command(label="Run Roblox in New Bootstrap Window", command=self.new_bootstrap_play_roblox)
-                                        if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True: file_menu.add_command(label="Multi-Run Roblox in New Bootstrap Window", command=self.new_bootstrap_play_multi_roblox)
+                                        if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True:
+                                            file_menu.add_command(label="Open Roblox [Multi-Instance Mode]", command=self.new_bootstrap_play_multi_roblox)
+                                        else:
+                                            file_menu.add_command(label="Open Roblox", command=self.new_bootstrap_play_roblox)
                                         if fflag_configuration.get("EFlagAllowActivityTracking") == True: file_menu.add_command(label="Connect to Existing Roblox in New Bootstrap Window", command=self.new_bootstrap_play_reconnect)
                                         file_menu.add_command(label="Run Roblox Fast Flags Installer", command=self.new_bootstrap_run_fflag_installer)
                                         file_menu.add_command(label="Clear Roblox Logs", command=self.new_bootstrap_clear_roblox_logs)
@@ -493,6 +520,7 @@ if __name__ == "__main__":
                                         from Foundation import NSObject
 
                                         generated_ui_options = []
+                                        generated_menu_items = []
                                         if type(fflag_configuration.get("EFlagRobloxLinkShortcuts")) is dict:
                                             for i, v in fflag_configuration.get("EFlagRobloxLinkShortcuts").items():
                                                 if v and v.get("name") and v.get("id") and v.get("url"):
@@ -536,11 +564,13 @@ if __name__ == "__main__":
                                         menu_item.setEnabled_(True)
                                         self.dock_menu.addItem_(menu_item)
                                         self.dock_menu.addItem_(NSMenuItem.separatorItem())
-                                        menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox in New Bootstrap Window", "runRoblox:", "")
-                                        menu_item.setEnabled_(True)
-                                        self.dock_menu.addItem_(menu_item)
-                                        if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True: 
-                                            menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Multi-Run Roblox in New Bootstrap Window", "multiRunRoblox:", "")
+
+                                        if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True:
+                                            menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Roblox [Multi-Instance Mode]", "multiRunRoblox:", "")
+                                            menu_item.setEnabled_(True)
+                                            self.dock_menu.addItem_(menu_item)
+                                        else:
+                                            menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Roblox", "runRoblox:", "")
                                             menu_item.setEnabled_(True)
                                             self.dock_menu.addItem_(menu_item)
                                         menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox Fast Flags Installer", "runFFlagInstaller:", "")
@@ -558,6 +588,7 @@ if __name__ == "__main__":
                                                 menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(p["message"], "shortcut:", "")
                                                 menu_item.setEnabled_(True)
                                                 self.dock_menu.addItem_(menu_item)
+                                                generated_menu_items.append(menu_item)
                                         menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Shortcuts Menu", "shortcutmenu:", "")
                                         menu_item.setEnabled_(True)
                                         self.dock_menu.addItem_(menu_item)
@@ -761,12 +792,15 @@ if __name__ == "__main__":
                         printErrorMessage(f"Unable to get terminal pid. Response: {associated_terminal_pid}")
                 except Exception as e:
                     printErrorMessage(str(e))
+            
             if not (fflag_configuration.get("EFlagDisableCreatingTkinterApp") == True):
-                threading.Thread(target=awake, daemon=False).start()
+                threading.Thread(target=notificationLoop, daemon=False).start()
+                threading.Thread(target=terminalAwaitLoop, daemon=True).start()
                 threading.Thread(target=startBootstrap, daemon=False).start()
                 createTkinterAppReplication()
             else:
-                threading.Thread(target=awake).start()
+                threading.Thread(target=terminalAwaitLoop, daemon=True).start()
+                threading.Thread(target=notificationLoop, daemon=False).start()
                 startBootstrap()
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: {str(e)}")

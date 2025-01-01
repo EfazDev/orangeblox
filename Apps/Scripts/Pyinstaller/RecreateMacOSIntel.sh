@@ -36,8 +36,6 @@ codesig1() {
     STATUS=$?
         if [ $STATUS -eq 0 ]; then
             break
-        else
-            printMessage "Main Codesign Attempt Failed. Retrying.."
         fi
     done
 }

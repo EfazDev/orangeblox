@@ -32,8 +32,6 @@ codesig() {
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
             break
-        else
-            printMessage "Bootstrap Loader Codesign Attempt Failed. Retrying.."
         fi
     done
     while true; do
@@ -51,8 +49,6 @@ codesig() {
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
             break
-        else
-            printMessage "Play Roblox Codesign Attempt Failed. Retrying.."
         fi
     done
 }

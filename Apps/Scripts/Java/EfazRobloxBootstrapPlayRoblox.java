@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class EfazRobloxBootstrapPlayRoblox {
-    public static String current_version = "1.5.8";
+    public static String current_version = "1.5.9";
     public static String main_os = "Windows";
     public static void main(String[] args) throws IOException {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {

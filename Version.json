@@ -1,10 +1,10 @@
 {
-    "version": "1.5.8",
-    "latest_version": "1.5.8",
+    "version": "1.5.9",
+    "latest_version": "1.5.9",
     "hashes": {
-        "main": "3d9252191eeaa4d74119c937e8f17e14e69ee213360af762c85a4344c109a32b",
-        "fflag_install": "d720612d196a8e0727c69f07e7c937b5e9d35ecbd0f701131ee06bed1660402b",
-        "install": "793b774a74d41e352e538fe692276522362402e26b4b492cd10fec9cb858a2b2",
+        "main": "bcc86c1bb584633835773e6fb44911ebb1574e33e8d1c7eac22a7a3645b4172b",
+        "fflag_install": "7e9297c81a006fed51b4c9b9e8e59d20c32a1364d3ae3ecfa55c7e819d0e0dd1",
+        "install": "aa9de98e88c2c42f8cf5b7cb9dc402588d77dda9ef163f0d4b2f8cc42849a262",
         "bootstrap_api": "819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8",
         "discord_presence": "fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a",
         "pip_handler": "5e0c53133e054ebd8a2a6325ccdcc5fd47f3222b06d44e5523e569b95c67b686"
