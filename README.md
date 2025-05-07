@@ -1,70 +1,82 @@
-<h1 align="center"><img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/AppIcon.png?raw=true" width="40" height="40"> Efaz's Roblox Bootstrap</h1>
+<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" width="400" height="112"></h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
-    <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/roblox-bootstrap?color=ff4b00&label=🔄 Version" alt="Version"></a>
-    <a href="https://github.com/EfazDev/roblox-bootstrap/releases/latest"><img src="https://img.shields.io/github/downloads/EfazDev/roblox-bootstrap/total?color=ff4b00&label=📥 Downloads" alt="Downloads"></a>
-    <a href="https://github.com/EfazDev/roblox-bootstrap"><img src="https://img.shields.io/github/stars/EfazDev/roblox-bootstrap?style=smooth&label=%E2%AD%90%20Stars&color=ff4b00" alt="Stars"></a>    
+    <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
+    <a href="https://github.com/EfazDev/orangeblox"><img src="https://img.shields.io/github/stars/EfazDev/orangeblox?style=smooth&label=%E2%AD%90%20Stars&color=ff4b00" alt="Stars"></a>    
     <a href="https://twitter.efaz.dev"><img src="https://img.shields.io/twitter/follow/EfazDev?style=social&labelColor=00ffff&color=00ffff" alt="Twitter"></a>
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/MultipleInstances.png?raw=true" alt="Multiple Roblox Instances with Pet Simulator 99 Opened">
-    <br>
-    <img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/AvatarEditor.png?raw=true" alt="Subway Surfers Avatar Map">
-    <br>
-    <img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/ServerLocations.png?raw=true" alt="Server Location Notification">
-    <br>
-    <img align="center" src="https://github.com/EfazDev/roblox-bootstrap/blob/main/BootstrapImages/DiscordPresences.png?raw=true" alt="Discord Rich Presences">
+    <img align="center" src="https://obx.efaz.dev/BootstrapImages/ServerLocations.png" alt="Server Location Notification"><br>
+    <p align="center">
+        <img src="https://obx.efaz.dev/BootstrapImages/WebhookPlayer.png" height="133" width="284" alt="Server Location Notification">
+        <img src="https://obx.efaz.dev/BootstrapImages/WebhookStudio.png" height="133" width="284" alt="Server Location Notification">
+    </p>
+    <p align="center">
+        <img src="https://obx.efaz.dev/BootstrapImages/PlayerRPC.png" height="152" width="350" alt="Player Discord Rich Presence">
+        <img src="https://obx.efaz.dev/BootstrapImages/StudioRPC.png" height="152" width="350" alt="Studio Discord Rich Presence">
+    </p>
+    <p align="center">
+        <img align="center" src="https://obx.efaz.dev/BootstrapImages/MultipleInstance.png" height="496" width="855" alt="Multiple Roblox Instances with Pet Simulator 99 Opened"><br><br><img align="center" src="https://obx.efaz.dev/BootstrapImages/AvatarEditor.png" height="650" width="1493" alt="Subway Surfers Avatar Map">
+    </p>
 </p>
 
-## What is this?
-Efaz's Roblox Bootstrap is a Python program heavily inspired by Bloxstrap made for macOS and Windows! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and lot more!
+> [!IMPORTANT]
+> Hello! If you were an user of Efaz's Roblox Bootstrap on v1.5.9 or lower, you might have noticed we have rebranded to OrangeBlox! Any mods and data are transferred as of this change and your mod scripts are able to still work under the EfazRobloxBootstrapAPI. However, you'll have to install manually rather than automatically downloading from the bootstrap. For more information, [click here.](https://github.com/efazdev/orangeblox/wiki/Rebranding-to-OrangeBlox)
+
+## What is OrangeBlox?
+OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and Windows! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
 
 ## Features
-1. Set FFlag Customizations on your Roblox installation!
-2. Set a custom Avatar Map, App Icon, Cursor, and Death Sound!
+1. Set FFlag and Global Setting Customizations on your Roblox installation!
+2. Install Mods including a custom Avatar Map, App Icon (macOS), Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
-4. Use multiple instances directly by launching from your default web browser or the EfazRobloxBootstrap app!
-5. Get server locations when joining (also uses ipinfo.io like Bloxstrap)
-6. Discord Rich Presences [Includes Support for BloxstrapRPC]
-7. Discord Webhooks [Join, Disconnect, Teleport, Crash, App Start, App Close, Bloxstrap RPC Notifications]
-8. Run Python Scripts based on events ran on the Roblox client using Mod Mode Scripts! *[One script limit]
-9. Play Roblox app so you can run Roblox directly!
-10. Read Logs from Roblox using RobloxFastFlagsInstaller and Debug Mode!
+4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
+5. Get server locations when joining (courtesy of ipinfo.io)
+6. Apply the same experience to Roblox Studio with mods!
+7. Discord Rich Presences [Includes Support for BloxstrapRPC]
+8. Roblox Studio Support with Mods and FFlags! *[FFlags may not work due to future Roblox updates]
+9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
+10. Run Python Scripts based on events ran on the Roblox client using Mod Mode Scripts! *[One script limit]
+11. Play Roblox/Run Studio app so you can run Roblox directly!
+12. Read Logs from Roblox using RobloxFastFlagsInstaller* (requires Debug Mode)!
 
 ## Requirements
-1. [Full ZIP file](https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip)
-2. [Python 3.10+](https://www.python.org/downloads/) (You may install Python 3.13.0 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
-3. Python Modules: pip install pypresence pyobjc posix-ipc requests plyer (For Windows: pip install pypresence requests pywin32 plyer)
-> [!NOTE]
-> Python 3.10 is not tested with the bootstrap, it may work though.
+1. [Full ZIP file](https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip)
+2. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.2 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
+3. Python Modules: <br>
+   macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc requests plyer <br>
+   Windows: pip install pypresence requests pywin32 plyer
 
 ## Install
-1. Once you have installed Python 3.10 or higher and downloaded the ZIP file, extract the full ZIP into a new folder.
+1. Once you have installed Python 3.11 or higher and downloaded the ZIP file, extract the full ZIP into a new folder.
 2. After you have EXTRACTED the folder, open it and make sure you see Install.py. Once you do, run it.
 2. Complete the installation process and once it says success, run the bootstrap by using the Launchpad for macOS or by using the Search Menu for Windows.
 3. Complete the tutorial about how to use the bootstrap.
-4. Done! You have installed Efaz's Roblox Bootstrap!
+4. Done! You have installed OrangeBlox!
 > [!NOTE]
-> If there's an error during the installation process, try checking if your computer is supported or if something was edited that may cause this error.
+> If there's an error during the installation process, try checking if your computer is supported or if something was edited that may cause this error. macOS may also edit permissions of the files if run under an admin account, keep an insight of that.
 
 ## Anti-Virus Information
 > [!IMPORTANT]
-> Efaz's Roblox Bootstrap is a safe Windows/macOS program and won't harm your Roblox client or your account (unless you have installed shady scripts/software and the app was modified). However, pyinstaller has some issues where apps created contain false positives from anti-virus software. For example, Windows Defender would result with Win32/Wacapew.C!ml. You may need to authorize the app or use the x86 app instead (Windows only, python Install.py --use-x86-windows) in order to allow use.
+> OrangeBlox is a safe Windows/macOS program and won't harm your Roblox account. However, pyinstaller has some issues where apps created contain false positives detecting from anti-virus software. For example, Windows Defender may detect the bootstrap with Win32/Wacapew.C!ml. You may need to authorize the app through your anti-virus or build the app directly in order to allow use.
 
 ## Hashes
-Main Bootstrap (Main.py): `bcc86c1bb584633835773e6fb44911ebb1574e33e8d1c7eac22a7a3645b4172b`<br>
-Roblox FFlag Installer (RobloxFastFlagsInstaller.py): `7e9297c81a006fed51b4c9b9e8e59d20c32a1364d3ae3ecfa55c7e819d0e0dd1`<br>
-Installer (Install.py): `aa9de98e88c2c42f8cf5b7cb9dc402588d77dda9ef163f0d4b2f8cc42849a262`<br>
-Bootstrap API (EfazRobloxBootstrapAPI.py): `819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8`<br>
-Discord Presence Handler (DiscordPresenceHandler.py): `fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a`<br>
-Pip Handler (PipHandler.py): `5e0c53133e054ebd8a2a6325ccdcc5fd47f3222b06d44e5523e569b95c67b686`<br>
+| File | MD5 Hash |
+| --- | --- |
+| Main Bootstrap (Main.py) | `b552e7a569d76b8d522bd7cdc57df762` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `9ba565da11545eb8ba0cb31bdc9a88d9` |
+| Installer (Install.py) | `524f072a682a9b9490fd9060e49cb3b4` |
+| Bootstrap API (OrangeAPI.py) | `43464cb4ec2cdb63b6a1fa475cfa3882` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `2db0b98d8d40bbe5c25cc3e1df86a82c` |
+| Pip Handler (PipHandler.py) | `72fd3262b0f861d653f43de00ad501f8` |
 
 ## Credits
-1. Made by <span style="color:#FF8700">@EfazDev</span>
-2. Old Death Sound and Cursors were sourced from <span style="color:#FF5FFF">[Bloxstrap files](https://github.com/pizzaboxer/bloxstrap)</span>
-3. AvatarEditorMaps were from <span style="color:#FF00FF">[Mielesgames's Map Files](https://github.com/Mielesgames/RobloxAvatarEditorMaps)</span> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
-4. Some files were exported from the main macOS Roblox.app or Bloxstrap files. <span style="color:#FF8700">(Logo was from the Apple Pages icon, recolored and then added the Roblox Logo)</span>
-5. macOS and Windows App was built using <span style="color:#00AFFF">pyinstaller</span>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller --rebuild-clang --full-rebuild-macOS-intel-arm64`
+1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" style="margin-bottom: -4px;" alt="@EfazDev 🍊"></a>
+2. Old Death Sound and Cursors were sourced from <a href="https://github.com/pizzaboxer/bloxstrap"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Bloxstrap%20%F0%9F%8E%AE" style="margin-bottom: -4px;" alt="Bloxstrap 🎮"></a>
+3. Avatar Editor Maps were from <a href="https://github.com/Mielesgames/RobloxAvatarEditorMaps"><img src="https://img.shields.io/static/v1?label=&color=ff0062&message=Mielesgames%27s%20Map%20Files%20%F0%9F%97%BA%EF%B8%8F" style="margin-bottom: -4px;" alt="Mielesgames's Map Files 🗺️"></a> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
+4. Server Locations was made thanks to <a href="https://ipinfo.io/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=ipinfo.io%20%F0%9F%8C%90" style="margin-bottom: -4px;" alt="ipinfo.io 🌐"></a> as it wouldn't be possible to convert ip addresses without them!
+5. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" style="margin-bottom: -4px;" alt="@CabledRblx 🦆"></a>. Thanks :)
+6. macOS and Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" style="margin-bottom: -4px;" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller --rebuild-clang --full-rebuild`
 > [!IMPORTANT]
-> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the EfazRobloxBootstrap folder as current path. In order to create a x86 exe file from x64 for Windows, use Python 3.13.0 in x86 (32-bit). Additionally, change `python3` to the Python Executable if python3 is not available as a command tool and --rebuild-clang is only available in macOS and requires Xcode Command Tools to be installed while --full-rebuild-macOS-intel-arm64 is only available just in macOS.
+> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the OrangeBlox folder as current path. For Windows, in order to build a x86 exe file in x64, use Python 3.13.2 in x86 (32-bit) and edit the RecreateWindows32.bat file inside of Apps/Scripts/Pyinstaller with Pyinstaller in x86 (ex. C:\Users\Local\AppData\Programs\Python\python313-32\Scripts\pyinstaller.exe). Arguments `--rebuild-clang` and `--full-rebuild` is only available in macOS and requires Xcode Command Tools to be installed

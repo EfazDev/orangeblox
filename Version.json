@@ -1,13 +1,13 @@
 {
-    "version": "1.5.9",
-    "latest_version": "1.5.9",
+    "version": "2.0.0",
+    "latest_version": "2.0.0",
     "hashes": {
-        "main": "bcc86c1bb584633835773e6fb44911ebb1574e33e8d1c7eac22a7a3645b4172b",
-        "fflag_install": "7e9297c81a006fed51b4c9b9e8e59d20c32a1364d3ae3ecfa55c7e819d0e0dd1",
-        "install": "aa9de98e88c2c42f8cf5b7cb9dc402588d77dda9ef163f0d4b2f8cc42849a262",
-        "bootstrap_api": "819b22a2a642f05f405d009f5765e903de1fb77aa1071d96736bd814217453d8",
-        "discord_presence": "fa853cc1f63f75544032a49509054452060e0e990a3fcb1b957e45b1763c385a",
-        "pip_handler": "5e0c53133e054ebd8a2a6325ccdcc5fd47f3222b06d44e5523e569b95c67b686"
+        "main": "b552e7a569d76b8d522bd7cdc57df762",
+        "fflag_install": "9ba565da11545eb8ba0cb31bdc9a88d9",
+        "install": "524f072a682a9b9490fd9060e49cb3b4",
+        "bootstrap_api": "43464cb4ec2cdb63b6a1fa475cfa3882",
+        "discord_presence": "2db0b98d8d40bbe5c25cc3e1df86a82c",
+        "pip_handler": "72fd3262b0f861d653f43de00ad501f8"
     },
-    "download_location": "https://github.com/EfazDev/roblox-bootstrap/archive/refs/heads/main.zip"
+    "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

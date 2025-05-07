@@ -1,13 +1,15 @@
 {
     "name": "Voice Chat Recorder!",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "mod_script": true,
+    "list_in_normal_mods": false,
     "mod_script_requirements": [
+        "sendDiscordWebhookMessage",
         "onRobloxVoiceChatStart",
         "onRobloxVoiceChatLeft",
         "onRobloxVoiceChatMute",
         "onRobloxVoiceChatUnmute"
     ],
-    "needed_python_modules": ["pvrecorder", "promptlib"],
+    "python_modules": ["pvrecorder", "promptlib"],
     "mod_script_supports": "1.4.4"
 }

@@ -1,50 +1,49 @@
 #
 # Hello there! Welcome to Mod Mode Scripts!
-# Mod Scripts are Python scripts that you can make to run code like configuring your bootstrap/Roblox functionality 
-# and sending a notification for when Roblox crashes!
+# Mod Scripts are Python scripts that you can make to run code like configuring your Roblox experience and sending a notification for when you got something in a game!
 # If you're a python developer, you may be able to get started here!
 # If you're a person who would like to run multiple mods, you'll only be able to run 1 script at a time due to security, so choose wisely!
 # 
 
 # Load Bootstrap API
-import EfazRobloxBootstrapAPI as ERBAPI; EfazRobloxBootstrapAPI = ERBAPI.EfazRobloxBootstrapAPI()
-debugMode = EfazRobloxBootstrapAPI.getDebugMode()
-apiVersion = EfazRobloxBootstrapAPI.about()
+import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
+debugMode = OrangeAPI.getDebugMode()
+apiVersion = OrangeAPI.about()
     
 # Printing Functions
 def printMainMessage(mes): # White System Console Text
     if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
         print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
     else:
-        EfazRobloxBootstrapAPI.printMainMessage(mes)
+        OrangeAPI.printMainMessage(mes)
 def printErrorMessage(mes): # Error Colored Console Text
     if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
         print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
     else:
-        EfazRobloxBootstrapAPI.printErrorMessage(mes)
+        OrangeAPI.printErrorMessage(mes)
 def printSuccessMessage(mes): # Success Colored Console Text
     if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
         print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
     else:
-        EfazRobloxBootstrapAPI.printSuccessMessage(mes)
+        OrangeAPI.printSuccessMessage(mes)
 def printWarnMessage(mes): # Orange Colored Console Text
     print(f"\033[38;5;202m{mes}\033[0m")
 def printYellowMessage(mes): # Yellow Colored Console Text
     if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
         print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
     else:
-        EfazRobloxBootstrapAPI.printWarnMessage(mes)
+        OrangeAPI.printWarnMessage(mes)
 def printDebugMessage(mes): # Debug Console Text
     if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
         if debugMode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
     else:
-        EfazRobloxBootstrapAPI.printDebugMessage(mes)
+        OrangeAPI.printDebugMessage(mes)
 
 # Main Handler
 def onRobloxAppStart(data):
-    template_count = EfazRobloxBootstrapAPI.getConfiguration("template_count") or 0
+    template_count = OrangeAPI.getConfiguration("template_count") or 0
     template_count += 1
-    EfazRobloxBootstrapAPI.setConfiguration("template_count", template_count)
+    OrangeAPI.setConfiguration("template_count", template_count)
     printWarnMessage("--- Template ---")
     printMainMessage("Hello there!")
     printMainMessage("This is a template mod script here!")

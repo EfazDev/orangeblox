@@ -1,3 +1,7 @@
+# Modules
+import sys
+sys.dont_write_bytecode = True
+
 try:
     import pypresence
     import logging
@@ -7,11 +11,11 @@ try:
     import uuid
     import sys
     import threading
+    import subprocess
     from PipHandler import pip
 except Exception as e:
     from PipHandler import pip
-    pip().install(["pypresence"])
-    import pypresence
+    pypresence = pip().importModule("pypresence", install_module_if_not_found=True)
     import logging
     import warnings
     import time
@@ -19,6 +23,7 @@ except Exception as e:
     import uuid
     import sys
     import threading
+    import subprocess
 
 main_os = platform.system()
 pip_class = pip()
@@ -48,6 +53,14 @@ class Presence(pypresence.Presence):
     def __init__(self, *args, **kwargs):
         self.presence_class = super()
         self.presence_class.__init__(*args, **kwargs)
+    def get_if_discord_opened(self):
+        if main_os == "Darwin":
+            if pip_class.getIfProcessIsOpened("Discord Helper") or pip_class.getIfProcessIsOpened("Discord PTB Helper") or pip_class.getIfProcessIsOpened("Discord Canary Helper"): return True
+        elif main_os == "Windows":
+            if pip_class.getIfProcessIsOpened("Discord.exe"): return True
+        else:
+            if pip_class.getIfProcessIsOpened("Discord"): return True
+        return False
     def connect(self):
         if self.connected == False:
             def create_connection():
@@ -55,7 +68,7 @@ class Presence(pypresence.Presence):
                     self.presence_class.connect()
                     self.stop_event = threading.Event()
                     suppress_hook()
-                    self.printDebugMode(f"[Connection Handler]: Started Discord Presence!")
+                    self.printDebugMessage(f"[Connection Handler]: Started Discord Presence!")
 
                     def loop():
                         try:
@@ -65,28 +78,20 @@ class Presence(pypresence.Presence):
                                 if not (self.connected == True):
                                     break
 
-                                is_closed = True
-                                if main_os == "Darwin":
-                                    if pip_class.getIfProcessIsOpened("Discord Helper (Plugin).app"): is_closed = False
-                                elif main_os == "Windows":
-                                    if pip_class.getIfProcessIsOpened("Discord.exe"): is_closed = False
-                                else:
-                                    if pip_class.getIfProcessIsOpened("Discord"): is_closed = False
-                                if is_closed == False:
+                                if self.get_if_discord_opened():
                                     if self.discord_session_connected == False:
-                                        try:
-                                            self.presence_class.connect()
-                                            self.printDebugMode(f"[Connection Handler]: Reactivated Discord Presence!")
-                                        except Exception as e:
-                                            def connect_attempt():
-                                                try:
+                                        def connect_attempt():
+                                            try:
+                                                if self.get_if_discord_opened() == True:
                                                     self.presence_class.connect()
-                                                    self.printDebugMode(f"[Connection Handler]: Reactivated Discord Presence!")
-                                                except Exception as e:
-                                                    self.printDebugMode(f"[Connection Handler]: Connection may be broken. Error: {str(e)}")
-                                                    time.sleep(2)
-                                                    connect_attempt()
-                                            connect_attempt()
+                                                    self.printDebugMessage(f"[Connection Handler]: Reactivated Discord Presence!")
+                                                else:
+                                                    raise Exception("Discord helper is not open!")
+                                            except Exception as e:
+                                                if not (str(e) == "Discord helper is not open!"): self.printDebugMessage(f"[Connection Handler]: Connection may be broken. Error: {str(e)}")
+                                                time.sleep(2)
+                                                connect_attempt()
+                                        connect_attempt()
                                     self.discord_session_connected = True
                                     try:
                                         if self.connected == True:
@@ -94,51 +99,43 @@ class Presence(pypresence.Presence):
                                                 self.presence_class.update(**(self.current_presence))
                                             else:
                                                 self.presence_class.clear()
-                                    except:
-                                        random_variable = 0
+                                    except Exception as e:
+                                        pass
                                 else:
-                                    if self.discord_session_connected == True:
-                                        self.printDebugMode(f"[Connection Handler]: Deactivated Discord Presence!")
+                                    if self.discord_session_connected == True: self.printDebugMessage(f"[Connection Handler]: Deactivated Discord Presence!")
                                     self.discord_session_connected = False
                                 time.sleep(4.5)
                         except Exception as e:
-                            self.printDebugMode(f"[Connection Handler]: Unable to connect to Discord! Error: {str(e)}")
+                            self.printDebugMessage(f"[Connection Handler]: Unable to connect to Discord! Error: {str(e)}")
                             self.discord_session_connected = False
                             try:
                                 self.close()
-                            except:
-                                random_variable = 1
+                            except Exception as e:
+                                pass
                     self.main_thread = threading.Thread(target=loop, daemon=True)
                     self.main_thread.start()
                 except Exception as e:
                     # Discord may not be open, await opening loop.
                     if self.connected == True:
-                        if main_os == "Darwin":
-                            while (pip_class.getIfProcessIsOpened("Discord Helper (Plugin).app") == False and self.connected == True):
-                                time.sleep(0.5)
-                        elif main_os == "Windows":
-                            while (pip_class.getIfProcessIsOpened("Discord.exe") == False and self.connected == True):
-                                time.sleep(0.5)
-                        else:
-                            while (pip_class.getIfProcessIsOpened("Discord") == False and self.connected == True):
-                                time.sleep(0.5)
+                        while (self.get_if_discord_opened() == False and self.connected == True):
+                            time.sleep(0.5)
                         if self.connected == True:
                             try:
                                 create_connection()
                             except Exception as e:
-                                self.printDebugMode(f"[Connection Handler]: Unable to connect to Discord! Error: {str(e)}")
-            threading.Thread(target=create_connection, daemon=True).start()
+                                self.printDebugMessage(f"[Connection Handler]: Unable to connect to Discord! Error: {str(e)}")
             self.connected = True
+            threading.Thread(target=create_connection, daemon=True).start()
             return {"success": True, "code": 0}
         else:
             return {"success": True, "code": 1}
     def generate_loop_key(self):
         self.current_loop_id = str(uuid.uuid4())
-        self.printDebugMode(f"[generate_loop_key()]: Loop key is generated! Key: {self.current_loop_id}")
+        self.printDebugMessage(f"[generate_loop_key()]: Loop key is generated! Key: {self.current_loop_id}")
         return self.current_loop_id
     def set_debug_mode(self, enabled: bool):
         self.debug_mode = enabled==True
-        self.printDebugMode(f"[set_debug_mode()]: Debug Mode is enabled!")
+        self.printDebugMessage(f"[set_debug_mode()]: Debug Mode is enabled!")
     def update(self, *args, **kwargs):
         if self.connected == True:
             if self.current_loop_id:
@@ -159,9 +156,9 @@ class Presence(pypresence.Presence):
                 try:
                     self.presence_class.close()
                     self.discord_session_connected = False
-                    self.printDebugMode(f"[close()]: Closed Discord Presence!")
+                    self.printDebugMessage(f"[close()]: Closed Discord Presence!")
                 except Exception as e:
-                    self.printDebugMode(f"[close()]: Unable to close to Discord! Error: {str(e)}")
+                    self.printDebugMessage(f"[close()]: Unable to close to Discord! Error: {str(e)}")
                 
             self.current_presence = None
             self.current_loop_id = None
@@ -176,5 +173,5 @@ class Presence(pypresence.Presence):
             return {"success": True, "code": 0}
         else:
             return {"success": False, "code": 1}
-    def printDebugMode(self, mes):
+    def printDebugMessage(self, mes):
         if self.debug_mode == True: print(f"\033[38;5;226m[Discord Presence] [DEBUG]: {mes}\033[0m")

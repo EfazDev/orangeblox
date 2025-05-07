@@ -1,2 +1,2 @@
-> [!CAUTION]
-> Windows Defender would detect the app as having a virus if created using Clang, may be the reason Play Roblox is based on Pyinstaller. Instead, this folder is only used for macOS version of Play Roblox app as it's directly made from Xcode Command Tools.
+# Clang Scripts
+This folder contains scripts that use clang to compile. This is normally only used for macOS versions of OrangeBlox and cannot be made in Windows due to mass anti-virus detections.

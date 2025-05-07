@@ -1,5 +1,6 @@
 {
     "name": "Original",
     "version": "0.0.0",
-    "mod_script": false
+    "mod_script": false,
+    "list_in_normal_mods": false
 }
