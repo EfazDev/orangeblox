@@ -17,7 +17,7 @@
         <img src="https://obx.efaz.dev/BootstrapImages/StudioRPC.png" height="152" width="350" alt="Studio Discord Rich Presence">
     </p>
     <p align="center">
-        <img align="center" src="https://obx.efaz.dev/BootstrapImages/MultipleInstance.png" height="496" width="855" alt="Multiple Roblox Instances with Pet Simulator 99 Opened"><br><br><img align="center" src="https://obx.efaz.dev/BootstrapImages/AvatarEditor.png" height="650" width="1493" alt="Subway Surfers Avatar Map">
+        <img align="center" src="https://obx.efaz.dev/BootstrapImages/MultipleInstance.png" height="496" width="855" alt="Multiple Roblox Instances with Pet Simulator 99 Opened"><br><br><img align="center" src="https://obx.efaz.dev/BootstrapImages/AvatarEditor.png" alt="Subway Surfers Avatar Map">
     </p>
 </p>
 
