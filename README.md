@@ -1,4 +1,4 @@
-<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" width="400" height="112"></h1>
+<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" height="50%" width="50%"></h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
@@ -7,17 +7,17 @@
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://obx.efaz.dev/BootstrapImages/ServerLocations.png" alt="Server Location Notification"><br>
+    <img align="center" src="https://obx.efaz.dev/BootstrapImages/ServerLocations.png" height="50%" width="50%" alt="Server Location Notification"><br>
     <p align="center">
-        <img src="https://obx.efaz.dev/BootstrapImages/WebhookPlayer.png" height="133" width="284" alt="Server Location Notification">
-        <img src="https://obx.efaz.dev/BootstrapImages/WebhookStudio.png" height="133" width="284" alt="Server Location Notification">
+        <img src="https://obx.efaz.dev/BootstrapImages/WebhookPlayer.png" alt="Server Location Notification">
+        <img src="https://obx.efaz.dev/BootstrapImages/WebhookStudio.png" alt="Server Location Notification">
     </p>
     <p align="center">
-        <img src="https://obx.efaz.dev/BootstrapImages/PlayerRPC.png" height="152" width="350" alt="Player Discord Rich Presence">
-        <img src="https://obx.efaz.dev/BootstrapImages/StudioRPC.png" height="152" width="350" alt="Studio Discord Rich Presence">
+        <img src="https://obx.efaz.dev/BootstrapImages/PlayerRPC.png" alt="Player Discord Rich Presence">
+        <img src="https://obx.efaz.dev/BootstrapImages/StudioRPC.png" alt="Studio Discord Rich Presence">
     </p>
     <p align="center">
-        <img align="center" src="https://obx.efaz.dev/BootstrapImages/MultipleInstance.png" height="496" width="855" alt="Multiple Roblox Instances with Pet Simulator 99 Opened"><br><br><img align="center" src="https://obx.efaz.dev/BootstrapImages/AvatarEditor.png" alt="Subway Surfers Avatar Map">
+        <img align="center" src="https://obx.efaz.dev/BootstrapImages/AvatarEditor.png" height="500" width="800" alt="Subway Surfers Avatar Map"><br><br><img align="center" src="https://obx.efaz.dev/BootstrapImages/MultipleInstance.png" alt="Multiple Roblox Instances with Pet Simulator 99 Opened">
     </p>
 </p>
 
