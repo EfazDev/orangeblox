@@ -77,7 +77,7 @@ std::string getAppPath() {
 }
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.0.0";
+    std::string current_version = "2.0.1";
     std::string main_os;
     std::string app_path;
     

@@ -2,6 +2,7 @@
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
+    <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/downloads/EfazDev/orangeblox/total?logoColor=ff4b00&label=Downloads%20%E2%AC%87%EF%B8%8F" alt="Downloads"></a>
     <a href="https://github.com/EfazDev/orangeblox"><img src="https://img.shields.io/github/stars/EfazDev/orangeblox?style=smooth&label=%E2%AD%90%20Stars&color=ff4b00" alt="Stars"></a>    
     <a href="https://twitter.efaz.dev"><img src="https://img.shields.io/twitter/follow/EfazDev?style=social&labelColor=00ffff&color=00ffff" alt="Twitter"></a>
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
@@ -29,7 +30,7 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 
 ## Features
 1. Set FFlag and Global Setting Customizations on your Roblox installation!
-2. Install Mods including a custom Avatar Map, App Icon (macOS), Cursor, and Death Sound!
+2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
 4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
 5. Get server locations when joining (courtesy of ipinfo.io)
@@ -37,13 +38,14 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 7. Discord Rich Presences [Includes Support for BloxstrapRPC]
 8. Roblox Studio Support with Mods and FFlags! *[FFlags may not work due to future Roblox updates]
 9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
-10. Run Python Scripts based on events ran on the Roblox client using Mod Mode Scripts! *[One script limit]
+10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts! *[One script limit]
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Read Logs from Roblox using RobloxFastFlagsInstaller* (requires Debug Mode)!
+13. + Way more features that can be explored!
 
 ## Requirements
-1. [Full ZIP file](https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip)
-2. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.2 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
+1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
+2. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.3 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
 3. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc requests plyer <br>
    Windows: pip install pypresence requests pywin32 plyer
@@ -64,12 +66,12 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `b552e7a569d76b8d522bd7cdc57df762` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `9ba565da11545eb8ba0cb31bdc9a88d9` |
-| Installer (Install.py) | `524f072a682a9b9490fd9060e49cb3b4` |
-| Bootstrap API (OrangeAPI.py) | `43464cb4ec2cdb63b6a1fa475cfa3882` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `2db0b98d8d40bbe5c25cc3e1df86a82c` |
-| Pip Handler (PipHandler.py) | `72fd3262b0f861d653f43de00ad501f8` |
+| Main Bootstrap (Main.py) | `4157adee276734e322ba9a4c85e4ac5b` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `63c702f983aa462bab4af9ad54f34436` |
+| Installer (Install.py) | `d616a3262d4252876139f361740451f0` |
+| Bootstrap API (OrangeAPI.py) | `04caac38eed270bbe8e3f9e2e35f9d44` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `4750ac894f5154d8be739f5f662f6165` |
+| Pip Handler (PipHandler.py) | `9020b79a78e958a5622d68358b6d5ba7` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" style="margin-bottom: -4px;" alt="@EfazDev 🍊"></a>
@@ -79,4 +81,4 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 5. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" style="margin-bottom: -4px;" alt="@CabledRblx 🦆"></a>. Thanks :)
 6. macOS and Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" style="margin-bottom: -4px;" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller --rebuild-clang --full-rebuild`
 > [!IMPORTANT]
-> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the OrangeBlox folder as current path. For Windows, in order to build a x86 exe file in x64, use Python 3.13.2 in x86 (32-bit) and edit the RecreateWindows32.bat file inside of Apps/Scripts/Pyinstaller with Pyinstaller in x86 (ex. C:\Users\Local\AppData\Programs\Python\python313-32\Scripts\pyinstaller.exe). Arguments `--rebuild-clang` and `--full-rebuild` is only available in macOS and requires Xcode Command Tools to be installed
+> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the OrangeBlox folder as current path. For Windows, in order to build a x86 exe file in x64, use Python in x86 and include the `--full-rebuild` argument. Arguments `--rebuild-clang` is only available in macOS and requires Xcode Command Tools to be installed

@@ -36,4 +36,5 @@ if checked:
                     "is_studio_mod": is_studio,
                     "watermark": "Generated using Kliko Mod Generator."
                 }, f, indent=4)
+            shutil.rmtree(os.path.join(current_path_location, "mod_updater", "result", i), ignore_errors=True)
             print(f"\033[38;5;82mSuccessfully created {i} as OrangeBlox mod!\033[0m")

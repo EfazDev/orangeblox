@@ -27,6 +27,7 @@ try:
                 "is_studio_mod": is_studio,
                 "watermark": "Generated using Kliko Mod Generator."
             }, f, indent=4)
+        shutil.rmtree(s, ignore_errors=True)
         print("\033[38;5;82mSuccessfully created as OrangeBlox mod!\033[0m")
 except DeployHistoryError as e:
     print(f"\033[38;5;196mThere was an issue trying to find the studio version! It could be not available at this time!\033[0m")

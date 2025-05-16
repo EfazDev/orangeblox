@@ -1,13 +1,13 @@
 {
-    "version": "2.0.0",
-    "latest_version": "2.0.0",
+    "version": "2.0.1",
+    "latest_version": "2.0.1",
     "hashes": {
-        "main": "b552e7a569d76b8d522bd7cdc57df762",
-        "fflag_install": "9ba565da11545eb8ba0cb31bdc9a88d9",
-        "install": "524f072a682a9b9490fd9060e49cb3b4",
-        "bootstrap_api": "43464cb4ec2cdb63b6a1fa475cfa3882",
-        "discord_presence": "2db0b98d8d40bbe5c25cc3e1df86a82c",
-        "pip_handler": "72fd3262b0f861d653f43de00ad501f8"
+        "main": "4157adee276734e322ba9a4c85e4ac5b",
+        "fflag_install": "63c702f983aa462bab4af9ad54f34436",
+        "install": "d616a3262d4252876139f361740451f0",
+        "bootstrap_api": "04caac38eed270bbe8e3f9e2e35f9d44",
+        "discord_presence": "4750ac894f5154d8be739f5f662f6165",
+        "pip_handler": "9020b79a78e958a5622d68358b6d5ba7"
     },
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

@@ -1,6 +1,6 @@
 {
     "name": "Kliko Mod Tool",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "player_studio_support": true,
     "list_in_normal_mods": false,
     "mod_script": true,
@@ -18,5 +18,5 @@
         "runOtherScripts"
     ],
     "python_modules": ["pillow", "requests", "tk", "numpy", "promptlib"],
-    "mod_script_supports": "2.0.0"
+    "mod_script_supports": "2.0.1"
 }

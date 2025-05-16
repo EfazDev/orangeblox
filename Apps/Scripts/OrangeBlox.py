@@ -13,7 +13,7 @@ import hashlib
 from PipHandler import pip
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.0"}
+    current_version = {"version": "2.0.1"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
-        fflag_configuration = {}
+        main_config = {}
         user_folder_name = os.path.basename(os.path.expanduser("~"))
 
         class plist:
@@ -160,7 +160,7 @@ if __name__ == "__main__":
                     return {"success": False, "message": "Path doesn't end with .plist", "data": path}
 
         def loadConfiguration():
-            global fflag_configuration
+            global main_config
             global loaded_json
             printMainMessage("Getting User Configuration..")
             if main_os == "Darwin":
@@ -169,23 +169,23 @@ if __name__ == "__main__":
                 if os.path.exists(macos_preference_expected):
                     app_configuration = plist().readPListFile(macos_preference_expected)
                     if app_configuration.get("Configuration"):
-                        fflag_configuration = app_configuration.get("Configuration")
+                        main_config = app_configuration.get("Configuration")
                         loaded_json = True
                     else:
-                        fflag_configuration = {}
+                        main_config = {}
                         loaded_json = True
                 else:
-                    fflag_configuration = {}
+                    main_config = {}
                     loaded_json = True
-                return fflag_configuration
+                return main_config
             else:
-                with open("FastFlagConfiguration.json", "r", encoding="utf-8") as f:
-                    fflag_configuration = json.load(f)
+                with open("Configuration.json", "r", encoding="utf-8") as f:
+                    main_config = json.load(f)
                 loaded_json = True
-                return fflag_configuration
+                return main_config
 
         def printDebugMessage(mes): 
-            if fflag_configuration.get("EFlagEnableDebugMode") == True: 
+            if main_config.get("EFlagEnableDebugMode") == True: 
                 print(f"\033[38;5;226m{mes}\033[0m")
                 logs.append((mes, 2))
 
@@ -193,7 +193,7 @@ if __name__ == "__main__":
         printMainMessage("Finding Python Executable..")
         if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
         pythonExecutable = pip_class.findPython()
-        if fflag_configuration.get("EFlagSpecifyPythonExecutable"): pythonExecutable = fflag_configuration.get("EFlagSpecifyPythonExecutable")
+        if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
         if not os.path.exists(pythonExecutable):
             printErrorMessage("Please install Python in order to run this bootstrap!")
             input("> ")
@@ -371,9 +371,9 @@ if __name__ == "__main__":
                     if not (e_file_hash == integrated_app_hashes.get("discord_presence")): validated = False; unable_to_validate.append("DiscordPresenceHandler.py")
                     if not (f_file_hash == integrated_app_hashes.get("pip_handler")): validated = False; unable_to_validate.append("PipHandler.py")
 
-                    if validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True:
+                    if validated == True or main_config.get("EFlagDisableSecureHashSecurity") == True:
                         printMainMessage(f"Running Bootstrap..")
-                        if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
+                        if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
                         try:
                             result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
                         except Exception as e:
@@ -389,7 +389,7 @@ if __name__ == "__main__":
                     else:
                         displayNotification("Uh oh!", "Your copy of OrangeBlox was unable to be validated and might be tampered with!")
                         printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
-                        if fflag_configuration.get("EFlagDisableCreatingTkinterApp") == True: 
+                        if main_config.get("EFlagDisableCreatingTkinterApp") == True: 
                             printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
                         else:
                             printErrorMessage(f"Requested validation failed window from Tkinter.")
@@ -514,27 +514,27 @@ if __name__ == "__main__":
                                     file_menu = tk.Menu(self.top_menu)
                                     self.top_menu.add_cascade(label="File", menu=file_menu)
                                     file_menu.add_separator()
-                                    if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True:
+                                    if main_config.get("EFlagEnableDuplicationOfClients") == True:
                                         file_menu.add_command(label="Open Roblox [Multi-Instance Mode]", command=self.new_bootstrap_play_multi_roblox)
                                     else:
                                         file_menu.add_command(label="Open Roblox", command=self.new_bootstrap_play_roblox)
-                                    if fflag_configuration.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="Run Roblox Studio", command=self.new_bootstrap_play_roblox_studio)
+                                    if main_config.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="Run Roblox Studio", command=self.new_bootstrap_play_roblox_studio)
                                     file_menu.add_separator()
-                                    if not (fflag_configuration.get("EFlagAllowActivityTracking") == False): 
+                                    if not (main_config.get("EFlagAllowActivityTracking") == False): 
                                         file_menu.add_command(label="Connect to Existing Roblox", command=self.new_bootstrap_play_reconnect)
-                                        if fflag_configuration.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="Connect to Existing Roblox Studio", command=self.new_bootstrap_play_reconnect_studio)
+                                        if main_config.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="Connect to Existing Roblox Studio", command=self.new_bootstrap_play_reconnect_studio)
                                     file_menu.add_separator()
                                     file_menu.add_command(label="Run Fast Flags Installer", command=self.new_bootstrap_run_fflag_installer)
                                     file_menu.add_command(label="Clear Roblox Logs", command=self.new_bootstrap_clear_roblox_logs)
                                     file_menu.add_command(label="Roblox Installer Options", command=self.new_bootstrap_roblox_installer)
                                     file_menu.add_command(label="End All Roblox Windows", command=self.new_bootstrap_end_roblox)
-                                    if fflag_configuration.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="End All Roblox Studio Windows", command=self.new_bootstrap_end_roblox_studio)
+                                    if main_config.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="End All Roblox Studio Windows", command=self.new_bootstrap_end_roblox_studio)
 
                                     shortcuts_menu = tk.Menu(self.top_menu)
                                     self.top_menu.add_cascade(label="Shortcuts", menu=shortcuts_menu)
                                     generated_ui_options = []
-                                    if type(fflag_configuration.get("EFlagRobloxLinkShortcuts")) is dict:
-                                        for i, v in fflag_configuration.get("EFlagRobloxLinkShortcuts").items():
+                                    if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                        for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                             if v and v.get("name") and v.get("id") and v.get("url"): generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
                                     if len(generated_ui_options) > 0:
                                         for p in generated_ui_options:
@@ -547,7 +547,7 @@ if __name__ == "__main__":
                                     self.top_menu.add_cascade(label="Options", menu=options_menu)
                                     options_menu.add_command(label="Clear Debug Window Logs", command=self.clear_logs)
                                     options_menu.add_command(label="Force Load Debug Window Logs", command=self.force_load_logs)
-                                    if (fflag_configuration.get("EFlagNumberOfTkinterAppsAllowed", 1)) > 0 and os.path.exists(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}")): options_menu.add_command(label="Unlock Tkinter App Lock", command=self.unlock_tkinter_lock)
+                                    if (main_config.get("EFlagNumberOfTkinterAppsAllowed", 1)) > 0 and os.path.exists(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}")): options_menu.add_command(label="Unlock Tkinter App Lock", command=self.unlock_tkinter_lock)
                                     options_menu.add_command(label="Close Tkinter App", command=self.on_close)
 
                                     help_menu = tk.Menu(self.top_menu)
@@ -639,8 +639,8 @@ if __name__ == "__main__":
                                     def validateMenuItem_(self, menuItem):
                                         return True
                         
-                                if type(fflag_configuration.get("EFlagRobloxLinkShortcuts")) is dict:
-                                    for i, v in fflag_configuration.get("EFlagRobloxLinkShortcuts").items():
+                                if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                    for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id") and v.get("url"):
                                             generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
 
@@ -659,7 +659,7 @@ if __name__ == "__main__":
                                 self.dock_menu.addItem_(menu_item)
                                 self.dock_menu.addItem_(NSMenuItem.separatorItem())
 
-                                if fflag_configuration.get("EFlagEnableDuplicationOfClients") == True:
+                                if main_config.get("EFlagEnableDuplicationOfClients") == True:
                                     menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Roblox [Multi-Instance Mode]", "multiRunRoblox:", "")
                                     menu_item.setEnabled_(True)
                                     self.dock_menu.addItem_(menu_item)
@@ -667,7 +667,7 @@ if __name__ == "__main__":
                                     menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Open Roblox", "runRoblox:", "")
                                     menu_item.setEnabled_(True)
                                     self.dock_menu.addItem_(menu_item)
-                                if fflag_configuration.get("EFlagRobloxStudioEnabled") == True:
+                                if main_config.get("EFlagRobloxStudioEnabled") == True:
                                     menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Run Roblox Studio", "runRobloxStudio:", "")
                                     menu_item.setEnabled_(True)
                                     self.dock_menu.addItem_(menu_item)
@@ -681,7 +681,7 @@ if __name__ == "__main__":
                                 menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("End All Roblox Windows", "endAllRoblox:", "")
                                 menu_item.setEnabled_(True)
                                 self.dock_menu.addItem_(menu_item)
-                                if fflag_configuration.get("EFlagRobloxStudioEnabled") == True:
+                                if main_config.get("EFlagRobloxStudioEnabled") == True:
                                     menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("End All Roblox Studio Windows", "endAllRobloxStudio:", "")
                                     menu_item.setEnabled_(True)
                                     self.dock_menu.addItem_(menu_item)
@@ -840,7 +840,7 @@ if __name__ == "__main__":
                                                 printWarnMessage("--- Hello Robloxian! ---")
                                                 printMainMessage("It seems like you found a secret easter egg!")
                                                 printMainMessage("Well, it's just a command line but is something!")
-                                                if not (fflag_configuration.get("EFlagEnableSecretJackpot") == False):
+                                                if not (main_config.get("EFlagEnableSecretJackpot") == False):
                                                     jackpot = random.randint(1, 100)
                                                     if jackpot == 1:
                                                         printSuccessMessage(f"Are you going to hit the jackpot? 1/100 => JACKPOT!! ({jackpot})")
@@ -907,7 +907,7 @@ if __name__ == "__main__":
                                 if self.validation_frame: 
                                     self.validation_frame.destroy()
                                     self.validation_frame = None
-                                fflag_configuration["EFlagDisableSecureHashSecurity"] = True
+                                main_config["EFlagDisableSecureHashSecurity"] = True
                                 def sta():
                                     global associated_terminal_pid
                                     global ended
@@ -924,7 +924,7 @@ if __name__ == "__main__":
                         try:
                             app_root = tk.Tk()
                             app = App(app_root)
-                            if fflag_configuration.get("EFlagEnableTkinterDockMenu") == True: threading.Thread(target=app.generate_dock_menu, daemon=True).start()
+                            if main_config.get("EFlagEnableTkinterDockMenu") == True: threading.Thread(target=app.generate_dock_menu, daemon=True).start()
                             app_root.after(100, app_root.deiconify)
                             app_root.mainloop()
                         except Exception as e:
@@ -934,13 +934,13 @@ if __name__ == "__main__":
                 except Exception as e:
                     printErrorMessage(str(e))
             
-            if not (fflag_configuration.get("EFlagDisableCreatingTkinterApp") == True):
+            if not (main_config.get("EFlagDisableCreatingTkinterApp") == True):
                 threading.Thread(target=notificationLoop, daemon=False).start()
                 threading.Thread(target=terminalAwaitLoop, daemon=True).start()
-                if (fflag_configuration.get("EFlagNumberOfTkinterAppsAllowed", 1)) > 0:
+                if (main_config.get("EFlagNumberOfTkinterAppsAllowed", 1)) > 0:
                     threading.Thread(target=startBootstrap, daemon=False).start()
                     app_count = pip_class.getAmountOfProcesses("OrangeBloxMain")
-                    if app_count < fflag_configuration.get("EFlagNumberOfTkinterAppsAllowed", 1): 
+                    if app_count < main_config.get("EFlagNumberOfTkinterAppsAllowed", 1): 
                         with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f:
                             f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                         createTkinterAppReplication()
@@ -978,26 +978,26 @@ if __name__ == "__main__":
             os.system("title OrangeBlox 🍊")
             os.system("chcp 65001")
             printMainMessage(f"Loading Configuration File..")
-            with open(os.path.join(app_path, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(app_path, "Configuration.json"), "r", encoding="utf-8") as f:
                 try:
-                    fflag_configuration = json.load(f)
+                    main_config = json.load(f)
                 except Exception as e:
                     loaded_json = False
 
             if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
-                if not fflag_configuration.get("EFlagDisableBootstrapCooldown") == True:
+                if not main_config.get("EFlagDisableBootstrapCooldown") == True:
                     with open(os.path.join(app_path, "BootstrapCooldown"), "r", encoding="utf-8") as f:
                         te = f.read()
                         if te.isnumeric():
                             if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
-                                printErrorMessage("You're starting the booldown too fast! Please wait 3 seconds!")
-                                printDebugMessage(f'If this message is still here after 3 seconds, delete the file "{app_path}/Resources/BootstrapCooldown"')
+                                printErrorMessage("You're starting the booldown too fast! Please wait 1 seconds!")
+                                printDebugMessage(f'If this message is still here after 1 seconds, delete the file "{app_path}/Resources/BootstrapCooldown"')
                                 sys.exit(0)
             else:
                 def cool():
                     with open(os.path.join(app_path, "BootstrapCooldown"), "w", encoding="utf-8") as f:
-                        f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 3))
-                    time.sleep(fflag_configuration.get("EFlagBootstrapCooldownAmount", 3))
+                        f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 1))
+                    time.sleep(main_config.get("EFlagBootstrapCooldownAmount", 1))
                     if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
                         os.remove(os.path.join(app_path, "BootstrapCooldown"))
                 threading.Thread(target=cool, daemon=True).start()
@@ -1016,7 +1016,7 @@ if __name__ == "__main__":
             printMainMessage("Finding Python Executable..")
             if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython()
-            if fflag_configuration.get("EFlagSpecifyPythonExecutable"): pythonExecutable = fflag_configuration.get("EFlagSpecifyPythonExecutable")
+            if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
             if not os.path.exists(pythonExecutable):
                 printErrorMessage("Please install Python in order to run this bootstrap!")
                 input("> ")
@@ -1074,7 +1074,7 @@ if __name__ == "__main__":
                         if not (e_file_hash == integrated_app_hashes.get("discord_presence")): validated = False; unable_to_validate.append("DiscordPresenceHandler.py")
                         if not (f_file_hash == integrated_app_hashes.get("pip_handler")): validated = False; unable_to_validate.append("PipHandler.py")
 
-                        if not (validated == True or fflag_configuration.get("EFlagDisableSecureHashSecurity") == True):
+                        if not (validated == True or main_config.get("EFlagDisableSecureHashSecurity") == True):
                             printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
                             printErrorMessage(f"Would you like to skip verification? Hashes that are unable to be validated are listed below:")
                             if not (a_file_hash == integrated_app_hashes["main"]):  printMainMessage(f'Main.py | {integrated_app_hashes["main"]} => {a_file_hash}')
@@ -1087,7 +1087,7 @@ if __name__ == "__main__":
                             displayNotification("Uh oh!", "Your copy of OrangeBlox was unable to be validated!")
                         printMainMessage(f"Running Bootstrap..")
                         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
-                        if fflag_configuration.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
+                        if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
                         result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], shell=True, cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")
                         ended = True

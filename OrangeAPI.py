@@ -1,9 +1,9 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.0.0
+# v2.0.1
 # 
-# Provided to Mod Mode Scripts using variable OrangeAPI
+# Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
 # import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 # 
@@ -17,7 +17,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.0.0"}
+current_version = {"version": "2.0.1"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -111,7 +111,7 @@ class Response:
             raise InvalidRequest()
 class OrangeAPI:
     """
-    The OrangeAPI is an API that Mod Mode Scripts can use for getting or setting data from the bootstrap such as FastFlagConfiguration data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxFastFlagInstaller.py, etc.]
+    The OrangeAPI is an API that Mod Scripts can use for getting or setting data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxFastFlagInstaller.py, etc.]
    
     **OrangeAPI is only supported on OrangeBlox v2.0.0+. Any other versions like Efaz's Roblox Bootstrap v1.5.9 or below is unable to use this API.**
     **Please use the Efaz's Roblox Bootstrap API in order to support Efaz's Roblox Bootstrap v1.3.0-v1.5.9.**
@@ -120,16 +120,16 @@ class OrangeAPI:
     import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
     ```
     """
-    requestedFunctions = {}
+    requestedFunctions: dict = {}
     """
     ## Warning!
     This variable was moved to head in v1.4.1+ for security purposes and now returns an empty array that is not usable for communicating.
     """
-    launchedFromBootstrap = False
+    launchedFromBootstrap: bool = False
     """
     This is a boolean variable used to indicate if the module is launched from the bootstrap or not.
     """
-    debugMode = False
+    debugMode: bool = False
     """
     This is a boolean variable that is enabled if the user is on debug mode.
     """
@@ -271,45 +271,89 @@ class OrangeAPI:
         def convert(self): """This converts the class into a usable JSON table!"""; return {"name": str(self.name), "value": str(self.value), "inline": self.inline==True}
 
     # Functions
-    def getFastFlagConfiguration(self): # Permission: getFastFlagConfiguration
+    def getMainConfiguration(self) -> dict | None: # Permission: getMainConfiguration
         """
-        This gets the current user's FastFlagConfiguration data.
+        This gets the current user's bootstrap configuration data.
+
+        Permission: getMainConfiguration | Level: 1 [Warning]
+
+        **The following keys are not shown due to security: EFlagDiscordWebhookURL**
+        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
+
+        ```python
+        main_config = OrangeAPI.getMainConfiguration()
+        print(main_config) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
+        ```
+        """
+        return Request(self, "getMainConfiguration").generateResponse().response
+    def setMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setMainConfiguration
+        """
+        This sets the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        
+        Permission: setMainConfiguration | Level: 2 [Caution]
+        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
+
+        ```python
+        response = OrangeAPI.setMainConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
+        ```
+        """
+        return Request(self, "setMainConfiguration", [configuration, full]).generateResponse()
+    def saveMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveMainConfiguration
+        """
+        This sets the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        
+        Permission: saveMainConfiguration | Level: 2 [Caution]
+
+        **Unless the user has recovery tools, data overwritten by this function is non-recoverable. Therefore, please check your code and make validation checks if needed! For security, EFlags keys are not able to be saved and are ignored when tried.**
+        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
+
+        ```python
+        response = OrangeAPI.saveMainConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
+        ```
+        """
+        return Request(self, "saveMainConfiguration", [configuration, full]).generateResponse()
+    def getFastFlagConfiguration(self) -> dict | None: # Permission: getFastFlagConfiguration
+        """
+        This gets the current user's bootstrap configuration data.
 
         Permission: getFastFlagConfiguration | Level: 1 [Warning]
 
         **The following keys are not shown due to security: EFlagDiscordWebhookURL**
+        **This function was renamed to getFastFlagConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
 
         ```python
-        fflag_configuration = OrangeAPI.getFastFlagConfiguration()
-        print(fflag_configuration) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
+        main_config = OrangeAPI.getFastFlagConfiguration()
+        print(main_config) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
         ```
         """
         return Request(self, "getFastFlagConfiguration").generateResponse().response
-    def setFastFlagConfiguration(self, configuration: dict, full: bool=False): # Permission: setFastFlagConfiguration
+    def setFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setFastFlagConfiguration
         """
-        This sets the current user's FastFlagConfiguration data in the CURRENT running bootstrap window. This will not affect the FastFlagConfiguration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        This sets the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
         Permission: setFastFlagConfiguration | Level: 2 [Caution]
+        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
 
         ```python
         response = OrangeAPI.setFastFlagConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
         ```
         """
         return Request(self, "setFastFlagConfiguration", [configuration, full]).generateResponse()
-    def saveFastFlagConfiguration(self, configuration: dict, full: bool=False): # Permission: saveFastFlagConfiguration
+    def saveFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveFastFlagConfiguration
         """
-        This sets the current user's FastFlagConfiguration data through the current window AND the FastFlagConfiguration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        This sets the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
         Permission: saveFastFlagConfiguration | Level: 2 [Caution]
 
         **Unless the user has recovery tools, data overwritten by this function is non-recoverable. Therefore, please check your code and make validation checks if needed! For security, EFlags keys are not able to be saved and are ignored when tried.**
+        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
 
         ```python
         response = OrangeAPI.saveFastFlagConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
         ```
         """
         return Request(self, "saveFastFlagConfiguration", [configuration, full]).generateResponse()
-    def displayNotification(self, title: str="Mod Script", message: str="A mod script message!"): # Permission: displayNotification
+    def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.
         
@@ -320,7 +364,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "displayNotification", {"title": title, "message": message}).generateResponse()
-    def generateModsManifest(self): # Permission: generateModsManifest
+    def generateModsManifest(self) -> dict[str, dict[str, typing.Any]] | None: # Permission: generateModsManifest
         """
         Get information about all the user's installed mods!
         
@@ -338,13 +382,20 @@ class OrangeAPI:
         #         "manifest_path": "/Applications/OrangeBlox.app/Contents/Resources/Mods/Template/Manifest.py",
         #         "enabled": True,
         #         "permissions": ["onGameDisconnected", "sendBloxstrapRPC"],
-        #         "python_modules": ["requests"]
+        #         "python_modules": ["requests"],
+        #         "mod_script_supports": "1.3.0",
+        #         "mod_script_end_support": "1.5.0",
+        #         "mod_script_end_support_reasoning": "Bugs were unable to be fixed and maintained.",
+        #         "mod_script_supports_operating_system": True,
+        #         "both_supported": False,
+        #         "is_studio_mod": False,
+        #         "list_in_normal_mods": True
         #     }
         # }
         ```
         """
         return Request(self, "generateModsManifest").generateResponse().response
-    def sendBloxstrapRPC(self, command: str="SetRichPresence", data: typing.Union[BloxstrapRichPresence, dict, str]={}, disableWebhook: bool=True): # Permission: sendBloxstrapRPC
+    def sendBloxstrapRPC(self, command: str="SetRichPresence", data: typing.Union[BloxstrapRichPresence, dict, str]={}, disableWebhook: bool=True) -> Response | None: # Permission: sendBloxstrapRPC
         """
         This changes the current Discord Presence if found using BloxstrapRPC. If disableWebhook is enabled, the Discord webhook notification is disabled. [Original Example from Bloxstrap in Roblox Lua](https://github.com/bloxstraplabs/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game#function-setrichpresence)
         
@@ -372,7 +423,7 @@ class OrangeAPI:
         else:
             generated_rpc_data = {}
         return Request(self, "sendBloxstrapRPC", [{"command": command, "data": generated_rpc_data}, (disableWebhook == True)]).generateResponse()
-    def getRobloxLogFolderSize(self, static: bool=False): # Permission: getRobloxLogFolderSize
+    def getRobloxLogFolderSize(self, static: bool=False) -> str | int | None: # Permission: getRobloxLogFolderSize
         """
         Get the current size of the Roblox Logs folder. If static mode is enabled, it will return the size of the Logs folder in bytes. Idk why would this be useful lol.
 
@@ -384,7 +435,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getRobloxLogFolderSize", {"static": static}).generateResponse().response   
-    def getLatestRobloxVersion(self, channel: str="LIVE"): # Permission: getLatestRobloxVersion
+    def getLatestRobloxVersion(self, channel: str="LIVE") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxVersion
         """
         This pings the Roblox servers to get what's the latest Roblox version in a channel.
 
@@ -400,7 +451,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getLatestRobloxVersion", {"channel": channel}).generateResponse().response 
-    def getInstalledRobloxVersion(self): # Permission: getInstalledRobloxVersion
+    def getInstalledRobloxVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxVersion
         """
         This gets the current Roblox version installed including the channel the user is connected to.
 
@@ -417,7 +468,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getInstalledRobloxVersion").generateResponse().response
-    def getLatestOppositeRobloxVersion(self, channel: str="LIVE"): # Permission: getLatestOppositeRobloxVersion
+    def getLatestOppositeRobloxVersion(self, channel: str="LIVE") -> dict[str, typing.Any] | None: # Permission: getLatestOppositeRobloxVersion
         """
         Get the latest version of the opposite application (Roblox Player -> Studio, Studio -> Player)
 
@@ -435,7 +486,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getLatestOppositeRobloxVersion", {"channel": channel}).generateResponse().response 
-    def getOppositeInstalledRobloxVersion(self): # Permission: getOppositeInstalledRobloxVersion
+    def getOppositeInstalledRobloxVersion(self) -> dict[str, typing.Any] | None: # Permission: getOppositeInstalledRobloxVersion
         """
         Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)
 
@@ -454,7 +505,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getOppositeInstalledRobloxVersion").generateResponse().response
-    def getRobloxInstallFolder(self): # Permission: getRobloxInstallFolder
+    def getRobloxInstallFolder(self) -> str | None: # Permission: getRobloxInstallFolder
         """
         This gets where Roblox is installed at. This may change between versions or operating systems.
 
@@ -465,7 +516,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getRobloxInstallFolder").generateResponse().response   
-    def getIfRobloxIsOpen(self, pid=""): # Permission: getIfRobloxIsOpen
+    def getIfRobloxIsOpen(self, pid="") -> bool | None: # Permission: getIfRobloxIsOpen
         """
         This gets if Roblox is currently open using the following PID provided if got or using the latest open Roblox window.
 
@@ -476,7 +527,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getIfRobloxIsOpen", {"pid": pid}).generateResponse().response
-    def getLatestRobloxPid(self): # Permission: getLatestRobloxPid
+    def getLatestRobloxPid(self) -> str | None: # Permission: getLatestRobloxPid
         """
         Get the latest Roblox window PID opened
 
@@ -487,7 +538,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getLatestRobloxPid").generateResponse().response
-    def getOpenedRobloxPids(self): # Permission: getOpenedRobloxPids
+    def getOpenedRobloxPids(self) -> list[str] | None: # Permission: getOpenedRobloxPids
         """
         Get all the currently opened Roblox PIDs
 
@@ -500,7 +551,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getOpenedRobloxPids").generateResponse().response
-    def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int): # Permission: changeRobloxWindowSizeAndPosition
+    def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int) -> Response | None: # Permission: changeRobloxWindowSizeAndPosition
         """
         Change the Roblox Window Size and Position
 
@@ -513,7 +564,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "changeRobloxWindowSizeAndPosition", {"size_x": size_x, "size_y": size_y, "position_x": position_x, "position_y": position_y}).generateResponse()
-    def setRobloxWindowTitle(self, title: str): # Permission: setRobloxWindowTitle
+    def setRobloxWindowTitle(self, title: str) -> Response | None: # Permission: setRobloxWindowTitle
         """
         Set the Roblox Window Title [Windows Only]
 
@@ -526,7 +577,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "setRobloxWindowTitle", {"title": title}).generateResponse()
-    def setRobloxWindowIcon(self, icon: str): # Permission: setRobloxWindowIcon
+    def setRobloxWindowIcon(self, icon: str) -> Response | None: # Permission: setRobloxWindowIcon
         """
         Set the Roblox Window Icon [Windows Only]
 
@@ -539,7 +590,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "setRobloxWindowIcon", {"icon": icon}).generateResponse()
-    def focusRobloxWindow(self): # Permission: focusRobloxWindow
+    def focusRobloxWindow(self) -> Response | None: # Permission: focusRobloxWindow
         """
         Focus the Roblox Window to the top window
 
@@ -552,7 +603,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "focusRobloxWindow").generateResponse()
-    def reprepareRoblox(self): # Permission: reprepareRoblox
+    def reprepareRoblox(self) -> Response | None: # Permission: reprepareRoblox
         """
         Reprepare Roblox again if not opened. It is useful if your script has changed the user's mods.
 
@@ -565,7 +616,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "reprepareRoblox").generateResponse()
-    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"): # Permission: sendDiscordWebhookMessage
+    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png") -> Response | None: # Permission: sendDiscordWebhookMessage
         """
         Send a Discord Webhook message to the user's Discord webhook!
 
@@ -578,7 +629,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "sendDiscordWebhookMessage", {"title": title, "description": description, "color": color, "fields": fields, "image": image}).generateResponse()
-    def getRobloxAppSettings(self): # Permission: getRobloxAppSettings
+    def getRobloxAppSettings(self) -> dict[str, typing.Any] | None: # Permission: getRobloxAppSettings
         """
         Get information about the Roblox client such as the logged in user, accessible polciies and settings.
         
@@ -607,7 +658,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getRobloxAppSettings").generateResponse().response
-    def getPlatform(self, static: bool=False): # No Permission Needed
+    def getPlatform(self, static: bool=False) -> str: # No Permission Needed
         """
         Get the current running platform name. It may return Windows, macOS or Linux for when static is disabled. If it enabled, it will return platform.system()
         
@@ -633,7 +684,7 @@ class OrangeAPI:
                 return "macOS"
             else:
                 return "Linux"
-    def getDebugMode(self): # No Permission Needed
+    def getDebugMode(self) -> bool: # No Permission Needed
         """
         Get if the bootstrap is in Debug Mode
         
@@ -644,7 +695,7 @@ class OrangeAPI:
         ```
         """
         return debug_mode == True
-    def getStudioMode(self): # No Permission Needed
+    def getStudioMode(self) -> bool: # No Permission Needed
         """
         Get if the user launched Roblox Studio
         
@@ -655,7 +706,7 @@ class OrangeAPI:
         ```
         """
         return studio_mode == True
-    def checkIfResponseClass(self, suspected: typing.Optional[Response]): # No Permission Needed
+    def checkIfResponseClass(self, suspected: typing.Optional[Response]) -> bool: # No Permission Needed
         """
         Check if the value you got is an Response class or just the value.
 
@@ -672,7 +723,7 @@ class OrangeAPI:
             return True
         else:
             return False
-    def requestInput(self, question: str, prompt: str="> "): # No Permission Needed
+    def requestInput(self, question: str, prompt: str="> ") -> str | None: # No Permission Needed
         """
         Request an input from the user with a question [Takes effect if Roblox is not launched.]
         
@@ -689,7 +740,7 @@ class OrangeAPI:
             return input(prompt)
         else:
             return None
-    def getIfRobloxLaunched(self): # No Permission Needed
+    def getIfRobloxLaunched(self) -> bool | None: # No Permission Needed
         """
         Get if Roblox was launched by the bootstrap yet. [Useful for determining before interrupting the main loop]
         
@@ -702,7 +753,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getIfRobloxLaunched").generateResponse().response
-    def printMainMessage(self, mes: str): # No Permission Needed
+    def printMainMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a message on the python console using the bootstrap.
 
@@ -715,7 +766,7 @@ class OrangeAPI:
         ```
         """
         print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
-    def printColoredMessage(self, mes: str, ansi: int): # No Permission Needed
+    def printColoredMessage(self, mes: str, ansi: int) -> None: # No Permission Needed
         """
         Print a message on the python console using an ANSI 256 bit color number.
 
@@ -730,7 +781,7 @@ class OrangeAPI:
         if type(ansi) is int: 
             if ansi == 202 or ansi == 208 or ansi == 166: return
             print(f"\033[38;5;{ansi}m[MOD SCRIPT]: {mes}\033[0m")
-    def printErrorMessage(self, mes: str): # No Permission Needed
+    def printErrorMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a red message on the python console using the bootstrap. [Indicates error]
 
@@ -743,7 +794,7 @@ class OrangeAPI:
         ```
         """
         print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
-    def printSuccessMessage(self, mes: str): # No Permission Needed
+    def printSuccessMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a green message on the python console using the bootstrap. [Indicates success]
 
@@ -756,7 +807,7 @@ class OrangeAPI:
         ```
         """
         print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
-    def printWarnMessage(self, mes: str): # No Permission Needed
+    def printWarnMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
         
@@ -769,7 +820,7 @@ class OrangeAPI:
         ```
         """
         print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
-    def printYellowMessage(self, mes: str): # No Permission Needed
+    def printYellowMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
         
@@ -782,7 +833,7 @@ class OrangeAPI:
         ```
         """
         return self.printWarnMessage(mes)
-    def printDebugMessage(self, mes: str): # No Permission Needed
+    def printDebugMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap IF debug mode is enabled.
         
@@ -795,7 +846,7 @@ class OrangeAPI:
         ```
         """
         if debug_mode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
-    def getConfiguration(self, name: str="*"): # No Permission Needed
+    def getConfiguration(self, name: str="*") -> dict | typing.Any | None: # No Permission Needed
         """
         Get all configurations from name "*" or one configuration from name if existing.
 
@@ -811,7 +862,7 @@ class OrangeAPI:
             return Request(self, "getConfiguration", {"name": name}).generateResponse().response
         else:
             return None
-    def setConfiguration(self, name: str="*", data: typing.Union[None, str, dict, bool, int, float, list]=None): # No Permission Needed
+    def setConfiguration(self, name: str="*", data: typing.Union[None, str, dict, bool, int, float, list]=None) -> Response | None: # No Permission Needed
         """
         Set a configuration in a name. Values must be usable in a JSON format. If the name is a "*", the data provided must be in a dictionary like {"existing": "Woah"} for example.
 
@@ -824,12 +875,12 @@ class OrangeAPI:
         if (data == None) or (type(data) is str) or (type(data) is dict) or (type(data) is bool) or (type(data) is int) or (type(data) is float) or (type(data) is list):
             try:
                 a = json.dumps(data)
-                return Request(self, "setConfiguration", {"name": name, "data": data}).generateResponse().response
+                return Request(self, "setConfiguration", {"name": name, "data": data}).generateResponse()
             except Exception as e:
                 raise InvalidRequest()
         else:
             raise InvalidRequest()
-    def about(self): # No Permission Needed
+    def about(self) -> dict[str, typing.Any] | None: # No Permission Needed
         """
         Get basic info about the bootstrap such as version of both API and bootstrap itself!
         

@@ -1,5 +1,7 @@
 from PyInstaller.utils.hooks import collect_data_files
 import os
+import tempfile
+import uuid
 try:
     from PyInstaller.building.api import *
     from PyInstaller.building.build_main import *
@@ -42,12 +44,12 @@ main_exe = EXE(
     name="OrangeBlox",
     debug=False,
     bootloader_ignore_signals=False,
-    argv_emulation=True,
     strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIcon.ico",
-    runtime_tmpdir=None,
+    version="Version.txt",
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeBlox_{uuid.uuid4().hex}"),
     onefile=True
 )
 play_roblox_exe = EXE(
@@ -59,12 +61,12 @@ play_roblox_exe = EXE(
     name="PlayRoblox",
     debug=False,
     bootloader_ignore_signals=False,
-    argv_emulation=True,
     strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconPlayRoblox.ico",
-    runtime_tmpdir=None,
+    version="VersionPlay.txt",
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangePlayRoblox_{uuid.uuid4().hex}"),
     onefile=True
 )
 run_studio_exe = EXE(
@@ -76,12 +78,12 @@ run_studio_exe = EXE(
     name="RunStudio",
     debug=False,
     bootloader_ignore_signals=False,
-    argv_emulation=True,
     strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconRunStudio.ico",
-    runtime_tmpdir=None,
-    onefile=True
+    version="VersionStudio.txt",
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeRunStudio_{uuid.uuid4().hex}"),
+    onefile=True,
 )
 build = [main_exe, play_roblox_exe, run_studio_exe]

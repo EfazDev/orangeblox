@@ -270,8 +270,20 @@ class pip:
         import subprocess
         import os
         argv.pop(0)
-        subprocess.run(f'"{self.executable}" {os.path.join(os.path.dirname(os.path.abspath(__file__)), scriptname)}{" ".join(argv)}', shell=True)
+        subprocess.run([self.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), scriptname)] + argv)
         sys.exit(0)
+    def endProcess(self, name="", pid=""):
+        import subprocess
+        import platform
+        main_os = platform.system()
+        if pid == "":
+            if main_os == "Darwin": subprocess.run(f"killall -9 {name}", shell=True, stdout=subprocess.DEVNULL)
+            elif main_os == "Windows": subprocess.run(f"taskkill /IM {name} /F", shell=True, stdout=subprocess.DEVNULL)
+            else: subprocess.run(f"killall -9 {name}", shell=True, stdout=subprocess.DEVNULL)
+        else:
+            if main_os == "Darwin": subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL)
+            elif main_os == "Windows": subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=subprocess.DEVNULL)
+            else: subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL)
     def importModule(self, module_name: str, install_module_if_not_found: bool=False):
         import importlib
         try:

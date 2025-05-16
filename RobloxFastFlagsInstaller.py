@@ -374,8 +374,20 @@ class pip:
         import subprocess
         import os
         argv.pop(0)
-        subprocess.run(f'"{self.executable}" {os.path.join(os.path.dirname(os.path.abspath(__file__)), scriptname)}{" ".join(argv)}', shell=True)
+        subprocess.run([self.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), scriptname)] + argv)
         sys.exit(0)
+    def endProcess(self, name="", pid=""):
+        import subprocess
+        import platform
+        main_os = platform.system()
+        if pid == "":
+            if main_os == "Darwin": subprocess.run(f"killall -9 {name}", shell=True, stdout=subprocess.DEVNULL)
+            elif main_os == "Windows": subprocess.run(f"taskkill /IM {name} /F", shell=True, stdout=subprocess.DEVNULL)
+            else: subprocess.run(f"killall -9 {name}", shell=True, stdout=subprocess.DEVNULL)
+        else:
+            if main_os == "Darwin": subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL)
+            elif main_os == "Windows": subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=subprocess.DEVNULL)
+            else: subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL)
     def importModule(self, module_name: str, install_module_if_not_found: bool=False):
         import importlib
         try:
@@ -772,6 +784,7 @@ class Main:
 
         # OrangeBlox Permissions
         "fastFlagConfiguration": {"message": "Edit or view your bootstrap configuration file", "level": 3, "detection": "FastFlagConfiguration"},
+        "configuration": {"message": "Edit or view your bootstrap configuration file", "level": 3, "detection": "MainConfig"},
         "editMainExecutable": {"message": "Edit the main bootstrap executable", "level": 4, "detection": "Main.py"},
         "editRobloxFastFlagInstallerExecutable": {"message": "Edit the RobloxFastFlagInstaller executable", "level": 4, "detection": "RobloxFastFlagInstaller.py"},
         "editOrangeAPIExecutable": {"message": "Edit the OrangeAPI executable", "level": 4, "detection": "OrangeAPI.py"},
@@ -803,6 +816,9 @@ class Main:
         "getFastFlagConfiguration": {"message": "View your bootstrap configuration file", "level": 1},
         "setFastFlagConfiguration": {"message": "Set your bootstrap configuration within executable", "level": 2},
         "saveFastFlagConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
+        "getMainConfiguration": {"message": "View your bootstrap configuration file", "level": 1},
+        "setMainConfiguration": {"message": "Set your bootstrap configuration within executable", "level": 2},
+        "saveMainConfiguration": {"message": "Edit and save your bootstrap configuration file", "level": 2},
         "getIfRobloxLaunched": {"message": "Get if Roblox has launched from the bootstrap", "level": 0, "free": True},
         "getLatestRobloxPid": {"message": "Get the current latest Roblox window's PID", "level": 1},
         "getOpenedRobloxPids": {"message": "Get all the currently opened Roblox PIDs", "level": 1},
@@ -942,10 +958,11 @@ class Main:
         event_names = None
         created_mutex = False
         is_studio = False
-        await_20_second_log_creation = False
+        await_log_creation = False
         await_log_creation_attempts = 0
+        one_threaded = True
         windows_roblox_starter_launched_roblox = False
-        def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_20_second_log_creation: bool=False, created_mutex: bool=None, studio: bool=False):
+        def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_log_creation: bool=False, created_mutex: bool=None, studio: bool=False, one_threaded: bool=True):
             if type(main_handler) is Main:
                 self.main_handler = main_handler
                 self.pid = pid
@@ -953,7 +970,8 @@ class Main:
                 self.allow_other_logs = allow_other_logs
                 self.created_mutex = created_mutex
                 self.is_studio = studio
-                self.await_20_second_log_creation = await_20_second_log_creation
+                self.await_log_creation = await_log_creation
+                self.one_threaded = one_threaded
                 if studio == True:
                     self.event_names = main_handler.robloxStudioInstanceEventNames
                 else:
@@ -1037,6 +1055,83 @@ class Main:
                     if i and i["name"] == eventName: self.events.remove(i)
         def requestThreadClosing(self):
             self.requested_end_tracking = True
+        def newestFile(self, path):
+            files = os.listdir(path)
+            paths = []
+            for basename in files:
+                if self.is_studio == False and "Player" in basename:
+                    paths.append(os.path.join(path, basename))
+                elif self.is_studio == True and "Studio" in basename:
+                    paths.append(os.path.join(path, basename))
+            if len(paths) > 0: return max(paths, key=os.path.getctime)
+        def fileCreatedRecently(self, file_path):
+            try:
+                creation_time = os.path.getctime(file_path)
+                current_time = time.time()
+                if (current_time - creation_time) <= 10:
+                    return True
+                else:
+                    return False
+            except:
+                return False
+        def getLatestLogFile(self):
+            logs_path = None
+            if main_os == "Darwin": logs_path = os.path.join(user_folder, "Library", "Logs", "Roblox")
+            elif main_os == "Windows": logs_path = os.path.join(windows_dir, "logs")
+            else: logs_path = os.path.join(windows_dir, "logs")
+            makedirs(logs_path)
+            main_log = self.newestFile(logs_path)
+            if not main_log: time.sleep(0.5); return self.getLatestLogFile()
+            if not main_log.endswith(".log"): time.sleep(0.5); return self.getLatestLogFile()
+            logs_attached = []
+            if os.path.exists(os.path.join(logs_path, "RFFILogFiles.json")):
+                with open(os.path.join(logs_path, "RFFILogFiles.json"), "r", encoding="utf-8") as f: logs_attached = json.load(f)
+            if self.await_log_creation == True:
+                if self.await_log_creation_attempts < 40:
+                    if self.fileCreatedRecently(main_log):
+                        if main_log in logs_attached:
+                            time.sleep(0.5)
+                            self.await_log_creation_attempts += 1
+                            if self.debug_mode == True: printDebugMessage(f"Log file is already used in an another Roblox Instance ({self.await_log_creation_attempts}/40)")
+                            return self.getLatestLogFile()
+                        else:
+                            logs_attached.append(main_log)
+                            with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f:
+                                json.dump(logs_attached, f, indent=4)
+                            if self.debug_mode == True: printDebugMessage(f"Successfully found log file ({self.await_log_creation_attempts}/40). Returning with: {main_log}")
+                            return main_log
+                    else:
+                        time.sleep(0.5)
+                        self.await_log_creation_attempts += 1
+                        if self.debug_mode == True: printDebugMessage(f"Awaiting Log Creation ({self.await_log_creation_attempts}/40)")
+                        return self.getLatestLogFile()
+                else:
+                    logs_attached.append(main_log)
+                    with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f:
+                        json.dump(logs_attached, f, indent=4)
+                    if self.debug_mode == True: printDebugMessage(f"Unable to find a new file within 20 seconds ({self.await_log_creation_attempts}/40). Returning with: {main_log}")
+                    return main_log
+            else:
+                if self.debug_mode == True: printDebugMessage(f"Successfully found log file. Returning with: {main_log}")
+                return main_log
+        def cleanLogs(self):
+            if self.debug_mode == True: printDebugMessage(f"Cleaning logs from session..")
+            with open(self.main_log_file, "r", encoding="utf-8", errors="ignore") as file:
+                lines = file.readlines()
+            with open(self.main_log_file, "w", encoding="utf-8", errors="ignore") as write_file:
+                end_lines = []
+                current_log = ""
+                for line in lines:
+                    should_remove = False
+                    f_index = line.find("[F")
+                    if f_index != -1:
+                        filtered_line = line[f_index:]
+                        if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "[FLog::FMOD] FMOD API error" in line or "HttpResponse(" in line:
+                            should_remove = True
+                        else:
+                            current_log = filtered_line
+                    if should_remove == False: end_lines.append(line)
+                write_file.writelines(end_lines)
         def startActivityTracking(self):
             if self.watchdog_started == False:
                 self.watchdog_started = True
@@ -1045,25 +1140,6 @@ class Main:
                     if main_os == "Darwin" or main_os == "Windows":
                         main_log = ""
                         passed_lines = []
-                        def newest(path):
-                            files = os.listdir(path)
-                            paths = []
-                            for basename in files:
-                                if self.is_studio == False and "Player" in basename:
-                                    paths.append(os.path.join(path, basename))
-                                elif self.is_studio == True and "Studio" in basename:
-                                    paths.append(os.path.join(path, basename))
-                            if len(paths) > 0: return max(paths, key=os.path.getctime)
-                        def fileCreatedRecently(file_path):
-                            try:
-                                creation_time = os.path.getctime(file_path)
-                                current_time = time.time()
-                                if (current_time - creation_time) <= 20:
-                                    return True
-                                else:
-                                    return False
-                            except:
-                                return False
                         def submitToThread(eventName="onUnknownEvent", data=None, isLine=True):
                             if not (eventName == "onRobloxLog"): 
                                 submitToThread(eventName="onRobloxLog", data={"eventName": eventName, "data": data, "isLine": isLine}, isLine=False)
@@ -1076,7 +1152,11 @@ class Main:
                                         else:
                                             printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
                             for i in self.events:
-                                if i and callable(i.get("callback")) and i.get("name") == eventName: threading.Thread(target=i.get("callback"), args=[data]).start()
+                                if i and callable(i.get("callback")) and i.get("name") == eventName: 
+                                    if self.one_threaded == True:
+                                        try: i.get("callback")(data)
+                                        except Exception as e: printErrorMessage(e)
+                                    else: threading.Thread(target=i.get("callback"), args=[data]).start()
                         def handleLine(line=""):
                             if self.is_studio == True:
                                 if "[FLog::Output] LoadClientSettingsFromLocal" in line:
@@ -1782,80 +1862,16 @@ class Main:
                                     submitToThread(eventName="onOtherRobloxLog", data=line, isLine=True)
                         if self.main_log_file == "":
                             self.await_log_creation_attempts = 0
-                            def getLogFile():
-                                logs_path = None
-                                if main_os == "Darwin":
-                                    logs_path = os.path.join(user_folder, "Library", "Logs", "Roblox")
-                                elif main_os == "Windows":
-                                    logs_path = os.path.join(windows_dir, "logs")
-                                else:
-                                    logs_path = os.path.join(user_folder, "Library", "Logs", "Roblox")
-                                makedirs(logs_path)
-                                main_log = newest(logs_path)
-                                if not main_log:
-                                    time.sleep(0.5)
-                                    return getLogFile()
-                                if not main_log.endswith(".log"):
-                                    time.sleep(0.5)
-                                    return getLogFile()
-                                logs_attached = []
-                                if os.path.exists(os.path.join(logs_path, "RFFILogFiles.json")):
-                                    with open(os.path.join(logs_path, "RFFILogFiles.json"), "r", encoding="utf-8") as f:
-                                        logs_attached = json.load(f)
-                                if self.await_20_second_log_creation == True:
-                                    if self.await_log_creation_attempts < 40:
-                                        if fileCreatedRecently(main_log):
-                                            if main_log in logs_attached:
-                                                time.sleep(0.5)
-                                                self.await_log_creation_attempts += 1
-                                                return getLogFile()
-                                            else:
-                                                logs_attached.append(main_log)
-                                                with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f:
-                                                    json.dump(logs_attached, f, indent=4)
-                                                return main_log
-                                        else:
-                                            time.sleep(0.5)
-                                            self.await_log_creation_attempts += 1
-                                            return getLogFile()
-                                    else:
-                                        logs_attached.append(main_log)
-                                        with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f:
-                                            json.dump(logs_attached, f, indent=4)
-                                        return main_log
-                                else:
-                                    logs_attached.append(main_log)
-                                    with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f:
-                                        json.dump(logs_attached, f, indent=4)
-                                    return main_log
-                            main_log = getLogFile()
+                            main_log = self.getLatestLogFile()
                             self.main_log_file = main_log
                         else:
                             main_log = self.main_log_file
 
                         with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
-                            def cleanLogs():
-                                if self.debug_mode == True: printDebugMessage(f"Cleaning logs from session..")
-                                with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
-                                    lines = file.readlines()
-                                with open(main_log, "w", encoding="utf-8", errors="ignore") as write_file:
-                                    end_lines = []
-                                    current_log = ""
-                                    for line in lines:
-                                        should_remove = False
-                                        f_index = line.find("[F")
-                                        if f_index != -1:
-                                            filtered_line = line[f_index:]
-                                            if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "[FLog::FMOD] FMOD API error" in line or "HttpResponse(" in line:
-                                                should_remove = True
-                                            else:
-                                                current_log = filtered_line
-                                        if should_remove == False: end_lines.append(line)
-                                    write_file.writelines(end_lines)
                             while True:
                                 line = file.readline()
                                 if not line:
-                                    threading.Thread(target=cleanLogs).start()
+                                    threading.Thread(target=self.cleanLogs).start()
                                     break
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
@@ -1874,7 +1890,7 @@ class Main:
                                                         res = handleLine(line)
                                                         if res:
                                                             if res.code == 0:
-                                                                threading.Thread(target=cleanLogs).start()
+                                                                threading.Thread(target=self.cleanLogs).start()
                                                                 break
                                                             elif res.code == 1:
                                                                 self.ended_process = True
@@ -1886,7 +1902,7 @@ class Main:
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
-                                                threading.Thread(target=cleanLogs).start()
+                                                threading.Thread(target=self.cleanLogs).start()
                                                 break     
                                             elif res.code == 1:
                                                 self.ended_process = True
@@ -1896,7 +1912,7 @@ class Main:
                                 line = file.readline()
                                 if self.ended_process == True:
                                     submitToThread(eventName="onRobloxExit", data=line)
-                                    threading.Thread(target=cleanLogs).start()
+                                    threading.Thread(target=self.cleanLogs).start()
                                     break
                                 if not line:
                                     time.sleep(0.01)
@@ -1915,7 +1931,7 @@ class Main:
                                                     if res:
                                                         if res.code == 0:
                                                             self.ended_process = True
-                                                            threading.Thread(target=cleanLogs).start()
+                                                            threading.Thread(target=self.cleanLogs).start()
                                                             break     
                                                         elif res.code == 1:
                                                             self.ended_process = True
@@ -1925,7 +1941,7 @@ class Main:
                                             if res:
                                                 if res.code == 0:
                                                     self.ended_process = True
-                                                    threading.Thread(target=cleanLogs).start()
+                                                    threading.Thread(target=self.cleanLogs).start()
                                                     break     
                                                 elif res.code == 1:
                                                     self.ended_process = True
@@ -1935,7 +1951,7 @@ class Main:
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
-                                                threading.Thread(target=cleanLogs).start()
+                                                threading.Thread(target=self.cleanLogs).start()
                                                 break     
                                             elif res.code == 1:
                                                 self.ended_process = True
@@ -2947,7 +2963,7 @@ class Main:
         for s in p:
             if ':' in s: key, value = s.split(':', 1); data[key] = value
         return data
-    def openRoblox(self, forceQuit=False, makeDupe=False, startData="", debug=False, attachInstance=False, allowRobloxOtherLogDebug=False, mainLogFile="") -> "RobloxInstance | None":
+    def openRoblox(self, forceQuit=False, makeDupe=False, startData="", debug=False, attachInstance=False, allowRobloxOtherLogDebug=False, mainLogFile="", oneThreadedInstance=True) -> "RobloxInstance | None":
         if self.getIfRobloxIsOpen():
             if forceQuit == True:
                 self.endRoblox()
@@ -2963,14 +2979,14 @@ class Main:
                         if attachInstance == True:
                             cur_open_pid = self.getLatestOpenedRobloxPid()
                             start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                             while True:
                                 if test_instance.ended_process == True:
                                     break
                                 elif len(test_instance.getWindowsOpened()) > 0:
                                     time.sleep(1)
                                     if len(test_instance.getWindowsOpened()) > 0: break
-                                elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                elif start_time+5 < datetime.datetime.now(tz=datetime.UTC).timestamp():
                                     break
                                 else:
                                     time.sleep(0.5)
@@ -2978,11 +2994,7 @@ class Main:
                             if self.getIfRobloxIsOpen() == True:
                                 self.prepareMultiInstance(debug=debug, required=True)
                                 pid = self.getLatestOpenedRobloxPid()
-                                if pid:
-                                    if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
-                                    else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
                 else:
                     com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
                     if debug == True: printDebugMessage("Running Roblox Player Unix Executable..")
@@ -2992,11 +3004,7 @@ class Main:
                             time.sleep(2)
                             if self.getIfRobloxIsOpen() == True:
                                 pid = self.getLatestOpenedRobloxPid()
-                                if pid:
-                                    if not (mainLogFile == ""):
-                                        return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
-                                    else:
-                                        return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                                if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
             else:
                 if debug == True: printDebugMessage("Running Roblox.app..")
                 a = subprocess.run(f"open -a \'{macOS_dir}\' {startData}", shell=True)
@@ -3005,11 +3013,7 @@ class Main:
                         time.sleep(2)
                         if self.getIfRobloxIsOpen() == True:
                             pid = self.getLatestOpenedRobloxPid()
-                            if pid:
-                                if not (mainLogFile == ""):
-                                    return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
-                                else:
-                                    return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True)
+                            if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
         elif self.__main_os__ == "Windows":
             created_mutex = False
             if not self.getIfRobloxIsOpen():
@@ -3033,64 +3037,54 @@ class Main:
             most_recent_roblox_version_dir = self.getRobloxInstallFolder()
             if most_recent_roblox_version_dir:
                 if debug == True: printDebugMessage("Running RobloxPlayerBeta.exe..")
-                if startData == "":
-                    a = subprocess.run(f"start {os.path.join(most_recent_roblox_version_dir, 'RobloxPlayerBeta.exe')}", shell=True, stdout=subprocess.DEVNULL)
-                else:
-                    a = subprocess.run(f'start {os.path.join(most_recent_roblox_version_dir, "RobloxPlayerBeta.exe")} {startData}', shell=True, stdout=subprocess.DEVNULL)
+                if startData == "": a = subprocess.run(f"start {os.path.join(most_recent_roblox_version_dir, 'RobloxPlayerBeta.exe')}", shell=True, stdout=subprocess.DEVNULL)
+                else: a = subprocess.run(f'start {os.path.join(most_recent_roblox_version_dir, "RobloxPlayerBeta.exe")} {startData}', shell=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
                         if makeDupe == True:
                             if self.getIfRobloxIsOpen() == True:
                                 cur_open_pid = self.getLatestOpenedRobloxPid()
                                 start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True:
                                         break
                                     elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(1)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    elif start_time+5 < datetime.datetime.now(tz=datetime.UTC).timestamp():
                                         break
                                     else:
                                         time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxIsOpen() == True:
                                     pid = self.getLatestOpenedRobloxPid()
-                                    if pid:
-                                        if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
-                                        else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
+                                    if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
                         else:
                             time.sleep(1)
                             if self.getIfRobloxIsOpen() == True:
                                 cur_open_pid = self.getLatestOpenedRobloxPid()
                                 start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False)
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True:
                                         break
                                     elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(1)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    elif start_time+5 < datetime.datetime.now(tz=datetime.UTC).timestamp():
                                         break
                                     else:
                                         time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxIsOpen() == True:
                                     pid = self.getLatestOpenedRobloxPid()
-                                    if pid:
-                                        if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
-                                        else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex)
+                                    if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
             else:
                 printLog("Roblox couldn't be found.")
         else:
             printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
-    def openRobloxStudio(self, forceQuit=False, startData="", makeDupe=True, debug=False, attachInstance=False, allowRobloxOtherLogDebug=False, mainLogFile="") -> "RobloxInstance | None":
+    def openRobloxStudio(self, forceQuit=False, startData="", makeDupe=True, debug=False, attachInstance=False, allowRobloxOtherLogDebug=False, mainLogFile="", oneThreadedInstance=True) -> "RobloxInstance | None":
         if self.getIfRobloxStudioIsOpen():
             if forceQuit == True:
                 self.endRobloxStudio()
@@ -3105,11 +3099,7 @@ class Main:
                         time.sleep(2)
                         if self.getIfRobloxStudioIsOpen() == True:
                             pid = self.getLatestOpenedRobloxStudioPid()
-                            if pid:
-                                if not (mainLogFile == ""):
-                                    return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, studio=True)
-                                else:
-                                    return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, studio=True)
+                            if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, studio=True, one_threaded=oneThreadedInstance)
             else:
                 if debug == True: printDebugMessage("Running RobloxStudio.app..")
                 a = subprocess.run(f"open -a \'{macOS_studioDir}\' --args {startData}", shell=True)
@@ -3118,69 +3108,55 @@ class Main:
                         time.sleep(2)
                         if self.getIfRobloxStudioIsOpen() == True:
                             pid = self.getLatestOpenedRobloxStudioPid()
-                            if pid:
-                                if not (mainLogFile == ""):
-                                    return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, studio=True)
-                                else:
-                                    return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, studio=True)
+                            if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, studio=True, one_threaded=oneThreadedInstance)
         elif self.__main_os__ == "Windows":
             created_mutex = False
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=True)
             if most_recent_roblox_version_dir:
                 if debug == True: printDebugMessage("Running RobloxStudioBeta.exe..")
-                if startData == "":
-                    a = subprocess.run(f"start {os.path.join(most_recent_roblox_version_dir, 'RobloxStudioBeta.exe')}", shell=True, stdout=subprocess.DEVNULL)
-                else:
-                    a = subprocess.run(f'start {os.path.join(most_recent_roblox_version_dir, "RobloxStudioBeta.exe")} {startData}', shell=True, stdout=subprocess.DEVNULL)
+                if startData == "": a = subprocess.run(f"start {os.path.join(most_recent_roblox_version_dir, 'RobloxStudioBeta.exe')}", shell=True, stdout=subprocess.DEVNULL)
+                else: a = subprocess.run(f'start {os.path.join(most_recent_roblox_version_dir, "RobloxStudioBeta.exe")} {startData}', shell=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
                         if makeDupe == True:
                             if self.getIfRobloxStudioIsOpen() == True:
                                 cur_open_pid = self.getLatestOpenedRobloxStudioPid()
                                 start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False, studio=True)
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, studio=True, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True:
                                         break
                                     elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(1)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    elif start_time+5 < datetime.datetime.now(tz=datetime.UTC).timestamp():
                                         break
                                     else:
                                         time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxStudioIsOpen() == True:
                                     pid = self.getLatestOpenedRobloxStudioPid()
-                                    if pid:
-                                        if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex, studio=True)
-                                        else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex, studio=True)
+                                    if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, studio=True, one_threaded=oneThreadedInstance)
                         else:
                             time.sleep(1)
                             if self.getIfRobloxStudioIsOpen() == True:
                                 cur_open_pid = self.getLatestOpenedRobloxStudioPid()
                                 start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=False, studio=True)
+                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, studio=True, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True:
                                         break
                                     elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(1)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+3 < datetime.datetime.now(tz=datetime.UTC).timestamp():
+                                    elif start_time+5 < datetime.datetime.now(tz=datetime.UTC).timestamp():
                                         break
                                     else:
                                         time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxStudioIsOpen() == True:
                                     pid = self.getLatestOpenedRobloxStudioPid()
-                                    if pid:
-                                        if not (mainLogFile == ""):
-                                            return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex, studio=True)
-                                        else:
-                                            return self.RobloxInstance(self, pid=pid, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_20_second_log_creation=True, created_mutex=created_mutex, studio=True)
+                                    if pid: return self.RobloxInstance(self, pid=pid, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, studio=True, one_threaded=oneThreadedInstance)
             else:
                 printLog("Roblox Studio couldn't be found.")
         else:
@@ -3368,10 +3344,10 @@ class Main:
                             printWarnMessage(f"Client Settings is already created. Skipping Folder Creation..")
                     printMainMessage(f"Writing ClientAppSettings.json")
                     if merge == True:
-                        if os.path.exists("FastFlagConfiguration.json"):
+                        if os.path.exists("Configuration.json"):
                             try:
                                 printMainMessage("Reading Previous Configurations..")
-                                with open(f"FastFlagConfiguration.json", "r", encoding="utf-8") as f:
+                                with open(f"Configuration.json", "r", encoding="utf-8") as f:
                                     merge_json = json.load(f)
                                 if studio == True:
                                     if merge_json.get("EFlagRobloxStudioFlags"):
@@ -3397,8 +3373,8 @@ class Main:
                                 printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                     
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
-                    if orangeblox_mode == True and os.path.exists("FastFlagConfiguration.json"):
-                        set_location = "FastFlagConfiguration.json"
+                    if orangeblox_mode == True and os.path.exists("Configuration.json"):
+                        set_location = "Configuration.json"
                     with open(set_location, "w", encoding="utf-8") as f:
                         if flat == True:
                             json.dump(fflags, f)

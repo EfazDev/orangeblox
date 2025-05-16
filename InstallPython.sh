@@ -7,7 +7,7 @@ printMessage() {
 ma_os=$(uname)
 arch=$(uname -m)
 if [ "$ma_os" = "Darwin" ]; then
-    url="https://www.python.org/ftp/python/3.13.2/python-3.13.2-macos11.pkg"
+    url="https://www.python.org/ftp/python/3.13.3/python-3.13.3-macos11.pkg"
     tmp_pkg=$(mktemp /tmp/python-installer.XXXXXX.pkg)
     curl -o "$tmp_pkg" "$url"
     if [ $? -eq 0 ]; then
@@ -19,12 +19,12 @@ if [ "$ma_os" = "Darwin" ]; then
 elif [[ "$ma_os" == *"MINGW"* || "$ma_os" == *"CYGWIN"* || "$ma_os" == *"MSYS"* ]]; then
     if [ "$arch" = "x86_64" ]; then
         if [ "$PROCESSOR_ARCHITEW6432" == "ARM64" ]; then
-            url="https://www.python.org/ftp/python/3.13.2/python-3.13.2-arm64.exe"
+            url="https://www.python.org/ftp/python/3.13.3/python-3.13.3-arm64.exe"
         else
-            url="https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.exe"
+            url="https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe"
         fi
     else
-        url="https://www.python.org/ftp/python/3.13.2/python-3.13.2.exe"
+        url="https://www.python.org/ftp/python/3.13.3/python-3.13.3.exe"
     fi
     tmp_exe=$(mktemp /tmp/python-installer.XXXXXX.exe)
     curl -o "$tmp_exe" "$url"

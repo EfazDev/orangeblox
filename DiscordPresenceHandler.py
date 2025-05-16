@@ -11,7 +11,6 @@ try:
     import uuid
     import sys
     import threading
-    import subprocess
     from PipHandler import pip
 except Exception as e:
     from PipHandler import pip
@@ -23,7 +22,6 @@ except Exception as e:
     import uuid
     import sys
     import threading
-    import subprocess
 
 main_os = platform.system()
 pip_class = pip()

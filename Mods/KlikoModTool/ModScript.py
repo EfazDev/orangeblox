@@ -131,6 +131,7 @@ if installed["success"] == True:
                         q = {}
                         for _, i in mod_manifest.items():
                             if i.get("name") == "Original": continue
+                            if i.get("list_in_normal_mods") == False and i.get("enabled") == False: continue
                             co += 1
                             if type(i.get("name")) is str:
                                 final_name = f"{i.get('name')} [{i.get('id')}]"

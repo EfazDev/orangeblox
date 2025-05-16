@@ -1,18 +1,19 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.0.0
+# v2.0.1
 # 
 
 # Modules
-import shutil
-import os
-import platform
-import json
 import subprocess
+import platform
+import hashlib
+import shutil
 import time
-import sys
 import stat
+import json
+import sys
+import os
 sys.dont_write_bytecode = True
 
 import RobloxFastFlagsInstaller
@@ -87,26 +88,30 @@ def getSettings(directory=""):
         if os.path.exists(macos_preference_expected):
             app_configuration = PipHandler.plist().readPListFile(macos_preference_expected)
             if app_configuration.get("Configuration"):
-                fflag_configuration = app_configuration.get("Configuration")
+                main_config = app_configuration.get("Configuration")
             else:
-                fflag_configuration = {}
+                main_config = {}
         else:
-            fflag_configuration = {}
-        return fflag_configuration
+            main_config = {}
+        return main_config
     else:
         with open(directory, "r", encoding="utf-8") as f:
-            fflag_configuration = json.load(f)
-        return fflag_configuration
-def saveSettings(fflag_configuration, directory=""):
+            main_config = json.load(f)
+        return main_config
+def saveSettings(main_config, directory=""):
     respo = {
         "saved_normally": False,
         "sync_failed": False,
         "sync_success": False
     }
-    if not (fflag_configuration.get("EFlagDisableAutosaveToInstallation") == True) and (fflag_configuration.get("EFlagOrangeBloxSyncDir") and os.path.exists(fflag_configuration.get("EFlagOrangeBloxSyncDir"))):
-        if os.path.exists(os.path.join(fflag_configuration.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json')):
-            with open(os.path.join(fflag_configuration.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json'), "w", encoding="utf-8") as f:
-                json.dump(fflag_configuration, f, indent=4)
+    if not (main_config.get("EFlagDisableAutosaveToInstallation") == True) and (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+        if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json')):
+            with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json'), "w", encoding="utf-8") as f:
+                json.dump(main_config, f, indent=4)
+            respo["sync_success"] = True
+        elif os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')):
+            with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json'), "w", encoding="utf-8") as f:
+                json.dump(main_config, f, indent=4)
             respo["sync_success"] = True
         else:
             printErrorMessage("Bootstrap Sync is not supported since the original unextracted directory is not found.")
@@ -118,13 +123,24 @@ def saveSettings(fflag_configuration, directory=""):
             app_configuration = PipHandler.plist().readPListFile(macos_preference_expected)
         else:
             app_configuration = {}
-        app_configuration["Configuration"] = fflag_configuration
+        app_configuration["Configuration"] = main_config
         PipHandler.plist().writePListFile(macos_preference_expected, app_configuration)
     else:
         with open(directory, "w", encoding="utf-8") as f:
-            json.dump(fflag_configuration, f, indent=4)
+            json.dump(main_config, f, indent=4)
     respo["saved_normally"] = True
     return respo
+def generateFileHash(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            hasher = hashlib.md5()
+            chunk = f.read(8192)
+            while chunk: 
+                hasher.update(chunk)
+                chunk = f.read(8192)
+        return hasher.hexdigest()
+    except Exception as e:
+        return None
     
 def getInstalledAppPath():
     if main_os == "Darwin":
@@ -263,10 +279,10 @@ if __name__ == "__main__":
         "__pycache__", 
         "InstallPython.sh", 
         "InstallPython.bat",
-        "FastFlagConfiguration.json", 
+        "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.0.0"}
+    current_version = {"version": "2.0.1"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     pip_class = PipHandler.pip()
@@ -405,11 +421,11 @@ if __name__ == "__main__":
     if expected_app_path and (main_os == "Darwin" and os.path.exists(os.path.join(expected_app_paths[found_platform][1], "Contents", "Resources", "Versions")) or os.path.exists(os.path.join(expected_app_paths[found_platform][1], "Versions"))):
         versions_folder = os.path.join(expected_app_paths[found_platform][1], "Versions")
         if main_os == "Darwin": versions_folder = os.path.join(expected_app_paths[found_platform][1], "Contents", "Resources", "Versions")
-        fflag_configuration = getSettings(directory=os.path.join(expected_app_paths[found_platform][1], "FastFlagConfiguration.json"))
+        main_config = getSettings(directory=os.path.join(expected_app_paths[found_platform][1], "FastFlagConfiguration.json"))
         RobloxFastFlagsInstaller.windows_versions_dir = versions_folder
-        RobloxFastFlagsInstaller.windows_player_folder_name = fflag_configuration.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
-        RobloxFastFlagsInstaller.windows_studio_folder_name = fflag_configuration.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
-        if fflag_configuration.get("EFlagPreventRobloxMacOSAppOverlapping", False) == True:
+        RobloxFastFlagsInstaller.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
+        RobloxFastFlagsInstaller.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
+        if main_config.get("EFlagPreventRobloxMacOSAppOverlapping", False) == True:
             user_folder_name = os.path.basename(os.path.expanduser("~"))
             versions_folder = os.path.join(versions_folder, user_folder_name)
             RobloxFastFlagsInstaller.macOS_dir = os.path.join(versions_folder, "Roblox.app")
@@ -466,7 +482,7 @@ if __name__ == "__main__":
                 win32com = pip_class.importModule("win32com")
             if rebuild_from_source == 1: rebuild_target = ["pyinstaller"]
             if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
-            if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
+            if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target, boolonly=True): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
         except Exception as e:
             if not instant_install == True: printMainMessage("Some modules are not installed and may be needed for some features. Do you want to install all the modules needed now? (y/n)")
             if instant_install == True or isYes(input("> ")) == True:
@@ -491,29 +507,29 @@ if __name__ == "__main__":
                         fast_config_path = os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources", "FastFlagConfiguration.json")
                     if os.path.exists(fast_config_path):
                         with open(fast_config_path, "r", encoding="utf-8") as f:
-                            fflag_configuration = json.load(f)
+                            main_config = json.load(f)
                     else:
-                        fflag_configuration = getSettings(directory=fast_config_path)
+                        main_config = getSettings(directory=fast_config_path)
                 else:
-                    fflag_configuration = {}
+                    main_config = {}
                     if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
                         with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f:
-                            fflag_configuration = json.load(f)
+                            main_config = json.load(f)
 
                 # Adapt Fast Flags from Efaz's Roblox Bootstrap
-                if not fflag_configuration.get("EFlagRobloxPlayerFlags"):
+                if not main_config.get("EFlagRobloxPlayerFlags"):
                     printMainMessage("Converting Fast Flags..")
                     player_flags = {}
-                    for i, v in fflag_configuration.items():
+                    for i, v in main_config.items():
                         if not i.startswith("EFlag"):
                             player_flags[i] = v
                     for i, v in player_flags.items():
-                        fflag_configuration.pop(i)
-                    fflag_configuration["EFlagRobloxPlayerFlags"] = player_flags
-                    fflag_configuration["EFlagRobloxStudioFlags"] = {}
+                        main_config.pop(i)
+                    main_config["EFlagRobloxPlayerFlags"] = player_flags
+                    main_config["EFlagRobloxStudioFlags"] = {}
 
                 # Rebuild Clang Apps from Source
-                if rebuild_from_source_clang == True or (fflag_configuration.get("EFlagRebuildClangAppFromSourceDuringUpdates") == True and update_mode == True):
+                if rebuild_from_source_clang == True or (main_config.get("EFlagRebuildClangAppFromSourceDuringUpdates") == True and update_mode == True):
                     printMainMessage("Running Clang++ Rebuild..")
                     extra_detail = " nosudo"
                     if use_sudo_for_codesign == True: extra_detail = ""
@@ -530,7 +546,7 @@ if __name__ == "__main__":
                         return
 
                 # Rebuild Pyinstaller & Nuitka Apps
-                if rebuild_from_source == 1 or (fflag_configuration.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
+                if rebuild_from_source == 1 or (main_config.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
                     extra_detail = " nosudo"
                     if use_sudo_for_codesign == True: extra_detail = ""
                     if os.path.exists(os.path.join(current_path_location, "SigningCertificateName")): 
@@ -547,12 +563,14 @@ if __name__ == "__main__":
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Pyinstaller Rebuild..")
-                        rebuild_status = subprocess.run(f"sh {os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh')} installer" + extra_detail, shell=True, cwd=current_path_location)
+                        pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
+                        rebuild_status = subprocess.run(f"sh {pa} installer" + extra_detail, shell=True, cwd=current_path_location)
                         if rebuild_status.returncode == 0:
                             printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
                         else:
                             printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                elif rebuild_from_source == 2 or (fflag_configuration.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
+                        os.remove(pa)
+                elif rebuild_from_source == 2 or (main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
                     extra_detail = " nosudo"
                     if use_sudo_for_codesign == True: extra_detail = ""
                     if os.path.exists(os.path.join(current_path_location, "SigningCertificateName")): 
@@ -569,11 +587,13 @@ if __name__ == "__main__":
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Nuitka Rebuild..")
-                        rebuild_status = subprocess.run(f"sh {os.path.join(current_path_location, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOSIntel.sh')} installer" + extra_detail, shell=True, cwd=current_path_location)
+                        pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOSIntel.sh'), pip_class)
+                        rebuild_status = subprocess.run(f"sh {pa} installer" + extra_detail, shell=True, cwd=current_path_location)
                         if rebuild_status.returncode == 0:
                             printSuccessMessage(f"Rebuilding Intel Nuitka App succeeded! Continuing to installation..")
                         else:
                             printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
+                        os.remove(pa)
 
                 if platform.machine() == "arm64":
                     if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxMac.zip")):
@@ -601,7 +621,7 @@ if __name__ == "__main__":
                         printYellowMessage("Something went wrong finding OrangeBloxMacIntel.zip. It will require a OrangeBloxMac folder in order for installation to finish.")
                 if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxMac")):
                     # Delete Other Operating System Files
-                    if not (disable_remove_other_operating_systems == True or fflag_configuration.get("EFlagDisableDeleteOtherOSApps") == True):
+                    if not (disable_remove_other_operating_systems == True or main_config.get("EFlagDisableDeleteOtherOSApps") == True):
                         deleted_other_os = False
                         if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxWindows.zip")):
                             os.remove(os.path.join(current_path_location, "Apps", "OrangeBloxWindows.zip"))
@@ -698,9 +718,9 @@ if __name__ == "__main__":
 
                         # Sync Configuration Files
                         printMainMessage("Configurating App Data..")
-                        if not ("OrangeBlox.app" in current_path_location): fflag_configuration["EFlagOrangeBloxSyncDir"] = current_path_location
-                        fflag_configuration["EFlagAvailableInstalledDirectories"] = stored_main_app
-                        saveSettings(fflag_configuration, directory=os.path.join(stored_main_app[found_platform][1], "Contents", "Resources", "FastFlagConfiguration.json"))
+                        if not ("OrangeBlox.app" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
+                        main_config["EFlagAvailableInstalledDirectories"] = stored_main_app
+                        saveSettings(main_config, directory=os.path.join(stored_main_app[found_platform][1], "Contents", "Resources", "FastFlagConfiguration.json"))
                         with open(os.path.join(stored_main_app[found_platform][2], "Contents", "Resources", "LocatedAppDirectory"), "w", encoding="utf-8") as f:
                             f.write(os.path.join(stored_main_app[found_platform][1], "Contents"))
                         with open(os.path.join(stored_main_app[found_platform][3], "Contents", "Resources", "LocatedAppDirectory"), "w", encoding="utf-8") as f:
@@ -739,34 +759,33 @@ if __name__ == "__main__":
                 # Get FastFlagConfiguration.json Data
                 if overwrited == True:
                     printMainMessage("Getting Configuration File Data..")
-                    fast_config_path = os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json")
-                    if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap")):
-                        fast_config_path = os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")
+                    fast_config_path = os.path.join(f"{stored_main_app[found_platform][0]}", "Configuration.json")
+                    if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")
+                    elif os.path.exists(os.path.join(stored_main_app[found_platform][0], "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app[found_platform][0], "FastFlagConfiguration.json")
                     if os.path.exists(fast_config_path):
                         with open(fast_config_path, "r", encoding="utf-8") as f:
-                            fflag_configuration = json.load(f)
+                            main_config = json.load(f)
                     else:
-                        fflag_configuration = getSettings(directory=fast_config_path)
+                        main_config = getSettings(directory=fast_config_path)
                 else:
-                    fflag_configuration = {}
-                    if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
-                        with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f:
-                            fflag_configuration = json.load(f)
+                    main_config = {}
+                    if os.path.exists(os.path.join(current_path_location, "Configuration.json")):
+                        with open(os.path.join(current_path_location, "Configuration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
 
                 # Adapt Fast Flags from Efaz's Roblox Bootstrap
-                if not fflag_configuration.get("EFlagRobloxPlayerFlags"):
+                if not main_config.get("EFlagRobloxPlayerFlags"):
                     printMainMessage("Converting Fast Flags..")
                     player_flags = {}
-                    for i, v in fflag_configuration.items():
+                    for i, v in main_config.items():
                         if not i.startswith("EFlag"):
                             player_flags[i] = v
                     for i, v in player_flags.items():
-                        fflag_configuration.pop(i)
-                    fflag_configuration["EFlagRobloxPlayerFlags"] = player_flags
-                    fflag_configuration["EFlagRobloxStudioFlags"] = {}
+                        main_config.pop(i)
+                    main_config["EFlagRobloxPlayerFlags"] = player_flags
+                    main_config["EFlagRobloxStudioFlags"] = {}
 
                 # Rebuild Pyinstaller & Nuitka Apps
-                if rebuild_from_source == 1 or (fflag_configuration.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
+                if rebuild_from_source == 1 or (main_config.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
                     printMainMessage("Running Pyinstaller Rebuild..")
                     pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows{'32' if is_x86_windows() else ''}.bat"), pip_class)
                     rebuild_status = subprocess.run(f"{pa} installer signexe", shell=True, cwd=current_path_location)
@@ -794,7 +813,7 @@ if __name__ == "__main__":
                     else:
                         printErrorMessage(f"Pyinstaller Rebuild failed! Status code: {rebuild_status.returncode}")
                         return
-                elif rebuild_from_source == 2 or (fflag_configuration.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
+                elif rebuild_from_source == 2 or (main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
                     printMainMessage("Running Nuitka Rebuild..")
                     pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Nuitka", f"RecreateWindows{'32' if is_x86_windows() else ''}.bat"), pip_class)
                     rebuild_status = subprocess.run(f"{pa} installer signexe", shell=True, cwd=current_path_location)
@@ -837,7 +856,7 @@ if __name__ == "__main__":
                 if os.path.exists(f"{current_path_location}/Apps/OrangeBloxWindows/"):
                     # Delete Other Operating System Files
                     deleted_other_os = False
-                    if not (disable_remove_other_operating_systems == True or fflag_configuration.get("EFlagDisableDeleteOtherOSApps") == True):
+                    if not (disable_remove_other_operating_systems == True or main_config.get("EFlagDisableDeleteOtherOSApps") == True):
                         if os.path.exists(os.path.join(current_path_location, "/Apps/OrangeBloxMac.zip")):
                             os.remove(os.path.join(current_path_location, "/Apps/OrangeBloxMac.zip"))
                             deleted_other_os = True
@@ -876,6 +895,9 @@ if __name__ == "__main__":
                         pip_class.copyTreeWithMetadata(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap"), stored_main_app[found_platform][0], dirs_exist_ok=True, ignore=ignore_files_func)
 
                     # Install EXE File
+                    if pip_class.getIfProcessIsOpened("OrangeBlox.exe"):
+                        printMainMessage("Closing OrangeBlox executable in order to install EXE file..")
+                        pip_class.endProcess("OrangeBlox.exe")
                     printMainMessage("Installing EXE File..")
                     try:
                         if is_x86_windows() or use_x86_windows == True:
@@ -958,7 +980,7 @@ if __name__ == "__main__":
                             # set_url_scheme("roblox-studio", stored_main_app[found_platform][1])
                             # set_url_scheme("roblox-studio-auth", stored_main_app[found_platform][1])
                     else:
-                        if not (fflag_configuration.get("EFlagDisableURLSchemeInstall") == True):
+                        if not (main_config.get("EFlagDisableURLSchemeInstall") == True):
                             printMainMessage("Setting up URL Schemes..")
                             def set_url_scheme(protocol, exe_path):
                                 try:
@@ -1001,7 +1023,7 @@ if __name__ == "__main__":
                             # set_url_scheme("roblox-studio-auth", stored_main_app[found_platform][1])
 
                     # Setup Shortcuts
-                    if not (disabled_shortcuts_installation == True or fflag_configuration.get("EFlagDisableShortcutsInstall") == True):
+                    if not (disabled_shortcuts_installation == True or main_config.get("EFlagDisableShortcutsInstall") == True):
                         printMainMessage("Setting up shortcuts..")
                         try:
                             import win32com.client # type: ignore
@@ -1036,19 +1058,20 @@ if __name__ == "__main__":
                         # Handle Existing Configuration Files
                         printMainMessage("Configurating App Data..")
                         if disabled_url_scheme_installation == True:
-                            fflag_configuration["EFlagDisableURLSchemeInstall"] = True
+                            main_config["EFlagDisableURLSchemeInstall"] = True
                         elif disabled_url_scheme_installation == False:
-                            fflag_configuration["EFlagDisableURLSchemeInstall"] = False
+                            main_config["EFlagDisableURLSchemeInstall"] = False
                         if disabled_shortcuts_installation == True:
-                            fflag_configuration["EFlagDisableShortcutsInstall"] = True
+                            main_config["EFlagDisableShortcutsInstall"] = True
                         elif disabled_shortcuts_installation == False:
-                            fflag_configuration["EFlagDisableShortcutsInstall"] = False
+                            main_config["EFlagDisableShortcutsInstall"] = False
 
                         if use_installation_syncing == True:
-                            if not ("/Local/OrangeBlox/" in current_path_location): fflag_configuration["EFlagOrangeBloxSyncDir"] = current_path_location
-                        fflag_configuration["EFlagAvailableInstalledDirectories"] = stored_main_app
-                        with open(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"), "w", encoding="utf-8") as f:
-                            json.dump(fflag_configuration, f, indent=4)
+                            if not ("/Local/OrangeBlox/" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
+                        main_config["EFlagAvailableInstalledDirectories"] = stored_main_app
+                        with open(os.path.join(f"{stored_main_app[found_platform][0]}", "Configuration.json"), "w", encoding="utf-8") as f:
+                            json.dump(main_config, f, indent=4)
+                        if os.path.exists(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json")): os.remove(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"))
 
                         # Handle Avatar Maps
                         map_folder_contained = []
@@ -1165,7 +1188,7 @@ if __name__ == "__main__":
                     win32com = pip_class.importModule("win32com")
                 if rebuild_from_source == 1: rebuild_target = ["pyinstaller"]
                 if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
-                if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
+                if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target, boolonly=True): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
             except Exception as e:
                 if not instant_install == True: printMainMessage("Some modules are not installed and may be needed for some features. Do you want to install all the modules needed now? (y/n)")
                 if instant_install == True or isYes(input("> ")) == True:
@@ -1264,8 +1287,7 @@ if __name__ == "__main__":
                 printYellowMessage("Pyinstaller is required to be installed for this to work.")
                 a = input("> ")
                 if isYes(a) == True:
-                    if not pip_class.installed(["pyinstaller"]):
-                        pip_class.install(["pyinstaller"])
+                    if not pip_class.installed(["pyinstaller"], boolonly=True): pip_class.install(["pyinstaller"])
                     rebuild_from_source = True
                 if main_os == "Darwin":
                     printMainMessage("Would you like to rebuild the Bootstrap Loader, Play Roblox app and Run Studio app based on source code? (y/n)")
@@ -1553,10 +1575,10 @@ if __name__ == "__main__":
                             printErrorMessage("OrangeBlox is not installed!")
                             input("> ")
                             sys.exit(0)
-                        printMainMessage("Copying FastFlagConfiguration.json..")
-                        fflag_configuration = getSettings(os.path.join(app_location, "FastFlagConfiguration.json"))
-                        with open(os.path.join(repair_path, "FastFlagConfiguration.json"), "w", encoding="utf-8") as f:
-                            json.dump(fflag_configuration, f, indent=4)
+                        printMainMessage("Copying Configuration.json..")
+                        main_config = getSettings(os.path.join(app_location, "Configuration.json"))
+                        with open(os.path.join(repair_path, "Configuration.json"), "w", encoding="utf-8") as f:
+                            json.dump(main_config, f, indent=4)
                         printMainMessage("Copying AvatarEditorMaps..")
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(repair_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Cursors..")
@@ -1569,6 +1591,18 @@ if __name__ == "__main__":
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxBrand"), os.path.join(repair_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxStudioBrand..")
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxStudioBrand"), os.path.join(repair_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        printMainMessage("Creating Metadata..")
+                        ver = current_version["version"]
+                        if os.path.exists(os.path.join(app_location, "Version.json")):
+                            ver_js = None
+                            with open(os.path.join(app_location, "Version.json"), "r", encoding="utf-8") as f: ver_js = json.load(f)
+                            if ver_js: ver = ver_js["version"]
+                        with open(os.path.join(repair_path, "Metadata.json"), "w", encoding="utf-8") as f:
+                            json.dump({
+                                "installer_version": current_version["version"],
+                                "bootstrap_version": ver,
+                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py")),
+                            }, f, indent=4)
                         printMainMessage("Uninstalling Bootstrap..")
                         try:
                             requestUninstall()
@@ -1578,11 +1612,13 @@ if __name__ == "__main__":
                             try:
                                 install()
                                 printMainMessage("Installation was a success! Preparing data..")
-                                printMainMessage("Copying FastFlagConfiguration.json..")
-                                with open(os.path.join(repair_path, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f:
-                                    fflag_configuration = json.load(f)
-                                saveSettings(fflag_configuration, directory=os.path.join(app_location, "FastFlagConfiguration.json"))
-                                shutil.copy(os.path.join(repair_path, "FastFlagConfiguration.json"), os.path.join(app_location, "FastFlagConfiguration.json"))
+                                printMainMessage("Copying Configuration.json..")
+                                if os.path.exists(os.path.join(repair_path, "FastFlagConfiguration.json")):
+                                    with open(os.path.join(repair_path, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
+                                else:
+                                    with open(os.path.join(repair_path, "Configuration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
+                                saveSettings(main_config, directory=os.path.join(app_location, "Configuration.json"))
+                                shutil.copy(os.path.join(repair_path, "Configuration.json"), os.path.join(app_location, "Configuration.json"))
                                 printMainMessage("Copying AvatarEditorMaps..")
                                 pip_class.copyTreeWithMetadata(os.path.join(repair_path, "AvatarEditorMaps"), os.path.join(app_location, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying Cursors..")
@@ -1642,10 +1678,10 @@ if __name__ == "__main__":
                             printErrorMessage("OrangeBlox is not installed!")
                             input("> ")
                             sys.exit(0)
-                        printMainMessage("Copying FastFlagConfiguration.json..")
-                        fflag_configuration = getSettings(os.path.join(app_location, "FastFlagConfiguration.json"))
-                        with open(os.path.join(backup_path, "FastFlagConfiguration.json"), "w", encoding="utf-8") as f:
-                            json.dump(fflag_configuration, f, indent=4)
+                        printMainMessage("Copying Configuration.json..")
+                        main_config = getSettings(os.path.join(app_location, "Configuration.json"))
+                        with open(os.path.join(backup_path, "Configuration.json"), "w", encoding="utf-8") as f:
+                            json.dump(main_config, f, indent=4)
                         printMainMessage("Copying AvatarEditorMaps..")
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(backup_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Cursors..")
@@ -1658,6 +1694,18 @@ if __name__ == "__main__":
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxBrand"), os.path.join(backup_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxStudioBrand..")
                         pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxStudioBrand"), os.path.join(backup_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        printMainMessage("Creating Metadata..")
+                        ver = current_version["version"]
+                        if os.path.exists(os.path.join(app_location, "Version.json")):
+                            ver_js = None
+                            with open(os.path.join(app_location, "Version.json"), "r", encoding="utf-8") as f: ver_js = json.load(f)
+                            if ver_js: ver = ver_js["version"]
+                        with open(os.path.join(backup_path, "Metadata.json"), "w", encoding="utf-8") as f:
+                            json.dump({
+                                "installer_version": current_version["version"],
+                                "bootstrap_version": ver,
+                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py")),
+                            }, f, indent=4)
                         printMainMessage("Archiving Backup..")
                         file_dir = ""
                         for i in os.listdir(backup_path): 

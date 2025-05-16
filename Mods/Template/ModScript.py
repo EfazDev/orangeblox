@@ -1,5 +1,5 @@
 #
-# Hello there! Welcome to Mod Mode Scripts!
+# Hello there! Welcome to Mod Scripts!
 # Mod Scripts are Python scripts that you can make to run code like configuring your Roblox experience and sending a notification for when you got something in a game!
 # If you're a python developer, you may be able to get started here!
 # If you're a person who would like to run multiple mods, you'll only be able to run 1 script at a time due to security, so choose wisely!

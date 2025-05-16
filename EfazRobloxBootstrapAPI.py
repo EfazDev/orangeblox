@@ -1,9 +1,9 @@
 # 
 # EfazRobloxBootstrapAPI
 # Made by Efaz from efaz.dev
-# Documentation Edition for v2.0.0
+# Documentation Edition for v2.0.1
 # 
-# Provided to Mod Mode Scripts using variable EfazRobloxBootstrapAPI for versions 1.5.9 or lower
+# Provided to Mod Scripts using variable EfazRobloxBootstrapAPI for versions 1.5.9 or lower
 # Later versions must use the OrangeAPI for documentation of features made after v1.5.9 but are allowed to use the variable in runtime.
 # This version of EfazRobloxBootstrapAPI is a mapped version of OrangeAPI and redirects to OrangeAPI when used.
 #
@@ -14,7 +14,7 @@
 from typing import Union
 
 # Variables
-current_version = {"version": "2.0.0"}
+current_version = {"version": "2.0.1"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -55,9 +55,9 @@ class Response:
         raise UnusedAPI()
 class EfazRobloxBootstrapAPI:
     """
-    The OrangeAPI is an API that Mod Mode Scripts can use for getting or setting data from the bootstrap such as FastFlagConfiguration data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxFastFlagInstaller.py, etc.]
+    The EfazRobloxBootstrapAPI is the API that Mod Scripts used to have before OrangeAPI v2.0.0. Please update to OrangeAPI v2.0.0 in order to stay supported.
    
-    **OrangeAPI is only supported on OrangeBlox v2.0.0+/Efaz's Roblox Bootstrap v1.3.0+. Any other versions like v1.2.5 or below is unable to use this API.**
+    **EfazRobloxBootstrapAPI is only supported on Efaz's Roblox Bootstrap v1.3.0-v1.5.9. Any other versions like v1.2.5 or below is unable to use this API. For OrangeBlox v2.0.0+, this API replicates the OrangeAPI class.**
 
     ```python
     import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
@@ -160,8 +160,8 @@ class EfazRobloxBootstrapAPI:
         **The following keys are not shown due to security: EFlagDiscordWebhookURL**
 
         ```python
-        fflag_configuration = OrangeAPI.getFastFlagConfiguration()
-        print(fflag_configuration) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
+        main_config = OrangeAPI.getFastFlagConfiguration()
+        print(main_config) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
         ```
         """
         raise UnusedAPI()
