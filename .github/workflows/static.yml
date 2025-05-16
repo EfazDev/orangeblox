@@ -45,7 +45,17 @@ jobs:
                 <body>
                     <p>Sorry but what are you doing here?</p>
                 </body>
-            </html>' > index.html
+            </html>' > index.html && echo '<!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <script>
+                        window.location.href = "https://github.com/EfazDev/orangeblox"
+                    </script>
+                </head>
+                <body>
+                    <p>Sorry but what are you doing here?</p>
+                </body>
+            </html>' > 404.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
