@@ -2,7 +2,7 @@
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
-    <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/downloads/EfazDev/orangeblox/total?logoColor=ff4b00&label=Downloads%20%E2%AC%87%EF%B8%8F" alt="Downloads"></a>
+    <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/downloads/EfazDev/orangeblox/total?color=ff4b00&label=%F0%9F%92%BB%20Downloads" alt="Downloads"></a>
     <a href="https://github.com/EfazDev/orangeblox"><img src="https://img.shields.io/github/stars/EfazDev/orangeblox?style=smooth&label=%E2%AD%90%20Stars&color=ff4b00" alt="Stars"></a>    
     <a href="https://twitter.efaz.dev"><img src="https://img.shields.io/twitter/follow/EfazDev?style=social&labelColor=00ffff&color=00ffff" alt="Twitter"></a>
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
