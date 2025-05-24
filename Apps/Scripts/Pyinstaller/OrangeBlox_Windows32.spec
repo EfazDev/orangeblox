@@ -38,9 +38,7 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 main_exe = EXE(
     pyz,
     [a.scripts[1]],
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    exclude_binaries=True,
     name="OrangeBlox32",
     debug=False,
     bootloader_ignore_signals=False,
@@ -49,15 +47,12 @@ main_exe = EXE(
     upx=True,
     icon="../../../BootstrapImages/AppIcon.ico",
     version="Version.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeBlox_{uuid.uuid4().hex}"),
-    onefile=True
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeBlox_{uuid.uuid4().hex}")
 )
 play_roblox_exe = EXE(
     pyz,
     [a.scripts[2]],
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    exclude_binaries=True,
     name="PlayRoblox32",
     debug=False,
     bootloader_ignore_signals=False,
@@ -66,15 +61,12 @@ play_roblox_exe = EXE(
     upx=True,
     icon="../../../BootstrapImages/AppIconPlayRoblox.ico",
     version="VersionPlay.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangePlayRoblox_{uuid.uuid4().hex}"),
-    onefile=True
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangePlayRoblox_{uuid.uuid4().hex}")
 )
 run_studio_exe = EXE(
     pyz,
     [a.scripts[3]],
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    exclude_binaries=True,
     name="RunStudio32",
     debug=False,
     bootloader_ignore_signals=False,
@@ -83,7 +75,18 @@ run_studio_exe = EXE(
     upx=True,
     icon="../../../BootstrapImages/AppIconRunStudio.ico",
     version="VersionStudio.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeRunStudio_{uuid.uuid4().hex}"),
-    onefile=True
+    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeRunStudio_{uuid.uuid4().hex}")
 )
-build = [main_exe, play_roblox_exe, run_studio_exe]
+combined_coll = COLLECT(
+    main_exe,
+    play_roblox_exe,
+    run_studio_exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name="OrangeBlox32",
+    distpath="dist",
+)

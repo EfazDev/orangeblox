@@ -5,7 +5,7 @@ import platform
 import uuid
 import logging
 import datetime
-from PipHandler import pip
+import PipHandler
 
 def printMainMessage(mes): print(f"\033[38;5;255m{mes}\033[0m"); logging.info(mes)
 def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m"); logging.error(mes)
@@ -23,13 +23,20 @@ def setLoggingHandler(handler_name):
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.1"}
+    current_version = {"version": "2.0.2"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
     app_path = ""
-    pip_class = pip()
+    pip_class = PipHandler.pip()
+
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if main_os == "Windows": app_path = os.path.dirname(sys.executable)
+        else: app_path = os.path.abspath(os.path.join("../", os.path.dirname(sys.executable)))
+    else:
+        if main_os == "Windows": app_path = os.path.dirname(sys.argv[0])
+        else: app_path = os.path.abspath(os.path.join("../", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     logging_config = setLoggingHandler("OrangeRunStudio")
 
     printWarnMessage("-----------")
@@ -38,13 +45,6 @@ if __name__ == "__main__":
     printWarnMessage(f"v{current_version['version']}")
     printWarnMessage("-----------")
     printMainMessage("Determining System OS..")
-
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        if main_os == "Windows": app_path = os.path.dirname(sys.executable)
-        else: app_path = os.path.abspath(os.path.join("../", os.path.dirname(sys.executable)))
-    else:
-        if main_os == "Windows": app_path = os.path.dirname(sys.argv[0])
-        else: app_path = os.path.abspath(os.path.join("../", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
     if main_os == "Darwin":
         if os.path.exists(os.path.join(app_path, "LocatedAppDirectory")):
@@ -73,18 +73,22 @@ if __name__ == "__main__":
         local_app_data = pip_class.getLocalAppData()
         if os.path.exists(os.path.join(app_path, "OrangeBlox.exe")):
             url_scheme_path = os.path.join(app_path, "URLSchemeExchange")
-            with open(url_scheme_path, "w", encoding="utf-8") as f:
-                f.write("orangeblox://run-studio")
-            printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
+            filtered_args = ""
+            if len(args) > 1: filtered_args = "roblox-studio " + " ".join(args)
+            write_arg = filtered_args if filtered_args != "" else "orangeblox://run-studio"
+            with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
+            printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")
             printMainMessage("Loading OrangeBlox.exe!")
             result = subprocess.run(f'{os.path.join(app_path, "OrangeBlox.exe")}')
             sys.exit(0)
         elif os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")):
             installed_path = open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r", encoding="utf-8").read()
             url_scheme_path = os.path.join(installed_path, "URLSchemeExchange")
-            with open(url_scheme_path, "w", encoding="utf-8") as f:
-                f.write("orangeblox://run-studio")
-            printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
+            filtered_args = ""
+            if len(args) > 1: filtered_args = "roblox-studio " + " ".join(args)
+            write_arg = filtered_args if filtered_args != "" else "orangeblox://run-studio"
+            with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
+            printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")
             printMainMessage("Loading OrangeBlox.exe!")
             result = subprocess.run(f'{os.path.join(installed_path, "OrangeBlox.exe")}')
             sys.exit(0)

@@ -10,10 +10,10 @@ printMessage "Building Clang Package for OrangeBloxLoad.."
 clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/OrangeBloxLoad.app/Contents/MacOS/OrangeBloxLoad" ./Apps/Scripts/Clang/OrangeBloxLoad.mm -g0
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.cpp -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm -g0
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-clang++ -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Run Studio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.cpp -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Run Studio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm -g0
 
 # Sign Package
 printMessage "Signing Package.."

@@ -23,7 +23,7 @@ def setLoggingHandler(handler_name):
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.1"}
+    current_version = {"version": "2.0.2"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv

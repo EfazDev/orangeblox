@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.0.1
+# v2.0.2
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -17,7 +17,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.0.1"}
+current_version = {"version": "2.0.2"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -899,3 +899,20 @@ class OrangeAPI:
         else:
             cached_information["about"] = {"bootstrap_version": current_version["bootstrap_version"], "api_version": current_version["version"]}
             return {"bootstrap_version": current_version["bootstrap_version"], "api_version": current_version["version"]}
+    def getIfBootstrapSupported(self, needed_version: str) -> bool: # No Permission Needed
+        """
+        Get if the provided bootstrap version number is supported within the bootstrap (Provided >= Bootstrap)!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.0.2+**
+
+        ```python
+        # Current Version: v2.0.2
+        supported = OrangeAPI.getIfBootstrapSupported("2.0.1") # -> True
+        not_supported = OrangeAPI.getIfBootstrapSupported("3.0.0") # -> False
+        ```
+        """
+        about = self.about()
+        bootstrap_version = about["bootstrap_version"]
+        return needed_version >= bootstrap_version

@@ -3,6 +3,7 @@ import subprocess
 import json
 import threading
 import os
+import zlib
 import platform
 import uuid
 import time
@@ -10,19 +11,18 @@ import traceback
 import datetime
 import logging
 import hashlib
-from PipHandler import pip
+import PipHandler
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.1"}
+    current_version = {"version": "2.0.2"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
-    pip_class = pip()
+    pip_class = PipHandler.pip(find=True)
     app_path = ""
     macos_path = ""
     logs = []
 
-    pip_class.executable = pip_class.findPython()
     COLOR_CODES = {
         0: "white",
         1: "red",
@@ -62,7 +62,20 @@ if __name__ == "__main__":
     printWarnMessage("Made by Efaz from efaz.dev!")
     printWarnMessage(f"v{current_version['version']}")
     printWarnMessage("-----------")
-    printMainMessage("Determining System OS..")
+    if main_os == "Windows":
+        printMainMessage(f"System OS: {main_os} ({platform.version()})")
+    elif main_os == "Darwin":
+        printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
+    else:
+        printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+        input("> ")
+        sys.exit(0)
+    if not pip_class.osSupported(windows_build=17134, macos_version=(10,13,0)):
+        if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17134 (April 2018) or higher. Please update your operating system in order to continue!")
+        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+        input("> ")
+        sys.exit(0)
+    printWarnMessage("-----------")
 
     def displayNotification(title="Unknown Title", message="Unknown Message"):
         if main_os == "Darwin":
@@ -138,51 +151,24 @@ if __name__ == "__main__":
         main_config = {}
         user_folder_name = os.path.basename(os.path.expanduser("~"))
 
-        class plist:
-            def readPListFile(self, path: str):
-                if os.path.exists(path) and path.endswith(".plist"):
-                    import plistlib
-                    with open(path, "rb") as f:
-                        plist_data = plistlib.load(f)
-                    return plist_data
-                else:
-                    return {}
-            def writePListFile(self, path: str, data):
-                if path.endswith(".plist"):
-                    try:
-                        import plistlib
-                        with open(path, "wb") as f:
-                            plistlib.dump(data, f)
-                        return {"success": True, "message": "Success!", "data": data}
-                    except Exception as e:
-                        return {"success": False, "message": "Something went wrong.", "data": ""}
-                else:
-                    return {"success": False, "message": "Path doesn't end with .plist", "data": path}
-
         def loadConfiguration():
             global main_config
             global loaded_json
             printMainMessage("Getting User Configuration..")
-            if main_os == "Darwin":
-                if os.path.exists(f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist'): os.remove(f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist')
-                macos_preference_expected = f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.orangeblox.plist'
-                if os.path.exists(macos_preference_expected):
-                    app_configuration = plist().readPListFile(macos_preference_expected)
-                    if app_configuration.get("Configuration"):
-                        main_config = app_configuration.get("Configuration")
-                        loaded_json = True
-                    else:
-                        main_config = {}
-                        loaded_json = True
+            if os.path.exists(f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist'): os.remove(f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.robloxbootstrap.plist')
+            macos_preference_expected = f'{os.path.expanduser("~")}/Library/Preferences/dev.efaz.orangeblox.plist'
+            if os.path.exists(macos_preference_expected):
+                app_configuration = PipHandler.plist().readPListFile(macos_preference_expected)
+                if app_configuration.get("Configuration"):
+                    main_config = app_configuration.get("Configuration")
+                    loaded_json = True
                 else:
                     main_config = {}
                     loaded_json = True
-                return main_config
             else:
-                with open("Configuration.json", "r", encoding="utf-8") as f:
-                    main_config = json.load(f)
+                main_config = {}
                 loaded_json = True
-                return main_config
+            return main_config
 
         def printDebugMessage(mes): 
             if main_config.get("EFlagEnableDebugMode") == True: 
@@ -191,19 +177,21 @@ if __name__ == "__main__":
 
         loadConfiguration()
         printMainMessage("Finding Python Executable..")
-        if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
-        pythonExecutable = pip_class.findPython()
         if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
-        if not os.path.exists(pythonExecutable):
-            printErrorMessage("Please install Python in order to run this bootstrap!")
-            input("> ")
-            sys.exit(0)
         else:
-            printMainMessage(f"Detected Python Executable: {pythonExecutable}")
-
+            if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
+            pythonExecutable = pip_class.findPython()
+        if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0): 
+            pip_class.pythonInstall()
+            pythonExecutable = pip_class.findPython()
+            pip_class.executable = pythonExecutable
+            if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0):
+                printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
+                input("> ")
+                sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
 
-        execute_command = f"unset HISTFILE && ulimit -n 2048 && cd {app_path}/ && {pythonExecutable} Main.py && exit"
+        execute_command = f"unset HISTFILE && cd {app_path}/ && {pythonExecutable} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -221,7 +209,18 @@ if __name__ == "__main__":
         applescript = f'''
         tell application "Terminal"
             activate
+            set existing_profile to false
+            repeat with s in settings sets
+                if name of s is equal to "OrangeBlox" then
+                    set existing_profile to true
+                    exit repeat
+                end if
+            end repeat
+            if existing_profile is false then
+                open POSIX file "{os.path.join(app_path, "BootstrapImages", f"OrangeBlox.terminal")}"
+            end if
             set py_window to do script "{execute_command}"
+            set current settings of py_window to settings set "OrangeBlox"
             try
                 set terminal_id to (id of py_window) as string
             on error err_message number err_num
@@ -374,10 +373,7 @@ if __name__ == "__main__":
                     if validated == True or main_config.get("EFlagDisableSecureHashSecurity") == True:
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
-                        try:
-                            result = subprocess.run(args=["osascript", "-e", applescript], check=True, capture_output=True)
-                        except Exception as e:
-                            printErrorMessage(f"An error was issued by subprocess: {str(e)}")
+                        result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0:
@@ -978,11 +974,11 @@ if __name__ == "__main__":
             os.system("title OrangeBlox 🍊")
             os.system("chcp 65001")
             printMainMessage(f"Loading Configuration File..")
-            with open(os.path.join(app_path, "Configuration.json"), "r", encoding="utf-8") as f:
-                try:
-                    main_config = json.load(f)
-                except Exception as e:
-                    loaded_json = False
+            with open(os.path.join(app_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
+            try: obfuscated_json = json.loads(obfuscated_json)
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+            main_config = obfuscated_json
+            loaded_json = True
 
             if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
                 if not main_config.get("EFlagDisableBootstrapCooldown") == True:
@@ -1014,15 +1010,20 @@ if __name__ == "__main__":
                             f.write(filtered_args)
 
             printMainMessage("Finding Python Executable..")
-            if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
-            pythonExecutable = pip_class.findPython()
             if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
-            if not os.path.exists(pythonExecutable):
-                printErrorMessage("Please install Python in order to run this bootstrap!")
-                input("> ")
-                sys.exit(0)
             else:
-                printMainMessage(f"Detected Python Executable: {pythonExecutable}")
+                if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
+                pythonExecutable = pip_class.findPython()
+            pip_class.executable = pythonExecutable
+            if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0): 
+                pip_class.pythonInstall()
+                pythonExecutable = pip_class.findPython()
+                pip_class.executable = pythonExecutable
+                if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0):
+                    printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
+                    input("> ")
+                    sys.exit(0)
+            printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
             try:
                 ended = False

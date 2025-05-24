@@ -29,6 +29,37 @@ if exist Apps\RunStudio.exe (
 if exist Apps\RunStudio32.exe (
     move /Y Apps\RunStudio32.exe OrangeBloxWindows\RunStudio32.exe
 )
+if exist Apps\_internal (
+    move /Y Apps\_internal OrangeBloxWindows\_internal
+)
+if exist Apps\OrangeBlox (
+    if exist Apps\OrangeBlox\OrangeBlox.exe (
+        move /Y Apps\OrangeBlox\OrangeBlox.exe OrangeBloxWindows\OrangeBlox.exe
+    )
+    if exist Apps\OrangeBlox\PlayRoblox.exe (
+        move /Y Apps\OrangeBlox\PlayRoblox.exe OrangeBloxWindows\PlayRoblox.exe
+    )
+    if exist Apps\OrangeBlox\RunStudio.exe (
+        move /Y Apps\OrangeBlox\RunStudio.exe OrangeBloxWindows\RunStudio.exe
+    )
+    if exist Apps\OrangeBlox\_internal (
+        move /Y Apps\OrangeBlox\_internal OrangeBloxWindows\_internal
+    )
+)
+if exist Apps\OrangeBlox32 (
+    if exist Apps\OrangeBlox32\OrangeBlox32.exe (
+        move /Y Apps\OrangeBlox32\OrangeBlox32.exe OrangeBloxWindows\OrangeBlox32.exe
+    )
+    if exist Apps\OrangeBlox32\PlayRoblox32.exe (
+        move /Y Apps\OrangeBlox32\PlayRoblox32.exe OrangeBloxWindows\PlayRoblox32.exe
+    )
+    if exist Apps\OrangeBlox32\RunStudio32.exe (
+        move /Y Apps\OrangeBlox32\RunStudio32.exe OrangeBloxWindows\RunStudio32.exe
+    )
+    if exist Apps\OrangeBlox32\_internal (
+        move /Y Apps\OrangeBlox32\_internal OrangeBloxWindows\_internal32
+    )
+)
 if "%2"=="signexe" (
     if exist OrangeBloxWindows\OrangeBlox.exe (
         signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\OrangeBlox.exe"
@@ -60,7 +91,7 @@ if not "%1"=="installer" (
 
 rem Cleaning Up
 powershell -c "Write-Host 'Rebuild OrangeBlox: Cleaning Up..' -ForegroundColor Green"
-rmdir /S /Q __pycache__ Apps\OrangeBlox.exe Apps\OrangeBlox32.exe Apps\PlayRoblox.exe Apps\PlayRoblox32.exe Apps\RunStudio.exe Apps\RunStudio32.exe build > NUL 2>&1
+rmdir /S /Q __pycache__ Apps\OrangeBlox.exe Apps\OrangeBlox32.exe Apps\PlayRoblox.exe Apps\PlayRoblox32.exe Apps\RunStudio.exe Apps\RunStudio32.exe Apps\OrangeBlox Apps\OrangeBlox32 build > NUL 2>&1
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Successfully rebuilt OrangeBlox!' -ForegroundColor Green"
 powershell -c "Write-Host 'Rebuild OrangeBlox: Check the Apps folder for the generated ZIP file! File: Apps\OrangeBloxWindows.zip' -ForegroundColor Green"

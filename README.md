@@ -45,8 +45,9 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
-2. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.3 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
-3. Python Modules: <br>
+2. [Windows 10.0.17134 (April 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13 (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
+3. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.3 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
+4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc requests plyer <br>
    Windows: pip install pypresence requests pywin32 plyer
 
@@ -66,12 +67,12 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `4157adee276734e322ba9a4c85e4ac5b` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `63c702f983aa462bab4af9ad54f34436` |
-| Installer (Install.py) | `d616a3262d4252876139f361740451f0` |
-| Bootstrap API (OrangeAPI.py) | `04caac38eed270bbe8e3f9e2e35f9d44` |
+| Main Bootstrap (Main.py) | `86e808f4ff7c2aa832b82f814f914db8` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a32c13a7dc33ccb1787d0db78de3552c` |
+| Installer (Install.py) | `493e81980ba83d28f8ebb9f864845d86` |
+| Bootstrap API (OrangeAPI.py) | `0674debf619a51768df8b9cf783aff6e` |
 | Discord Presence Handler (DiscordPresenceHandler.py) | `4750ac894f5154d8be739f5f662f6165` |
-| Pip Handler (PipHandler.py) | `9020b79a78e958a5622d68358b6d5ba7` |
+| Pip Handler (PipHandler.py) | `20952cb60bab3a8c5249cfa7928ced6f` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" style="margin-bottom: -4px;" alt="@EfazDev 🍊"></a>

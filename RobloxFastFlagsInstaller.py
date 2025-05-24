@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.1.0
+# v2.1.1
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -19,6 +19,7 @@ import hashlib
 import urllib.request
 import re
 import sys
+import zlib
 
 main_os = platform.system()
 orangeblox_mode = False
@@ -86,6 +87,9 @@ if sys.version_info >= (3, 8, 0):
         "onPlayTestDisconnected",
         "onTelemetryLog",
         "onClosingGame",
+        "onGameLoaded",
+        "onLostConnection",
+        "onWatchdogReconnection",
         "onTeamCreateConnect",
         "onTeamCreateDisconnect",
         "onCloudPlugins",
@@ -113,26 +117,27 @@ def printLog(mes):
 def makedirs(a): os.makedirs(a,exist_ok=True)
 
 if os.path.exists("Main.py") and os.path.exists("PipHandler.py") and os.path.exists("OrangeAPI.py"): orangeblox_mode = True
-fast_flag_installer_version = "2.1.0"
+fast_flag_installer_version = "2.1.1"
 sys.dont_write_bytecode = True
 
 class pip:
     executable = None
     debug = False
-    def __init__(self, command: list=[], executable: str=None, debug: bool=False):
+    def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, opposite: bool=False):
         import sys
         import os
         import subprocess
         self.debug = debug==True
-        if type(executable) is str:
-            if os.path.isfile(executable):
-                self.executable = executable
-            else:
-                self.executable = sys.executable
+        if opposite == True:
+            self.executable = self.findPython(opposite_arch=opposite)
         else:
-            self.executable = sys.executable
-        if type(command) is list and len(command) > 0: subprocess.check_call([self.executable, "-m", "pip"] + command)
+            if type(executable) is str:
+                if os.path.isfile(executable): self.executable = executable
+                else: self.executable = self.findPython(opposite_arch=opposite) if find == True else sys.executable
+            else: self.executable = self.findPython(opposite_arch=opposite) if find == True else sys.executable
+        if type(command) is list and len(command) > 0: self.ensurePip(); subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: typing.List[str]):
+        self.ensurePip()
         import subprocess
         res = {}
         generated_list = []
@@ -148,6 +153,7 @@ class pip:
                 return {"success": False, "message": str(e)}
         return res
     def uninstall(self, packages: typing.List[str]):
+        self.ensurePip()
         import subprocess
         res = {}
         generated_list = []
@@ -162,30 +168,55 @@ class pip:
                 res[i] = {"success": False}
         return res
     def installed(self, packages: typing.List[str]=[], boolonly: bool=False):
+        self.ensurePip()
         import subprocess
-        sub = subprocess.run([self.executable, "-m", "pip", "list"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        line_splits = sub.stdout.decode().splitlines()[2:]
-        installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
-        installed_checked = {}
-        all_installed = True
-        if len(packages) == 0:
-            return installed_packages
-        elif len(packages) == 1:
-            return packages[0].lower() in installed_packages
-        else:
-            for i in packages:
-                try:
-                    if i.lower() in installed_packages:
-                        installed_checked[i] = True
-                    else:
+        import importlib.metadata
+        if self.isSameRunningPythonExecutable() and not len(packages) == 0:
+            def che(a):
+                try: importlib.metadata.version(a); return True
+                except importlib.metadata.PackageNotFoundError: return False
+            if len(packages) == 1:
+                return che(packages[0].lower())
+            else:
+                installed_checked = {}
+                all_installed = True
+                for i in packages:
+                    try:
+                        if che(i.lower()):
+                            installed_checked[i] = True
+                        else:
+                            installed_checked[i] = False
+                            all_installed = False
+                    except Exception as e:
                         installed_checked[i] = False
                         all_installed = False
-                except Exception as e:
-                    installed_checked[i] = False
-                    all_installed = False
-            installed_checked["all"] = all_installed
-            if boolonly == True: return installed_checked["all"]
-            return installed_checked
+                installed_checked["all"] = all_installed
+                if boolonly == True: return installed_checked["all"]
+                return installed_checked
+        else:
+            sub = subprocess.run([self.executable, "-m", "pip", "list"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            line_splits = sub.stdout.decode().splitlines()[2:]
+            installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
+            installed_checked = {}
+            all_installed = True
+            if len(packages) == 0:
+                return installed_packages
+            elif len(packages) == 1:
+                return packages[0].lower() in installed_packages
+            else:
+                for i in packages:
+                    try:
+                        if i.lower() in installed_packages:
+                            installed_checked[i] = True
+                        else:
+                            installed_checked[i] = False
+                            all_installed = False
+                    except Exception as e:
+                        installed_checked[i] = False
+                        all_installed = False
+                installed_checked["all"] = all_installed
+                if boolonly == True: return installed_checked["all"]
+                return installed_checked
     def download(self, packages: typing.List[str], repository_mode: bool=False):
         import subprocess
         import os
@@ -222,6 +253,7 @@ class pip:
                     down_path = os.path.join(current_path_location, '-'.join(generated_list) + "_download")
                     if os.path.isdir(down_path): shutil.rmtree(down_path, ignore_errors=True)
                     os.makedirs(down_path)
+                    self.ensurePip()
                     subprocess.check_call([self.executable, "-m", "pip", "download", "--no-binary", ":all:"] + generated_list, stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL, cwd=down_path)
                     a = []
                     for e in os.listdir(down_path): a.append(os.path.join(down_path, e))
@@ -242,6 +274,8 @@ class pip:
                 links = {}
                 for i in generated_list:
                     urll = f"https://pypi.org/pypi/{i}/json"
+                    if self.getIfConnectedToInternet() == False:
+                        return {"success": False}
                     with urllib.request.urlopen(urll) as response:
                         data = json.load(response)
                         info = data["info"]
@@ -332,6 +366,9 @@ class pip:
         ma_os = platform.system()
         ma_arch = platform.architecture()
         ma_processor = platform.machine()
+        if self.getIfConnectedToInternet() == False:
+            if self.debug == True: print("Failed to download Python installer.")
+            return
         if version == "": version = self.getLatestPythonVersion(beta=beta)
         if not version:
             if self.debug == True: print("Failed to download Python installer.")
@@ -398,6 +435,76 @@ class pip:
                 return importlib.import_module(module_name)
             except Exception as e:
                 raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+    def installLocalPythonCertificates(self):
+        import subprocess
+        import platform
+        if platform.system() == "Darwin":
+            s = subprocess.run(f"""
+        #!/bin/sh
+                                
+        {self.executable} << "EOF"
+        # install_certifi.py
+        #
+        # sample script to install or update a set of default Root Certificates
+        # for the ssl module.  Uses the certificates provided by the certifi package:
+        #       https://pypi.org/project/certifi/
+        import os
+        import os.path
+        import ssl
+        import stat
+        import subprocess
+        import sys
+        STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+                    | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+                    | stat.S_IROTH |                stat.S_IXOTH )
+        def main():
+        openssl_dir, openssl_cafile = os.path.split(
+            ssl.get_default_verify_paths().openssl_cafile)
+        print(" -- pip install --upgrade certifi")
+        subprocess.check_call([sys.executable,
+            "-E", "-s", "-m", "pip", "install", "--upgrade", "certifi"])
+        import certifi
+        # change working directory to the default SSL directory
+        os.chdir(openssl_dir)
+        relpath_to_certifi_cafile = os.path.relpath(certifi.where())
+        print(" -- removing any existing file or link")
+        try:
+            os.remove(openssl_cafile)
+        except FileNotFoundError:
+            pass
+        print(" -- creating symlink to certifi certificate bundle")
+        os.symlink(relpath_to_certifi_cafile, openssl_cafile)
+        print(" -- setting permissions")
+        os.chmod(openssl_cafile, STAT_0o775)
+        print(" -- update complete")
+        if __name__ == '__main__':
+        main()
+        EOF""", shell=True, stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)
+            if not (s.returncode == 0) and self.debug == True: print(f"Unable to install local python certificates!")
+    def ensurePip(self):
+        import subprocess
+        import tempfile
+        if not self.executable: return False
+        check_for_pip_pro = subprocess.run([self.executable, "-m", "pip"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if check_for_pip_pro.returncode == 0:
+            return True
+        else:
+            if self.getIfConnectedToInternet() == True:
+                if self.debug == True: print(f"Downloading pip from pypi..")
+                with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as temp_file: pypi_download_path = temp_file.name
+                download_res = subprocess.run(["curl", "-o", pypi_download_path, "https://bootstrap.pypa.io/get-pip.py"], stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)            
+                if download_res.returncode == 0:
+                    if self.debug == True: print(f"Successfully downloaded pip! Installing to Python..")
+                    install_to_py = subprocess.run([self.executable, pypi_download_path], stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)
+                    if install_to_py.returncode == 0:
+                        if self.debug == True: print(f"Successfully installed pip to Python executable!")
+                        self.installLocalPythonCertificates()
+                        return True
+                    else: return False
+                else: return False
+            else:
+                if self.debug == True: print(f"Unable to download pip due to no internet access.")
+                return False
     def copyTreeWithMetadata(self, src: str, dst: str, symlinks=False, ignore=None, dirs_exist_ok=False, ignore_if_not_exist=False):
         import shutil
         import os
@@ -626,6 +733,7 @@ class pip:
                         pip_class_for_py = pip(executable=path)
                         founded_pythons.append(pip_class_for_py)
         return founded_pythons
+pip_class = pip()
 class plist:
     def readPListFile(self, path: str):
         import os
@@ -688,6 +796,7 @@ class Main:
         "onRobloxVoiceChatLeft",
         "onRobloxAudioDeviceStopRecording",
         "onRobloxAudioDeviceStartRecording",
+        "onWatchdogReconnection"
     ]
     robloxStudioInstanceEventNames = [
         "onRobloxExit", 
@@ -717,13 +826,16 @@ class Main:
         "onRobloxAppStart",
         "onOtherRobloxLog",
         "onClosingGame",
+        "onGameLoaded",
+        "onLostConnection",
         "onTeamCreateConnect",
         "onTeamCreateDisconnect",
         "onCloudPlugins",
         "onPluginUnloading",
         "onRobloxSaved",
         "onNewStudioLaunching",
-        "onStudioInstallerLaunched"
+        "onStudioInstallerLaunched",
+        "onWatchdogReconnection"
     ]
     robloxInstanceEventInfo = {
         # 0 = Safe, 1 = Caution, 2 = Warning, 3 = Dangerous
@@ -764,7 +876,9 @@ class Main:
         "onGameJoined": {"message": "Allow detecting when Roblox loads a game fully", "level": 0, "robloxEvent": True}, 
         "onGameLeaving": {"message": "Allow detecting when you leave a game", "level": 0, "robloxEvent": True}, 
         "onGameDisconnected": {"message": "Allow detecting when you disconnect from a game", "level": 0, "robloxEvent": True},
+        "onWatchdogReconnection": {"message": "Allow detecting when watchdog was reconnected", "level": 0, "robloxEvent": True},
         
+        # Roblox Studio Permissions
         "onPlayTestStart": {"message": "Allow detecting when you started a playtest", "level": 0, "robloxEvent": True},
         "onStudioLoginSuccess": {"message": "Allow detecting when you have logged into studio successfully", "level": 1, "robloxEvent": True},
         "onOpeningGame": {"message": "Allow detecting when you loaded a place/document", "level": 1, "robloxEvent": True},
@@ -775,6 +889,8 @@ class Main:
         "onPlayTestDisconnected": {"message": "Allow detecting when you disconnect from playtesting.", "level": 1, "robloxEvent": True},
         "onTelemetryLog": {"message": "Allow detecting studio log information.", "level": 2, "robloxEvent": True},
         "onClosingGame": {"message": "Allow detecting when you close a place/document", "level": 1, "robloxEvent": True},
+        "onGameLoaded": {"message": "Allow detecting when you fully load a game", "level": 1, "robloxEvent": True},
+        "onLostConnection": {"message": "Allow detecting when you disconnect due to lost connection in a Studio server", "level": 1, "robloxEvent": True},
         "onCloudPlugins": {"message": "Allow detecting loading plugins from the web.", "level": 1, "robloxEvent": True},
         "onTeamCreateConnect": {"message": "Allow detecting when you connect to a team connect server.", "level": 1, "robloxEvent": True},
         "onTeamCreateDisconnect": {"message": "Allow detecting when you disconnect to a team connect server.", "level": 1, "robloxEvent": True},
@@ -899,108 +1015,109 @@ class Main:
         "extracontent-models.zip": "/ExtraContent/models",
         "extracontent-textures.zip": "/ExtraContent/textures"
     }
-    
+    disconnect_code_list = {
+        "103": "The Roblox experience you are trying to join is currently not available.",
+        "256": "Developer has shut down all game servers or game server has shut down for other reasons, please reconnect.",
+        "260": "There was a problem receiving data, please reconnect.",
+        "261": "Error while receiving data, please reconnect.",
+        "262": "There was a problem sending data, please reconnect.",
+        "264": "Same account launched experience from different device. Leave the experience from the other device and try again.",
+        "266": "Your connection timed out. Check your internet connection and try again.",
+        "267": "You were kicked from this experience.",
+        "268": "You have been kicked due to unexpected client behavior.",
+        "271": "You have been kicked by server, please reconnect.",
+        "272": "Lost connection due to an error.",
+        "273": "Same account launched experience from different device. Reconnect if you prefer to use this device.",
+        "274": "The experience's developer has temporarily shut down the experience server. Please try again.",
+        "275": "Roblox has shut down the server for maintenance. Please try again.",
+        "277": "Please check your internet connection and try again.",
+        "278": "You were disconnected for being idle 20 minutes.",
+        "279": "Failed to connect to the Game. (ID = 17: Connection attempt failed.)",
+        "280": "Your version of Roblox may be out of date. Please update Roblox and try again.",
+        "282": "Disconnected from game, please reconnect.",
+        "284": "A fatal error occurred while running this game.",
+        "285": "Client/User issued disconnect.",
+        "286": "Your device does not have enough memory to run this experience. Exit back to the app.",
+        "291": "Player has been removed from the DataModel.",
+        "292": "Your device's memory is low. Leaving now will preserve your state and prevent Roblox from crashing.",
+        "517": "This game is currently unavailable. Please try again later.",
+        "522": "The user you attempted to join has left the game.",
+        "523": "The status of the experience has changed and you no longer have access. Please try again later.",
+        "524": "You do not have permission to join this experience.",
+        "525": "The server is currently busy. Please try again.",
+        "528": "Your party is too large to join this experience. Try joining a different experience.",
+        "529": "A Http error has occurred. Please close the client and try again.",
+        "533": "Your privacy settings prevent you from joining this server.",
+        "600": "You were banned from this experience by the creator.",
+        "610": "Unable to join game instance.",
+        "770": "Game's root place is not active."
+    }
+
     # System Functions 
     class WatchdogLineResponse():
         code: int=None
-        def __init__(self, code: int): self.code = code
-        class EndRoblox(): code=0
-        class EndWatchdog(): code=1
+        data: typing.Any=None
+        def __init__(self, code: int, data: typing.Any): self.code = code; self.data = data
+        class EndRoblox(): code=0; data=None
+        class EndWatchdog(): code=1; data=None
+        class ReconnectWatchdog(): code=2; data=None
+        class NormalResponse(): code=3; data=None
     class InvalidRobloxHandlerException(Exception):
         def __init__(self): super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Main class!")
     class RobloxInstance():
-        events = []
+        __events__ = []
         pid = ""
         watchdog_started = False
         ended_process = False
         main_handler = None
-        main_log_file = ""
+        log_file = ""
         debug_mode = False
         disconnect_cooldown = False
-        requested_end_tracking = False
-        disconnect_code_list = {
-            "103": "The Roblox experience you are trying to join is currently not available.",
-            "256": "Developer has shut down all game servers or game server has shut down for other reasons, please reconnect.",
-            "260": "There was a problem receiving data, please reconnect.",
-            "261": "Error while receiving data, please reconnect.",
-            "262": "There was a problem sending data, please reconnect.",
-            "264": "Same account launched experience from different device. Leave the experience from the other device and try again.",
-            "266": "Your connection timed out. Check your internet connection and try again.",
-            "267": "You were kicked from this experience.",
-            "268": "You have been kicked due to unexpected client behavior.",
-            "271": "You have been kicked by server, please reconnect.",
-            "272": "Lost connection due to an error.",
-            "273": "Same account launched experience from different device. Reconnect if you prefer to use this device.",
-            "274": "The experience's developer has temporarily shut down the experience server. Please try again.",
-            "275": "Roblox has shut down the server for maintenance. Please try again.",
-            "277": "Please check your internet connection and try again.",
-            "278": "You were disconnected for being idle 20 minutes.",
-            "279": "Failed to connect to the Game. (ID = 17: Connection attempt failed.)",
-            "280": "Your version of Roblox may be out of date. Please update Roblox and try again.",
-            "282": "Disconnected from game, please reconnect.",
-            "284": "A fatal error occurred while running this game.",
-            "285": "Client/User issued disconnect.",
-            "286": "Your device does not have enough memory to run this experience. Exit back to the app.",
-            "291": "Player has been removed from the DataModel.",
-            "292": "Your device's memory is low. Leaving now will preserve your state and prevent Roblox from crashing.",
-            "517": "This game is currently unavailable. Please try again later.",
-            "522": "The user you attempted to join has left the game.",
-            "523": "The status of the experience has changed and you no longer have access. Please try again later.",
-            "524": "You do not have permission to join this experience.",
-            "525": "The server is currently busy. Please try again.",
-            "528": "Your party is too large to join this experience. Try joining a different experience.",
-            "529": "A Http error has occurred. Please close the client and try again.",
-            "533": "Your privacy settings prevent you from joining this server.",
-            "600": "You were banned from this experience by the creator.",
-            "610": "Unable to join game instance.",
-            "770": "Game's root place is not active."
-        }
-        event_names = None
+        end_tracking = False
+        connected_to_game = False
+        validating_disconnect = False
         created_mutex = False
         is_studio = False
+        loading_existing_logs = False
         await_log_creation = False
         await_log_creation_attempts = 0
         one_threaded = True
-        windows_roblox_starter_launched_roblox = False
-        def __init__(self, main_handler, pid: str, log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_log_creation: bool=False, created_mutex: bool=None, studio: bool=False, one_threaded: bool=True):
+        roblox_starter_launched = False
+        daemon = False
+
+        def __init__(self, main_handler, pid: str="", log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_log_creation: bool=False, created_mutex: bool=False, studio: bool=False, one_threaded: bool=True, daemon: bool=False, start_watchdog: bool=True):
             if type(main_handler) is Main:
                 self.main_handler = main_handler
-                self.pid = pid
-                self.debug_mode = debug_mode
-                self.allow_other_logs = allow_other_logs
-                self.created_mutex = created_mutex
-                self.is_studio = studio
-                self.await_log_creation = await_log_creation
-                self.one_threaded = one_threaded
-                if studio == True:
-                    self.event_names = main_handler.robloxStudioInstanceEventNames
-                else:
-                    self.event_names = main_handler.robloxInstanceEventNames
-                if log_file == "" or os.path.exists(log_file):
-                    self.main_log_file = log_file
-                self.startActivityTracking()
-            else:
-                raise Main.InvalidRobloxHandlerException()
+                if pid == "":
+                    if studio == True: self.pid = self.main_handler.getLatestOpenedRobloxStudioPid()
+                    else: self.pid = self.main_handler.getLatestOpenedRobloxPid()
+                else: self.pid = pid
+                self.debug_mode = debug_mode==True
+                self.allow_other_logs = allow_other_logs==True
+                self.created_mutex = created_mutex==True
+                self.is_studio = studio==True
+                self.await_log_creation = await_log_creation==True
+                self.one_threaded = one_threaded==True
+                self.daemon = daemon==True
+                if log_file != "" and os.path.exists(log_file): self.log_file = log_file
+                if start_watchdog == True: self.startActivityTracking()
+            else: raise Main.InvalidRobloxHandlerException()
         def awaitRobloxClosing(self):
             while True:
                 time.sleep(1)
-                if not self.pid:
-                    self.ended_process = True
-                    break
-                if (self.main_handler.getIfRobloxIsOpen(pid=self.pid) == False) or self.requested_end_tracking == True or (self.ended_process == True):
-                    self.ended_process = True
-                    break
+                if not self.pid: self.ended_process = True; break
+                if (self.main_handler.getIfRobloxIsOpen(pid=self.pid) == False) or self.end_tracking == True or (self.ended_process == True): self.ended_process = True; break
         def setRobloxEventCallback(self, eventName: robloxInstanceTotalLiteralEventNames, eventCallback: typing.Callable[[typing.Any], None]):
             if callable(eventCallback):
-                if eventName in self.event_names:
-                    for i in self.events:
-                        if i and i["name"] == eventName: self.events.remove(i)
-                    self.events.append({"name": eventName, "callback": eventCallback})
+                if eventName in self.getAvailableEventNames():
+                    for i in self.__events__:
+                        if i and i["name"] == eventName: self.__events__.remove(i)
+                    self.__events__.append({"name": eventName, "callback": eventCallback})
                     if self.watchdog_started == False: self.startActivityTracking()
         def addRobloxEventCallback(self, eventName: robloxInstanceTotalLiteralEventNames, eventCallback: typing.Callable[[typing.Any], None]):
             if callable(eventCallback):
-                if eventName in self.event_names:
-                    self.events.append({"name": eventName, "callback": eventCallback})
+                if eventName in self.getAvailableEventNames():
+                    self.__events__.append({"name": eventName, "callback": eventCallback})
                     if self.watchdog_started == False: self.startActivityTracking()
         def getWindowsOpened(self) -> "list[Main.RobloxWindow]":
             if self.pid and not (self.pid == "") and self.pid.isnumeric():
@@ -1010,9 +1127,9 @@ class Main:
                             import win32gui # type: ignore
                             import win32process # type: ignore
                         except Exception as e:
-                            pip().install(["pywin32"])
-                            win32gui = pip().importModule("win32gui")
-                            win32process = pip().importModule("win32process")
+                            pip_class.install(["pywin32"])
+                            win32gui = pip_class.importModule("win32gui")
+                            win32process = pip_class.importModule("win32process")
                         system_windows = []
                         def callback(hwnd, _):
                             if win32gui.IsWindowVisible(hwnd):
@@ -1028,8 +1145,8 @@ class Main:
                         try:
                             from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
                         except Exception as e:
-                            pip().install(["pyobjc-framework-Quartz"])
-                            Quartz = pip().importModule("Quartz")
+                            pip_class.install(["pyobjc-framework-Quartz"])
+                            Quartz = pip_class.importModule("Quartz")
                             CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly = Quartz.CGWindowListCopyWindowInfo, Quartz.kCGWindowListOptionOnScreenOnly
                         system_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, 0)
                         app_windows = [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(self.pid)]
@@ -1048,32 +1165,31 @@ class Main:
             else:
                 return []
         def clearRobloxEventCallbacks(self, eventName: robloxInstanceTotalLiteralEventNames=""):
-            if eventName == "":
-                self.events = []
+            if eventName == "": self.__events__ = []
             else:
-                for i in self.events:
-                    if i and i["name"] == eventName: self.events.remove(i)
-        def requestThreadClosing(self):
-            self.requested_end_tracking = True
+                for i in self.__events__:
+                    if i and i["name"] == eventName: self.__events__.remove(i)
+        def requestThreadClosing(self): self.end_tracking = True
+        def endInstance(self): 
+            if self.is_studio == True: self.main_handler.endRobloxStudio(self.pid)
+            else: self.main_handler.endRoblox(self.pid)
         def newestFile(self, path):
             files = os.listdir(path)
             paths = []
             for basename in files:
-                if self.is_studio == False and "Player" in basename:
-                    paths.append(os.path.join(path, basename))
-                elif self.is_studio == True and "Studio" in basename:
-                    paths.append(os.path.join(path, basename))
+                if self.is_studio == False and "Player" in basename: paths.append(os.path.join(path, basename))
+                elif self.is_studio == True and "Studio" in basename: paths.append(os.path.join(path, basename))
             if len(paths) > 0: return max(paths, key=os.path.getctime)
+        def getAvailableEventNames(self):
+            if self.is_studio == True: return self.main_handler.robloxStudioInstanceEventNames
+            else: return self.main_handler.robloxInstanceEventNames
         def fileCreatedRecently(self, file_path):
             try:
                 creation_time = os.path.getctime(file_path)
                 current_time = time.time()
-                if (current_time - creation_time) <= 10:
-                    return True
-                else:
-                    return False
-            except:
-                return False
+                if (current_time - creation_time) <= 10: return True
+                else: return False
+            except: return False
         def getLatestLogFile(self):
             logs_path = None
             if main_os == "Darwin": logs_path = os.path.join(user_folder, "Library", "Logs", "Roblox")
@@ -1116,9 +1232,8 @@ class Main:
                 return main_log
         def cleanLogs(self):
             if self.debug_mode == True: printDebugMessage(f"Cleaning logs from session..")
-            with open(self.main_log_file, "r", encoding="utf-8", errors="ignore") as file:
-                lines = file.readlines()
-            with open(self.main_log_file, "w", encoding="utf-8", errors="ignore") as write_file:
+            with open(self.log_file, "r", encoding="utf-8", errors="ignore") as file: lines = file.readlines()
+            with open(self.log_file, "w", encoding="utf-8", errors="ignore") as write_file:
                 end_lines = []
                 current_log = ""
                 for line in lines:
@@ -1132,6 +1247,828 @@ class Main:
                             current_log = filtered_line
                     if should_remove == False: end_lines.append(line)
                 write_file.writelines(end_lines)
+        def handleLogLine(self, line=""):
+            if self.is_studio == True:
+                if "[FLog::Output] LoadClientSettingsFromLocal" in line:
+                    self.submitEvent(eventName="onLoadedFFlags", data=line, isLine=True)
+                elif "[FLog::Output] ! Joining game" in line:
+                    def generate_arg():
+                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+\.\d+\.\d+\.\d+)"
+                        match = re.search(pattern, line)
+                        if match:
+                            jobId = match.group(1)
+                            placeId = match.group(2)
+                            ip_address = match.group(3)
+                            return {
+                                "jobId": jobId,
+                                "placeId": placeId,
+                                "ip": ip_address
+                            }   
+                        return None
+                    
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onPlayTestStart", data=generated_data, isLine=False)
+                elif "[FLog::Output] Web returned cloud plugins:" in line:
+                    def generate_arg():
+                        match = re.search(r'\[([\d,\s]+)\]', line)
+                        if not match:
+                            return None
+                        else:
+                            return list(map(int, match.group(1).split(',')))
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onCloudPlugins", data=generated_data, isLine=False)
+                elif "[FLog::Output] UpdateUtils::requestInstallerUpdate - Launching Installer for update:" in line:
+                    self.submitEvent(eventName="onStudioInstallerLaunched", data=line, isLine=True)
+                elif "[FLog::Output] Connecting to UDMUX server " in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Output\] Connecting to UDMUX server (?P<udmux_address>[^\s]+):(?P<udmux_port>[^\s]+), and RCC server (?P<rcc_address>[^\s]+):(?P<rcc_port>[^\s]+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "connected_address": data.get("udmux_address"),
+                            "connected_port": int(data.get("udmux_port")),
+                            "connected_rcc_address": data.get("rcc_address"),
+                            "connected_rcc_port": int(data.get("rcc_port"))
+                        }
+                        return result
+                    
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
+                        self.submitEvent(eventName="onGameJoined", data={
+                            "ip": generated_data["connected_address"],
+                            "port": generated_data["connected_port"]
+                        }, isLine=False)
+                elif "[FLog::Output] About to exit the application, doing cleanup." in line:
+                    if self.roblox_starter_launched == False:
+                        self.submitEvent(eventName="onRobloxExit", data=line)
+                        self.submitEvent(eventName="onRobloxSharedLogLaunch", data=line)
+                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
+                    else:
+                        self.submitEvent(eventName="onRobloxLauncherDestroyed", data=line)
+                elif "[FLog::Output] [BloxstrapRPC]" in line:
+                    def generate_arg():
+                        json_start_index = line.find('[BloxstrapRPC]') + len('[BloxstrapRPC] ')
+                        if json_start_index == -1:
+                            return None
+                        json_str = line[json_start_index:].strip()
+                        try:
+                            return json.loads(json_str)
+                        except json.JSONDecodeError as e:
+                            if self.debug_mode == True: printDebugMessage(str(e))
+                            return None
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
+                elif "RobloxAudioDevice::StopRecording" in line:
+                    self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
+                elif "RobloxAudioDevice::StartRecording" in line:
+                    self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
+                elif "[FLog::Output]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Output]') + len('[FLog::Output] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLog", data=generated_data, isLine=False)
+                elif "[FLog::Error] Redundant Flag ID:" in line:
+                    def generate_arg():
+                        pattern = r"Redundant Flag ID:\s+([\w\d_]+)"
+                        match = re.search(pattern, line)
+                        if not match:
+                            return None
+                        else:
+                            result = {
+                                "flag_id": match.group(1)
+                            }
+                            return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onExpiredFlag", data=generated_data, isLine=False)
+                elif "[FLog::Error]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Error]') + len('[FLog::Error] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameError", data=generated_data, isLine=False)
+                elif "[FLog::Warning]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameWarning", data=generated_data, isLine=False)
+                elif "[FLog::StudioKeyEvents] open place" in line:
+                    def generate_arg():
+                        pattern = r"identifier\s*=\s*(\/[^\)\s]+|\d+)"
+                        match = re.search(pattern, line)
+                        if not match:
+                            pattern = r"(?:[a-zA-Z]:\\|\/)(?:[^\/\\\n]+[\/\\])*[^\/\\\n]+"
+                            match = re.findall(pattern, line)
+                            if len(match) < 1:
+                                return None
+                            else:
+                                result = {
+                                    "place_identifier": match[0]
+                                }
+                                return result
+                        else:
+                            result = {
+                                "place_identifier": match.group(1)
+                            }
+                            return result
+                    
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onOpeningGame", data=generated_data, isLine=False)
+                elif "[FLog::RobloxIDEDoc] RobloxIDEDoc::doClose" in line:
+                    self.submitEvent(eventName="onClosingGame", data=line, isLine=True); self.connected_to_game = False
+                elif "[telemetryLog] TaskNames: OpenPlaceSuccess" in line:
+                    self.submitEvent(eventName="onGameLoaded", data=line, isLine=True); self.connected_to_game = True
+                elif "[FLog::TeamCreateManager] Disconnected due to Lost connection to the game server, please reconnect" in line:
+                    self.submitEvent(eventName="onLostConnection", data=line, isLine=True); self.connected_to_game = False
+                elif "[FLog::StudioKeyEvents] starting Qt main event loop" in line:
+                    self.submitEvent(eventName="onRobloxAppStart", data=line, isLine=True)
+                elif "[FLog::StudioKeyEvents] login [end][success]" in line:
+                    self.submitEvent(eventName="onStudioLoginSuccess", data=line, isLine=True)
+                elif "[FLog::StudioKeyEvents] launching new studio instance" in line:
+                    self.submitEvent(eventName="onNewStudioLaunching", data=line, isLine=True)
+                elif "[FLog::StudioKeyEvents] team create connect (connection accepted)" in line:
+                    self.submitEvent(eventName="onTeamCreateConnect", data=line, isLine=True)
+                elif "[FLog::StudioKeyEvents] team create disconnect" in line:
+                    self.submitEvent(eventName="onTeamCreateDisconnect", data=line, isLine=True)
+                elif "[DFLog::HttpTraceError] HttpResponse(" in line:
+                    def generate_arg():
+                        try:
+                            pattern = re.compile(
+                                r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z),'
+                                r'(?P<elapsed_time>\d+\.\d+),'
+                                r'(?P<unknown>\w+),'
+                                r'(?P<unknown2>\d+)\s*\[(?P<log_level>[^\]]+)\]\s*'
+                                r'(?P<http_response>HttpResponse\(#\d+ 0x[\da-fA-F]+\))\s*'
+                                r'time:(?P<response_time>\d+\.\d+)ms\s*\(net:(?P<net_time>\d+\.\d+)ms\s*'
+                                r'callback:(?P<callback_time>\d+\.\d+)ms\s*timeInRetryQueue:(?P<retry_queue_time>\d+\.\d+)ms\)\s*'
+                                r'error:(?P<error_code>\d+)\s*message:(?P<error_message>[^\s]+):\s*(?P<error_details>.+)\s*'
+                                r'ip:\s*external:(?P<external_ip>\d+)\s*'
+                                r'numberOfTimesRetried:(?P<retries>\d+)'
+                            )
+
+                            match = pattern.match(line)
+                            data = match.groupdict()
+                            if match:
+                                return {
+                                    "numberOfTimesRetried": data.get("numberOfTimesRetried"),
+                                    "url": re.compile(r'DnsResolve\s+url:\s*\{\s*"(https://[^"]+)"\s*\}').search(data.get("error_details")).group(1),
+                                    "error_code": data.get("error_code"),
+                                    "callback_time": data.get("callback_time"),
+                                    "response_time": data.get("response_time"),
+                                    "http_response": data.get("http_response")
+                                }
+                            else:
+                                return None
+                        except Exception as e:
+                            return None                 
+                    generated_data = generate_arg()
+                    if generated_data: self.submitEvent(eventName="onHttpResponse", data=generated_data, isLine=False)
+                    else: self.submitEvent(eventName="onHttpResponse", data=line, isLine=True)
+                elif "[FLog::BetaFeatures] Applying settings for beta feature id" in line:
+                    def generate_arg():
+                        pattern = r"beta feature id (\w+)"
+                        match = re.search(pattern, line)
+                        if not match:
+                            return None
+                        else:
+                            result = {
+                                "feature_id": match.group(1)
+                            }
+                            return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onApplyingFeature", data=generated_data, isLine=False)
+                elif "[FLog::ClientRunInfo] The channel is " in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "channel": data.get("channel")
+                        }
+                        if result["channel"] == "production": result["channel"] = "LIVE"
+                        return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onRobloxChannel", data=generated_data, isLine=False)
+                        self.roblox_starter_launched = True
+                elif "[FLog::Audio] InputDevice" in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Audio\] InputDevice (?P<device_index>\d+): (?P<device_name>[^()]+)\(\{(?P<device_id>[0-9a-fA-F-]+)\}\) (?P<connections>\d+/\d+/\d+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "device_name": data.get("device_name"),
+                            "device_uuid": data.get("device_id"),
+                            "device_index": int(data.get("device_index")),
+                            "connection_divisons": data.get("connections")
+                        }
+                        return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
+                elif "[FLog::PluginLoadingEnhanced] Running plugin" in line:
+                    def generate_arg():
+                        pattern = r"plugin '([\w\d_]+)'\s+in datamodel (\w+)"
+                        match = re.search(pattern, line)
+                        if not match:
+                            return None
+                        else:
+                            result = {
+                                "plugin_id": match.group(1),
+                                "datamodel": match.group(2),
+                            }
+                            return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onPluginLoading", data=generated_data, isLine=False)
+                elif "[FLog::PluginLoadingEnhanced] Unloading plugin" in line:
+                    def generate_arg():
+                        pattern = r"plugin '([\w\d_]+)'\s+in datamodel (\w+)"
+                        match = re.search(pattern, line)
+                        if not match:
+                            return None
+                        else:
+                            result = {
+                                "plugin_id": match.group(1),
+                                "datamodel": match.group(2),
+                            }
+                            return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onPluginUnloading", data=generated_data, isLine=False)
+                elif "[FLog::StudioTimingLog] ======== Studio Publish Place Times =======" in line:
+                    self.submitEvent(eventName="onRobloxPublishing", data=line, isLine=True)
+                elif "[FLog::StudioTimingLog] ======== Studio Save To Cloud Times =======" in line:
+                    self.submitEvent(eventName="onRobloxSaved", data=line, isLine=True)
+                elif "RBXCRASH:" in line or "[FLog::CrashReportLog] Terminated" in line:
+                    self.submitEvent(eventName="onRobloxCrash", data=line, isLine=True)
+                elif "[FLog::Network] Client:Disconnect" in line:
+                    if self.disconnect_cooldown == False:
+                        self.disconnect_cooldown = True
+                        def b():
+                            time.sleep(3)
+                            self.disconnect_cooldown = False
+                        threading.Thread(target=b, daemon=True).start()
+                        self.submitEvent(eventName="onPlayTestDisconnected", data=None, isLine=False)
+                elif "[telemetryLog]" in line:
+                    def generate_arg():
+                        output = line.find('[telemetryLog]') + len('[telemetryLog] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onTelemetryLog", data=generated_data, isLine=False)
+                else:
+                    self.submitEvent(eventName="onOtherRobloxLog", data=line, isLine=True)
+            else:
+                if "[FLog::RobloxStarter] RobloxStarter destroyed" in line:
+                    if self.roblox_starter_launched == False:
+                        self.submitEvent(eventName="onRobloxExit", data=line)
+                        self.submitEvent(eventName="onRobloxSharedLogLaunch", data=line)
+                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
+                    else:
+                        self.submitEvent(eventName="onRobloxLauncherDestroyed", data=line)
+                elif "[FLog::UpdateController] Update check thread: updateRequired FALSE" in line:
+                    self.submitEvent(eventName="onRobloxPassedUpdate", data=line)
+                elif "[FLog::SingleSurfaceApp] initializeWithAppStarter" in line:
+                    self.submitEvent(eventName="onRobloxAppStart", data=line)
+                elif "[FLog::Output] ! Joining game" in line:
+                    def generate_arg():
+                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+\.\d+\.\d+\.\d+)"
+                        match = re.search(pattern, line)
+                        if match:
+                            jobId = match.group(1)
+                            placeId = match.group(2)
+                            ip_address = match.group(3)
+                            return {
+                                "jobId": jobId,
+                                "placeId": placeId,
+                                "ip": ip_address
+                            }   
+                        return None  
+                    generated_data = generate_arg()
+                    if generated_data: self.submitEvent(eventName="onGameStart", data=generated_data, isLine=False); self.connected_to_game = True
+                elif "[FLog::Output] [BloxstrapRPC]" in line:
+                    def generate_arg():
+                        json_start_index = line.find('[BloxstrapRPC]') + len('[BloxstrapRPC] ')
+                        if json_start_index == -1:
+                            return None
+                        json_str = line[json_start_index:].strip()
+                        try:
+                            return json.loads(json_str)
+                        except json.JSONDecodeError as e:
+                            if self.debug_mode == True: printDebugMessage(str(e))
+                            return None
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
+                elif "[FLog::Output] LoadClientSettingsFromLocal" in line:
+                    self.submitEvent(eventName="onLoadedFFlags", data=line, isLine=True)
+                elif "RobloxAudioDevice::SetMicrophoneMute true" in line:
+                    self.submitEvent(eventName="onRobloxVoiceChatMute", data=line, isLine=True)
+                elif "RobloxAudioDevice::SetMicrophoneMute false" in line:
+                    self.submitEvent(eventName="onRobloxVoiceChatUnmute", data=line, isLine=True)
+                elif "VoiceChatSession::leave" in line and "leaveRequested:1" in line:
+                    self.submitEvent(eventName="onRobloxVoiceChatLeft", data=line, isLine=True)
+                elif "VoiceChatSession::publishStart - JoinProfiling" in line:
+                    self.submitEvent(eventName="onRobloxVoiceChatStart", data=line, isLine=True)
+                elif "RobloxAudioDevice::StopRecording" in line:
+                    self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
+                elif "RobloxAudioDevice::StartRecording" in line:
+                    self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
+                elif "raiseTeleportInitFailedEvent" in line:
+                    self.submitEvent(eventName="onGameTeleportFailed", data=line, isLine=True)
+                elif "[FLog::Output]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Output]') + len('[FLog::Output] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLog", data=generated_data, isLine=False)
+                elif "[FLog::Error]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Error]') + len('[FLog::Error] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameError", data=generated_data, isLine=False)
+                elif "[FLog::Warning]" in line:
+                    def generate_arg():
+                        output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
+                        if output == -1:
+                            return None
+                        return line[output:].strip()
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameWarning", data=generated_data, isLine=False)
+                elif "[FLog::SingleSurfaceApp] launchUGCGameInternal" in line:
+                    self.submitEvent(eventName="onGameLoading", data=line, isLine=True)
+                elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToPlace" in line:
+                    url_start = line.find("URL: ") + len("URL: ")
+                    body_start = line.find("BODY: ")
+                    url = line[url_start:body_start].strip()
+                    body_json_str = line[body_start + len("BODY: "):].strip()
+                    try:
+                        body = json.loads(body_json_str)
+                    except json.JSONDecodeError as e:
+                        body = None
+                    generated_data = {"url": url, "data": body}
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLoadingNormal", data=generated_data, isLine=False)
+                elif "[FLog::GameJoinUtil] GameJoinUtil::joinGamePostPrivateServer" in line:
+                    url_start = line.find("URL: ") + len("URL: ")
+                    body_start = line.find("BODY: ")
+                    url = line[url_start:body_start].strip()
+                    body_json_str = line[body_start + len("BODY: "):].strip()
+                    try:
+                        body = json.loads(body_json_str)
+                    except json.JSONDecodeError as e:
+                        body = None
+                    generated_data = {"url": url, "data": body}
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLoadingPrivate", data=generated_data, isLine=False)
+                elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToReservedServer" in line:
+                    url_start = line.find("URL: ") + len("URL: ")
+                    body_start = line.find("Body: ")
+                    url = line[url_start:body_start].strip()
+                    body_json_str = line[body_start + len("Body: "):].strip()
+                    try:
+                        body = json.loads(body_json_str)
+                    except json.JSONDecodeError as e:
+                        body = None
+                    generated_data = {"url": url, "data": body}
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLoadingReserved", data=generated_data, isLine=False)
+                elif "[FLog::Network] UDMUX Address = " in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Network\] UDMUX Address = (?P<udmux_address>[^\s]+), Port = (?P<udmux_port>[^\s]+) \| RCC Server Address = (?P<rcc_address>[^\s]+), Port = (?P<rcc_port>[^\s]+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "connected_address": data.get("udmux_address"),
+                            "connected_port": int(data.get("udmux_port")),
+                            "connected_rcc_address": data.get("rcc_address"),
+                            "connected_rcc_port": int(data.get("rcc_port"))
+                        }
+                        return result
+                    
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
+                elif "[FLog::Audio] InputDevice" in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Audio\] InputDevice (?P<device_index>\d+): (?P<device_name>[^()]+)\(\{(?P<device_id>[0-9a-fA-F-]+)\}\) (?P<connections>\d+/\d+/\d+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "device_name": data.get("device_name"),
+                            "device_uuid": data.get("device_id"),
+                            "device_index": int(data.get("device_index")),
+                            "connection_divisons": data.get("connections")
+                        }
+                        return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
+                elif "[FLog::ClientRunInfo] The channel is " in line:
+                    def generate_arg():
+                        pattern = re.compile(
+                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)'
+                        )
+                        match = pattern.search(line)
+                        if not match:
+                            return None
+                        data = match.groupdict()
+                        result = {
+                            "channel": data.get("channel")
+                        }
+                        if result["channel"] == "production": result["channel"] = "LIVE"
+                        return result
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onRobloxChannel", data=generated_data, isLine=False)
+                        self.roblox_starter_launched = True
+                elif "[FLog::Warning] WebLogin authentication is failed and App is quitting" in line or "[FLog::Warning] (RobloxPlayerAppDelegate) WebLogin authentication failure" in line or "[FLog::Error] fetch flag exception:" in line:
+                    self.submitEvent(eventName="onRobloxAppLoginFailed", data=line, isLine=True)
+                elif "[FLog::UgcExperienceController] UgcExperienceController: doTeleport: joinScriptUrl" in line:
+                    import urllib.parse
+                    def generate_arg(json_str):
+                        def fix_json_string(json_str):
+                            try:
+                                a = (json_str).replace(" ", "").replace("\n", "")
+                                return json.loads(a)
+                            except Exception as e:
+                                return None
+                            
+                        def extract_ticket_info(ticket):
+                            decoded_ticket = (urllib.parse.unquote(ticket)) + '}'
+                            try:
+                                ticket_json = fix_json_string(decoded_ticket)
+                                if not ticket_json:
+                                    raise Exception()
+                                return {
+                                    "placeId": ticket_json.get("PlaceId"),
+                                    "jobId": ticket_json.get("GameId"),
+                                    "username": ticket_json.get("UserName"),
+                                    "userId": ticket_json.get("UserId"),
+                                    "displayName": ticket_json.get("DisplayName"),
+                                    "universeId": ticket_json.get("UniverseId"),
+                                    "isTeleport": ticket_json.get("IsTeleport"),
+                                    "followUserId": ticket_json.get("FollowUserId")
+                                }
+                            except Exception as e:
+                                decoded_ticket = (urllib.parse.unquote(ticket)) + '"}'
+                                try:
+                                    ticket_json = fix_json_string(decoded_ticket)
+                                    if not ticket_json:
+                                        raise Exception()
+                                    return {
+                                        "placeId": ticket_json.get("PlaceId"),
+                                        "jobId": ticket_json.get("GameId"),
+                                        "username": ticket_json.get("UserName"),
+                                        "userId": ticket_json.get("UserId"),
+                                        "displayName": ticket_json.get("DisplayName"),
+                                        "universeId": ticket_json.get("UniverseId"),
+                                        "isTeleport": ticket_json.get("IsTeleport"),
+                                        "followUserId": ticket_json.get("FollowUserId")
+                                    }
+                                except Exception as e:
+                                    try:
+                                        decoded_ticket = (urllib.parse.unquote(ticket)) + '""}'
+                                        ticket_json = fix_json_string(decoded_ticket)
+                                        if not ticket_json:
+                                            raise Exception()
+                                        return {
+                                            "placeId": ticket_json.get("PlaceId"),
+                                            "jobId": ticket_json.get("GameId"),
+                                            "username": ticket_json.get("UserName"),
+                                            "userId": ticket_json.get("UserId"),
+                                            "displayName": ticket_json.get("DisplayName"),
+                                            "universeId": ticket_json.get("UniverseId"),
+                                            "isTeleport": ticket_json.get("IsTeleport"),
+                                            "followUserId": ticket_json.get("FollowUserId")
+                                        }
+                                    except Exception as e:
+                                        try:
+                                            decoded_ticket = (urllib.parse.unquote(ticket)) + ':""}'
+                                            ticket_json = fix_json_string(decoded_ticket)
+                                            if not ticket_json:
+                                                raise Exception()
+                                            return {
+                                                "placeId": ticket_json.get("PlaceId"),
+                                                "jobId": ticket_json.get("GameId"),
+                                                "username": ticket_json.get("UserName"),
+                                                "userId": ticket_json.get("UserId"),
+                                                "displayName": ticket_json.get("DisplayName"),
+                                                "universeId": ticket_json.get("UniverseId"),
+                                                "isTeleport": ticket_json.get("IsTeleport"),
+                                                "followUserId": ticket_json.get("FollowUserId")
+                                            }
+                                        except Exception as e:
+                                            return None
+                                    
+                        json_str = json_str + '"'
+                        json_obj = fix_json_string(json_str + "}")
+                        if json_obj:
+                            ticket_url = json_obj.get("joinScriptUrl")
+                            if ticket_url:
+                                parsed_url = urllib.parse.urlparse(ticket_url)
+                                query_params = urllib.parse.parse_qs(parsed_url.query)
+                                ticket = query_params.get("ticket", [None])[0]
+                                ticket = ticket.split(',"MatchmakingDecisionId"')[0]
+                                if ticket:
+                                    b = extract_ticket_info(ticket)
+                                    return b
+                                else:
+                                    return json_obj
+                            else:
+                                return {
+                                    "placeId": None,
+                                    "jobId": json_obj.get("jobId"),
+                                    "username": None,
+                                    "userId": None,
+                                    "displayName": None,
+                                    "universeId": None,
+                                    "isTeleport": None,
+                                    "followUserId": None
+                                }
+                    
+                    first_try = False
+                    try:
+                        json.loads(line)
+                        first_try = True
+                    except Exception as e:
+                        first_try = False
+                    
+                    if first_try == False:
+                        generated_data = generate_arg(line)
+                        if generated_data:
+                            self.submitEvent(eventName="onGameTeleport", data=generated_data, isLine=False)
+                elif "[DFLog::HttpTraceError] HttpResponse(" in line:
+                    def generate_arg():
+                        try:
+                            pattern = re.compile(
+                                r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z),'
+                                r'(?P<elapsed_time>\d+\.\d+),'
+                                r'(?P<unknown>\w+),'
+                                r'(?P<unknown2>\d+)\s*\[(?P<log_level>[^\]]+)\]\s*'
+                                r'(?P<http_response>HttpResponse\(#\d+ 0x[\da-fA-F]+\))\s*'
+                                r'time:(?P<response_time>\d+\.\d+)ms\s*\(net:(?P<net_time>\d+\.\d+)ms\s*'
+                                r'callback:(?P<callback_time>\d+\.\d+)ms\s*timeInRetryQueue:(?P<retry_queue_time>\d+\.\d+)ms\)\s*'
+                                r'error:(?P<error_code>\d+)\s*message:(?P<error_message>[^\s]+):\s*(?P<error_details>.+)\s*'
+                                r'ip:\s*external:(?P<external_ip>\d+)\s*'
+                                r'numberOfTimesRetried:(?P<retries>\d+)'
+                            )
+
+                            match = pattern.match(line)
+                            data = match.groupdict()
+                            if match:
+                                return {
+                                    "numberOfTimesRetried": data.get("numberOfTimesRetried"),
+                                    "url": re.compile(r'DnsResolve\s+url:\s*\{\s*"(https://[^"]+)"\s*\}').search(data.get("error_details")).group(1),
+                                    "error_code": data.get("error_code"),
+                                    "callback_time": data.get("callback_time"),
+                                    "response_time": data.get("response_time"),
+                                    "http_response": data.get("http_response")
+                                }
+                            else:
+                                return None
+                        except Exception as e:
+                            return None
+                        
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onHttpResponse", data=generated_data, isLine=False)
+                    else:
+                        self.submitEvent(eventName="onHttpResponse", data=line, isLine=True)
+                elif '"partyId":' in line:
+                    url_start = line.find("URL: ") + len("URL: ")
+                    body_start = line.find("Body: ")
+                    url = line[url_start:body_start].strip()
+                    body_json_str = line[body_start + len("Body: "):].strip()
+                    try:
+                        body = json.loads(body_json_str)
+                    except json.JSONDecodeError as e:
+                        body = None
+                    generated_data = {"url": url, "data": body}
+                    if generated_data:
+                        self.submitEvent(eventName="onGameLoadingParty", data=generated_data, isLine=False)
+                elif '"jobId":' in line:
+                    import urllib.parse
+                    def generate_arg(json_str):
+                        def fix_json_string(json_str):
+                            try:
+                                a = (json_str).replace(" ", "").replace("\n", "")
+                                return json.loads(a)
+                            except Exception as e:
+                                return None
+                            
+                        def extract_ticket_info(ticket):
+                            decoded_ticket = (urllib.parse.unquote(ticket)) + '}'
+                            try:
+                                ticket_json = fix_json_string(decoded_ticket)
+                                if not ticket_json:
+                                    raise Exception()
+                                return {
+                                    "placeId": ticket_json.get("PlaceId"),
+                                    "jobId": ticket_json.get("GameId"),
+                                    "username": ticket_json.get("UserName"),
+                                    "userId": ticket_json.get("UserId"),
+                                    "displayName": ticket_json.get("DisplayName"),
+                                    "universeId": ticket_json.get("UniverseId"),
+                                    "isTeleport": ticket_json.get("IsTeleport"),
+                                    "followUserId": ticket_json.get("FollowUserId")
+                                }
+                            except Exception as e:
+                                decoded_ticket = (urllib.parse.unquote(ticket)) + '"}'
+                                try:
+                                    ticket_json = fix_json_string(decoded_ticket)
+                                    if not ticket_json:
+                                        raise Exception()
+                                    return {
+                                        "placeId": ticket_json.get("PlaceId"),
+                                        "jobId": ticket_json.get("GameId"),
+                                        "username": ticket_json.get("UserName"),
+                                        "userId": ticket_json.get("UserId"),
+                                        "displayName": ticket_json.get("DisplayName"),
+                                        "universeId": ticket_json.get("UniverseId"),
+                                        "isTeleport": ticket_json.get("IsTeleport"),
+                                        "followUserId": ticket_json.get("FollowUserId")
+                                    }
+                                except Exception as e:
+                                    try:
+                                        decoded_ticket = (urllib.parse.unquote(ticket)) + '""}'
+                                        ticket_json = fix_json_string(decoded_ticket)
+                                        if not ticket_json:
+                                            raise Exception()
+                                        return {
+                                            "placeId": ticket_json.get("PlaceId"),
+                                            "jobId": ticket_json.get("GameId"),
+                                            "username": ticket_json.get("UserName"),
+                                            "userId": ticket_json.get("UserId"),
+                                            "displayName": ticket_json.get("DisplayName"),
+                                            "universeId": ticket_json.get("UniverseId"),
+                                            "isTeleport": ticket_json.get("IsTeleport"),
+                                            "followUserId": ticket_json.get("FollowUserId")
+                                        }
+                                    except Exception as e:
+                                        try:
+                                            decoded_ticket = (urllib.parse.unquote(ticket)) + ':""}'
+                                            ticket_json = fix_json_string(decoded_ticket)
+                                            if not ticket_json:
+                                                raise Exception()
+                                            return {
+                                                "placeId": ticket_json.get("PlaceId"),
+                                                "jobId": ticket_json.get("GameId"),
+                                                "username": ticket_json.get("UserName"),
+                                                "userId": ticket_json.get("UserId"),
+                                                "displayName": ticket_json.get("DisplayName"),
+                                                "universeId": ticket_json.get("UniverseId"),
+                                                "isTeleport": ticket_json.get("IsTeleport"),
+                                                "followUserId": ticket_json.get("FollowUserId")
+                                            }
+                                        except Exception as e:
+                                            return None
+                                    
+                        json_str = json_str + '"'
+                        json_obj = fix_json_string(json_str + "}")
+                        if json_obj:
+                            ticket_url = json_obj.get("joinScriptUrl")
+                            if ticket_url:
+                                parsed_url = urllib.parse.urlparse(ticket_url)
+                                query_params = urllib.parse.parse_qs(parsed_url.query)
+                                ticket = query_params.get("ticket", [None])[0]
+                                ticket = ticket.split(',"MatchmakingDecisionId"')[0]
+                                if ticket:
+                                    b = extract_ticket_info(ticket)
+                                    return b
+                                else:
+                                    return json_obj
+                            else:
+                                return {
+                                    "placeId": None,
+                                    "jobId": json_obj.get("jobId"),
+                                    "username": None,
+                                    "userId": None,
+                                    "displayName": None,
+                                    "universeId": None,
+                                    "isTeleport": None,
+                                    "followUserId": None
+                                }
+                    
+                    first_try = False
+                    try:
+                        json.loads(line)
+                        first_try = True
+                    except Exception as e:
+                        first_try = False
+                    
+                    if first_try == False:
+                        generated_data = generate_arg(line)
+                        if generated_data:
+                            self.submitEvent(eventName="onGameJoinInfo", data=generated_data, isLine=False)
+                elif "[FLog::Network] serverId:" in line:
+                    def generate_arg():
+                        match = re.search(r'serverId:\s*(\d{1,3}(?:\.\d{1,3}){3})\|(\d+)', line)
+                        if match:
+                            ip = match.group(1)
+                            port = int(match.group(2))
+                            return {
+                                "ip": ip,
+                                "port": port
+                            }
+                        else:
+                            return {
+                                "ip": "127.0.0.1",
+                                "port": 443
+                            }
+                        
+                    generated_data = generate_arg()
+                    if generated_data:
+                        self.submitEvent(eventName="onGameJoined", data=generated_data, isLine=False)
+                elif "[FLog::SingleSurfaceApp] leaveUGCGameInternal" in line: self.submitEvent(eventName="onGameLeaving", data=line, isLine=True)
+                elif "RBXCRASH:" in line or "[FLog::CrashReportLog] Terminated" in line: self.submitEvent(eventName="onRobloxCrash", data=line, isLine=True); self.connected_to_game = False
+                elif "Roblox::terminateWaiter" in line:
+                    self.submitEvent(eventName="onRobloxTerminateInstance", data=line, isLine=True)
+                elif "[FLog::Network] Sending disconnect with reason" in line:
+                    code = line.split(':')[-1].strip()
+                    if code and code.isnumeric():
+                        main_code = int(code)
+                        if self.disconnect_cooldown == False:
+                            self.disconnect_cooldown = True
+                            def b():
+                                time.sleep(3)
+                                self.disconnect_cooldown = False
+                            threading.Thread(target=b, daemon=True).start()
+                            code_message = "Unknown"
+                            if self.main_handler.disconnect_code_list.get(str(main_code)):
+                                code_message = self.main_handler.disconnect_code_list.get(str(main_code))
+                            self.submitEvent(eventName="onGameDisconnected", data={"code": main_code, "message": code_message}, isLine=False); self.connected_to_game = False; self.validating_disconnect = True
+                elif "[FLog::SingleSurfaceApp] leaveUGCGame: (stage:LuaApp) blocking=0" in line:
+                    if self.validating_disconnect == False: return self.main_handler.WatchdogLineResponse.ReconnectWatchdog()
+                    else: self.validating_disconnect = False
+                else:
+                    self.submitEvent(eventName="onOtherRobloxLog", data=line, isLine=True)
+            return self.main_handler.WatchdogLineResponse.NormalResponse()
+        def submitEvent(self, eventName="onUnknownEvent", data=None, isLine=True):
+            if not (eventName == "onRobloxLog"): 
+                self.submitEvent(eventName="onRobloxLog", data={"eventName": eventName, "data": data, "isLine": isLine}, isLine=False)
+                if isLine == True:
+                    if self.debug_mode == True and not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(f'Event triggered: {eventName}, Line: {data}')
+                else:
+                    if self.debug_mode == True: 
+                        if type(data) is str and (data.startswith("Settings Date timestamp is") or data.startswith("Settings Date header was")):
+                            if self.allow_other_logs == True: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
+                        else:
+                            printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
+            for i in self.__events__:
+                if i and callable(i.get("callback")) and i.get("name") == eventName: 
+                    if self.one_threaded == True:
+                        try: i.get("callback")(data)
+                        except Exception as e: printErrorMessage(e)
+                    else: threading.Thread(target=i.get("callback"), args=[data], daemon=self.daemon).start()
         def startActivityTracking(self):
             if self.watchdog_started == False:
                 self.watchdog_started = True
@@ -1140,741 +2077,22 @@ class Main:
                     if main_os == "Darwin" or main_os == "Windows":
                         main_log = ""
                         passed_lines = []
-                        def submitToThread(eventName="onUnknownEvent", data=None, isLine=True):
-                            if not (eventName == "onRobloxLog"): 
-                                submitToThread(eventName="onRobloxLog", data={"eventName": eventName, "data": data, "isLine": isLine}, isLine=False)
-                                if isLine == True:
-                                    if self.debug_mode == True and not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(f'Event triggered: {eventName}, Line: {data}')
-                                else:
-                                    if self.debug_mode == True: 
-                                        if type(data) is str and (data.startswith("Settings Date timestamp is") or data.startswith("Settings Date header was")):
-                                            if self.allow_other_logs == True: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
-                                        else:
-                                            printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
-                            for i in self.events:
-                                if i and callable(i.get("callback")) and i.get("name") == eventName: 
-                                    if self.one_threaded == True:
-                                        try: i.get("callback")(data)
-                                        except Exception as e: printErrorMessage(e)
-                                    else: threading.Thread(target=i.get("callback"), args=[data]).start()
-                        def handleLine(line=""):
-                            if self.is_studio == True:
-                                if "[FLog::Output] LoadClientSettingsFromLocal" in line:
-                                    submitToThread(eventName="onLoadedFFlags", data=line, isLine=True)
-                                elif "[FLog::Output] ! Joining game" in line:
-                                    def generate_arg():
-                                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+\.\d+\.\d+\.\d+)"
-                                        match = re.search(pattern, line)
-                                        if match:
-                                            jobId = match.group(1)
-                                            placeId = match.group(2)
-                                            ip_address = match.group(3)
-                                            return {
-                                                "jobId": jobId,
-                                                "placeId": placeId,
-                                                "ip": ip_address
-                                            }   
-                                        return None
-                                    
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onPlayTestStart", data=generated_data, isLine=False)
-                                elif "[FLog::StudioKeyEvents] open place" in line:
-                                    def generate_arg():
-                                        pattern = r"identifier\s*=\s*(\/[^\)\s]+|\d+)"
-                                        match = re.search(pattern, line)
-                                        if not match:
-                                            pattern = r"(?:[a-zA-Z]:\\|\/)(?:[^\/\\\n]+[\/\\])*[^\/\\\n]+"
-                                            match = re.findall(pattern, line)
-                                            if len(match) < 1:
-                                                return None
-                                            else:
-                                                result = {
-                                                    "place_identifier": match[0]
-                                                }
-                                                return result
-                                        else:
-                                            result = {
-                                                "place_identifier": match.group(1)
-                                            }
-                                            return result
-                                    
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onOpeningGame", data=generated_data, isLine=False)
-                                elif "[FLog::RobloxIDEDoc] RobloxIDEDoc::doClose" in line:
-                                    submitToThread(eventName="onClosingGame", data=line, isLine=True)
-                                elif "[FLog::StudioKeyEvents] starting Qt main event loop" in line:
-                                    submitToThread(eventName="onRobloxAppStart", data=line, isLine=True)
-                                elif "[FLog::StudioKeyEvents] login [end][success]" in line:
-                                    submitToThread(eventName="onStudioLoginSuccess", data=line, isLine=True)
-                                elif "[FLog::StudioKeyEvents] launching new studio instance" in line:
-                                    submitToThread(eventName="onNewStudioLaunching", data=line, isLine=True)
-                                elif "[FLog::StudioKeyEvents] team create connect (connection accepted)" in line:
-                                    submitToThread(eventName="onTeamCreateConnect", data=line, isLine=True)
-                                elif "[FLog::StudioKeyEvents] team create disconnect" in line:
-                                    submitToThread(eventName="onTeamCreateDisconnect", data=line, isLine=True)
-                                elif "[FLog::Output] Web returned cloud plugins:" in line:
-                                    def generate_arg():
-                                        match = re.search(r'\[([\d,\s]+)\]', line)
-                                        if not match:
-                                            return None
-                                        else:
-                                            return list(map(int, match.group(1).split(',')))
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onCloudPlugins", data=generated_data, isLine=False)
-                                elif "[FLog::Output] UpdateUtils::requestInstallerUpdate - Launching Installer for update:" in line:
-                                    submitToThread(eventName="onStudioInstallerLaunched", data=line, isLine=True)
-                                elif "[FLog::Network] UDMUX Address = " in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Network\] UDMUX Address = (?P<udmux_address>[^\s]+), Port = (?P<udmux_port>[^\s]+) \| RCC Server Address = (?P<rcc_address>[^\s]+), Port = (?P<rcc_port>[^\s]+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "connected_address": data.get("udmux_address"),
-                                            "connected_port": int(data.get("udmux_port")),
-                                            "connected_rcc_address": data.get("rcc_address"),
-                                            "connected_rcc_port": int(data.get("rcc_port"))
-                                        }
-                                        return result
-                                    
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
-                                elif "[FLog::Network] serverId:" in line:
-                                    def generate_arg():
-                                        match = re.search(r'serverId:\s*(\d{1,3}(?:\.\d{1,3}){3})\|(\d+)', line)
-                                        if match:
-                                            ip = match.group(1)
-                                            port = int(match.group(2))
-                                            if ip == "127.0.0.1": return
-                                            return {
-                                                "ip": ip,
-                                                "port": port
-                                            }
-                                        
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameJoined", data=generated_data, isLine=False)
-                                elif "HttpResponse(" in line:
-                                    def generate_arg():
-                                        try:
-                                            pattern = re.compile(
-                                                r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z),'
-                                                r'(?P<elapsed_time>\d+\.\d+),'
-                                                r'(?P<unknown>\w+),'
-                                                r'(?P<unknown2>\d+)\s*\[(?P<log_level>[^\]]+)\]\s*'
-                                                r'(?P<http_response>HttpResponse\(#\d+ 0x[\da-fA-F]+\))\s*'
-                                                r'time:(?P<response_time>\d+\.\d+)ms\s*\(net:(?P<net_time>\d+\.\d+)ms\s*'
-                                                r'callback:(?P<callback_time>\d+\.\d+)ms\s*timeInRetryQueue:(?P<retry_queue_time>\d+\.\d+)ms\)\s*'
-                                                r'error:(?P<error_code>\d+)\s*message:(?P<error_message>[^\s]+):\s*(?P<error_details>.+)\s*'
-                                                r'ip:\s*external:(?P<external_ip>\d+)\s*'
-                                                r'numberOfTimesRetried:(?P<retries>\d+)'
-                                            )
-
-                                            match = pattern.match(line)
-                                            data = match.groupdict()
-                                            if match:
-                                                return {
-                                                    "numberOfTimesRetried": data.get("numberOfTimesRetried"),
-                                                    "url": re.compile(r'DnsResolve\s+url:\s*\{\s*"(https://[^"]+)"\s*\}').search(data.get("error_details")).group(1),
-                                                    "error_code": data.get("error_code"),
-                                                    "callback_time": data.get("callback_time"),
-                                                    "response_time": data.get("response_time"),
-                                                    "http_response": data.get("http_response")
-                                                }
-                                            else:
-                                                return None
-                                        except Exception as e:
-                                            return None
-                                        
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onHttpResponse", data=generated_data, isLine=False)
-                                    else:
-                                        submitToThread(eventName="onHttpResponse", data=line, isLine=True)
-                                elif "[FLog::Error] Redundant Flag ID:" in line:
-                                    def generate_arg():
-                                        pattern = r"Redundant Flag ID:\s+([\w\d_]+)"
-                                        match = re.search(pattern, line)
-                                        if not match:
-                                            return None
-                                        else:
-                                            result = {
-                                                "flag_id": match.group(1)
-                                            }
-                                            return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onExpiredFlag", data=generated_data, isLine=False)
-                                elif "[FLog::BetaFeatures] Applying settings for beta feature id" in line:
-                                    def generate_arg():
-                                        pattern = r"beta feature id (\w+)"
-                                        match = re.search(pattern, line)
-                                        if not match:
-                                            return None
-                                        else:
-                                            result = {
-                                                "feature_id": match.group(1)
-                                            }
-                                            return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onApplyingFeature", data=generated_data, isLine=False)
-                                elif "[FLog::ClientRunInfo] The channel is " in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "channel": data.get("channel")
-                                        }
-                                        if result["channel"] == "production": result["channel"] = "LIVE"
-                                        return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onRobloxChannel", data=generated_data, isLine=False)
-                                        self.windows_roblox_starter_launched_roblox = True
-                                elif "[FLog::Audio] InputDevice" in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Audio\] InputDevice (?P<device_index>\d+): (?P<device_name>[^()]+)\(\{(?P<device_id>[0-9a-fA-F-]+)\}\) (?P<connections>\d+/\d+/\d+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "device_name": data.get("device_name"),
-                                            "device_uuid": data.get("device_id"),
-                                            "device_index": int(data.get("device_index")),
-                                            "connection_divisons": data.get("connections")
-                                        }
-                                        return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
-                                elif "[FLog::PluginLoadingEnhanced] Running plugin" in line:
-                                    def generate_arg():
-                                        pattern = r"plugin '([\w\d_]+)'\s+in datamodel (\w+)"
-                                        match = re.search(pattern, line)
-                                        if not match:
-                                            return None
-                                        else:
-                                            result = {
-                                                "plugin_id": match.group(1),
-                                                "datamodel": match.group(2),
-                                            }
-                                            return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onPluginLoading", data=generated_data, isLine=False)
-                                elif "[FLog::PluginLoadingEnhanced] Unloading plugin" in line:
-                                    def generate_arg():
-                                        pattern = r"plugin '([\w\d_]+)'\s+in datamodel (\w+)"
-                                        match = re.search(pattern, line)
-                                        if not match:
-                                            return None
-                                        else:
-                                            result = {
-                                                "plugin_id": match.group(1),
-                                                "datamodel": match.group(2),
-                                            }
-                                            return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onPluginUnloading", data=generated_data, isLine=False)
-                                elif "[FLog::Output] [BloxstrapRPC]" in line:
-                                    def generate_arg():
-                                        json_start_index = line.find('[BloxstrapRPC]') + len('[BloxstrapRPC] ')
-                                        if json_start_index == -1:
-                                            return None
-                                        json_str = line[json_start_index:].strip()
-                                        try:
-                                            return json.loads(json_str)
-                                        except json.JSONDecodeError as e:
-                                            if self.debug_mode == True: printDebugMessage(str(e))
-                                            return None
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
-                                elif "[FLog::StudioTimingLog] ======== Studio Publish Place Times =======" in line:
-                                    submitToThread(eventName="onRobloxPublishing", data=line, isLine=True)
-                                elif "[FLog::StudioTimingLog] ======== Studio Save To Cloud Times =======" in line:
-                                    submitToThread(eventName="onRobloxSaved", data=line, isLine=True)
-                                elif "RBXCRASH:" in line or "[FLog::CrashReportLog] Terminated" in line:
-                                    submitToThread(eventName="onRobloxCrash", data=line, isLine=True)
-                                elif "RobloxAudioDevice::StopRecording" in line:
-                                    submitToThread(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
-                                elif "RobloxAudioDevice::StartRecording" in line:
-                                    submitToThread(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
-                                elif "[FLog::Output] About to exit the application, doing cleanup." in line:
-                                    if self.windows_roblox_starter_launched_roblox == False:
-                                        submitToThread(eventName="onRobloxExit", data=line)
-                                        submitToThread(eventName="onRobloxSharedLogLaunch", data=line)
-                                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
-                                    else:
-                                        submitToThread(eventName="onRobloxLauncherDestroyed", data=line)
-                                elif "[FLog::Network] Client:Disconnect" in line:
-                                    if self.disconnect_cooldown == False:
-                                        self.disconnect_cooldown = True
-                                        def b():
-                                            time.sleep(3)
-                                            self.disconnect_cooldown = False
-                                        threading.Thread(target=b, daemon=True).start()
-                                        submitToThread(eventName="onPlayTestDisconnected", data=None, isLine=False)
-                                elif "[FLog::Output]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Output]') + len('[FLog::Output] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLog", data=generated_data, isLine=False)
-                                elif "[FLog::Error]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Error]') + len('[FLog::Error] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameError", data=generated_data, isLine=False)
-                                elif "[FLog::Warning]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameWarning", data=generated_data, isLine=False)
-                                elif "[telemetryLog]" in line:
-                                    def generate_arg():
-                                        output = line.find('[telemetryLog]') + len('[telemetryLog] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onTelemetryLog", data=generated_data, isLine=False)
-                                else:
-                                    submitToThread(eventName="onOtherRobloxLog", data=line, isLine=True)
-                            else:
-                                if "[FLog::RobloxStarter] RobloxStarter destroyed" in line:
-                                    if self.windows_roblox_starter_launched_roblox == False:
-                                        submitToThread(eventName="onRobloxExit", data=line)
-                                        submitToThread(eventName="onRobloxSharedLogLaunch", data=line)
-                                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
-                                    else:
-                                        submitToThread(eventName="onRobloxLauncherDestroyed", data=line)
-                                elif "[FLog::UpdateController] Update check thread: updateRequired FALSE" in line:
-                                    submitToThread(eventName="onRobloxPassedUpdate", data=line)
-                                elif "[FLog::SingleSurfaceApp] initializeWithAppStarter" in line:
-                                    submitToThread(eventName="onRobloxAppStart", data=line)
-                                elif "[FLog::Output] ! Joining game" in line:
-                                    def generate_arg():
-                                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+\.\d+\.\d+\.\d+)"
-                                        match = re.search(pattern, line)
-                                        if match:
-                                            jobId = match.group(1)
-                                            placeId = match.group(2)
-                                            ip_address = match.group(3)
-                                            return {
-                                                "jobId": jobId,
-                                                "placeId": placeId,
-                                                "ip": ip_address
-                                            }   
-                                        return None
-                                    
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameStart", data=generated_data, isLine=False)
-                                elif "[FLog::SingleSurfaceApp] launchUGCGameInternal" in line:
-                                    submitToThread(eventName="onGameLoading", data=line, isLine=True)
-                                elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToPlace" in line:
-                                    url_start = line.find("URL: ") + len("URL: ")
-                                    body_start = line.find("BODY: ")
-                                    url = line[url_start:body_start].strip()
-                                    body_json_str = line[body_start + len("BODY: "):].strip()
-                                    try:
-                                        body = json.loads(body_json_str)
-                                    except json.JSONDecodeError as e:
-                                        body = None
-                                    generated_data = {"url": url, "data": body}
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLoadingNormal", data=generated_data, isLine=False)
-                                elif "[FLog::GameJoinUtil] GameJoinUtil::joinGamePostPrivateServer" in line:
-                                    url_start = line.find("URL: ") + len("URL: ")
-                                    body_start = line.find("BODY: ")
-                                    url = line[url_start:body_start].strip()
-                                    body_json_str = line[body_start + len("BODY: "):].strip()
-                                    try:
-                                        body = json.loads(body_json_str)
-                                    except json.JSONDecodeError as e:
-                                        body = None
-                                    generated_data = {"url": url, "data": body}
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLoadingPrivate", data=generated_data, isLine=False)
-                                elif "[FLog::GameJoinUtil] GameJoinUtil::initiateTeleportToReservedServer" in line:
-                                    url_start = line.find("URL: ") + len("URL: ")
-                                    body_start = line.find("Body: ")
-                                    url = line[url_start:body_start].strip()
-                                    body_json_str = line[body_start + len("Body: "):].strip()
-                                    try:
-                                        body = json.loads(body_json_str)
-                                    except json.JSONDecodeError as e:
-                                        body = None
-                                    generated_data = {"url": url, "data": body}
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLoadingReserved", data=generated_data, isLine=False)
-                                elif '"partyId":' in line:
-                                    url_start = line.find("URL: ") + len("URL: ")
-                                    body_start = line.find("Body: ")
-                                    url = line[url_start:body_start].strip()
-                                    body_json_str = line[body_start + len("Body: "):].strip()
-                                    try:
-                                        body = json.loads(body_json_str)
-                                    except json.JSONDecodeError as e:
-                                        body = None
-                                    generated_data = {"url": url, "data": body}
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLoadingParty", data=generated_data, isLine=False)
-                                elif "[FLog::Output] [BloxstrapRPC]" in line:
-                                    def generate_arg():
-                                        json_start_index = line.find('[BloxstrapRPC]') + len('[BloxstrapRPC] ')
-                                        if json_start_index == -1:
-                                            return None
-                                        json_str = line[json_start_index:].strip()
-                                        try:
-                                            return json.loads(json_str)
-                                        except json.JSONDecodeError as e:
-                                            if self.debug_mode == True: printDebugMessage(str(e))
-                                            return None
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
-                                elif "[FLog::Output] LoadClientSettingsFromLocal" in line:
-                                    submitToThread(eventName="onLoadedFFlags", data=line, isLine=True)
-                                elif "[FLog::Network] UDMUX Address = " in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Network\] UDMUX Address = (?P<udmux_address>[^\s]+), Port = (?P<udmux_port>[^\s]+) \| RCC Server Address = (?P<rcc_address>[^\s]+), Port = (?P<rcc_port>[^\s]+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "connected_address": data.get("udmux_address"),
-                                            "connected_port": int(data.get("udmux_port")),
-                                            "connected_rcc_address": data.get("rcc_address"),
-                                            "connected_rcc_port": int(data.get("rcc_port"))
-                                        }
-                                        return result
-                                    
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
-                                elif "[FLog::Audio] InputDevice" in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::Audio\] InputDevice (?P<device_index>\d+): (?P<device_name>[^()]+)\(\{(?P<device_id>[0-9a-fA-F-]+)\}\) (?P<connections>\d+/\d+/\d+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "device_name": data.get("device_name"),
-                                            "device_uuid": data.get("device_id"),
-                                            "device_index": int(data.get("device_index")),
-                                            "connection_divisons": data.get("connections")
-                                        }
-                                        return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
-                                elif "[FLog::ClientRunInfo] The channel is " in line:
-                                    def generate_arg():
-                                        pattern = re.compile(
-                                            r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)'
-                                        )
-                                        match = pattern.search(line)
-                                        if not match:
-                                            return None
-                                        data = match.groupdict()
-                                        result = {
-                                            "channel": data.get("channel")
-                                        }
-                                        if result["channel"] == "production": result["channel"] = "LIVE"
-                                        return result
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onRobloxChannel", data=generated_data, isLine=False)
-                                        self.windows_roblox_starter_launched_roblox = True
-                                elif "[FLog::Warning] WebLogin authentication is failed and App is quitting" in line or "[FLog::Warning] (RobloxPlayerAppDelegate) WebLogin authentication failure" in line:
-                                    submitToThread(eventName="onRobloxAppLoginFailed", data=line, isLine=True)
-                                elif "[FLog::UgcExperienceController] UgcExperienceController: doTeleport: joinScriptUrl" in line:
-                                    submitToThread(eventName="onGameTeleport", data=line, isLine=True)
-                                elif "raiseTeleportInitFailedEvent" in line:
-                                    submitToThread(eventName="onGameTeleportFailed", data=line, isLine=True)
-                                elif "RobloxAudioDevice::SetMicrophoneMute true" in line:
-                                    submitToThread(eventName="onRobloxVoiceChatMute", data=line, isLine=True)
-                                elif "RobloxAudioDevice::SetMicrophoneMute false" in line:
-                                    submitToThread(eventName="onRobloxVoiceChatUnmute", data=line, isLine=True)
-                                elif "VoiceChatSession::leave" in line and "leaveRequested:1" in line:
-                                    submitToThread(eventName="onRobloxVoiceChatLeft", data=line, isLine=True)
-                                elif "VoiceChatSession::publishStart - JoinProfiling" in line:
-                                    submitToThread(eventName="onRobloxVoiceChatStart", data=line, isLine=True)
-                                elif "RobloxAudioDevice::StopRecording" in line:
-                                    submitToThread(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
-                                elif "RobloxAudioDevice::StartRecording" in line:
-                                    submitToThread(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
-                                elif "HttpResponse(" in line:
-                                    def generate_arg():
-                                        try:
-                                            pattern = re.compile(
-                                                r'(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z),'
-                                                r'(?P<elapsed_time>\d+\.\d+),'
-                                                r'(?P<unknown>\w+),'
-                                                r'(?P<unknown2>\d+)\s*\[(?P<log_level>[^\]]+)\]\s*'
-                                                r'(?P<http_response>HttpResponse\(#\d+ 0x[\da-fA-F]+\))\s*'
-                                                r'time:(?P<response_time>\d+\.\d+)ms\s*\(net:(?P<net_time>\d+\.\d+)ms\s*'
-                                                r'callback:(?P<callback_time>\d+\.\d+)ms\s*timeInRetryQueue:(?P<retry_queue_time>\d+\.\d+)ms\)\s*'
-                                                r'error:(?P<error_code>\d+)\s*message:(?P<error_message>[^\s]+):\s*(?P<error_details>.+)\s*'
-                                                r'ip:\s*external:(?P<external_ip>\d+)\s*'
-                                                r'numberOfTimesRetried:(?P<retries>\d+)'
-                                            )
-
-                                            match = pattern.match(line)
-                                            data = match.groupdict()
-                                            if match:
-                                                return {
-                                                    "numberOfTimesRetried": data.get("numberOfTimesRetried"),
-                                                    "url": re.compile(r'DnsResolve\s+url:\s*\{\s*"(https://[^"]+)"\s*\}').search(data.get("error_details")).group(1),
-                                                    "error_code": data.get("error_code"),
-                                                    "callback_time": data.get("callback_time"),
-                                                    "response_time": data.get("response_time"),
-                                                    "http_response": data.get("http_response")
-                                                }
-                                            else:
-                                                return None
-                                        except Exception as e:
-                                            return None
-                                        
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onHttpResponse", data=generated_data, isLine=False)
-                                    else:
-                                        submitToThread(eventName="onHttpResponse", data=line, isLine=True)
-                                elif '"jobId":' in line:
-                                    import urllib.parse
-                                    def generate_arg(json_str):
-                                        def fix_json_string(json_str):
-                                            try:
-                                                a = (json_str).replace(" ", "").replace("\n", "")
-                                                return json.loads(a)
-                                            except Exception as e:
-                                                return None
-                                            
-                                        def extract_ticket_info(ticket):
-                                            decoded_ticket = (urllib.parse.unquote(ticket)) + '}'
-                                            try:
-                                                ticket_json = fix_json_string(decoded_ticket)
-                                                if not ticket_json:
-                                                    raise Exception()
-                                                return {
-                                                    "placeId": ticket_json.get("PlaceId"),
-                                                    "jobId": ticket_json.get("GameId"),
-                                                    "username": ticket_json.get("UserName"),
-                                                    "userId": ticket_json.get("UserId"),
-                                                    "displayName": ticket_json.get("DisplayName"),
-                                                    "universeId": ticket_json.get("UniverseId"),
-                                                    "isTeleport": ticket_json.get("IsTeleport"),
-                                                    "followUserId": ticket_json.get("FollowUserId")
-                                                }
-                                            except Exception as e:
-                                                decoded_ticket = (urllib.parse.unquote(ticket)) + '"}'
-                                                try:
-                                                    ticket_json = fix_json_string(decoded_ticket)
-                                                    if not ticket_json:
-                                                        raise Exception()
-                                                    return {
-                                                        "placeId": ticket_json.get("PlaceId"),
-                                                        "jobId": ticket_json.get("GameId"),
-                                                        "username": ticket_json.get("UserName"),
-                                                        "userId": ticket_json.get("UserId"),
-                                                        "displayName": ticket_json.get("DisplayName"),
-                                                        "universeId": ticket_json.get("UniverseId"),
-                                                        "isTeleport": ticket_json.get("IsTeleport"),
-                                                        "followUserId": ticket_json.get("FollowUserId")
-                                                    }
-                                                except Exception as e:
-                                                    try:
-                                                        decoded_ticket = (urllib.parse.unquote(ticket)) + '""}'
-                                                        ticket_json = fix_json_string(decoded_ticket)
-                                                        if not ticket_json:
-                                                            raise Exception()
-                                                        return {
-                                                            "placeId": ticket_json.get("PlaceId"),
-                                                            "jobId": ticket_json.get("GameId"),
-                                                            "username": ticket_json.get("UserName"),
-                                                            "userId": ticket_json.get("UserId"),
-                                                            "displayName": ticket_json.get("DisplayName"),
-                                                            "universeId": ticket_json.get("UniverseId"),
-                                                            "isTeleport": ticket_json.get("IsTeleport"),
-                                                            "followUserId": ticket_json.get("FollowUserId")
-                                                        }
-                                                    except Exception as e:
-                                                        try:
-                                                            decoded_ticket = (urllib.parse.unquote(ticket)) + ':""}'
-                                                            ticket_json = fix_json_string(decoded_ticket)
-                                                            if not ticket_json:
-                                                                raise Exception()
-                                                            return {
-                                                                "placeId": ticket_json.get("PlaceId"),
-                                                                "jobId": ticket_json.get("GameId"),
-                                                                "username": ticket_json.get("UserName"),
-                                                                "userId": ticket_json.get("UserId"),
-                                                                "displayName": ticket_json.get("DisplayName"),
-                                                                "universeId": ticket_json.get("UniverseId"),
-                                                                "isTeleport": ticket_json.get("IsTeleport"),
-                                                                "followUserId": ticket_json.get("FollowUserId")
-                                                            }
-                                                        except Exception as e:
-                                                            return None
-                                                    
-                                        json_str = json_str + '"'
-                                        json_obj = fix_json_string(json_str + "}")
-                                        if json_obj:
-                                            ticket_url = json_obj.get("joinScriptUrl")
-                                            if ticket_url:
-                                                parsed_url = urllib.parse.urlparse(ticket_url)
-                                                query_params = urllib.parse.parse_qs(parsed_url.query)
-                                                ticket = query_params.get("ticket", [None])[0]
-                                                ticket = ticket.split(',"MatchmakingDecisionId"')[0]
-                                                if ticket:
-                                                    b = extract_ticket_info(ticket)
-                                                    return b
-                                                else:
-                                                    return json_obj
-                                            else:
-                                                return {
-                                                    "placeId": None,
-                                                    "jobId": json_obj.get("jobId"),
-                                                    "username": None,
-                                                    "userId": None,
-                                                    "displayName": None,
-                                                    "universeId": None,
-                                                    "isTeleport": None,
-                                                    "followUserId": None
-                                                }
-                                    
-                                    first_try = False
-                                    try:
-                                        json.loads(line)
-                                        first_try = True
-                                    except Exception as e:
-                                        first_try = False
-                                    
-                                    if first_try == False:
-                                        generated_data = generate_arg(line)
-                                        if generated_data:
-                                            submitToThread(eventName="onGameJoinInfo", data=generated_data, isLine=False)
-                                elif "[FLog::Network] serverId:" in line:
-                                    def generate_arg():
-                                        match = re.search(r'serverId:\s*(\d{1,3}(?:\.\d{1,3}){3})\|(\d+)', line)
-                                        if match:
-                                            ip = match.group(1)
-                                            port = int(match.group(2))
-                                            return {
-                                                "ip": ip,
-                                                "port": port
-                                            }
-                                        else:
-                                            return {
-                                                "ip": "127.0.0.1",
-                                                "port": 443
-                                            }
-                                        
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameJoined", data=generated_data, isLine=False)
-                                elif "[FLog::SingleSurfaceApp] leaveUGCGameInternal" in line:
-                                    submitToThread(eventName="onGameLeaving", data=line, isLine=True)
-                                elif "RBXCRASH:" in line or "[FLog::CrashReportLog] Terminated" in line:
-                                    submitToThread(eventName="onRobloxCrash", data=line, isLine=True)
-                                elif "Roblox::terminateWaiter" in line:
-                                    submitToThread(eventName="onRobloxTerminateInstance", data=line, isLine=True)
-                                elif "[FLog::Network] Sending disconnect with reason" in line:
-                                    code = line.split(':')[-1].strip()
-                                    if code and code.isnumeric():
-                                        main_code = int(code)
-                                        if self.disconnect_cooldown == False:
-                                            self.disconnect_cooldown = True
-                                            def b():
-                                                time.sleep(3)
-                                                self.disconnect_cooldown = False
-                                            threading.Thread(target=b, daemon=True).start()
-                                            code_message = "Unknown"
-                                            if self.disconnect_code_list.get(str(main_code)):
-                                                code_message = self.disconnect_code_list.get(str(main_code))
-                                            submitToThread(eventName="onGameDisconnected", data={"code": main_code, "message": code_message}, isLine=False)
-                                elif "[FLog::Output]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Output]') + len('[FLog::Output] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameLog", data=generated_data, isLine=False)
-                                elif "[FLog::Error]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Error]') + len('[FLog::Error] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameError", data=generated_data, isLine=False)
-                                elif "[FLog::Warning]" in line:
-                                    def generate_arg():
-                                        output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
-                                        if output == -1:
-                                            return None
-                                        return line[output:].strip()
-                                    generated_data = generate_arg()
-                                    if generated_data:
-                                        submitToThread(eventName="onGameWarning", data=generated_data, isLine=False)
-                                else:
-                                    submitToThread(eventName="onOtherRobloxLog", data=line, isLine=True)
-                        if self.main_log_file == "":
+                        if self.log_file == "":
                             self.await_log_creation_attempts = 0
                             main_log = self.getLatestLogFile()
-                            self.main_log_file = main_log
+                            self.log_file = main_log
                         else:
-                            main_log = self.main_log_file
+                            main_log = self.log_file
 
                         with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
+                            self.loading_existing_logs = True
                             while True:
                                 line = file.readline()
                                 if not line:
                                     threading.Thread(target=self.cleanLogs).start()
                                     break
                                 if self.ended_process == True:
-                                    submitToThread(eventName="onRobloxExit", data=line)
+                                    self.submitEvent(eventName="onRobloxExit", data=line)
                                     return
                                 if not (line in passed_lines):
                                     timestamp_str = line.split(",")
@@ -1887,7 +2105,7 @@ class Main:
                                                 if timestamp:
                                                     age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
                                                     if age_in_seconds < 60:
-                                                        res = handleLine(line)
+                                                        res = self.handleLogLine(line)
                                                         if res:
                                                             if res.code == 0:
                                                                 threading.Thread(target=self.cleanLogs).start()
@@ -1895,10 +2113,16 @@ class Main:
                                                             elif res.code == 1:
                                                                 self.ended_process = True
                                                                 return
+                                                            elif res.code == 2:
+                                                                self.watchdog_started = False
+                                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                                                                self.startActivityTracking()
+                                                                return
+                                                            
                                             except Exception as e:
                                                 if self.debug_mode == True: printDebugMessage(f"Unable to read log: {str(e)}")
                                     else:
-                                        res = handleLine(line)
+                                        res = self.handleLogLine(line)
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
@@ -1907,11 +2131,17 @@ class Main:
                                             elif res.code == 1:
                                                 self.ended_process = True
                                                 return
+                                            elif res.code == 2:
+                                                self.watchdog_started = False
+                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                                                self.startActivityTracking()
+                                                return
+                            self.loading_existing_logs = False
                             file.seek(0, os.SEEK_END)
                             while True:
                                 line = file.readline()
                                 if self.ended_process == True:
-                                    submitToThread(eventName="onRobloxExit", data=line)
+                                    self.submitEvent(eventName="onRobloxExit", data=line)
                                     threading.Thread(target=self.cleanLogs).start()
                                     break
                                 if not line:
@@ -1927,7 +2157,7 @@ class Main:
                                             if timestamp:
                                                 age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
                                                 if age_in_seconds < 60:
-                                                    res = handleLine(line)
+                                                    res = self.handleLogLine(line)
                                                     if res:
                                                         if res.code == 0:
                                                             self.ended_process = True
@@ -1935,9 +2165,14 @@ class Main:
                                                             break     
                                                         elif res.code == 1:
                                                             self.ended_process = True
-                                                            return  
+                                                            return 
+                                                        elif res.code == 2:
+                                                            self.watchdog_started = False
+                                                            self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                                                            self.startActivityTracking()
+                                                            return 
                                         else:
-                                            res = handleLine(line)
+                                            res = self.handleLogLine(line)
                                             if res:
                                                 if res.code == 0:
                                                     self.ended_process = True
@@ -1946,8 +2181,13 @@ class Main:
                                                 elif res.code == 1:
                                                     self.ended_process = True
                                                     return
+                                                elif res.code == 2:
+                                                    self.watchdog_started = False
+                                                    self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                                                    self.startActivityTracking()
+                                                    return
                                     else:
-                                        res = handleLine(line)
+                                        res = self.handleLogLine(line)
                                         if res:
                                             if res.code == 0:
                                                 self.ended_process = True
@@ -1955,9 +2195,14 @@ class Main:
                                                 break     
                                             elif res.code == 1:
                                                 self.ended_process = True
-                                                return                           
-                threading.Thread(target=watchDog).start()
-                threading.Thread(target=self.awaitRobloxClosing).start()
+                                                return  
+                                            elif res.code == 2:
+                                                self.watchdog_started = False
+                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                                                self.startActivityTracking()
+                                                return                         
+                threading.Thread(target=watchDog, daemon=self.daemon).start()
+                threading.Thread(target=self.awaitRobloxClosing, daemon=self.daemon).start()
     class RobloxWindow():
         pid = None
         system_handler = None
@@ -1970,9 +2215,9 @@ class Main:
                     import win32gui # type: ignore
                     import win32process # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
-                    win32process = pip().importModule("win32process")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
+                    win32process = pip_class.importModule("win32process")
                 win32gui.SetFocus(self.system_handler)
             elif main_os == "Darwin":
                 subprocess.run(["osascript", "-e", f'tell application "System Events" to set frontmost of (every process whose unix id is {self.pid}) to true'])
@@ -1982,9 +2227,9 @@ class Main:
                     import win32gui # type: ignore
                     import win32process # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
-                    win32process = pip().importModule("win32process")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
+                    win32process = pip_class.importModule("win32process")
                 win32gui.DestroyWindow(self.system_handler)
             elif main_os == "Darwin":
                 Main().endRoblox(str(self.pid))
@@ -1993,8 +2238,8 @@ class Main:
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
                 win32gui.SetWindowText(self.system_handler, title)
             elif main_os == "Darwin":
                 printLog("Setting Window Title is unavailable for macOS.")
@@ -2004,9 +2249,9 @@ class Main:
                     import win32gui # type: ignore
                     import win32con # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
-                    win32con = pip().importModule("win32con")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
+                    win32con = pip_class.importModule("win32con")
                 if not type(icon) is str or not icon.endswith(".ico"): raise Exception("This icon is not an ico file!")
                 Icon = win32gui.LoadImage(
                     None,
@@ -2024,8 +2269,8 @@ class Main:
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
                 win32gui.SetWindowPos(self.system_handler, win32gui.HWND_TOP, size_x, size_y, position_x, position_y, win32gui.SWP_SHOWWINDOW)
             elif main_os == "Darwin":
                 try:
@@ -2045,8 +2290,8 @@ class Main:
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
                 win32gui.SetWindowPos(self.system_handler, win32gui.HWND_TOP, None, None, position_x, position_y, win32gui.SWP_SHOWWINDOW)
             elif main_os == "Darwin":
                 try:
@@ -2065,8 +2310,8 @@ class Main:
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
                 win32gui.SetWindowPos(self.system_handler, win32gui.HWND_TOP, size_x, size_y, win32gui.SWP_SHOWWINDOW)
             elif main_os == "Darwin":
                 try:
@@ -2085,16 +2330,16 @@ class Main:
                 try:
                     import win32gui # type: ignore
                 except Exception as e:
-                    pip().install(["pywin32"])
-                    win32gui = pip().importModule("win32gui")
+                    pip_class.install(["pywin32"])
+                    win32gui = pip_class.importModule("win32gui")
                 x, y, x1, y1 = win32gui.GetWindowRect(self.system_handler)
                 return (x, y), (x1 - x, y1 - y)
             elif main_os == "Darwin":
                 try:
                     from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly
                 except Exception as e:
-                    pip().install(["pyobjc-framework-Quartz"])
-                    Quartz = pip().importModule("Quartz")
+                    pip_class.install(["pyobjc-framework-Quartz"])
+                    Quartz = pip_class.importModule("Quartz")
                     CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly = Quartz.CGWindowListCopyWindowInfo, Quartz.kCGWindowListOptionOnScreenOnly
                 window_list = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, 0)
                 for window in window_list:
@@ -2265,8 +2510,8 @@ class Main:
         except Exception as e:
             printMainMessage("This application is requesting for the latest Roblox version but needs a module. Would you like to install it? (y/n)")
             if isYes(input("> ")) == True:
-                pip().install(["requests"])
-                requests = pip().importModule("requests")
+                pip_class.install(["requests"])
+                requests = pip_class.importModule("requests")
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Returning back to application.")
@@ -2384,8 +2629,8 @@ class Main:
         except Exception as e:
             printMainMessage("This application is requesting for the latest Roblox version but needs a module. Would you like to install it? (y/n)")
             if isYes(input("> ")) == True:
-                pip().install(["requests"])
-                requests = pip().importModule("requests")
+                pip_class.install(["requests"])
+                requests = pip_class.importModule("requests")
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Returning back to application.")
@@ -2416,7 +2661,7 @@ class Main:
                         return {"success": False, "message": "Something went wrong."}
             elif self.__main_os__ == "Windows":
                 if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-                is32Bit = pip().is32BitWindows()
+                is32Bit = pip_class.is32BitWindows()
                 if channel:
                     res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/WindowsStudio{is32Bit == True and '' or '64'}/channel/{channel}")
                 else:
@@ -2668,7 +2913,7 @@ class Main:
         pids = self.getOpenedRobloxPids()
         generated_window_instances = []
         for i in pids:
-            process_windows = pip().getProcessWindows(i)
+            process_windows = pip_class.getProcessWindows(i)
             for e in process_windows:
                 generated_window_instances.append(self.RobloxWindow(int(i), e))
         return generated_window_instances
@@ -2676,13 +2921,13 @@ class Main:
         pids = self.getOpenedRobloxStudioPids()
         generated_window_instances = []
         for i in pids:
-            process_windows = pip().getProcessWindows(i)
+            process_windows = pip_class.getProcessWindows(i)
             for e in process_windows:
                 generated_window_instances.append(self.RobloxWindow(int(i), e))
         return generated_window_instances
     def getOpenedRobloxWindows(self, pid):
         generated_window_instance = None
-        process_windows = pip().getProcessWindows(pid)
+        process_windows = pip_class.getProcessWindows(pid)
         for e in process_windows:
             generated_window_instance =  self.RobloxWindow(int(pid), e)
         return generated_window_instance
@@ -2799,8 +3044,8 @@ class Main:
         except Exception as e:
             printMainMessage("This application is requesting for the latest Roblox app settings but needs a module. Would you like to install it? (y/n)")
             if isYes(input("> ")) == True:
-                pip().install(["requests"])
-                requests = pip().importModule("requests")
+                pip_class.install(["requests"])
+                requests = pip_class.importModule("requests")
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Returning back to application.")
@@ -2850,8 +3095,8 @@ class Main:
         except Exception as e:
             printMainMessage("This application is requesting for the latest Roblox app settings but needs a module. Would you like to install it? (y/n)")
             if isYes(input("> ")) == True:
-                pip().install(["requests"])
-                requests = pip().importModule("requests")
+                pip_class.install(["requests"])
+                requests = pip_class.importModule("requests")
                 printSuccessMessage("Successfully installed modules!")
             else:
                 printErrorMessage("Returning back to application.")
@@ -2898,13 +3143,13 @@ class Main:
                 import posix_ipc
             except Exception as e:
                 if required == True:
-                    pip().install(["posix-ipc"])
-                    posix_ipc = pip().importModule("posix_ipc")
+                    pip_class.install(["posix-ipc"])
+                    posix_ipc = pip_class.importModule("posix_ipc")
                 else:
                     printMainMessage("This application is requesting for semaphore access but needs a module. Would you like to install it? (y/n)")
                     if isYes(input("> ")) == True:
-                        pip().install(["posix-ipc"])
-                        posix_ipc = pip().importModule("posix_ipc")
+                        pip_class.install(["posix-ipc"])
+                        posix_ipc = pip_class.importModule("posix_ipc")
                         printSuccessMessage("Successfully installed modules!")
                     else:
                         printErrorMessage("Returning back to application.")
@@ -3090,6 +3335,15 @@ class Main:
                 self.endRobloxStudio()
                 if debug == True: printDebugMessage("Ending Roblox Studio Instances..")
         if self.__main_os__ == "Darwin":
+            if not os.path.exists(os.path.join(user_folder, "Library", "Roblox", "ClientSettings")):
+                s = os.path.join(user_folder, "Library", "Roblox", "ClientSettings")
+                makedirs(s)
+                if not os.path.exists(os.path.join(s, "StudioAppSettings.json")):
+                    cur = self.getCurrentStudioClientVersion()
+                    if cur["success"] == True: 
+                        e = self.getLatestRobloxStudioAppSettings(debug=debug, bucket=cur["channel"])
+                        if e["success"] == True: 
+                            with open(os.path.join(s, "StudioAppSettings.json"), "w") as f: json.dump(e["application_settings"], f)
             if makeDupe == True:
                 com = f"open -n -a \'{os.path.join(macOS_studioDir, macOS_beforeClientServices, 'RobloxStudio')}\' --args {startData}"
                 if debug == True: printDebugMessage("Running Roblox Studio Unix Executable..")
@@ -3113,6 +3367,15 @@ class Main:
             created_mutex = False
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=True)
             if most_recent_roblox_version_dir:
+                if not os.path.exists(os.path.join(user_folder, "Roblox", "ClientSettings")):
+                    s = os.path.join(user_folder, "Roblox", "ClientSettings")
+                    makedirs(s)
+                    if not os.path.exists(os.path.join(s, "StudioAppSettings.json")):
+                        cur = self.getCurrentStudioClientVersion()
+                        if cur["success"] == True: 
+                            e = self.getLatestRobloxStudioAppSettings(debug=debug, bucket=cur["channel"])
+                            if e["success"] == True: 
+                                with open(os.path.join(s, "StudioAppSettings.json"), "w") as f: json.dump(e["application_settings"], f)
                 if debug == True: printDebugMessage("Running RobloxStudioBeta.exe..")
                 if startData == "": a = subprocess.run(f"start {os.path.join(most_recent_roblox_version_dir, 'RobloxStudioBeta.exe')}", shell=True, stdout=subprocess.DEVNULL)
                 else: a = subprocess.run(f'start {os.path.join(most_recent_roblox_version_dir, "RobloxStudioBeta.exe")} {startData}', shell=True, stdout=subprocess.DEVNULL)
@@ -3179,7 +3442,7 @@ class Main:
                         urllib.request.urlretrieve(cur_vers_down_link, os.path.join(current_path_location, "RobloxPlayerInstall.zip"))
                         zip_extract = subprocess.run(["unzip", "-o", os.path.join(current_path_location, "RobloxPlayerInstall.zip"), "-d", os.path.join(current_path_location, "RobloxPlayerInstall")], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                         if zip_extract.returncode == 0:
-                            pip().copyTreeWithMetadata(os.path.join(current_path_location, "RobloxPlayerInstall", "RobloxPlayerInstaller.app"), filePath, dirs_exist_ok=True, symlinks=True)
+                            pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "RobloxPlayerInstall", "RobloxPlayerInstaller.app"), filePath, dirs_exist_ok=True, symlinks=True)
                             shutil.rmtree(os.path.join(current_path_location, "RobloxPlayerInstall"), ignore_errors=True)
                             os.remove(os.path.join(current_path_location, "RobloxPlayerInstall.zip"))
                         else:
@@ -3220,7 +3483,7 @@ class Main:
                         urllib.request.urlretrieve(cur_vers_down_link, os.path.join(current_path_location, "RobloxStudioInstall.zip"))
                         zip_extract = subprocess.run(["unzip", "-o", os.path.join(current_path_location, "RobloxStudioInstall.zip"), "-d", os.path.join(current_path_location, "RobloxStudioInstall")], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                         if zip_extract.returncode == 0:
-                            pip().copyTreeWithMetadata(os.path.join(current_path_location, "RobloxStudioInstall", "RobloxStudioInstaller.app"), filePath, dirs_exist_ok=True, symlinks=True)
+                            pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "RobloxStudioInstall", "RobloxStudioInstaller.app"), filePath, dirs_exist_ok=True, symlinks=True)
                             shutil.rmtree(os.path.join(current_path_location, "RobloxStudioInstall"), ignore_errors=True)
                             os.remove(os.path.join(current_path_location, "RobloxStudioInstall.zip"))
                         else:
@@ -3301,7 +3564,7 @@ class Main:
                     set_location = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
                     app_configuration = plist().readPListFile(set_location)
                     app_configuration["Configuration"] = fflags
-                    plist().writePListFile(set_location, app_configuration)
+                    plist().writePListFile(set_location, app_configuration, binary=True)
                 else:
                     with open(set_location, "w", encoding="utf-8") as f:
                         if flat == True:
@@ -3347,8 +3610,9 @@ class Main:
                         if os.path.exists("Configuration.json"):
                             try:
                                 printMainMessage("Reading Previous Configurations..")
-                                with open(f"Configuration.json", "r", encoding="utf-8") as f:
-                                    merge_json = json.load(f)
+                                with open(f"Configuration.json", "rb") as f: merge_json = f.read()
+                                try: merge_json = json.loads(merge_json)
+                                except Exception as e: merge_json = json.loads(zlib.decompress(merge_json).decode("utf-8"))
                                 if studio == True:
                                     if merge_json.get("EFlagRobloxStudioFlags"):
                                         merge_json["EFlagRobloxStudioFlags"].update(fflags)
@@ -3374,12 +3638,12 @@ class Main:
                     
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
                     if orangeblox_mode == True and os.path.exists("Configuration.json"):
-                        set_location = "Configuration.json"
-                    with open(set_location, "w", encoding="utf-8") as f:
-                        if flat == True:
-                            json.dump(fflags, f)
-                        else:
-                            json.dump(fflags, f, indent=4)
+                        data_in_string = zlib.compress(json.dumps(fflags).encode('utf-8'))
+                        with open(os.path.join(current_path_location, "Configuration.json"), "wb") as f: f.write(data_in_string)
+                    else:
+                        with open(set_location, "w", encoding="utf-8") as f:
+                            if flat == True: json.dump(fflags, f)
+                            else: json.dump(fflags, f, indent=4)
                     printSuccessMessage("DONE!")
                     if orangeblox_mode == True:
                         printSuccessMessage("Your fast flags was successfully saved into your Fast Flag Settings!")
@@ -3606,7 +3870,7 @@ class Main:
                                     try:
                                         if submitStatus: submitStatus.submit("[INSTALL] Downloading Roblox Installer..", 30)
                                         if debug == True: printDebugMessage(f"Replicating Roblox Player installer to path: {copyRobloxInstallerPath}")
-                                        pip().copyTreeWithMetadata(os.path.join(macOS_dir, macOS_beforeClientServices, "RobloxPlayerInstaller.app"), copyRobloxInstallerPath, dirs_exist_ok=True)
+                                        pip_class.copyTreeWithMetadata(os.path.join(macOS_dir, macOS_beforeClientServices, "RobloxPlayerInstaller.app"), copyRobloxInstallerPath, dirs_exist_ok=True)
                                     except Exception as e:
                                         if debug == True: printDebugMessage("Unable to replicate installer to the designated file path.")
                                 else:
@@ -3787,7 +4051,7 @@ class Main:
                                     try:
                                         if submitStatus: submitStatus.submit("[INSTALL] Downloading Roblox Installer..", 30)
                                         if debug == True: printDebugMessage(f"Replicating Roblox Player installer to path: {copyRobloxInstallerPath}")
-                                        pip().copyTreeWithMetadata(os.path.join(macOS_studioDir, macOS_beforeClientServices, "RobloxStudioInstaller.app"), copyRobloxInstallerPath, dirs_exist_ok=True)
+                                        pip_class.copyTreeWithMetadata(os.path.join(macOS_studioDir, macOS_beforeClientServices, "RobloxStudioInstaller.app"), copyRobloxInstallerPath, dirs_exist_ok=True)
                                     except Exception as e:
                                         if debug == True: printDebugMessage("Unable to replicate installer to the designated file path.")
                                 else:
@@ -3923,8 +4187,8 @@ class Main:
                     try:
                         import requests
                     except Exception as e:
-                        pip().install(["requests"])
-                        requests = pip().importModule("requests")
+                        pip_class.install(["requests"])
+                        requests = pip_class.importModule("requests")
                         printSuccessMessage("Successfully installed modules!")
                     if self.getIfRobloxIsOpen():
                         if submitStatus: submitStatus.submit("[BUNDLE] Closing Roblox..", 5)
@@ -4046,7 +4310,7 @@ class Main:
                                     if zip_extract.returncode == 0:
                                         if submitStatus: submitStatus.submit(f"[BUNDLE] Moving Player!", 60)
                                         if debug == True: printDebugMessage(f"Moving Player..")
-                                        pip().copyTreeWithMetadata(os.path.join(installPath, "RobloxPlayer", "RobloxPlayer.app"), appPath, dirs_exist_ok=True, symlinks=True)
+                                        pip_class.copyTreeWithMetadata(os.path.join(installPath, "RobloxPlayer", "RobloxPlayer.app"), appPath, dirs_exist_ok=True, symlinks=True)
                                         if submitStatus: submitStatus.submit(f"[BUNDLE] Cleaning up Player!", 80)
                                         if debug == True: printDebugMessage(f"Cleaning up..")
                                         shutil.rmtree(os.path.join(installPath, "RobloxPlayer"), ignore_errors=True)
@@ -4062,7 +4326,7 @@ class Main:
                                     if debug == True: printDebugMessage(f"Unable to download the Roblox Player.")
                                     if submitStatus: submitStatus.submit("\033ERR[BUNDLE] Failed to download Roblox Player.", 100)
                             except Exception as e:
-                                if debug == True: printDebugMessage(f"Unable to download and install the Roblox Player.")
+                                if debug == True: printDebugMessage(f"Unable to download and install the Roblox Player."); printDebugMessage(f"Exception: {str(e)}")
                                 if submitStatus: submitStatus.submit("\033ERR[BUNDLE] Failed to download and install Roblox Player.", 100)
                     else:
                         if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")
@@ -4085,8 +4349,8 @@ class Main:
                     try:
                         import requests
                     except Exception as e:
-                        pip().install(["requests"])
-                        requests = pip().importModule("requests")
+                        pip_class.install(["requests"])
+                        requests = pip_class.importModule("requests")
                         printSuccessMessage("Successfully installed modules!")
                     if self.getIfRobloxIsOpen():
                         if submitStatus: submitStatus.submit("[BUNDLE] Closing Roblox Studio..", 5)
@@ -4209,7 +4473,7 @@ class Main:
                                     if zip_extract.returncode == 0:
                                         if submitStatus: submitStatus.submit(f"[BUNDLE] Moving Studio!", 60)
                                         if debug == True: printDebugMessage(f"Moving Studio..")
-                                        pip().copyTreeWithMetadata(os.path.join(installPath, "RobloxStudioApp", "RobloxStudio.app"), appPath, dirs_exist_ok=True, symlinks=True)
+                                        pip_class.copyTreeWithMetadata(os.path.join(installPath, "RobloxStudioApp", "RobloxStudio.app"), appPath, dirs_exist_ok=True, symlinks=True)
                                         if submitStatus: submitStatus.submit(f"[BUNDLE] Cleaning up Studio!", 80)
                                         if debug == True: printDebugMessage(f"Cleaning up..")
                                         shutil.rmtree(os.path.join(installPath, "RobloxStudioApp"), ignore_errors=True)
@@ -4224,8 +4488,8 @@ class Main:
                                 else:
                                     if debug == True: printDebugMessage(f"Unable to download the Roblox Studio.")
                                     if submitStatus: submitStatus.submit("\033ERR[INSTALL] Failed to download Roblox Studio.", 100)
-                            except:
-                                if debug == True: printDebugMessage(f"Unable to download and install the Roblox Studio.")
+                            except Exception as e:
+                                if debug == True: printDebugMessage(f"Unable to download and install the Roblox Studio."); printDebugMessage(f"Exception: {str(e)}")
                                 if submitStatus: submitStatus.submit("\033ERR[INSTALL] Failed to download and install Roblox Studio.", 100)
                     else:
                         if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")
@@ -4416,7 +4680,6 @@ class Main:
 
 if __name__ == "__main__":
     handler = Main()
-    pip_class = pip()
     if orangeblox_mode == False:
         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
         if main_os == "Windows":
@@ -4440,12 +4703,17 @@ if __name__ == "__main__":
                 return True
         if waitForInternet() == True: printWarnMessage("-----------")
         if main_os == "Windows":
-            printMainMessage(f"System OS: {main_os}")
+            printMainMessage(f"System OS: {main_os} ({platform.version()})")
             found_platform = "Windows"
         elif main_os == "Darwin":
             printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
             found_platform = "Darwin"
         else:
+            input("> ")
+            sys.exit(0)
+        if not pip_class.osSupported(windows_build=17134, macos_version=(10,13,0)):
+            if main_os == "Windows": printErrorMessage("RobloxFastFlagsInstaller is only supported for Windows 10.0.17134 (April 2018) or higher. Please update your operating system in order to continue!")
+            elif main_os == "Darwin": printErrorMessage("RobloxFastFlagsInstaller is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
             input("> ")
             sys.exit(0)
         printMainMessage(f"Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")

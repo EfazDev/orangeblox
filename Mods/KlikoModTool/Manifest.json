@@ -18,5 +18,5 @@
         "runOtherScripts"
     ],
     "python_modules": ["pillow", "requests", "tk", "numpy", "promptlib"],
-    "mod_script_supports": "2.0.1"
+    "mod_script_supports": "2.0.2"
 }

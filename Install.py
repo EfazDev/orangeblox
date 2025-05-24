@@ -1,17 +1,19 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.0.1
+# v2.0.2
 # 
 
 # Modules
 import subprocess
 import platform
+import datetime
 import hashlib
 import shutil
 import time
 import stat
 import json
+import zlib
 import sys
 import os
 sys.dont_write_bytecode = True
@@ -95,9 +97,10 @@ def getSettings(directory=""):
             main_config = {}
         return main_config
     else:
-        with open(directory, "r", encoding="utf-8") as f:
-            main_config = json.load(f)
-        return main_config
+        with open(directory, "rb") as f: obfuscated_json = f.read()
+        try: obfuscated_json = json.loads(obfuscated_json)
+        except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+        return obfuscated_json
 def saveSettings(main_config, directory=""):
     respo = {
         "saved_normally": False,
@@ -124,10 +127,10 @@ def saveSettings(main_config, directory=""):
         else:
             app_configuration = {}
         app_configuration["Configuration"] = main_config
-        PipHandler.plist().writePListFile(macos_preference_expected, app_configuration)
+        PipHandler.plist().writePListFile(macos_preference_expected, app_configuration, binary=True)
     else:
-        with open(directory, "w", encoding="utf-8") as f:
-            json.dump(main_config, f, indent=4)
+        data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
+        with open(directory, "wb") as f: f.write(data_in_string)
     respo["saved_normally"] = True
     return respo
 def generateFileHash(file_path):
@@ -141,7 +144,6 @@ def generateFileHash(file_path):
         return hasher.hexdigest()
     except Exception as e:
         return None
-    
 def getInstalledAppPath():
     if main_os == "Darwin":
         macos_preference_expected = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
@@ -160,7 +162,10 @@ def getInstalledAppPath():
             value_data, reg_type = reg.QueryValueEx(reg_key, "InstalledAppPath")
             reg.CloseKey(reg_key)
             if value_data and type(value_data) is str:
-                return value_data, pip_class.getLocalAppData()
+                if os.path.exists(os.path.join(value_data, "OrangeBlox")):
+                    return value_data, pip_class.getLocalAppData()
+                else:
+                    return os.path.dirname(value_data), pip_class.getLocalAppData()
             else:
                 return pip_class.getLocalAppData(), pip_class.getLocalAppData()
         except Exception as e:
@@ -173,7 +178,7 @@ def setInstalledAppPath(install_app_path):
         if os.path.exists(macos_preference_expected):
             plist_info = PipHandler.plist().readPListFile(macos_preference_expected)
         plist_info["InstalledAppPath"] = install_app_path
-        PipHandler.plist().writePListFile(macos_preference_expected, plist_info)
+        PipHandler.plist().writePListFile(macos_preference_expected, plist_info, binary=True)
     elif main_os == "Windows":
         import winreg as reg
         app_key = r"Software\EfazRobloxBootstrap"
@@ -241,7 +246,6 @@ def convertPythonExecutablesInFileToPaths(path: str, python_instance: PipHandler
     tar = os.path.join(os.path.dirname(path), f'{splits[0]}Converted.{splits[1]}')
     with open(tar, "w", encoding="utf-8") as f: f.write(fi)
     return tar
-    
 def waitForInternet():
     if pip_class.getIfConnectedToInternet() == False:
         printWarnMessage("--- Waiting for Internet ---")
@@ -282,7 +286,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.0.1"}
+    current_version = {"version": "2.0.2"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     pip_class = PipHandler.pip()
@@ -391,13 +395,18 @@ if __name__ == "__main__":
     # Requirement Checks
     if waitForInternet() == True: printWarnMessage("-----------")
     if main_os == "Windows":
-        printMainMessage(f"System OS: {main_os}")
+        printMainMessage(f"System OS: {main_os} ({platform.version()})")
         found_platform = "Windows"
     elif main_os == "Darwin":
         printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
         found_platform = "Darwin"
     else:
         printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+        input("> ")
+        sys.exit(0)
+    if not pip_class.osSupported(windows_build=17134, macos_version=(10,13,0)):
+        if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17134 (April 2018) or higher. Please update your operating system in order to continue!")
+        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
         input("> ")
         sys.exit(0)
     printMainMessage(f"Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
@@ -469,6 +478,7 @@ if __name__ == "__main__":
         global disable_download_for_app
         global use_installation_syncing
         global rebuild_target
+        started_build_time = datetime.datetime.now().timestamp()
 
         try:
             requests = pip_class.importModule("requests")
@@ -484,7 +494,7 @@ if __name__ == "__main__":
             if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
             if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target, boolonly=True): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
         except Exception as e:
-            if not instant_install == True: printMainMessage("Some modules are not installed and may be needed for some features. Do you want to install all the modules needed now? (y/n)")
+            if not instant_install == True: printMainMessage("Modules from the internet are needed to be installed in order to use OrangeBlox. Do you want to install them now? (y/n)")
             if instant_install == True or isYes(input("> ")) == True:
                 if rebuild_from_source == 1: rebuild_target = ["pyinstaller"]
                 if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
@@ -746,10 +756,11 @@ if __name__ == "__main__":
                             shutil.rmtree(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app"), ignore_errors=True)
 
                         # Success!
+                        end_build_time = datetime.datetime.now().timestamp()
                         if overwrited == True:
-                            printSuccessMessage(f"Successfully updated OrangeBlox!")
+                            printSuccessMessage(f"Successfully updated OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         else:
-                            printSuccessMessage(f"Successfully installed OrangeBlox!")
+                            printSuccessMessage(f"Successfully installed OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                     else:
                         printErrorMessage("Something went wrong trying to find the application folder.")
                     shutil.rmtree(f"{current_path_location}/Apps/OrangeBloxMac/")
@@ -762,11 +773,7 @@ if __name__ == "__main__":
                     fast_config_path = os.path.join(f"{stored_main_app[found_platform][0]}", "Configuration.json")
                     if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")
                     elif os.path.exists(os.path.join(stored_main_app[found_platform][0], "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app[found_platform][0], "FastFlagConfiguration.json")
-                    if os.path.exists(fast_config_path):
-                        with open(fast_config_path, "r", encoding="utf-8") as f:
-                            main_config = json.load(f)
-                    else:
-                        main_config = getSettings(directory=fast_config_path)
+                    main_config = getSettings(directory=fast_config_path if os.path.exists(fast_config_path) else os.path.join(current_path_location, "Configuration.json"))
                 else:
                     main_config = {}
                     if os.path.exists(os.path.join(current_path_location, "Configuration.json")):
@@ -794,8 +801,7 @@ if __name__ == "__main__":
                         os.remove(pa)
                         if full_rebuild_mode == True and not is_x86_windows():
                             printMainMessage("Running Pyinstaller Rebuild in x86..")
-                            x86_python = PipHandler.pip()
-                            x86_python.executable = x86_python.findPython(opposite_arch=True)
+                            x86_python = PipHandler.pip(opposite=True)
                             if x86_python.pythonInstalled():
                                 if x86_python.installed(["pyinstaller"]):
                                     pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows32.bat"), x86_python)
@@ -822,8 +828,7 @@ if __name__ == "__main__":
                         printSuccessMessage("Nuitka Rebuild success!")
                         if full_rebuild_mode == True and not is_x86_windows():
                             printMainMessage("Running Nuitka Rebuild in x86..")
-                            x86_python = PipHandler.pip()
-                            x86_python.executable = x86_python.findPython(opposite_arch=True)
+                            x86_python = PipHandler.pip(opposite=True)
                             if x86_python.pythonInstalled():
                                 if x86_python.installed(["Nuitka"]):
                                     pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Nuitka", f"RecreateWindows32.bat"), x86_python)
@@ -904,7 +909,7 @@ if __name__ == "__main__":
                             shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "OrangeBlox32.exe"), stored_main_app[found_platform][1])
                             shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
                             shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "RunStudio32.exe"), os.path.join(stored_main_app[found_platform][2], "RunStudio.exe"))
-                            pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                            pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "_internal32"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                         else:
                             if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "OrangeBlox.exe")):
                                 shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "OrangeBlox.exe"), stored_main_app[found_platform][1])
@@ -918,7 +923,7 @@ if __name__ == "__main__":
                                     shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "OrangeBlox32.exe"), stored_main_app[found_platform][1])
                                     shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "PlayRoblox32.exe"), os.path.join(stored_main_app[found_platform][2], "PlayRoblox.exe"))
                                     shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "RunStudio32.exe"), os.path.join(stored_main_app[found_platform][2], "RunStudio.exe"))
-                                    pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "_internal"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                                    pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "_internal32"), os.path.join(stored_main_app[found_platform][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                                 else:
                                     sys.exit(0)
                     except Exception as e:
@@ -1066,11 +1071,10 @@ if __name__ == "__main__":
                         elif disabled_shortcuts_installation == False:
                             main_config["EFlagDisableShortcutsInstall"] = False
 
-                        if use_installation_syncing == True:
-                            if not ("/Local/OrangeBlox/" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
+                        if use_installation_syncing == True and not ("/Local/OrangeBlox/" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
                         main_config["EFlagAvailableInstalledDirectories"] = stored_main_app
-                        with open(os.path.join(f"{stored_main_app[found_platform][0]}", "Configuration.json"), "w", encoding="utf-8") as f:
-                            json.dump(main_config, f, indent=4)
+                        data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
+                        with open(os.path.join(f"{stored_main_app[found_platform][0]}", "Configuration.json"), "wb") as f: f.write(data_in_string)
                         if os.path.exists(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json")): os.remove(os.path.join(f"{stored_main_app[found_platform][0]}", "FastFlagConfiguration.json"))
 
                         # Handle Avatar Maps
@@ -1140,10 +1144,11 @@ if __name__ == "__main__":
                         if stored_main_app.get("OverallInstall"): setInstalledAppPath(stored_main_app.get("OverallInstall"))
 
                         # Success!
+                        end_build_time = datetime.datetime.now().timestamp()
                         if overwrited == True:
-                            printSuccessMessage(f"Successfully updated OrangeBlox!")
+                            printSuccessMessage(f"Successfully updated OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         else:
-                            printSuccessMessage(f"Successfully installed OrangeBlox!")
+                            printSuccessMessage(f"Successfully installed OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         shutil.rmtree(f"{current_path_location}/Apps/OrangeBloxWindows/")
                     else:
                         printErrorMessage("Something went wrong trying to find the installation folder.")
@@ -1190,7 +1195,7 @@ if __name__ == "__main__":
                 if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
                 if len(rebuild_target) > 0 and not pip_class.installed(rebuild_target, boolonly=True): raise Exception(f"Please install {rebuild_target[0]} for this mode!")
             except Exception as e:
-                if not instant_install == True: printMainMessage("Some modules are not installed and may be needed for some features. Do you want to install all the modules needed now? (y/n)")
+                if not instant_install == True: printMainMessage("Modules from the internet are needed to be installed in order to use OrangeBlox. Do you want to install them now? (y/n)")
                 if instant_install == True or isYes(input("> ")) == True:
                     if rebuild_from_source == 1: rebuild_target = ["pyinstaller"]
                     if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
@@ -1711,7 +1716,9 @@ if __name__ == "__main__":
                         for i in os.listdir(backup_path): 
                             file_dir = file_dir + f' "{i}"'
                         if main_os == "Darwin": subprocess.run(f'zip -r -y "../Backup.obx"{file_dir}', cwd=backup_path, shell=True)
-                        elif main_os == "Windows": subprocess.run(f'powershell Compress-Archive -Path * -Update -DestinationPath ../Backup.obx', cwd=backup_path, shell=True)
+                        elif main_os == "Windows": 
+                            s = subprocess.run(f'powershell Compress-Archive -Path * -Update -DestinationPath ../Backup.zip', cwd=backup_path, shell=True)
+                            if s.returncode == 0: os.rename(os.path.join(current_path_location, "Backup.zip"), os.path.join(current_path_location, 'Backup.obx'))
                         printMainMessage("Cleaning up..")
                         shutil.rmtree(backup_path, ignore_errors=True)
                         printSuccessMessage(f"Successfully backed up OrangeBlox data!")

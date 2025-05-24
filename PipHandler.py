@@ -15,20 +15,21 @@ import sys
 class pip:
     executable = None
     debug = False
-    def __init__(self, command: list=[], executable: str=None, debug: bool=False):
+    def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, opposite: bool=False):
         import sys
         import os
         import subprocess
         self.debug = debug==True
-        if type(executable) is str:
-            if os.path.isfile(executable):
-                self.executable = executable
-            else:
-                self.executable = sys.executable
+        if opposite == True:
+            self.executable = self.findPython(opposite_arch=opposite)
         else:
-            self.executable = sys.executable
-        if type(command) is list and len(command) > 0: subprocess.check_call([self.executable, "-m", "pip"] + command)
+            if type(executable) is str:
+                if os.path.isfile(executable): self.executable = executable
+                else: self.executable = self.findPython(opposite_arch=opposite) if find == True else sys.executable
+            else: self.executable = self.findPython(opposite_arch=opposite) if find == True else sys.executable
+        if type(command) is list and len(command) > 0: self.ensurePip(); subprocess.check_call([self.executable, "-m", "pip"] + command)
     def install(self, packages: typing.List[str]):
+        self.ensurePip()
         import subprocess
         res = {}
         generated_list = []
@@ -44,6 +45,7 @@ class pip:
                 return {"success": False, "message": str(e)}
         return res
     def uninstall(self, packages: typing.List[str]):
+        self.ensurePip()
         import subprocess
         res = {}
         generated_list = []
@@ -58,30 +60,55 @@ class pip:
                 res[i] = {"success": False}
         return res
     def installed(self, packages: typing.List[str]=[], boolonly: bool=False):
+        self.ensurePip()
         import subprocess
-        sub = subprocess.run([self.executable, "-m", "pip", "list"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        line_splits = sub.stdout.decode().splitlines()[2:]
-        installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
-        installed_checked = {}
-        all_installed = True
-        if len(packages) == 0:
-            return installed_packages
-        elif len(packages) == 1:
-            return packages[0].lower() in installed_packages
-        else:
-            for i in packages:
-                try:
-                    if i.lower() in installed_packages:
-                        installed_checked[i] = True
-                    else:
+        import importlib.metadata
+        if self.isSameRunningPythonExecutable() and not len(packages) == 0:
+            def che(a):
+                try: importlib.metadata.version(a); return True
+                except importlib.metadata.PackageNotFoundError: return False
+            if len(packages) == 1:
+                return che(packages[0].lower())
+            else:
+                installed_checked = {}
+                all_installed = True
+                for i in packages:
+                    try:
+                        if che(i.lower()):
+                            installed_checked[i] = True
+                        else:
+                            installed_checked[i] = False
+                            all_installed = False
+                    except Exception as e:
                         installed_checked[i] = False
                         all_installed = False
-                except Exception as e:
-                    installed_checked[i] = False
-                    all_installed = False
-            installed_checked["all"] = all_installed
-            if boolonly == True: return installed_checked["all"]
-            return installed_checked
+                installed_checked["all"] = all_installed
+                if boolonly == True: return installed_checked["all"]
+                return installed_checked
+        else:
+            sub = subprocess.run([self.executable, "-m", "pip", "list"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            line_splits = sub.stdout.decode().splitlines()[2:]
+            installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
+            installed_checked = {}
+            all_installed = True
+            if len(packages) == 0:
+                return installed_packages
+            elif len(packages) == 1:
+                return packages[0].lower() in installed_packages
+            else:
+                for i in packages:
+                    try:
+                        if i.lower() in installed_packages:
+                            installed_checked[i] = True
+                        else:
+                            installed_checked[i] = False
+                            all_installed = False
+                    except Exception as e:
+                        installed_checked[i] = False
+                        all_installed = False
+                installed_checked["all"] = all_installed
+                if boolonly == True: return installed_checked["all"]
+                return installed_checked
     def download(self, packages: typing.List[str], repository_mode: bool=False):
         import subprocess
         import os
@@ -118,6 +145,7 @@ class pip:
                     down_path = os.path.join(current_path_location, '-'.join(generated_list) + "_download")
                     if os.path.isdir(down_path): shutil.rmtree(down_path, ignore_errors=True)
                     os.makedirs(down_path)
+                    self.ensurePip()
                     subprocess.check_call([self.executable, "-m", "pip", "download", "--no-binary", ":all:"] + generated_list, stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL, cwd=down_path)
                     a = []
                     for e in os.listdir(down_path): a.append(os.path.join(down_path, e))
@@ -138,6 +166,8 @@ class pip:
                 links = {}
                 for i in generated_list:
                     urll = f"https://pypi.org/pypi/{i}/json"
+                    if self.getIfConnectedToInternet() == False:
+                        return {"success": False}
                     with urllib.request.urlopen(urll) as response:
                         data = json.load(response)
                         info = data["info"]
@@ -219,6 +249,21 @@ class pip:
             def to_int(val): return int(re.sub(r'\D', '', val))
             return tuple(map(to_int, cur_version)) >= (major, minor, patch)
         else: return False
+    def osSupported(self, windows_build: int=0, macos_version: tuple[int, int, int]=(0,0,0)):
+        import platform
+        if platform.system() == "Windows":
+            version = platform.version()
+            v = version.split(".")
+            if len(v) < 3: return False
+            return int(v[2]) >= windows_build
+        elif platform.system() == "Darwin":
+            version = platform.mac_ver()[0]
+            version_tuple = tuple(map(int, version.split('.')))
+            while len(version_tuple) < 3: version_tuple += (0,)
+            while len(macos_version) < 3: min_version += (0,)
+            return version_tuple >= macos_version
+        else:
+            return False
     def pythonInstall(self, version: str="", beta: bool=False):
         import subprocess
         import platform
@@ -228,6 +273,9 @@ class pip:
         ma_os = platform.system()
         ma_arch = platform.architecture()
         ma_processor = platform.machine()
+        if self.getIfConnectedToInternet() == False:
+            if self.debug == True: print("Failed to download Python installer.")
+            return
         if version == "": version = self.getLatestPythonVersion(beta=beta)
         if not version:
             if self.debug == True: print("Failed to download Python installer.")
@@ -294,6 +342,76 @@ class pip:
                 return importlib.import_module(module_name)
             except Exception as e:
                 raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+    def installLocalPythonCertificates(self):
+        import subprocess
+        import platform
+        if platform.system() == "Darwin":
+            s = subprocess.run(f"""
+        #!/bin/sh
+                                
+        {self.executable} << "EOF"
+        # install_certifi.py
+        #
+        # sample script to install or update a set of default Root Certificates
+        # for the ssl module.  Uses the certificates provided by the certifi package:
+        #       https://pypi.org/project/certifi/
+        import os
+        import os.path
+        import ssl
+        import stat
+        import subprocess
+        import sys
+        STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+                    | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+                    | stat.S_IROTH |                stat.S_IXOTH )
+        def main():
+        openssl_dir, openssl_cafile = os.path.split(
+            ssl.get_default_verify_paths().openssl_cafile)
+        print(" -- pip install --upgrade certifi")
+        subprocess.check_call([sys.executable,
+            "-E", "-s", "-m", "pip", "install", "--upgrade", "certifi"])
+        import certifi
+        # change working directory to the default SSL directory
+        os.chdir(openssl_dir)
+        relpath_to_certifi_cafile = os.path.relpath(certifi.where())
+        print(" -- removing any existing file or link")
+        try:
+            os.remove(openssl_cafile)
+        except FileNotFoundError:
+            pass
+        print(" -- creating symlink to certifi certificate bundle")
+        os.symlink(relpath_to_certifi_cafile, openssl_cafile)
+        print(" -- setting permissions")
+        os.chmod(openssl_cafile, STAT_0o775)
+        print(" -- update complete")
+        if __name__ == '__main__':
+        main()
+        EOF""", shell=True, stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)
+            if not (s.returncode == 0) and self.debug == True: print(f"Unable to install local python certificates!")
+    def ensurePip(self):
+        import subprocess
+        import tempfile
+        if not self.executable: return False
+        check_for_pip_pro = subprocess.run([self.executable, "-m", "pip"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if check_for_pip_pro.returncode == 0:
+            return True
+        else:
+            if self.getIfConnectedToInternet() == True:
+                if self.debug == True: print(f"Downloading pip from pypi..")
+                with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as temp_file: pypi_download_path = temp_file.name
+                download_res = subprocess.run(["curl", "-o", pypi_download_path, "https://bootstrap.pypa.io/get-pip.py"], stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)            
+                if download_res.returncode == 0:
+                    if self.debug == True: print(f"Successfully downloaded pip! Installing to Python..")
+                    install_to_py = subprocess.run([self.executable, pypi_download_path], stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL)
+                    if install_to_py.returncode == 0:
+                        if self.debug == True: print(f"Successfully installed pip to Python executable!")
+                        self.installLocalPythonCertificates()
+                        return True
+                    else: return False
+                else: return False
+            else:
+                if self.debug == True: print(f"Unable to download pip due to no internet access.")
+                return False
     def copyTreeWithMetadata(self, src: str, dst: str, symlinks=False, ignore=None, dirs_exist_ok=False, ignore_if_not_exist=False):
         import shutil
         import os
@@ -643,22 +761,20 @@ class InstantRequestJSONResponse:
 class plist:
     def readPListFile(self, path: str):
         import os
-        if os.path.exists(path) and path.endswith(".plist"):
+        if os.path.exists(path):
             import plistlib
             with open(path, "rb") as f:
                 plist_data = plistlib.load(f)
             return plist_data
         else:
             return {}
-    def writePListFile(self, path: str, data):
-        if path.endswith(".plist"):
-            try:
-                import plistlib
-                with open(path, "wb") as f:
-                    plistlib.dump(data, f)
-                return {"success": True, "message": "Success!", "data": data}
-            except Exception as e:
-                return {"success": False, "message": "Something went wrong.", "data": ""}
-        else:
-            return {"success": False, "message": "Path doesn't end with .plist", "data": path}
+    def writePListFile(self, path: str, data: dict | str | int | float, binary: bool=False):
+        try:
+            import plistlib
+            with open(path, "wb") as f:
+                if binary == True: plistlib.dump(data, f, fmt=plistlib.FMT_BINARY)
+                else: plistlib.dump(data, f)
+            return {"success": True, "message": "Success!", "data": data}
+        except Exception as e:
+            return {"success": False, "message": "Something went wrong.", "data": ""}
 if __name__ == "__main__": print("PipHandler.py is a module and is not a runable instance!")

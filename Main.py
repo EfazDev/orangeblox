@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.0.1
+# v2.0.2
 # 
 
 # Modules
@@ -18,6 +18,7 @@ import logging
 import hashlib
 import asyncio
 import time
+import zlib
 import re
 sys.dont_write_bytecode = True
 
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     installed_update = False
     connect_instead = False
     run_studio = False
-    current_version = {"version": "2.0.1"}
+    current_version = {"version": "2.0.2"}
     given_args = list(filter(None, sys.argv))
 
     def printMainMessage(mes): print(f"\033[38;5;255m{mes}\033[0m")
@@ -285,8 +286,8 @@ if __name__ == "__main__":
                                 mod_info["permissions"].append(pe)
                         if ("EfazRobloxBootstrapAPI" in mod_mode_script_text) and mod_info.get("mod_script_supports") < "1.3.0":
                             mod_info["mod_script_supports"] = "1.3.0"
-                        elif ("OrangeAPI" in mod_mode_script_text) and mod_info.get("mod_script_supports") < "2.0.1":
-                            mod_info["mod_script_supports"] = "2.0.1"
+                        elif ("OrangeAPI" in mod_mode_script_text) and mod_info.get("mod_script_supports") < "2.0.2":
+                            mod_info["mod_script_supports"] = "2.0.2"
                         mod_info["mod_script_path"] = mod_script_path
                 else:
                     mod_info["mod_script"] = False
@@ -311,8 +312,10 @@ if __name__ == "__main__":
                 fast_config_loaded = True
             return main_config
         else:
-            with open(os.path.join(current_path_location, "Configuration.json"), "r", encoding="utf-8") as f:
-                main_config = json.load(f)
+            with open(os.path.join(current_path_location, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
+            try: obfuscated_json = json.loads(obfuscated_json)
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+            main_config = obfuscated_json
             fast_config_loaded = True
             return main_config
     def saveSettings():
@@ -337,10 +340,10 @@ if __name__ == "__main__":
             else:
                 app_configuration = {}
             app_configuration["Configuration"] = main_config
-            PipHandler.plist().writePListFile(macos_preference_expected, app_configuration)
+            PipHandler.plist().writePListFile(macos_preference_expected, app_configuration, binary=True)
         else:
-            with open(os.path.join(current_path_location, "Configuration.json"), "w", encoding="utf-8") as f:
-                json.dump(main_config, f, indent=4)
+            data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
+            with open(os.path.join(current_path_location, "Configuration.json"), "wb") as f: f.write(data_in_string)
         respo["saved_normally"] = True
         return respo
     def waitForInternet():
@@ -350,6 +353,7 @@ if __name__ == "__main__":
             while pip_class.getIfConnectedToInternet() == False:
                 time.sleep(0.05)
             return True
+    def generateCodesignCommand(pa, iden): return 'codesign -f --deep --timestamp=none -s ' + iden + ' \'' + pa + '\''
     def setInstalledAppPath(install_app_path):
         if main_os == "Darwin":
             if os.path.exists(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist")): os.remove(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist"))
@@ -358,7 +362,7 @@ if __name__ == "__main__":
             if os.path.exists(macos_preference_expected):
                 plist_info = PipHandler.plist().readPListFile(macos_preference_expected)
             plist_info["InstalledAppPath"] = install_app_path
-            PipHandler.plist().writePListFile(macos_preference_expected, plist_info)
+            PipHandler.plist().writePListFile(macos_preference_expected, plist_info, binary=True)
         elif main_os == "Windows":
             import winreg as reg
             app_key = r"Software\EfazRobloxBootstrap"
@@ -386,11 +390,16 @@ if __name__ == "__main__":
 
         # Requirement Checks
         if main_os == "Windows":
-            printMainMessage(f"System OS: {main_os}")
+            printMainMessage(f"System OS: {main_os} ({platform.version()})")
         elif main_os == "Darwin":
             printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
         else:
             printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+            input("> ")
+            sys.exit(0)
+        if not pip_class.osSupported(windows_build=17134, macos_version=(10,13,0)):
+            if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17134 (April 2018) or higher. Please update your operating system in order to continue!")
+            elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
             input("> ")
             sys.exit(0)
         printMainMessage(f"Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
@@ -478,8 +487,9 @@ if __name__ == "__main__":
     versions_folder = os.path.join(current_path_location, "Versions")
     submitStatus = PipHandler.ProgressBar()
     user_folder_name = ""
+    user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
     if main_os == "Windows":
-        printMainMessage(f"System OS: {main_os}")
+        printMainMessage(f"System OS: {main_os} ({platform.version()})")
         found_platform = "Windows"
     elif main_os == "Darwin":
         printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
@@ -488,9 +498,34 @@ if __name__ == "__main__":
         printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
         input("> ")
         sys.exit(0)
+    if not pip_class.osSupported(windows_build=17134, macos_version=(10,13,0)):
+        if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17134 (April 2018) or higher. Please update your operating system in order to continue!")
+        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+        input("> ")
+        sys.exit(0)
+    try:
+        requests = pip_class.importModule("requests")
+        plyer = pip_class.importModule("plyer")
+        pypresence = pip_class.importModule("pypresence")
+        tkinter = pip_class.importModule("tkinter")
+        certifi = pip_class.importModule("certifi")
+        if main_os == "Darwin":
+            posix_ipc = pip_class.importModule("posix_ipc")
+            objc = pip_class.importModule("objc")
+        elif main_os == "Windows":
+            win32com = pip_class.importModule("win32com")
+    except Exception as e:
+        printWarnMessage("--- Installing Python Modules ---")
+        pip_class.install(["requests", "plyer", "pypresence", "tk"])
+        pip_class.installLocalPythonCertificates()
+        if main_os == "Darwin": pip_class.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
+        elif main_os == "Windows": pip_class.install(["pywin32"])
+        pip_class.restartScript("Install.py", sys.argv)
+        printSuccessMessage("Successfully installed modules!")
     printMainMessage(f"Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
     if not pip_class.pythonSupported(3, 11, 0):
         if not pip_class.pythonSupported(3, 6, 0):
+            printWarnMessage("--- Python Update Required ---")
             printErrorMessage("Please update your current installation of Python above 3.11.0")
             input("> ")
             sys.exit(0)
@@ -657,6 +692,115 @@ if __name__ == "__main__":
         printWarnMessage("--------------------")
         subprocess.run(args=[sys.executable, "RobloxFastFlagsInstaller.py"], cwd=current_path_location)
         getSettings()
+    def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
+        global main_config
+        printWarnMessage("--- Run OrangeBlox Installer ---")
+        if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+            printMainMessage("Are you sure you want to run OrangeBlox installer from installation folder?=")
+            printMainMessage("[y/t] = Yes")
+            printMainMessage("[r] = Download & Run")
+            printMainMessage("[n/*] = No")
+        else:
+            printMainMessage("Are you sure you want to run OrangeBlox installer?")
+            printMainMessage("[y/t] = Yes")
+            printMainMessage("[n/*] = No")
+        def download_option():
+            if pip_class.getIfConnectedToInternet():
+                try:
+                    import requests
+                except Exception as e:
+                    pip_class.install(["requests"])
+                    requests = pip_class.importModule("requests")
+                    printSuccessMessage("Successfully installed modules!")
+                printDebugMessage("Setting Installed App Path to Local User..") 
+                if main_os == "Darwin": setInstalledAppPath(str(Path(os.path.join("../", "../", "../")).resolve()) + "/")
+                elif main_os == "Windows": setInstalledAppPath(os.path.join(current_path_location, ".."))
+                printDebugMessage("Sending Request to Bootstrap Version Servers..") 
+                version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
+                if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
+                try:
+                    latest_vers_res = requests.get(f"{version_server}", headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagRobloxBootstrapUpdatesAuthorizationKey", "")})
+                except Exception as e:
+                    class mini_request_class(): ok = False
+                    latest_vers_res = mini_request_class()
+                if latest_vers_res.ok:
+                    latest_vers = latest_vers_res.json()
+                    download_location = latest_vers.get("download_location", "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip")
+                    if download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip":
+                        printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
+                    elif download_location == "https://cdn.efaz.dev/cdn/py/orangeblox-beta.zip":
+                        printYellowMessage("⚠️ This version is a beta and may cause issues with your installation.")
+                    elif not (main_config.get("EFlagRobloxBootstrapUpdatesAuthorizationKey", "") == ""):
+                        printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
+                    else:
+                        printErrorMessage("❌ The download location for this version is different from the official GitHub download link!! You may be downloading an unofficial OrangeBlox version!")
+                    if not (download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"):
+                        printErrorMessage("Are you sure you want to download OrangeBlox from this source? This may compromise your security if chosen. (y/n)")
+                        a = input("> ")
+                        if not (isYes(a) == True): return "OrangeBlox Installer task was canceled!"
+                    printMainMessage("Downloading Latest Version of OrangeBlox..")
+                    late_v = latest_vers.get("latest_version")
+                    printDebugMessage(f"Download location: {download_location} => {os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')}")
+                    download_update = subprocess.run(["curl", "-L", download_location, "-o", os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')], check=True, cwd=current_path_location)
+                    if download_update.returncode == 0:
+                        printMainMessage("Download Success! Extracting ZIP now!")
+                        dow_tar = os.path.join(user_folder, f'OrangeBloxInstaller')
+                        if main_os == "Darwin":
+                            makedirs(dow_tar)
+                            zip_extract = subprocess.run(["unzip", "-o", os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), "-d", dow_tar], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, cwd=current_path_location)
+                        elif main_os == "Windows":
+                            makedirs(dow_tar)
+                            zip_extract = subprocess.run(["tar", "-xf", os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), "-C", dow_tar], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, cwd=current_path_location)
+                        if zip_extract.returncode == 0:
+                            printMainMessage("Removing ZIP File..")
+                            if os.path.exists(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')): os.remove(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
+                            temp_sync = False
+                            if not (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+                                printMainMessage(f"Registering Sync Directory..")
+                                printDebugMessage(f'Sync Directory: {os.path.join(dow_tar, "orangeblox-main")}')
+                                main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar, "orangeblox-main")
+                                saveSettings()
+                                temp_sync = True
+                            printMainMessage("Running Installer..")
+                            sys.stdout.clear()
+                            e = subprocess.run(args=[sys.executable, os.path.join(dow_tar, "orangeblox-main", "Install.py")], cwd=dow_tar)
+                            if e.returncode == 0: printSuccessMessage("OrangeBlox Installer has succeeded successfully! Once you continue, this script will reload.")
+                            else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
+                            if temp_sync == False and os.path.exists(dow_tar): shutil.rmtree(dow_tar, ignore_errors=True)
+                            input("> ")
+                            pip_class.restartScript("Main.py", sys.argv)
+                            sys.exit(0)
+                            return
+                        else:
+                            printErrorMessage("There was an issue trying to unpack the OrangeBlox installation folder!")
+                            return "OrangeBlox Installer task was canceled!"
+                    else:
+                        printErrorMessage("There was an issue trying to download OrangeBlox from the download server!")
+                        return "OrangeBlox Installer task was canceled!"
+                else:
+                    printErrorMessage("There was an issue trying to fetch OrangeBlox information!")
+                    return "OrangeBlox Installer task was canceled!"
+            else:
+                printErrorMessage("Please connect to your internet in order to use this action!")
+                return "OrangeBlox Installer task was canceled!"
+        a = input("> ")
+        if isYes(a) == True:
+            if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+                printMainMessage("Running Installer..")
+                sys.stdout.clear()
+                e = subprocess.run(args=[sys.executable, os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Install.py")], cwd=main_config.get("EFlagOrangeBloxSyncDir"))
+                if e.returncode == 0: printSuccessMessage("OrangeBlox Installer has succeeded successfully! Once you continue, this script will reload.")
+                else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
+                input("> ")
+                pip_class.restartScript("Main.py", sys.argv)
+                sys.exit(0)
+                return
+            else:
+                return download_option()
+        elif a == "r":
+            return download_option()
+        else:
+            return "OrangeBlox Installer task was canceled!"   
     def continueToClearLogs(): # Clear All Roblox Logs
         printWarnMessage("--- Clear All Roblox Logs ---")
         if handler.getIfRobloxIsOpen() == True:
@@ -1557,6 +1701,20 @@ if __name__ == "__main__":
                         main_config["EFlagUseDiscordWebhook"] = False
                         printErrorMessage("The provided webhook link is not a valid format.")
 
+                    if main_config.get("EFlagRobloxStudioEnabled") == True:
+                        printMainMessage("Would you like to enable force reconnection when you disconnect from a Studio server? (y/n)")
+                        printMainMessage(f'Current Setting: {(main_config.get("EFlagForceReconnectOnStudioLost", False)==True)}')
+                        d = input("> ")
+                        if isYes(d) == True:
+                            main_config["EFlagForceReconnectOnStudioLost"] = True
+                            printDebugMessage("User selected: True")
+                        elif isRequestClose(d) == True:
+                            printMainMessage("Closing settings..")
+                            return "Settings was closed."
+                        elif isNo(d) == True:
+                            main_config["EFlagForceReconnectOnStudioLost"] = False
+                            printDebugMessage("User selected: False")
+
                     if main_os == "Windows":
                         printMainMessage("Would you like to enable showing the Account Name in the Roblox title window? (y/n)")
                         printMainMessage(f'Current Setting: {(main_config.get("EFlagShowRunningAccountNameInTitle", False)==True)}')
@@ -1599,7 +1757,7 @@ if __name__ == "__main__":
             def bootstrapSettings():
                 printWarnMessage("--- Bootstrap Settings ---")
                 global main_config
-                # Simplified Bootstrap Menu deprecated v2.0.1 in result of moving options to settings.
+                # Simplified Bootstrap Menu deprecated v2.0.2 in result of moving options to settings.
                 """
                 printMainMessage("Would you like to simplify the Bootstrap Start UI? (y/n)")
                 printMainMessage("This will shrink the UI to 6 options.")
@@ -1977,6 +2135,15 @@ if __name__ == "__main__":
                 "include_new_message": "Roblox has been modified!",
                 "clear_console": True
             })
+            generated_ui_options.append({
+                "index": 8, 
+                "message": "OrangeBlox Installer Options", 
+                "func": continueToOrangeBloxInstaller, 
+                "include_go_to_roblox": True, 
+                "include_message": "OrangeBlox has been modified! Would you like to run it now? (y/n)", 
+                "include_new_message": "OrangeBlox has been modified!",
+                "clear_console": True
+            })
             try:
                 import requests
             except Exception as e:
@@ -2019,7 +2186,7 @@ if __name__ == "__main__":
                             else:
                                 versio_name = f'\033[38;5;{unic}mCheck for Updates [{emoji_to_define_update}]\033[0m'
             generated_ui_options.append({
-                "index": 8, 
+                "index": 9, 
                 "message": versio_name, 
                 "func": continueToUpdates, 
                 "include_go_to_roblox": True, 
@@ -2028,7 +2195,7 @@ if __name__ == "__main__":
                 "clear_console": True
             })
             generated_ui_options.append({
-                "index": 9, 
+                "index": 10, 
                 "message": "Debugging", 
                 "func": debugging,
                 "clear_console": True
@@ -2880,7 +3047,7 @@ if __name__ == "__main__":
             printSuccessMessage("Successfully installed modules!")
         printDebugMessage("Setting Installed App Path to Local User..") 
         if main_os == "Darwin": setInstalledAppPath(str(Path(os.path.join("../", "../", "../")).resolve()) + "/")
-        elif main_os == "Windows": setInstalledAppPath(current_path_location + "/")
+        elif main_os == "Windows": setInstalledAppPath(os.path.join(current_path_location, ".."))
         printDebugMessage("Sending Request to Bootstrap Version Servers..") 
         version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
         if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
@@ -3302,53 +3469,47 @@ if __name__ == "__main__":
                         "clear_console": True
                     })
                     if main_config.get("EFlagRobloxUnfriendCheckEnabled") == True:
-                        try:
-                            import requests
-                        except Exception as e:
-                            pip_class.install(["requests"])
-                            requests = pip_class.importModule("requests")
-                        unfriended_friends = []
-                        try:
-                            friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
-                            friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends", timeout=0.5)
-                            friend_list_json = friend_list_req.json()
-                            if friend_list_req.ok:
-                                last_pinged_friend_list = {}
-                                if os.path.exists(os.path.join(current_path_location, "CachedFriendsList.json")):
-                                    with open(os.path.join(current_path_location, "CachedFriendsList.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
-                                if last_pinged_friend_list.get(str(friend_check_id)):
-                                    for i in last_pinged_friend_list.get(str(friend_check_id)):
-                                        found_friend = False
-                                        for e in friend_list_json.get("data"):
-                                            if e["id"] == i["id"]: found_friend = True; break
-                                        if found_friend == False: unfriended_friends.append(i)
-                                else:
-                                    last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-                                    with open(os.path.join(current_path_location, "CachedFriendsList.json"), "w", encoding="utf-8") as f:
-                                        json.dump(last_pinged_friend_list, f, indent=4)
-                        except Exception as e:
-                            printDebugMessage(f"Unable to fetch friends list! Exception: {str(e)}")
+                        def friendCheckThread():
+                            try:
+                                import requests
+                            except Exception as e:
+                                pip_class.install(["requests"])
+                                requests = pip_class.importModule("requests")
                             unfriended_friends = []
-                        if len(unfriended_friends) > 0:
-                            generated_ui_options.append({
-                                "index": 12, 
-                                "message": f"Unfriended Friends \033[38;5;196m[{len(unfriended_friends)}]\033[0m", 
-                                "func": continueToUnfriendedFriends, 
-                                "include_go_to_roblox": True, 
-                                "include_message": "Listed all unfriended friends! Would you like to run Roblox? (y/n)", 
-                                "include_new_message": "Listed all unfriended friends!",
-                                "clear_console": True
-                            })
-                        else:
-                            generated_ui_options.append({
-                                "index": 12, 
-                                "message": f"Unfriended Friends", 
-                                "func": continueToUnfriendedFriends, 
-                                "include_go_to_roblox": True, 
-                                "include_message": "Listed all unfriended friends! Would you like to run Roblox? (y/n)", 
-                                "include_new_message": "Listed all unfriended friends!",
-                                "clear_console": True
-                            })
+                            try:
+                                friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
+                                friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends", timeout=0.5)
+                                friend_list_json = friend_list_req.json()
+                                if friend_list_req.ok:
+                                    last_pinged_friend_list = {}
+                                    if os.path.exists(os.path.join(current_path_location, "CachedFriendsList.json")):
+                                        with open(os.path.join(current_path_location, "CachedFriendsList.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+                                    if last_pinged_friend_list.get(str(friend_check_id)):
+                                        for i in last_pinged_friend_list.get(str(friend_check_id)):
+                                            found_friend = False
+                                            for e in friend_list_json.get("data"):
+                                                if e["id"] == i["id"]: found_friend = True; break
+                                            if found_friend == False: unfriended_friends.append(i)
+                                    else:
+                                        last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
+                                        with open(os.path.join(current_path_location, "CachedFriendsList.json"), "w", encoding="utf-8") as f:
+                                            json.dump(last_pinged_friend_list, f, indent=4)
+                            except Exception as e:
+                                unfriended_friends = []
+                            if len(unfriended_friends) > 0:
+                                for i in unfriended_friends:
+                                    displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you while you were away! ;(")
+                                    time.sleep(1)
+                        threading.Thread(target=friendCheckThread, daemon=True).start()        
+                        generated_ui_options.append({
+                            "index": 12, 
+                            "message": f"Unfriended Friends", 
+                            "func": continueToUnfriendedFriends, 
+                            "include_go_to_roblox": True, 
+                            "include_message": "Listed all unfriended friends! Would you like to run Roblox? (y/n)", 
+                            "include_new_message": "Listed all unfriended friends!",
+                            "clear_console": True
+                        })
                                 
                     generated_ui_options.append({
                         "index": 100, 
@@ -3514,6 +3675,7 @@ if __name__ == "__main__":
                         printWarnMessage("--- Unknown URL ---")
                         printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                         printDebugMessage(f"URL Scheme Requested: {url}")
+                        printDebugMessage(f"Arguments Received: {given_args}")
                         printMainMessage("[1] = Return to Main Menu")
                         printMainMessage("[2] = Continue to Roblox")
                         printMainMessage("[*] = End Process")
@@ -3530,6 +3692,7 @@ if __name__ == "__main__":
                     printWarnMessage("--- Redirecting to Roblox Studio! ---")
                     printMainMessage("Successfully loaded Roblox Studio URL Scheme! Continuing to Roblox Studio..")
                     run_studio = True
+                    if ("-channel" in url or "-RobloxChannel" in url) and "version-" in url and "roblox-studio " in url: given_args[1] = given_args[1].replace("roblox-studio ", "")
                 elif "roblox" in url:
                     printWarnMessage("--- Redirecting to Roblox! ---")
                     if main_config.get("EFlagEnableDuplicationOfClients") == True:
@@ -3538,6 +3701,7 @@ if __name__ == "__main__":
                         printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox..")
                     if main_config.get("EFlagEnableSkipModificationMode") == True and main_os == "Darwin":
                         skip_modification_mode = True
+                    if ("-channel" in url or "-RobloxChannel" in url) and "version-" in url and "roblox-player " in url: given_args[1] = given_args[1].replace("roblox-player ", "")
                 elif os.path.isfile(url):
                     if url.endswith(".rbxl") or url.endswith(".rbxlx"):
                         printWarnMessage("--- Redirecting to Roblox Studio! ---")
@@ -3573,7 +3737,7 @@ if __name__ == "__main__":
                                                 with open(os.path.join(backup_path, "Metadata.json"), "r", encoding="utf-8") as f: back_metadata = json.load(f)
                                             if back_metadata.get("bootstrap_version") == "0.0.0":
                                                 printWarnMessage("--- Attention Needed! ---")
-                                                printMainMessage("This backup is created in a version before OrangeBlox v2.0.1. Are you sure you want to continue with this backup? (y/n)")
+                                                printMainMessage("This backup is created in a version before OrangeBlox v2.0.2. Are you sure you want to continue with this backup? (y/n)")
                                                 a = input("> ")
                                                 if not (isYes(a) == True):
                                                     sys.exit(0)
@@ -3642,6 +3806,7 @@ if __name__ == "__main__":
                     printWarnMessage("--- Unknown URL ---")
                     printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                     printDebugMessage(f"URL Scheme Requested: {url}")
+                    printDebugMessage(f"Arguments Received: {given_args}")
                     printMainMessage("[1] = Return to Main Menu")
                     printMainMessage("[2] = Continue to Roblox")
                     printMainMessage("[*] = End Process")
@@ -3749,13 +3914,13 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join("../", "../", "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
                     with open(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                         f.write(current_path_location)
-                    subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if os.path.exists(os.path.join("../", "../", "../", "Run Studio.app")):
                     pip_class.copyTreeWithMetadata(os.path.join("../", "../", "../", "Run Studio.app"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
                     shutil.copy(os.path.join("../", "../", "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
                     with open(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                         f.write(current_path_location)
-                    subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Check for Updates
         if (not (main_config.get("EFlagDisableRobloxUpdateChecks") == True)):
@@ -3774,13 +3939,23 @@ if __name__ == "__main__":
                                 url = ""
                         elif main_os == "Windows":
                             url = given_args[1]
-                        if url.startswith("roblox-studio"):
+                        if "-channel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-channel") + 1]
+                            given_args = ["Main.py", "orangeblox://run-studio"]
+                        elif "-RobloxChannel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-RobloxChannel") + 1]
+                            given_args = ["Main.py", "orangeblox://run-studio"]
+                        elif url.startswith("roblox-studio"):
                             url_data = handler.parseRobloxURL(url)
                             if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                     if url_channel:
-                        user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
-                        if main_os == "Darwin" and os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxStudioChannel.plist")):
-                            read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxStudioChannel.plist"))
+                        if url_channel == "production": url_channel = ""
+                        printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
+                        if main_os == "Darwin":
+                            if os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxStudioChannel.plist")): read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"))
+                            else: read_install_plist = {}
                             read_install_plist["www.roblox.com"] = url_channel
                             PipHandler.plist().writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxStudioChannel.plist"), read_install_plist)
                         elif main_os == "Windows":
@@ -4007,7 +4182,7 @@ if __name__ == "__main__":
                 if main_config.get("EFlagEnableChangeBrandIcons2") == True: printSuccessMessage("Successfully changed brand images!")
                 else: printSuccessMessage("Successfully changed brand images to original!")
                 printMainMessage("Installing Updater Apps..")
-                if main_os == "Windows" and not os.path.exists(os.path.join(stored_content_folder_destinations[found_platform], "RobloxStudioBetaPlayRobloxRestart.txt")):
+                if main_os == "Windows":
                     pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "_internal"), os.path.join(stored_content_folder_destinations[found_platform], "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
                     shutil.copy(os.path.join(current_path_location, "RunStudio.exe"), os.path.join(stored_content_folder_destinations[found_platform], "RobloxStudioInstaller.exe"))
                     with open(os.path.join(stored_content_folder_destinations[found_platform], "RobloxStudioBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f:
@@ -4018,13 +4193,13 @@ if __name__ == "__main__":
                         shutil.copy(os.path.join("../", "../", "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
                         with open(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                             f.write(current_path_location)
-                        subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if os.path.exists(os.path.join("../", "../", "../", "Run Studio.app")):
                         pip_class.copyTreeWithMetadata(os.path.join("../", "../", "../", "Run Studio.app"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
                         shutil.copy(os.path.join("../", "../", "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
                         with open(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                             f.write(current_path_location)
-                        subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 printSuccessMessage("Successfully installed updater apps!")
                 printMainMessage("Installing Fast Flags..")
                 if fast_config_loaded == True:
@@ -4073,7 +4248,7 @@ if __name__ == "__main__":
                             #     printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
                             printMainMessage("Signing Roblox Studio.app..")
                             def req_codesign(co=0):
-                                result = subprocess.run(f"codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep --timestamp=none '{RobloxFastFlagsInstaller.macOS_studioDir}'", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
+                                result = subprocess.run(generateCodesignCommand(RobloxFastFlagsInstaller.macOS_studioDir, main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
                                 printDebugMessage(f"Code Signing Response: {result.returncode}")
                                 if result.returncode == 0:
                                     printSuccessMessage("Successfully signed Roblox Studio.app!")
@@ -4232,6 +4407,8 @@ if __name__ == "__main__":
         connected_user_info = None
         updated_count = 0
         connected_roblox_instance = None
+        connected_to_game = False
+        is_connection_lost = False
 
         # Mod Scripts
         mod_mode_module = None
@@ -4282,9 +4459,9 @@ if __name__ == "__main__":
 
                                         if approved_through_scan == True:
                                             if mod_manifest.get("python_modules"):
-                                                printDebugMessage("Checking for uninstalled Python modules..")
+                                                printDebugMessage("Validating Installation of Mod Script Modules..")
                                                 if not pip_class.installed(mod_manifest.get("python_modules", []), boolonly=True): pip_class.install(mod_manifest.get("python_modules", []))
-                                            printDebugMessage("Connecting to mod mode script..")
+                                            printDebugMessage("Initalizing Components..")
                                             script_path = os.path.join(current_path_location, "Mods", selected_mod_mode, "ModScript.py")
                                             api_handled_requests = {}
                                             try:
@@ -4299,16 +4476,14 @@ if __name__ == "__main__":
                                                 generated_api_instance = OrangeAPI.OrangeAPI()
 
                                                 # Load Mod Script
-                                                with open(script_path, "r", encoding="utf-8") as f:
-                                                    mod_script_contents = f.read()
-                                                if not (mod_script_contents.find("EfazRobloxBootstrapAPI()") == -1) or not (mod_script_contents.find("import EfazRobloxBootstrapAPI") == -1): mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import RobloxFastFlagsInstaller") == -1): mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import PipHandler") == -1): mod_script_contents = mod_script_contents.replace("import PipHandler", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import Install") == -1): mod_script_contents = mod_script_contents.replace("import Install", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import DiscordPresenceHandler") == -1): mod_script_contents = mod_script_contents.replace("import DiscordPresenceHandler", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import Main") == -1): mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
-                                                with open(script_path, "w", encoding="utf-8") as f:
-                                                    f.write(mod_script_contents)
+                                                with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
+                                                if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
+                                                if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
+                                                if "import PipHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import PipHandler", "import OrangeAPI")
+                                                if "import Install" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Install", "import OrangeAPI")
+                                                if "import DiscordPresenceHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import DiscordPresenceHandler", "import OrangeAPI")
+                                                if "import Main" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
+                                                with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
                                                 spec = importlib.util.spec_from_file_location("ModScript", script_path)
                                                 mod_mode_module = importlib.util.module_from_spec(spec)
                                                 setattr(mod_mode_module, "OrangeAPI", generated_api_instance)
@@ -4630,15 +4805,13 @@ if __name__ == "__main__":
                                                 # Launch API
                                                 def start_asyncio_loop(): asyncio.run(handleRequests()) 
                                                 threading.Thread(target=start_asyncio_loop, daemon=True).start()
-                                                printDebugMessage("Started handling requests for Orange API!")
+                                                printDebugMessage(f"Launched OrangeAPI v{OrangeAPI.current_version['version']}!")
 
                                                 # Set and Handle Printing Functions
                                                 def handlePrint(mes): printMainMessage(f"[MOD SCRIPT]: {mes}")
-                                                def empty_str(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
-                                                    return ""
-                                                def empty(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
-                                                    return None
-                                                def open_config(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
+                                                def empty_str(*args, **kwargs): return ""
+                                                def empty(*args, **kwargs): return None
+                                                def open_config(*args, **kwargs):
                                                     mod_mode_config = {}
                                                     config_path = os.path.join(current_path_location, "Mods", selected_mod_mode, f"Configuration_{user_folder_name}")
                                                     if os.path.exists(config_path):
@@ -4651,8 +4824,7 @@ if __name__ == "__main__":
                                                 setattr(mod_mode_module, "print", handlePrint)
                                                 setattr(mod_mode_module, "input", empty_str)
                                                 setattr(mod_mode_module, "write", empty)
-                                                if not (("grantFileEditing" in approved_items_list) or (handler.robloxInstanceEventInfo.get("grantFileEditing", {"free": False}).get("free") == True)):
-                                                    setattr(mod_mode_module, "open", open_config)
+                                                if not (("grantFileEditing" in approved_items_list) or (handler.robloxInstanceEventInfo.get("grantFileEditing", {"free": False}).get("free") == True)): setattr(mod_mode_module, "open", open_config)
                                                 setattr(mod_mode_module, "exec", None)
                                                 setattr(mod_mode_module, "eval", None)
                                                 setattr(mod_mode_module, "setattr", empty)
@@ -4660,6 +4832,7 @@ if __name__ == "__main__":
                                                 setattr(mod_mode_module, "EfazRobloxBootstrapAPI", generated_api_instance)
 
                                                 # Launch Script
+                                                printDebugMessage("Starting Mod Script..")
                                                 spec.loader.exec_module(mod_mode_module)
                                                 printSuccessMessage("Successfully connected to script!")
                                             except Exception as e:
@@ -4731,8 +4904,8 @@ if __name__ == "__main__":
                     unfriended_friends = []
                 if len(unfriended_friends) > 0:
                     for i in unfriended_friends:
-                        if roblox_launched_affect_mod_script == True: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you while you were away! ;(")
-                        else: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you! ;(")
+                        if roblox_launched_affect_mod_script == True: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you! ;(")
+                        else: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you while you were away! ;(")
                         printDebugMessage(f"Unable to find friend @{i['name']} in list! User must be unfriended!")
                         time.sleep(1)
                 time.sleep(main_config.get("EFlagRobloxUnfriendCheckCooldown", 30))
@@ -4800,7 +4973,7 @@ if __name__ == "__main__":
                         },
                         {
                             "name": "Log Location",
-                            "value": connected_roblox_instance.main_log_file,
+                            "value": connected_roblox_instance.log_file,
                             "inline": True
                         }
                     ]
@@ -4856,7 +5029,7 @@ if __name__ == "__main__":
                     pip_class.install(["requests"])
                     requests = pip_class.importModule("requests")
                     printSuccessMessage("Successfully installed modules!")
-                if connected_roblox_instance and not (connected_roblox_instance.main_log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
+                if connected_roblox_instance and not (connected_roblox_instance.log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
                     title = "Roblox Studio Closed!"
                     color = 16735838
                     thumbnail_url = "https://obx.efaz.dev/BootstrapImages/RobloxStudioLogo.png"
@@ -4868,7 +5041,7 @@ if __name__ == "__main__":
                         },
                         {
                             "name": "Log Location",
-                            "value": connected_roblox_instance.main_log_file,
+                            "value": connected_roblox_instance.log_file,
                             "inline": True
                         }
                     ]
@@ -4903,16 +5076,18 @@ if __name__ == "__main__":
                     except Exception as e:
                         printDebugMessage(f"There was an issue sending your webhook message. Exception: {str(e)}")
         def onGameJoined(info):
+            global connected_to_game
+            connected_to_game = True
             generated_location = "Unknown Location"
+            try:
+                import requests
+            except Exception as e:
+                pip_class.install(["requests"])
+                requests = pip_class.importModule("requests")
+                printSuccessMessage("Successfully installed modules!")
             if info.get("ip"):
                 printDebugMessage(f"Roblox IP Address Detected! IP: {info.get('ip')}")
                 allocated_roblox_ip = info.get("ip")
-                try:
-                    import requests
-                except Exception as e:
-                    pip_class.install(["requests"])
-                    requests = pip_class.importModule("requests")
-                    printSuccessMessage("Successfully installed modules!")
                 server_info_res = requests.get(f"https://ipinfo.io/{allocated_roblox_ip}/json")
                 if server_info_res.ok:
                     server_info_json = server_info_res.json()
@@ -4935,6 +5110,10 @@ if __name__ == "__main__":
 
             global current_place_info
             global connected_user_info
+            if not connected_user_info:
+                sss = handler.getRobloxAppSettings()
+                if sss.get("name") and sss.get("id"):
+                    connected_user_info = {"name": sss.get("name"), "id": sss.get("id"), "display": sss.get("displayName")}
             if current_place_info:
                 if generated_location: current_place_info["server_location"] = generated_location
                 if current_place_info.get('place_identifier') and current_place_info.get('place_identifier').isnumeric():
@@ -5272,15 +5451,32 @@ if __name__ == "__main__":
                         printDebugMessage(f"Place responses rejected by Roblox. [{generated_thumbnail_api_res.ok},{generated_thumbnail_api_res.status_code} | {generated_place_api_res.ok},{generated_place_api_res.status_code}]")
         def onOpeningGame(info):
             global current_place_info
-            if not current_place_info: current_place_info = info
+            if not current_place_info: 
+                current_place_info = info
             elif info.get("placeId") and info.get("jobId"): 
                 for i, v in info.items(): current_place_info[i] = v
-            if not info.get("place_identifier").isnumeric():
+        def onGameLoaded(info):
+            global connected_to_game
+            if connected_to_game == False:
                 onGameJoined({})
+        def onLostConnection(info):
+            global is_connection_lost
+            is_connection_lost = True
+            if main_config.get("EFlagForceReconnectOnStudioLost") == True and connected_roblox_instance.loading_existing_logs == False:
+                placeId = current_place_info and current_place_info.get('place_identifier')
+                universeId = current_place_info and current_place_info.get('universeId')
+                if placeId and universeId:
+                    url = f"roblox-studio:1+distributorType:Global+launchmode:edit+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
+                    if main_os == "Darwin": subprocess.run(f"open {url}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
+                    else: subprocess.run(f"start {url}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
+                    connected_roblox_instance.endInstance()
         def onClosingGame(info):
+            global connected_to_game
             global current_place_info
             global connected_user_info
+            global is_connection_lost
             synced_place_info = None
+            connected_to_game = False
             if current_place_info:
                 synced_place_info = dict(current_place_info)
                 current_place_info = None
@@ -5317,6 +5513,10 @@ if __name__ == "__main__":
 
                         title = f"Disconnected from Studio Server!"
                         color = 16711680
+
+                        if is_connection_lost == True:
+                            title = f"Lost Connection from Studio Server!"
+                            color = 16776960
 
                         user_connected_text = "Unknown User"
                         if connected_user_info:
@@ -5406,6 +5606,7 @@ if __name__ == "__main__":
                 except Exception as e:
                     printDebugMessage(f"There was an error clearing Discord RPC: {str(e)}")
                 rpc_info = None
+            if main_config.get("EFlagEndStudioPlaceWhenDisconnected") == True and connected_roblox_instance and handler.getIfRobloxStudioIsOpen(pid=connected_roblox_instance.pid): connected_roblox_instance.endInstance()
         def onBloxstrapMessage(info, disableWebhook=False):
             if main_config.get("EFlagAllowBloxstrapStudioSDK") == True:
                 global rpc
@@ -5709,6 +5910,8 @@ if __name__ == "__main__":
                         printDebugMessage(f"There was an issue sending your webhook message. Exception: {str(e)}")
         def onRobloxCrash(consoleLine):
             global updated_count
+            global connected_to_game
+            connected_to_game = False
             updated_count = 999
             printErrorMessage("There was an error inside the RobloxStudio that has caused it to crash! Sorry!")
             printDebugMessage(f"Crashed Data: {consoleLine}")
@@ -5783,9 +5986,7 @@ if __name__ == "__main__":
         def onNewRobloxStudio(info):
             if main_os == "Darwin": subprocess.run("open orangeblox://reconnect-studio", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
             else: subprocess.run("start orangeblox://reconnect-studio", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
-        def onStudioInstallerLaunched(info):
-            time.sleep(1)
-            handler.endRobloxStudio()
+        def onStudioInstallerLaunched(info): connected_roblox_instance.endInstance()
 
         # Launch Roblox Studio
         def runRobloxStudio():
@@ -5801,6 +6002,8 @@ if __name__ == "__main__":
                     cri.addRobloxEventCallback("onGameJoined", onGameJoined)
                     cri.addRobloxEventCallback("onClosingGame", onClosingGame)
                     cri.addRobloxEventCallback("onRobloxAppStart", onRobloxAppStart)
+                    cri.addRobloxEventCallback("onGameLoaded", onGameLoaded)
+                    cri.addRobloxEventCallback("onLostConnection", onLostConnection)
                     cri.addRobloxEventCallback("onStudioInstallerLaunched", onStudioInstallerLaunched)
                     cri.addRobloxEventCallback("onRobloxCrash", onRobloxCrash)
                     cri.addRobloxEventCallback("onRobloxLog", onAllRobloxEvents)
@@ -5863,7 +6066,7 @@ if __name__ == "__main__":
                         )
                     else:
                         printDebugMessage(f"Running using Roblox Studio URL: {url}")
-                        if main_os == "Windows" and url.find("'") != -1 and os.path.exists(url): url = f"\"{url}\""
+                        if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                         connected_roblox_instance = handler.openRobloxStudio(
                             makeDupe=False if url.startswith("roblox-studio-auth:") else True, 
                             debug=(main_config.get("EFlagEnableDebugMode") == True), 
@@ -5955,13 +6158,23 @@ if __name__ == "__main__":
                                 url = ""
                         elif main_os == "Windows":
                             url = given_args[1]
-                        if url.startswith("roblox-player:"):
+                        if "-channel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-channel") + 1]
+                            given_args = ["Main.py", "orangeblox://continue"]
+                        elif "-RobloxChannel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-RobloxChannel") + 1]
+                            given_args = ["Main.py", "orangeblox://continue"]
+                        elif url.startswith("roblox-player:"):
                             url_data = handler.parseRobloxURL(url)
                             if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                     if url_channel:
-                        user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
-                        if main_os == "Darwin" and os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist")):
-                            read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"))
+                        if url_channel == "production": url_channel = ""
+                        printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
+                        if main_os == "Darwin":
+                            if os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist")): read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"))
+                            else: read_install_plist = {}
                             read_install_plist["www.roblox.com"] = url_channel
                             PipHandler.plist().writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"), read_install_plist)
                         elif main_os == "Windows":
@@ -6010,13 +6223,23 @@ if __name__ == "__main__":
                                 url = ""
                         elif main_os == "Windows":
                             url = given_args[1]
-                        if url.startswith("roblox-player:"):
+                        if "-channel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-channel") + 1]
+                            given_args = ["Main.py", "orangeblox://continue"]
+                        elif "-RobloxChannel " in url:
+                            s = url.split(" ")
+                            url_channel = s[s.index("-RobloxChannel") + 1]
+                            given_args = ["Main.py", "orangeblox://continue"]
+                        elif url.startswith("roblox-player:"):
                             url_data = handler.parseRobloxURL(url)
                             if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                     if url_channel:
-                        user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
-                        if main_os == "Darwin" and os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist")):
-                            read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"))
+                        if url_channel == "production": url_channel = ""
+                        printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
+                        if main_os == "Darwin":
+                            if os.path.exists(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist")): read_install_plist = PipHandler.plist().readPListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"))
+                            else: read_install_plist = {}
                             read_install_plist["www.roblox.com"] = url_channel
                             PipHandler.plist().writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"), read_install_plist)
                         elif main_os == "Windows":
@@ -6264,7 +6487,7 @@ if __name__ == "__main__":
                 if main_config.get("EFlagEnableChangeBrandIcons") == True: printSuccessMessage("Successfully changed brand images!")
                 else: printSuccessMessage("Successfully changed brand images to original!")
                 printMainMessage("Installing Updater Apps..")
-                if main_os == "Windows" and not os.path.exists(os.path.join(stored_content_folder_destinations[found_platform], "RobloxPlayerBetaPlayRobloxRestart.txt")):
+                if main_os == "Windows":
                     pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "_internal"), os.path.join(stored_content_folder_destinations[found_platform], "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
                     shutil.copy(os.path.join(current_path_location, "PlayRoblox.exe"), os.path.join(stored_content_folder_destinations[found_platform], "RobloxPlayerInstaller.exe"))
                     with open(os.path.join(stored_content_folder_destinations[found_platform], "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f:
@@ -6275,13 +6498,13 @@ if __name__ == "__main__":
                         shutil.copy(os.path.join("../", "../", "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
                         with open(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                             f.write(current_path_location)
-                        subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if os.path.exists(os.path.join("../", "../", "../", "Run Studio.app")):
                         pip_class.copyTreeWithMetadata(os.path.join("../", "../", "../", "Run Studio.app"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
                         shutil.copy(os.path.join("../", "../", "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
                         with open(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f:
                             f.write(current_path_location)
-                        subprocess.Popen(f'codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep \'{os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app")}\'', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        subprocess.Popen(generateCodesignCommand(os.path.join(RobloxFastFlagsInstaller.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 printSuccessMessage("Successfully installed updater apps!")
                 printMainMessage("Installing Fast Flags..")
                 if fast_config_loaded == True:
@@ -6359,7 +6582,7 @@ if __name__ == "__main__":
                             if main_config.get("EFlagRemoveCodeSigningMacOS") == True or check_codesign() == False:
                                 printMainMessage("Signing Roblox.app..")
                                 def req_codesign(co=0):
-                                    result = subprocess.run(f"codesign -f -s {main_config.get("EFlagRobloxCodesigningName", "-")} --deep --timestamp=none {RobloxFastFlagsInstaller.macOS_dir}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
+                                    result = subprocess.run(generateCodesignCommand(RobloxFastFlagsInstaller.macOS_dir, main_config.get("EFlagRobloxCodesigningName", "-")), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=current_path_location)
                                     printDebugMessage(f"Code Signing Response: {result.returncode}")
                                     if result.returncode == 0:
                                         printSuccessMessage("Successfully signed Roblox.app!")
@@ -6576,9 +6799,9 @@ if __name__ == "__main__":
 
                                         if approved_through_scan == True:
                                             if mod_manifest.get("python_modules"):
-                                                printDebugMessage("Checking for uninstalled Python modules..")
+                                                printDebugMessage("Validating Installation of Mod Script Modules..")
                                                 if not pip_class.installed(mod_manifest.get("python_modules", []), boolonly=True): pip_class.install(mod_manifest.get("python_modules", []))
-                                            printDebugMessage("Connecting to mod mode script..")
+                                            printDebugMessage("Initalizing Components..")
                                             script_path = os.path.join(current_path_location, "Mods", selected_mod_mode, "ModScript.py")
                                             api_handled_requests = {}
                                             try:
@@ -6593,16 +6816,14 @@ if __name__ == "__main__":
                                                 generated_api_instance = OrangeAPI.OrangeAPI()
 
                                                 # Load Mod Script
-                                                with open(script_path, "r", encoding="utf-8") as f:
-                                                    mod_script_contents = f.read()
-                                                if not (mod_script_contents.find("EfazRobloxBootstrapAPI()") == -1) or not (mod_script_contents.find("import EfazRobloxBootstrapAPI") == -1): mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import RobloxFastFlagsInstaller") == -1): mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import PipHandler") == -1): mod_script_contents = mod_script_contents.replace("import PipHandler", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import Install") == -1): mod_script_contents = mod_script_contents.replace("import Install", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import DiscordPresenceHandler") == -1): mod_script_contents = mod_script_contents.replace("import DiscordPresenceHandler", "import OrangeAPI")
-                                                if not (mod_script_contents.find("import Main") == -1): mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
-                                                with open(script_path, "w", encoding="utf-8") as f:
-                                                    f.write(mod_script_contents)
+                                                with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
+                                                if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
+                                                if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
+                                                if "import PipHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import PipHandler", "import OrangeAPI")
+                                                if "import Install" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Install", "import OrangeAPI")
+                                                if "import DiscordPresenceHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import DiscordPresenceHandler", "import OrangeAPI")
+                                                if "import Main" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
+                                                with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
                                                 spec = importlib.util.spec_from_file_location("ModScript", script_path)
                                                 mod_mode_module = importlib.util.module_from_spec(spec)
                                                 setattr(mod_mode_module, "OrangeAPI", generated_api_instance)
@@ -6926,29 +7147,25 @@ if __name__ == "__main__":
                                                  # Launch API
                                                 def start_asyncio_loop(): asyncio.run(handleRequests()) 
                                                 threading.Thread(target=start_asyncio_loop, daemon=True).start()
-                                                printDebugMessage("Started handling requests for Orange API!")
+                                                printDebugMessage(f"Launched OrangeAPI v{OrangeAPI.current_version['version']}!")
 
                                                 # Set and Handle Printing Functions
-                                                def handlePrint(mes): printMainMessage(f"[MOD SCRIP aT]: {mes}")
-                                                def empty_str(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
-                                                    return ""
-                                                def empty(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
-                                                    return None
-                                                def open_config(aa="",bb="",cc="",dd="",ee="",ff="",gg="",hh="",ii="",jj="",kk=""):
+                                                def handlePrint(mes): printMainMessage(f"[MOD SCRIPT]: {mes}")
+                                                def empty_str(*args, **kwargs): return ""
+                                                def empty(*args, **kwargs): return None
+                                                def open_config(*args, **kwargs):
                                                     mod_mode_config = {}
                                                     config_path = os.path.join(current_path_location, "Mods", selected_mod_mode, f"Configuration_{user_folder_name}")
                                                     if os.path.exists(config_path):
                                                         try:
-                                                            with open(config_path, "r", encoding="utf-8") as f:
-                                                                mod_mode_config = json.load(f)
+                                                            with open(config_path, "r", encoding="utf-8") as f: mod_mode_config = json.load(f)
                                                         except Exception as e:
                                                             printDebugMessage("Invalid mod mode configuration, returned blank.")
                                                     return mod_mode_config
                                                 setattr(mod_mode_module, "print", handlePrint)
                                                 setattr(mod_mode_module, "input", empty_str)
                                                 setattr(mod_mode_module, "write", empty)
-                                                if not (("grantFileEditing" in approved_items_list) or (handler.robloxInstanceEventInfo.get("grantFileEditing", {"free": False}).get("free") == True)):
-                                                    setattr(mod_mode_module, "open", open_config)
+                                                if not (("grantFileEditing" in approved_items_list) or (handler.robloxInstanceEventInfo.get("grantFileEditing", {"free": False}).get("free") == True)): setattr(mod_mode_module, "open", open_config)
                                                 setattr(mod_mode_module, "exec", None)
                                                 setattr(mod_mode_module, "eval", None)
                                                 setattr(mod_mode_module, "setattr", empty)
@@ -6956,6 +7173,7 @@ if __name__ == "__main__":
                                                 setattr(mod_mode_module, "EfazRobloxBootstrapAPI", generated_api_instance)
 
                                                 # Launch Script
+                                                printDebugMessage("Starting Mod Script..")
                                                 spec.loader.exec_module(mod_mode_module)
                                                 printSuccessMessage("Successfully connected to script!")
                                             except Exception as e:
@@ -6987,10 +7205,8 @@ if __name__ == "__main__":
                                         printYellowMessage(mod_manifest["mod_script_end_support_reasoning"])
                             else:
                                 printErrorMessage("Unable to find mod script under manifest.")
-        if skip_modification_mode == False:
-            loadModScripts()
-        else:
-            threading.Thread(target=loadModScripts, daemon=True).start()
+        if skip_modification_mode == False: loadModScripts()
+        else: threading.Thread(target=loadModScripts, daemon=True).start()
 
         # Extra Functions
         runtime_icon_cooldown = False
@@ -7027,8 +7243,8 @@ if __name__ == "__main__":
                     unfriended_friends = []
                 if len(unfriended_friends) > 0:
                     for i in unfriended_friends:
-                        if roblox_launched_affect_mod_script == True: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you while you were away! ;(")
-                        else: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you! ;(")
+                        if roblox_launched_affect_mod_script == True: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you! ;(")
+                        else: displayNotification("Unfriend Detected!", f"Oh! @{i['name']} has unfriended you while you were away! ;(")
                         printDebugMessage(f"Unable to find friend @{i['name']} in list! User must be unfriended!")
                         time.sleep(1)
                 time.sleep(main_config.get("EFlagRobloxUnfriendCheckCooldown", 30))
@@ -7850,7 +8066,7 @@ if __name__ == "__main__":
                     pip_class.install(["requests"])
                     requests = pip_class.importModule("requests")
                     printSuccessMessage("Successfully installed modules!")
-                if connected_roblox_instance and not (connected_roblox_instance.main_log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
+                if connected_roblox_instance and not (connected_roblox_instance.log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
                     title = "Roblox Closed!"
                     color = 16735838
                     thumbnail_url = "https://obx.efaz.dev/BootstrapImages/RobloxLogo.png"
@@ -7862,7 +8078,7 @@ if __name__ == "__main__":
                         },
                         {
                             "name": "Log Location",
-                            "value": connected_roblox_instance.main_log_file,
+                            "value": connected_roblox_instance.log_file,
                             "inline": True
                         }
                     ]
@@ -7970,7 +8186,7 @@ if __name__ == "__main__":
                         },
                         {
                             "name": "Log Location",
-                            "value": connected_roblox_instance.main_log_file,
+                            "value": connected_roblox_instance.log_file,
                             "inline": True
                         }
                     ]
@@ -8138,7 +8354,7 @@ if __name__ == "__main__":
                         )
                     else:
                         printDebugMessage(f"Running using Roblox URL: {url}")
-                        if main_os == "Windows" and url.find("'") != -1 and os.path.exists(url): url = f"\"{url}\""
+                        if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                         connected_roblox_instance = handler.openRoblox(
                             forceQuit=(not (main_config.get("EFlagEnableDuplicationOfClients") == True)), 
                             makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
