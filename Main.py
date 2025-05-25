@@ -3737,7 +3737,7 @@ if __name__ == "__main__":
                                                 with open(os.path.join(backup_path, "Metadata.json"), "r", encoding="utf-8") as f: back_metadata = json.load(f)
                                             if back_metadata.get("bootstrap_version") == "0.0.0":
                                                 printWarnMessage("--- Attention Needed! ---")
-                                                printMainMessage("This backup is created in a version before OrangeBlox v2.0.2. Are you sure you want to continue with this backup? (y/n)")
+                                                printMainMessage("This backup is created in a version before OrangeBlox v2.0.1. Are you sure you want to continue with this backup? (y/n)")
                                                 a = input("> ")
                                                 if not (isYes(a) == True):
                                                     sys.exit(0)

@@ -67,7 +67,7 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `86e808f4ff7c2aa832b82f814f914db8` |
+| Main Bootstrap (Main.py) | `c125c6b250bf20b08b4281b589d85d86` |
 | Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a32c13a7dc33ccb1787d0db78de3552c` |
 | Installer (Install.py) | `493e81980ba83d28f8ebb9f864845d86` |
 | Bootstrap API (OrangeAPI.py) | `0674debf619a51768df8b9cf783aff6e` |
