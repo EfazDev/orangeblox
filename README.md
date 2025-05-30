@@ -67,12 +67,12 @@ OrangeBlox is a Python program heavily inspired by Bloxstrap made for macOS and 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `c125c6b250bf20b08b4281b589d85d86` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a32c13a7dc33ccb1787d0db78de3552c` |
-| Installer (Install.py) | `493e81980ba83d28f8ebb9f864845d86` |
-| Bootstrap API (OrangeAPI.py) | `0674debf619a51768df8b9cf783aff6e` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `4750ac894f5154d8be739f5f662f6165` |
-| Pip Handler (PipHandler.py) | `20952cb60bab3a8c5249cfa7928ced6f` |
+| Main Bootstrap (Main.py) | `6047241ff3937a148ec451332f492e09` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `654b75f0f0acf2c8691bcc3b41c3c8d7` |
+| Installer (Install.py) | `9d23054f57f7b4b1f73ba68d7739ede4` |
+| Bootstrap API (OrangeAPI.py) | `2b03103c86d17e64e5cbb15ca0f331be` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `4c0a3cc04dd67903deb51f67c987d16f` |
+| Pip Handler (PipHandler.py) | `4fcf0b027d0ba8bd5d5f6bf4687420ae` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" style="margin-bottom: -4px;" alt="@EfazDev 🍊"></a>

@@ -15,6 +15,7 @@ import sys
 class pip:
     executable = None
     debug = False
+    ignore_same = False
     def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, opposite: bool=False):
         import sys
         import os
@@ -249,7 +250,7 @@ class pip:
             def to_int(val): return int(re.sub(r'\D', '', val))
             return tuple(map(to_int, cur_version)) >= (major, minor, patch)
         else: return False
-    def osSupported(self, windows_build: int=0, macos_version: tuple[int, int, int]=(0,0,0)):
+    def osSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)):
         import platform
         if platform.system() == "Windows":
             version = platform.version()
@@ -312,6 +313,12 @@ class pip:
         ma_os = platform.system()
         if ma_os == "Windows": return os.path.expandvars(r'%LOCALAPPDATA%')
         elif ma_os == "Darwin": return f'{os.path.expanduser("~")}/Library/'
+        else: return f'{os.path.expanduser("~")}/'
+    def getUserFolder(self):
+        import platform
+        import os
+        ma_os = platform.system()
+        if ma_os == "Windows": return os.path.basename(os.path.basename(os.path.expandvars(r'%LOCALAPPDATA%')))
         else: return f'{os.path.expanduser("~")}/'
     def restartScript(self, scriptname: str, argv: list):
         import sys
@@ -521,6 +528,7 @@ class pip:
     def isSameRunningPythonExecutable(self):
         import os
         import sys
+        if self.ignore_same == True: return False
         return os.path.samefile(self.executable, sys.executable)
     def getProcessWindows(self, pid: int):
         import platform
@@ -768,7 +776,7 @@ class plist:
             return plist_data
         else:
             return {}
-    def writePListFile(self, path: str, data: dict | str | int | float, binary: bool=False):
+    def writePListFile(self, path: str, data: typing.Union[dict, str, int, float], binary: bool=False):
         try:
             import plistlib
             with open(path, "wb") as f:

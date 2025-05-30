@@ -95,7 +95,7 @@ int launchApp() {
     }
     printMainMessage("Loading OrangeBlox executable!");
     std::string appPath = getAppPath();
-    std::string command = "open -n -a \"" + appPath + "/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBloxMain\"";
+    std::string command = "open -n -a \"" + appPath + "/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox\"";
     int result = std::system(command.c_str());
     if (result == 0) {
         printSuccessMessage("Bootstrap Launch Success: " + std::to_string(result));
@@ -158,7 +158,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.0.2";
+    std::string current_version = "2.0.3";
     std::string main_os;
     std::string app_path;
     
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (file.is_open()) {
-            file << "roblox-studio " + url_scheme;
+            file << "obx-launch-studio " + url_scheme;
             file.close();
             printMainMessage("Created URL Exchange File: " + url_scheme_path);
         }
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
                 std::ofstream file(url_scheme_path);
 
                 if (file.is_open()) {
-                    file << "roblox-studio " + url_scheme;
+                    file << "obx-launch-studio " + url_scheme;
                     file.close();
                     printMainMessage("Created URL Exchange File: " + url_scheme_path);
                 }

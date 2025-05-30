@@ -6,32 +6,32 @@ printMessage() {
 }
 
 # Build Package
-printMessage "Building Clang Package for OrangeBloxLoad.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/OrangeBloxLoad.app/Contents/MacOS/OrangeBloxLoad" ./Apps/Scripts/Clang/OrangeBloxLoad.mm -g0
+printMessage "Building Clang Package for OrangeLoader.."
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm -g0
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Play Roblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm -g0
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/Run Studio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -arch arm64 -o "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm -g0
 
 # Sign Package
 printMessage "Signing Package.."
-rm -rf "./Apps/OrangeBloxLoad.app/Contents/_CodeSignature/"
-rm -rf "./Apps/Play Roblox.app/Contents/_CodeSignature/"
-rm -rf "./Apps/Run Studio.app/Contents/_CodeSignature/"
+rm -rf "./Apps/OrangeLoader.app/Contents/_CodeSignature/"
+rm -rf "./Apps/OrangePlayRoblox.app/Contents/_CodeSignature/"
+rm -rf "./Apps/OrangeRunStudio.app/Contents/_CodeSignature/"
 codesig() {
     while true; do
         if [ "$1" != "nosudo" ]; then
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBloxLoad.app"
-            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBloxLoad.app"
-            sudo xattr -cr "./Apps/OrangeBloxLoad.app"
-            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBloxLoad.app"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeLoader.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeLoader.app"
+            sudo xattr -cr "./Apps/OrangeLoader.app"
+            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeLoader.app"
         else
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBloxLoad.app"
-            xattr -dr com.apple.FinderInfo "./Apps/OrangeBloxLoad.app"
-            xattr -cr "./Apps/OrangeBloxLoad.app"
-            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBloxLoad.app"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeLoader.app"
+            xattr -dr com.apple.FinderInfo "./Apps/OrangeLoader.app"
+            xattr -cr "./Apps/OrangeLoader.app"
+            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeLoader.app"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -40,15 +40,15 @@ codesig() {
     done
     while true; do
         if [ "$1" != "nosudo" ]; then
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Play Roblox.app"
-            sudo xattr -dr com.apple.FinderInfo "./Apps/Play Roblox.app"
-            sudo xattr -cr "./Apps/Play Roblox.app"
-            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/Play Roblox.app"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangePlayRoblox.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangePlayRoblox.app"
+            sudo xattr -cr "./Apps/OrangePlayRoblox.app"
+            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangePlayRoblox.app"
         else
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Play Roblox.app"
-            xattr -dr com.apple.FinderInfo "./Apps/Play Roblox.app"
-            xattr -cr "./Apps/Play Roblox.app"
-            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/Play Roblox.app"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangePlayRoblox.app"
+            xattr -dr com.apple.FinderInfo "./Apps/OrangePlayRoblox.app"
+            xattr -cr "./Apps/OrangePlayRoblox.app"
+            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangePlayRoblox.app"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -57,15 +57,15 @@ codesig() {
     done
     while true; do
         if [ "$1" != "nosudo" ]; then
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Run Studio.app"
-            sudo xattr -dr com.apple.FinderInfo "./Apps/Run Studio.app"
-            sudo xattr -cr "./Apps/Run Studio.app"
-            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/Run Studio.app"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeRunStudio.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeRunStudio.app"
+            sudo xattr -cr "./Apps/OrangeRunStudio.app"
+            sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeRunStudio.app"
         else
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Run Studio.app"
-            xattr -dr com.apple.FinderInfo "./Apps/Run Studio.app"
-            xattr -cr "./Apps/Run Studio.app"
-            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/Run Studio.app"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeRunStudio.app"
+            xattr -dr com.apple.FinderInfo "./Apps/OrangeRunStudio.app"
+            xattr -cr "./Apps/OrangeRunStudio.app"
+            codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeRunStudio.app"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -76,7 +76,7 @@ codesig() {
 codesig "$2"
 
 # Done!
-printMessage "Successfully rebuilt OrangeBloxLoad, OrangePlayRoblox and OrangeRunStudio!"
+printMessage "Successfully rebuilt OrangeLoader, OrangePlayRoblox and OrangeRunStudio!"
 printMessage "The executables have been moved to their assigned bundles and are ready for RecreateMacOS.sh!"
 if [ "$1" != "installer" ]; then
     read -p "> "

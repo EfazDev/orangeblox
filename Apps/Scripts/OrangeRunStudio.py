@@ -23,7 +23,7 @@ def setLoggingHandler(handler_name):
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.2"}
+    current_version = {"version": "2.0.3"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
@@ -60,7 +60,7 @@ if __name__ == "__main__":
                 subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
             printMainMessage("Loading OrangeBlox executable!")
-            result = subprocess.run(f'open -n -a "{app_path}/Contents/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBloxMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
+            result = subprocess.run(f'open -n -a "{app_path}/Contents/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
             if result.returncode == 0:
                 printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
             else:
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(app_path, "OrangeBlox.exe")):
             url_scheme_path = os.path.join(app_path, "URLSchemeExchange")
             filtered_args = ""
-            if len(args) > 1: filtered_args = "roblox-studio " + " ".join(args)
+            if len(args) > 1: filtered_args = "obx-launch-studio " + " ".join(args)
             write_arg = filtered_args if filtered_args != "" else "orangeblox://run-studio"
             with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
             printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             installed_path = open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r", encoding="utf-8").read()
             url_scheme_path = os.path.join(installed_path, "URLSchemeExchange")
             filtered_args = ""
-            if len(args) > 1: filtered_args = "roblox-studio " + " ".join(args)
+            if len(args) > 1: filtered_args = "obx-launch-studio " + " ".join(args)
             write_arg = filtered_args if filtered_args != "" else "orangeblox://run-studio"
             with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
             printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")

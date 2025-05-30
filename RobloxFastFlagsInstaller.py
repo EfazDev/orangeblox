@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.1.1
+# v2.1.2
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -117,12 +117,12 @@ def printLog(mes):
 def makedirs(a): os.makedirs(a,exist_ok=True)
 
 if os.path.exists("Main.py") and os.path.exists("PipHandler.py") and os.path.exists("OrangeAPI.py"): orangeblox_mode = True
-fast_flag_installer_version = "2.1.1"
-sys.dont_write_bytecode = True
+fast_flag_installer_version = "2.1.2"
 
 class pip:
     executable = None
     debug = False
+    ignore_same = False
     def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, opposite: bool=False):
         import sys
         import os
@@ -357,6 +357,21 @@ class pip:
             def to_int(val): return int(re.sub(r'\D', '', val))
             return tuple(map(to_int, cur_version)) >= (major, minor, patch)
         else: return False
+    def osSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)):
+        import platform
+        if platform.system() == "Windows":
+            version = platform.version()
+            v = version.split(".")
+            if len(v) < 3: return False
+            return int(v[2]) >= windows_build
+        elif platform.system() == "Darwin":
+            version = platform.mac_ver()[0]
+            version_tuple = tuple(map(int, version.split('.')))
+            while len(version_tuple) < 3: version_tuple += (0,)
+            while len(macos_version) < 3: min_version += (0,)
+            return version_tuple >= macos_version
+        else:
+            return False
     def pythonInstall(self, version: str="", beta: bool=False):
         import subprocess
         import platform
@@ -405,6 +420,12 @@ class pip:
         ma_os = platform.system()
         if ma_os == "Windows": return os.path.expandvars(r'%LOCALAPPDATA%')
         elif ma_os == "Darwin": return f'{os.path.expanduser("~")}/Library/'
+        else: return f'{os.path.expanduser("~")}/'
+    def getUserFolder(self):
+        import platform
+        import os
+        ma_os = platform.system()
+        if ma_os == "Windows": return os.path.basename(os.path.basename(os.path.expandvars(r'%LOCALAPPDATA%')))
         else: return f'{os.path.expanduser("~")}/'
     def restartScript(self, scriptname: str, argv: list):
         import sys
@@ -614,6 +635,7 @@ class pip:
     def isSameRunningPythonExecutable(self):
         import os
         import sys
+        if self.ignore_same == True: return False
         return os.path.samefile(self.executable, sys.executable)
     def getProcessWindows(self, pid: int):
         import platform
@@ -737,29 +759,26 @@ pip_class = pip()
 class plist:
     def readPListFile(self, path: str):
         import os
-        if os.path.exists(path) and path.endswith(".plist"):
+        if os.path.exists(path):
             import plistlib
             with open(path, "rb") as f:
                 plist_data = plistlib.load(f)
             return plist_data
         else:
             return {}
-    def writePListFile(self, path: str, data):
-        if path.endswith(".plist"):
-            try:
-                import plistlib
-                with open(path, "wb") as f:
-                    plistlib.dump(data, f)
-                return {"success": True, "message": "Success!", "data": data}
-            except Exception as e:
-                return {"success": False, "message": "Something went wrong.", "data": ""}
-        else:
-            return {"success": False, "message": "Path doesn't end with .plist", "data": path}
+    def writePListFile(self, path: str, data: typing.Union[dict, str, int, float], binary: bool=False):
+        try:
+            import plistlib
+            with open(path, "wb") as f:
+                if binary == True: plistlib.dump(data, f, fmt=plistlib.FMT_BINARY)
+                else: plistlib.dump(data, f)
+            return {"success": True, "message": "Success!", "data": data}
+        except Exception as e:
+            return {"success": False, "message": "Something went wrong.", "data": ""}
 class Main:
     # System Definitions
-    def __init__(self):
-        self.__main_os__ = main_os
-    robloxInstanceEventNames = [
+    def __init__(self): self.__main_os__ = main_os
+    roblox_player_event_names = [
         "onRobloxExit", 
         "onRobloxLog",
         "onRobloxSharedLogLaunch",
@@ -798,7 +817,7 @@ class Main:
         "onRobloxAudioDeviceStartRecording",
         "onWatchdogReconnection"
     ]
-    robloxStudioInstanceEventNames = [
+    roblox_studio_event_names = [
         "onRobloxExit", 
         "onRobloxLog",
         "onLoadedFFlags",
@@ -837,7 +856,7 @@ class Main:
         "onStudioInstallerLaunched",
         "onWatchdogReconnection"
     ]
-    robloxInstanceEventInfo = {
+    roblox_event_info = {
         # 0 = Safe, 1 = Caution, 2 = Warning, 3 = Dangerous
         "onRobloxExit": {"message": "Allow detecting when Roblox closes", "level": 0, "robloxEvent": True}, 
         "onRobloxLog": {"message": "Allow detecting every Roblox event", "level": 3, "robloxEvent": True},
@@ -953,7 +972,7 @@ class Main:
         "printYellowMessage": {"message": "Print a console in a yellow text (indicates a warning)", "level": 0, "free": True},
         "about": {"message": "Get bootstrap info", "level": 0, "free": True},
     }
-    robloxBundleExportFiles = {
+    roblox_bundle_files = {
         # This list is from Bloxstrap converted to Python
         "RobloxApp.zip": "/",
         "Libraries.zip": "/",
@@ -979,7 +998,7 @@ class Main:
         "extracontent-textures.zip": "/ExtraContent/textures",
         "extracontent-places.zip": "/ExtraContent/places"
     }
-    robloxStudioBundleExportFiles = {
+    roblox_studio_bundle_files = {
         # This list is from Bloxstrap converted to Python
         "redist.zip": "/",
         "ApplicationConfig.zip": "/ApplicationConfig",
@@ -1139,7 +1158,7 @@ class Main:
                         win32gui.EnumWindows(callback, None)
                         roblox_windows_classes = []
                         for i in system_windows:
-                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i))
+                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i, self.main_handler))
                         return roblox_windows_classes
                     elif main_os == "Darwin":
                         try:
@@ -1156,7 +1175,7 @@ class Main:
                                 new_set_of_system_windows.append(win)
                         roblox_windows_classes = []
                         for i in new_set_of_system_windows:
-                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i))
+                            roblox_windows_classes.append(self.main_handler.RobloxWindow(self.pid, i, self.main_handler))
                         return roblox_windows_classes
                     else:
                         return []
@@ -1181,8 +1200,8 @@ class Main:
                 elif self.is_studio == True and "Studio" in basename: paths.append(os.path.join(path, basename))
             if len(paths) > 0: return max(paths, key=os.path.getctime)
         def getAvailableEventNames(self):
-            if self.is_studio == True: return self.main_handler.robloxStudioInstanceEventNames
-            else: return self.main_handler.robloxInstanceEventNames
+            if self.is_studio == True: return self.main_handler.roblox_studio_event_names
+            else: return self.main_handler.roblox_player_event_names
         def fileCreatedRecently(self, file_path):
             try:
                 creation_time = os.path.getctime(file_path)
@@ -2206,9 +2225,11 @@ class Main:
     class RobloxWindow():
         pid = None
         system_handler = None
-        def __init__(self, pid, system_handler):
+        main_handler = None
+        def __init__(self, pid, system_handler, main_handler):
             self.pid = pid
             self.system_handler = system_handler
+            self.main_handler = main_handler
         def focusWindow(self):
             if main_os == "Windows":
                 try:
@@ -2232,7 +2253,7 @@ class Main:
                     win32process = pip_class.importModule("win32process")
                 win32gui.DestroyWindow(self.system_handler)
             elif main_os == "Darwin":
-                Main().endRoblox(str(self.pid))
+                self.main_handler.endRoblox(str(self.pid))
         def setWindowTitle(self, title: str):
             if main_os == "Windows":
                 try:
@@ -2770,7 +2791,7 @@ class Main:
             try:
                 result = subprocess.run(["ps", "axo", "pid,etime,command"], stdout=subprocess.PIPE, text=True)
                 processes = result.stdout
-                roblox_lines = [line for line in processes.splitlines() if "RobloxPlayer" in line]
+                roblox_lines = [line for line in processes.splitlines() if "/MacOS/RobloxPlayer" in line]
                 if not roblox_lines:
                     return None
                 def sort_by_etime(line):
@@ -2813,7 +2834,7 @@ class Main:
             try:
                 result = subprocess.run(["ps", "axo", "pid,etime,command"], stdout=subprocess.PIPE, text=True)
                 processes = result.stdout
-                roblox_lines = [line for line in processes.splitlines() if "RobloxStudio" in line]
+                roblox_lines = [line for line in processes.splitlines() if "/MacOS/RobloxStudio" in line]
                 if not roblox_lines:
                     return None
                 def sort_by_etime(line):
@@ -2915,7 +2936,7 @@ class Main:
         for i in pids:
             process_windows = pip_class.getProcessWindows(i)
             for e in process_windows:
-                generated_window_instances.append(self.RobloxWindow(int(i), e))
+                generated_window_instances.append(self.RobloxWindow(int(i), e, self))
         return generated_window_instances
     def getAllOpenedRobloxStudioWindows(self) -> "list[RobloxWindow]":
         pids = self.getOpenedRobloxStudioPids()
@@ -2923,13 +2944,13 @@ class Main:
         for i in pids:
             process_windows = pip_class.getProcessWindows(i)
             for e in process_windows:
-                generated_window_instances.append(self.RobloxWindow(int(i), e))
+                generated_window_instances.append(self.RobloxWindow(int(i), e, self))
         return generated_window_instances
     def getOpenedRobloxWindows(self, pid):
         generated_window_instance = None
         process_windows = pip_class.getProcessWindows(pid)
         for e in process_windows:
-            generated_window_instance =  self.RobloxWindow(int(pid), e)
+            generated_window_instance =  self.RobloxWindow(int(pid), e, self)
         return generated_window_instance
     def getRobloxAppSettings(self):
         appStorage = {}
@@ -3030,7 +3051,7 @@ class Main:
         macOS_studioDir = "/Applications/RobloxStudio.app"
         macOS_beforeClientServices = "/Contents/MacOS/"
         macOS_installedPath = "/Applications/"
-        windows_dir = f"{os.getenv('LOCALAPPDATA')}\\Roblox"
+        windows_dir = f"{pip_class.getLocalAppData()}\\Roblox"
         windows_versions_dir = f"{windows_dir}\\Versions"
         windows_player_folder_name = ""
         windows_studio_folder_name = ""
@@ -3923,7 +3944,7 @@ class Main:
                 if submitStatus: submitStatus.submit("[INSTALL] Roblox is installed!", 100)
                 return
             
-            if windows_versions_dir == os.path.join(os.getenv('LOCALAPPDATA'), "Roblox", "Versions"):    
+            if windows_versions_dir == os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"):    
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder()
                 if most_recent_roblox_version_dir:
                     if submitStatus: submitStatus.submit("[INSTALL] Running Roblox Installer..", 50)
@@ -4097,7 +4118,7 @@ class Main:
                 waitForRobloxEnd()
                 return
             
-            if windows_versions_dir == os.path.join(os.getenv('LOCALAPPDATA'), "Roblox", "Versions"):    
+            if windows_versions_dir == os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"):    
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=True)
                 if most_recent_roblox_version_dir:
                     if submitStatus: submitStatus.submit("[INSTALL] Running Roblox Studio Installer..", 50)
@@ -4230,8 +4251,8 @@ class Main:
                                         if not i == "":
                                             if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)*2))*100, 2)}/100]")
                                             urllib.request.urlretrieve(f'https://setup.rbxcdn.com/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
-                                            if self.robloxBundleExportFiles.get(i):
-                                                export_destination = self.robloxBundleExportFiles.get(i)
+                                            if self.roblox_bundle_files.get(i):
+                                                export_destination = self.roblox_bundle_files.get(i)
                                                 makedirs(f'{installPath}{export_destination}')
                                                 zip_extract = subprocess.run(["tar", "-xf", f"{os.path.join(installPath, i)}", "-C", f'{installPath}{export_destination}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                                                 per_step += 1
@@ -4392,8 +4413,8 @@ class Main:
                                         if not i == "":
                                             if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)*2))*100, 2)}/100]")
                                             urllib.request.urlretrieve(f'https://setup.rbxcdn.com/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
-                                            if self.robloxStudioBundleExportFiles.get(i):
-                                                export_destination = self.robloxStudioBundleExportFiles.get(i)
+                                            if self.roblox_studio_bundle_files.get(i):
+                                                export_destination = self.roblox_studio_bundle_files.get(i)
                                                 makedirs(f'{installPath}{export_destination}')
                                                 zip_extract = subprocess.run(["tar", "-xf", f"{os.path.join(installPath, i)}", "-C", f'{installPath}{export_destination}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
                                                 per_step += 1

@@ -21,17 +21,17 @@ pyinstaller ./Apps/Scripts/Pyinstaller/OrangeBlox_macOSIntel.spec --clean --dist
 printMessage "Signing Package.."
 codesig1() {
     while true; do
-    rm -rf ./Apps/OrangeBloxMain.app/Contents/_CodeSignature/
+    rm -rf ./Apps/OrangeBlox.app/Contents/_CodeSignature/
     if [ "$1" != "nosudo" ]; then
-        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBloxMain.app"
-        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBloxMain.app"
-        sudo xattr -cr "./Apps/OrangeBloxMain.app"
-        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBloxMain.app"
+        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
+        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
+        sudo xattr -cr "./Apps/OrangeBlox.app"
+        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
     else
-        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBloxMain.app"
-        xattr -dr com.apple.FinderInfo "./Apps/OrangeBloxMain.app"
-        xattr -cr "./Apps/OrangeBloxMain.app"
-        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBloxMain.app"
+        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
+        xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
+        xattr -cr "./Apps/OrangeBlox.app"
+        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
     fi
     STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -43,9 +43,9 @@ codesig1 "$2"
 
 # Create OrangeBloxMac.zip
 printMessage "Creating OrangeBloxMacIntel.zip.."
-zip -r -y ./Apps/OrangeBloxMacIntel.zip "./Apps/OrangeBloxMain.app" "./Apps/Play Roblox.app" "./Apps/OrangeBloxLoad.app" "./Apps/Run Studio.app"
+zip -r -y ./Apps/OrangeBloxMacIntel.zip "./Apps/OrangeBlox.app" "./Apps/OrangePlayRoblox.app" "./Apps/OrangeLoader.app" "./Apps/OrangeRunStudio.app"
 
-# Remove Build and OrangeBloxLoad folder
+# Remove Build and OrangeLoader folder
 printMessage "Partial Cleaning.."
 rm -rf ./build/
 
@@ -57,7 +57,7 @@ fi
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/OrangeBloxMain.app/ ./Apps/OrangeBloxMain/ ./__pycache__/
+rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox/ ./__pycache__/
 
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"

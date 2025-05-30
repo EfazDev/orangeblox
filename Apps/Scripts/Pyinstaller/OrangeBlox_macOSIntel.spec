@@ -8,10 +8,10 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../BootstrapImages/AppIcon.icns"
-current_version = {"version": "2.0.2"}
+current_version = {"version": "2.0.3"}
 
 main_plist = {
-    "CFBundleExecutable": "OrangeBloxMain",
+    "CFBundleExecutable": "OrangeBlox",
     "CFBundleIdentifier": "dev.efaz.orangeblox",
     "CFBundleURLTypes": [],
     "CFBundleName": "OrangeBlox",
@@ -36,7 +36,7 @@ main_analysis = Analysis(
     ["../OrangeBlox.py", "../../../PipHandler.py"],
     pathex=[],
     binaries=[],
-    datas=collect_data_files("OrangeBloxMain") + [("../../../Version.json", ".")],
+    datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
     hiddenimports=["pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "tkinter"],
     hookspath=[],
     hooksconfig={},
@@ -54,7 +54,7 @@ main_exe = EXE(
     main_pyz,
     [main_analysis.scripts[2]],
     exclude_binaries=True,
-    name="OrangeBloxMain",
+    name="OrangeBlox",
     debug=False,
     bootloader_ignore_signals=False,
     argv_emulation=False,
@@ -72,12 +72,12 @@ main_collect = COLLECT(
     strip=True,
     upx=True,
     upx_exclude=[],
-    name="OrangeBloxMain",
+    name="OrangeBlox",
     distpath='Apps',
 )
 main_app = BUNDLE(
     main_collect,
-    name="OrangeBloxMain.app",
+    name="OrangeBlox.app",
     icon=icon_file,
     bundle_identifier=main_plist["CFBundleIdentifier"],
     info_plist=main_plist,

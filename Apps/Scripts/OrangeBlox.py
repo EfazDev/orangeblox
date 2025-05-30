@@ -14,7 +14,7 @@ import hashlib
 import PipHandler
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.2"}
+    current_version = {"version": "2.0.3"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(uuid.uuid4())
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
 
-        execute_command = f"unset HISTFILE && cd {app_path}/ && {pythonExecutable} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && cd {app_path}/ && {pythonExecutable} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -699,7 +699,7 @@ if __name__ == "__main__":
                                     url_scheme_path = f"{app_path}/URLSchemeExchange"
                                     with open(url_scheme_path, "w", encoding="utf-8") as f:
                                         f.write(f"orangeblox://{action}?quick-action=true")
-                                subprocess.Popen(f'open -n -a "{macos_path}/OrangeBlox.app/Contents/MacOS/OrangeBloxMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                                subprocess.Popen(f'open -n -a "{macos_path}/OrangeBlox.app/Contents/MacOS/OrangeBlox"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                                 if not (action_name == "") and type(action_name) is str:
                                     printMainMessage(f"Launched Bootstrap with action: {action_name}")
                                 else:
@@ -935,7 +935,7 @@ if __name__ == "__main__":
                 threading.Thread(target=terminalAwaitLoop, daemon=True).start()
                 if (main_config.get("EFlagNumberOfTkinterAppsAllowed", 1)) > 0:
                     threading.Thread(target=startBootstrap, daemon=False).start()
-                    app_count = pip_class.getAmountOfProcesses("OrangeBloxMain")
+                    app_count = pip_class.getAmountOfProcesses("OrangeBlox")
                     if app_count < main_config.get("EFlagNumberOfTkinterAppsAllowed", 1): 
                         with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f:
                             f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
@@ -1047,9 +1047,7 @@ if __name__ == "__main__":
                                         printDebugMessage(str(e))
                                         notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
                                 if os.path.exists(os.path.join(app_path, "AppNotification")): os.remove(os.path.join(app_path, "AppNotification"))
-                                if notification.get("title") and notification.get("message"):
-                                    displayNotification(notification["title"], notification["message"])
-                                    printSuccessMessage("Successfully pinged app notification!")
+                                if notification.get("title") and notification.get("message"): displayNotification(notification["title"], notification["message"])
                             seconds += 1
                         except Exception as e:
                             printErrorMessage(f"There was an issue making a notification: {str(e)}")

@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>OrangeBlox</string>
 	<key>CFBundleExecutable</key>
-	<string>OrangeBloxMain</string>
+	<string>OrangeBlox</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -13,11 +13,11 @@
 	<key>CFBundleName</key>
 	<string>OrangeBlox</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.2</string>
+	<string>2.0.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.0.2</string>
+	<string>2.0.3</string>
     <key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>LSApplicationCategoryType</key>

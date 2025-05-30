@@ -23,7 +23,7 @@ def setLoggingHandler(handler_name):
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.2"}
+    current_version = {"version": "2.0.3"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                 subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
             printMainMessage("Loading OrangeBlox executable!")
-            result = subprocess.run(f'open -n -a "{app_path}/Contents/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBloxMain"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
+            result = subprocess.run(f'open -n -a "{app_path}/Contents/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
             if result.returncode == 0:
                 printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
             else:

@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.0.2
+# v2.0.3
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -17,7 +17,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.0.2"}
+current_version = {"version": "2.0.3"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False

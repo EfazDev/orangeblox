@@ -1,6 +1,5 @@
 # Modules
 import sys
-sys.dont_write_bytecode = True
 
 try:
     import pypresence
