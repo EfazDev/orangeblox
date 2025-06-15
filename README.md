@@ -31,7 +31,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts!
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Read Logs from Roblox using RobloxFastFlagsInstaller* (requires Debug Mode)!
-13. + Way more features that can be explored!
+13. & Way more features that can be explored!
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
