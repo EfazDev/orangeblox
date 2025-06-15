@@ -9,7 +9,7 @@
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://obx.efaz.dev/BootstrapImages/Collage.png" height="50%" width="50%" alt="Server Location Notification"><br>
+    <img align="center" src="https://obx.efaz.dev/BootstrapImages/Collage.png" height="75%" width="75%" alt="Server Location Notification"><br>
 </p>
 
 > [!IMPORTANT]
