@@ -15,11 +15,36 @@ python3 ./Apps/Scripts/GenerateHash.py
 
 # Build Nuitka Package
 printMessage "Building Nuitka Package.."
-python3.12 -m nuitka --macos-create-app-bundle --enable-plugin=tk-inter --include-data-files=PipHandler.py=PipHandler.py --include-data-files=Version.json=Version.json --output-dir="./Apps" --macos-app-icon=./BootstrapImages/AppIcon.icns --include-package-data=pyobjc --include-package-data=Cocoa --include-package-data=Quartz --target="OrangeBlox" "./Apps/Scripts/OrangeBlox.py"
-rm -rf ./Apps/OrangeBlox.app
-mv ./Apps/OrangeBlox.app ./Apps/OrangeBlox.app
+python3 -m nuitka \
+    --standalone \
+    --macos-create-app-bundle \
+    --include-data-files=PipHandler.py=PipHandler.py \
+    --include-data-files=Version.json=Version.json \
+    --output-dir="./Apps" \
+    --include-package-data=objc \
+    --include-package-data=Cocoa \
+    --include-package-data=Quartz \
+    --nofollow-import-to=tkinter.test \
+    --macos-app-icon=./BootstrapImages/AppIcon.icns \
+    --clang \
+    --lto=yes \
+    --remove-output \
+    --target="OrangeBlox" "./Apps/Scripts/OrangeBlox.py"
 mv ./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox ./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox
 cp ./Apps/Scripts/Nuitka/Info.plist ./Apps/OrangeBlox.app/Contents/Info.plist
+
+# Add Tkinter Data
+printMessage "Adding Tk-inter Data.."
+cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tcl_data ./Apps/OrangeBlox.app/Contents/Resources/_tcl_data
+cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tk_data ./Apps/OrangeBlox.app/Contents/Resources/_tk_data
+
+# Strip Package
+printMessage "Stripping macOS Package.."
+strip -x "./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox" 2>/dev/null \;
+strip -x "./Apps/OrangeBlox.app/Contents/MacOS/Tcl" 2>/dev/null \;
+strip -x "./Apps/OrangeBlox.app/Contents/MacOS/Tk" 2>/dev/null \;
+strip -x "./Apps/OrangeBlox.app/Contents/MacOS/Python" 2>/dev/null \;
+find "./Apps/OrangeBlox.app" -type f \( -name "*.so" -o -name "*.dylib" \) -exec strip -x {} 2>/dev/null \;
 
 # Sign Package
 printMessage "Signing Package.."
@@ -30,12 +55,12 @@ codesig1() {
         sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
         sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
         sudo xattr -cr "./Apps/OrangeBlox.app"
-        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
+        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
     else
         xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
         xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
         xattr -cr "./Apps/OrangeBlox.app"
-        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
+        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
     fi
     STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -61,7 +86,7 @@ fi
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox.build/ ./Apps/OrangeBlox.dist/ ./__pycache__/
+rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox.build/ ./Apps/OrangeBlox.dist/ ./__pycache__/ ./Apps/OrangeBlox/
 
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"

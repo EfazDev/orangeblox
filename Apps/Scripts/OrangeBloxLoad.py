@@ -2,7 +2,6 @@ import sys
 import os
 import subprocess
 import platform
-import uuid
 import logging
 import datetime
 from PipHandler import pip
@@ -23,11 +22,10 @@ def setLoggingHandler(handler_name):
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.3"}
+    current_version = {"version": "2.1.0"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
-    generated_app_id = str(uuid.uuid4())
     app_path = ""
     pip_class = pip()
     logging_config = setLoggingHandler("Bootloader2")
@@ -50,19 +48,16 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(app_path, "/Contents/MacOS/OrangeBlox.app/")):
             if len(args) > 1:
                 url_scheme_path = os.path.join(app_path, "/Resources/URLSchemeExchange")
-                with open(url_scheme_path, "w", encoding="utf-8") as f:
-                    f.write(args[1])
+                with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(args[1])
                 printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
             if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):
                 printMainMessage("Opening Terminal.app in order for console to show..")
-                subprocess.Popen(f'open -j -F -a /System/Applications/Utilities/Terminal.app', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                subprocess.Popen(["/usr/bin/open", "-j", "-F", "-a", "/System/Applications/Utilities/Terminal.app"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             printMainMessage("Loading OrangeBlox executable!")
-            result = subprocess.run(f'open -n -a "{app_path}/Contents/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, shell=True)
-            if result.returncode == 0:
-                printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
-            else:
-                printErrorMessage(f"Bootstrap Launch Failed: {result.returncode}")
+            result = subprocess.run(["/usr/bin/open", "-n", "-a", os.path.join(app_path, "Contents", "MacOS", "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox")], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            if result.returncode == 0: printSuccessMessage(f"Bootstrap Launch Success: {result.returncode}")
+            else: printErrorMessage(f"Bootstrap Launch Failed: {result.returncode}")
             sys.exit(0)
         else:
             printErrorMessage("Bootstrap Launch Failed: App is not installed.")
@@ -71,8 +66,7 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(app_path, "OrangeBlox.exe")):
             if len(args) > 1:
                 url_scheme_path = os.path.join(app_path, "URLSchemeExchange")
-                with open(url_scheme_path, "w", encoding="utf-8") as f:
-                    f.write(args[1])
+                with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(args[1])
                 printMainMessage(f"Created URL Exchange File: {url_scheme_path}")
             printMainMessage("Loading OrangeBlox.exe!")
             result = subprocess.run(f'{os.path.join(app_path, "OrangeBlox.exe")}')

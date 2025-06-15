@@ -26,12 +26,12 @@ codesig1() {
         sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
         sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
         sudo xattr -cr "./Apps/OrangeBlox.app"
-        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
+        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
     else
         xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
         xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
         xattr -cr "./Apps/OrangeBlox.app"
-        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app"
+        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
     fi
     STATUS=$?
         if [ $STATUS -eq 0 ]; then

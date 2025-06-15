@@ -17,8 +17,7 @@ from mod_updater.check_for_mod_updates import check_for_mod_updates
 from mod_updater.exceptions import DeployHistoryError
 checked = check_for_mod_updates(os.path.join(current_path_location, '../'), mods, studio_version["version"])
 if checked:
-    try:
-        mod_mode_module.update_mods(checked, studio_version)
+    try: mod_mode_module.update_mods(checked, studio_version)
     except DeployHistoryError as e:
         print(f"\033[38;5;196mThere was an issue trying to find the studio version! It could be not available at this time!\033[0m")
         sys.exit(1)

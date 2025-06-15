@@ -5,7 +5,6 @@ import threading
 import os
 import zlib
 import platform
-import uuid
 import time
 import traceback
 import datetime
@@ -14,10 +13,10 @@ import hashlib
 import PipHandler
 
 if __name__ == "__main__":
-    current_version = {"version": "2.0.3"}
+    current_version = {"version": "2.1.0"}
     main_os = platform.system()
     args = sys.argv
-    generated_app_id = str(uuid.uuid4())
+    generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
     pip_class = PipHandler.pip(find=True)
     app_path = ""
     macos_path = ""
@@ -62,10 +61,8 @@ if __name__ == "__main__":
     printWarnMessage("Made by Efaz from efaz.dev!")
     printWarnMessage(f"v{current_version['version']}")
     printWarnMessage("-----------")
-    if main_os == "Windows":
-        printMainMessage(f"System OS: {main_os} ({platform.version()})")
-    elif main_os == "Darwin":
-        printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
+    if main_os == "Windows": printMainMessage(f"System OS: {main_os} ({platform.version()})")
+    elif main_os == "Darwin": printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
     else:
         printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
         input("> ")
@@ -89,8 +86,7 @@ if __name__ == "__main__":
                 notification.setInformativeText_(message)
                 center = NSUserNotificationCenter.defaultUserNotificationCenter()
                 center.deliverNotification_(notification)
-            except Exception as e:
-                printErrorMessage(f"Something went wrong pinging Control Center: {str(e)}")
+            except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: {str(e)}")
         elif main_os == "Windows":
             try:
                 try:
@@ -104,30 +100,7 @@ if __name__ == "__main__":
                     app_name="OrangeBlox",
                     app_icon=os.path.join(app_path, "BootstrapImages", "AppIcon.ico")
                 )
-            except Exception as e:
-                printErrorMessage(f"Something went wrong pinging Windows Notification Center: {str(e)}")
-    def getIfProcessIsOpened(process_name="", pid=""):
-        if main_os == "Windows":
-            process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        elif main_os == "Darwin":
-            process = subprocess.Popen(["ps", "aux"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        else:
-            printMainMessage("Get if process is opened is only supported for macOS and Windows.")
-            return
-
-        output, _ = process.communicate()
-        process_list = output.decode("utf-8")
-
-        if pid == "":
-            if process_list.rfind(process_name) == -1:
-                return False
-            else:
-                return True
-        else:
-            if process_list.rfind(pid) == -1:
-                return False
-            else:
-                return True
+            except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: {str(e)}")
     def generateFileHash(file_path):
         try:
             with open(file_path, "rb") as f:
@@ -137,8 +110,7 @@ if __name__ == "__main__":
                     hasher.update(chunk)
                     chunk = f.read(8192)
             return hasher.hexdigest()
-        except Exception as e:
-            return None
+        except Exception as e: return None
     
     with open(os.path.join(os.path.dirname(__file__), "Version.json"), "r", encoding="utf-8") as f:
         current_version = json.load(f)
@@ -169,7 +141,6 @@ if __name__ == "__main__":
                 main_config = {}
                 loaded_json = True
             return main_config
-
         def printDebugMessage(mes): 
             if main_config.get("EFlagEnableDebugMode") == True: 
                 print(f"\033[38;5;226m{mes}\033[0m")
@@ -200,11 +171,9 @@ if __name__ == "__main__":
                 use_shell = True
                 printMainMessage(f"Creating URL Exchange file..")
                 if os.path.exists(f"{app_path}/"):
-                    with open(f"{app_path}/URLSchemeExchange", "w", encoding="utf-8") as f:
-                        f.write(filtered_args)
+                    with open(f"{app_path}/URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
-                    with open("URLSchemeExchange", "w", encoding="utf-8") as f:
-                        f.write(filtered_args)
+                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
         applescript = f'''
         tell application "Terminal"
@@ -259,7 +228,9 @@ if __name__ == "__main__":
             on error
                 set can_close_windows to (every window whose processes = {"{}"})
                 repeat with window_to_close in can_close_windows
-                    close window_to_close
+                    if name of window_to_close contains "OrangeBlox" then
+                        close window_to_close
+                    end if
                 end repeat
             end try
         end tell
@@ -270,6 +241,7 @@ if __name__ == "__main__":
             associated_terminal_pid = None
             activate_cooldown = False
             unable_to_validate = []
+            unable_to_validate2 = []
 
             def notificationLoop():
                 global ended
@@ -281,8 +253,7 @@ if __name__ == "__main__":
                                 try:
                                     notification = json.load(f)
                                     if not (type(notification) is dict):
-                                        class InvalidNotificationException(Exception):
-                                            pass
+                                        class InvalidNotificationException(Exception): pass
                                         raise InvalidNotificationException("The following data for notification is not valid.")
                                 except Exception as e:
                                     printDebugMessage(str(e))
@@ -291,8 +262,7 @@ if __name__ == "__main__":
                             if notification.get("title") and notification.get("message"):
                                 displayNotification(notification["title"], notification["message"])
                                 printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
-                    except Exception as e:
-                        printErrorMessage(f"There was an issue making a notification: {str(e)}")
+                    except Exception as e: printErrorMessage(f"There was an issue making a notification: {str(e)}")
                     time.sleep(0.05)
             def terminalAwaitLoop():
                 global associated_terminal_pid
@@ -306,11 +276,9 @@ if __name__ == "__main__":
                                     if cont.isnumeric() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                         activateTerminalWindow()
-                                except Exception as e:
-                                    printDebugMessage(str(e))
+                                except Exception as e: printDebugMessage(str(e))
                             if os.path.exists(f"{app_path}/Terminal_{generated_app_id}"): os.remove(f"{app_path}/Terminal_{generated_app_id}")
-                    except Exception as e:
-                        printErrorMessage(f"There was an issue getting Terminal ID: {str(e)}")
+                    except Exception as e: printErrorMessage(f"There was an issue getting Terminal ID: {str(e)}")
                     time.sleep(0.05)
             def loadConfigurationLoop():
                 seconds = 0
@@ -319,8 +287,7 @@ if __name__ == "__main__":
                     try:
                         seconds += 1
                         if seconds % 15 == 0: loadConfiguration()
-                    except Exception as e:
-                        printErrorMessage(f"There was an issue during the configuration loop: {str(e)}")
+                    except Exception as e: printErrorMessage(f"There was an issue during the configuration loop: {str(e)}")
                     time.sleep(1)
             def activateTerminalWindow(event=""): 
                 global activate_cooldown
@@ -342,35 +309,24 @@ if __name__ == "__main__":
                         )
                         if result.returncode == 0:
                             if event == "": printMainMessage("Successfully activated terminal!")
-                        else:
-                            printErrorMessage("Failed to activate Terminal window.")
+                        else: printErrorMessage("Failed to activate Terminal window.")
                         activate_cooldown = False
-                except Exception as e:
-                    printErrorMessage(f"Error activating Terminal window.")
+                except Exception as e: printErrorMessage(f"Error activating Terminal window.")
             def startBootstrap():
                 global ended
                 global validated
                 global unable_to_validate
+                global unable_to_validate2
                 global associated_terminal_pid
                 try:
                     printMainMessage(f"Validating Bootstrap Scripts..")
-                    a_file_hash = generateFileHash(f"{app_path}/Main.py")
-                    b_file_hash = generateFileHash(f"{app_path}/RobloxFastFlagsInstaller.py")
-                    c_file_hash = generateFileHash(f"{app_path}/Install.py")
-                    d_file_hash = generateFileHash(f"{app_path}/OrangeAPI.py")
-                    e_file_hash = generateFileHash(f"{app_path}/DiscordPresenceHandler.py")
-                    f_file_hash = generateFileHash(f"{app_path}/PipHandler.py")
-
-                    validated = True
                     integrated_app_hashes = current_version.get("hashes", {})
-                    if not (a_file_hash == integrated_app_hashes.get("main")): validated = False; unable_to_validate.append("Main.py")
-                    if not (b_file_hash == integrated_app_hashes.get("fflag_install")): validated = False; unable_to_validate.append("RobloxFastFlagsInstaller.py")
-                    if not (c_file_hash == integrated_app_hashes.get("install")): validated = False; unable_to_validate.append("Install.py")
-                    if not (d_file_hash == integrated_app_hashes.get("bootstrap_api")): validated = False; unable_to_validate.append("OrangeAPI.py")
-                    if not (e_file_hash == integrated_app_hashes.get("discord_presence")): validated = False; unable_to_validate.append("DiscordPresenceHandler.py")
-                    if not (f_file_hash == integrated_app_hashes.get("pip_handler")): validated = False; unable_to_validate.append("PipHandler.py")
-
-                    if validated == True or main_config.get("EFlagDisableSecureHashSecurity") == True:
+                    for i, v in integrated_app_hashes.items():
+                        if i == "OrangeBlox.py": continue
+                        file_hash = generateFileHash(os.path.join(app_path, i))
+                        if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
+                    if not (validated == False) or main_config.get("EFlagDisableSecureHashSecurity") == True:
+                        validated = True
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
                         result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
@@ -384,19 +340,13 @@ if __name__ == "__main__":
                             sys.exit(0)
                     else:
                         displayNotification("Uh oh!", "Your copy of OrangeBlox was unable to be validated and might be tampered with!")
-                        printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
+                        printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
+                        for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
                         if main_config.get("EFlagDisableCreatingTkinterApp") == True: 
                             printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
-                        else:
-                            printErrorMessage(f"Requested validation failed window from Tkinter.")
-                        if not (a_file_hash == integrated_app_hashes["main"]):  printMainMessage(f'Main.py | {integrated_app_hashes["main"]} => {a_file_hash}')
-                        if not (b_file_hash == integrated_app_hashes["fflag_install"]): printMainMessage(f'RobloxFastFlagsInstaller.py | {integrated_app_hashes["fflag_install"]} => {b_file_hash}')
-                        if not (c_file_hash == integrated_app_hashes["install"]): printMainMessage(f'Install.py | {integrated_app_hashes["install"]} => {c_file_hash}')
-                        if not (d_file_hash == integrated_app_hashes["bootstrap_api"]): printMainMessage(f'OrangeAPI.py | {integrated_app_hashes["bootstrap_api"]} => {d_file_hash}')
-                        if not (e_file_hash == integrated_app_hashes["discord_presence"]): printMainMessage(f'DiscordPresenceHandler.py | {integrated_app_hashes["discord_presence"]} => {e_file_hash}')
-                        if not (f_file_hash == integrated_app_hashes["pip_handler"]): printMainMessage(f'PipHandler.py | {integrated_app_hashes["pip_handler"]} => {f_file_hash}')
-                        ended = True
-                        sys.exit(0)
+                            ended = True
+                            sys.exit(0)
+                        else: printErrorMessage(f"Requested validation failed window from Tkinter.")
                 except Exception as e:
                     ended = True
                     printErrorMessage(f"Bootstrap Run Failed: {str(e)}")
@@ -408,8 +358,7 @@ if __name__ == "__main__":
                 global ended
                 try:
                     printMainMessage(f"Starting Tkinter App Replication..")
-                    while validated == None:
-                       time.sleep(0)
+                    while validated == None: time.sleep(0)
                     try:
                         if getattr(sys, "frozen", False):
                             os.environ["TCL_LIBRARY"] = f"{macos_path}/OrangeBlox.app/Contents/Resources/_tcl_data"
@@ -510,10 +459,8 @@ if __name__ == "__main__":
                                     file_menu = tk.Menu(self.top_menu)
                                     self.top_menu.add_cascade(label="File", menu=file_menu)
                                     file_menu.add_separator()
-                                    if main_config.get("EFlagEnableDuplicationOfClients") == True:
-                                        file_menu.add_command(label="Open Roblox [Multi-Instance Mode]", command=self.new_bootstrap_play_multi_roblox)
-                                    else:
-                                        file_menu.add_command(label="Open Roblox", command=self.new_bootstrap_play_roblox)
+                                    if main_config.get("EFlagEnableDuplicationOfClients") == True: file_menu.add_command(label="Open Roblox [Multi-Instance Mode]", command=self.new_bootstrap_play_multi_roblox)
+                                    else: file_menu.add_command(label="Open Roblox", command=self.new_bootstrap_play_roblox)
                                     if main_config.get("EFlagRobloxStudioEnabled") == True: file_menu.add_command(label="Run Roblox Studio", command=self.new_bootstrap_play_roblox_studio)
                                     file_menu.add_separator()
                                     if not (main_config.get("EFlagAllowActivityTracking") == False): 
@@ -552,10 +499,8 @@ if __name__ == "__main__":
                                     help_menu.add_command(label="GitHub Issues", command=self.show_github_issues_menu)
 
                                     try:
-                                        if self.top_menu and main_menu and help_menu:
-                                            master.config(menu=self.top_menu)
-                                    except Exception as e:
-                                        printErrorMessage(f"Menu configuration error: {str(e)}")
+                                        if self.top_menu and main_menu and help_menu: master.config(menu=self.top_menu)
+                                    except Exception as e: printErrorMessage(f"Menu configuration error: {str(e)}")
 
                                     if ended == True:
                                         self.master.quit()
@@ -567,18 +512,14 @@ if __name__ == "__main__":
                                                 self.check_end()
                                                 self.reset_button_click()
                                                 self.load_logs()
-                                                if validated == False:
-                                                    self.show_validation_failed_menu()
+                                                if validated == False: self.show_validation_failed_menu()
                                             else:
                                                 self.master.quit()
                                                 self.master.destroy()
-                                        except Exception as e:
-                                            printErrorMessage(f"Something went wrong with running functions! Error: {str(e)}")
+                                        except Exception as e: printErrorMessage(f"Something went wrong with running functions! Error: {str(e)}")
                                         printMainMessage(f"Tkinter app finished launching! Terminal ID: {self.terminal_window}")
-                                except Exception as e:
-                                    printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
-                            def on_button_click(self):
-                                self.activate_terminal_window()
+                                except Exception as e: printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
+                            def on_button_click(self): self.activate_terminal_window()
                             def on_close(self):
                                 global ended
                                 if ended == True:
@@ -588,57 +529,41 @@ if __name__ == "__main__":
                                     self.master.destroy()
                                     printSuccessMessage("Successfully ended Tkinter app!")
                                 else:
-                                    if self.terminal_window:
-                                        self.kill_bootstrap_window()
+                                    if self.terminal_window: self.kill_bootstrap_window()
                                     else:
                                         ended = True
                                         self.master.withdraw()
                                         self.master.destroy()
                                         printSuccessMessage("Successfully ended Tkinter app!")
-                            def prevent_minimize(self):
-                                printDebugMessage("Prevented minimizing main window in order to keep app running smoothly.")
+                            def prevent_minimize(self): printDebugMessage("Prevented minimizing main window in order to keep app running smoothly.")
                             def generate_dock_menu(self):
                                 generated_ui_options = []
                                 generated_menu_items = []
 
                                 class DockAppDelegate(NSObject):
-                                    def newBootstrapWindow_(self, sender):
-                                        main_app.new_bootstrap()
-                                    def runRoblox_(self, sender):
-                                        main_app.new_bootstrap_play_roblox()
-                                    def multiRunRoblox_(self, sender):
-                                        main_app.new_bootstrap_play_multi_roblox()
-                                    def runRobloxStudio_(self, sender):
-                                        main_app.new_bootstrap_play_roblox_studio()
-                                    def openRobloxInstallerOptions_(self, sender):
-                                        main_app.new_bootstrap_roblox_installer()
-                                    def endAllRoblox_(self, sender):
-                                        main_app.new_bootstrap_end_roblox()
-                                    def endAllRobloxStudio_(self, sender):
-                                        main_app.new_bootstrap_end_roblox_studio()
-                                    def runFFlagInstaller_(self, sender):
-                                        main_app.new_bootstrap_run_fflag_installer()
-                                    def reconnectRoblox_(self, sender):
-                                        main_app.new_bootstrap_play_reconnect()
-                                    def reconnectRobloxStudio_(self, sender):
-                                        main_app.new_bootstrap_play_reconnect_studio()
-                                    def enterDebugWindowMode_(self, sender):
-                                        main_app.instant_debug_window()
-                                    def shortcutmenu_(self, sender):
-                                        main_app.new_bootstrap_open_shortcuts()
+                                    def newBootstrapWindow_(self, sender):  main_app.new_bootstrap()
+                                    def runRoblox_(self, sender): main_app.new_bootstrap_play_roblox()
+                                    def multiRunRoblox_(self, sender): main_app.new_bootstrap_play_multi_roblox()
+                                    def runRobloxStudio_(self, sender): main_app.new_bootstrap_play_roblox_studio()
+                                    def openRobloxInstallerOptions_(self, sender): main_app.new_bootstrap_roblox_installer()
+                                    def endAllRoblox_(self, sender): main_app.new_bootstrap_end_roblox()
+                                    def endAllRobloxStudio_(self, sender): main_app.new_bootstrap_end_roblox_studio()
+                                    def runFFlagInstaller_(self, sender): main_app.new_bootstrap_run_fflag_installer()
+                                    def reconnectRoblox_(self, sender): main_app.new_bootstrap_play_reconnect()
+                                    def reconnectRobloxStudio_(self, sender): main_app.new_bootstrap_play_reconnect_studio()
+                                    def enterDebugWindowMode_(self, sender): main_app.instant_debug_window()
+                                    def shortcutmenu_(self, sender): main_app.new_bootstrap_open_shortcuts()
                                     def shortcut_(self, sender):
                                         menu_title = sender.title()
                                         for p in generated_ui_options:
                                             if p["message"] == menu_title:
                                                 main_app.new_bootstrap(f"shortcuts/{p['shortcut_info'].get('id')}", f"Open Shortcut ({p['message']})")
                                                 break
-                                    def validateMenuItem_(self, menuItem):
-                                        return True
+                                    def validateMenuItem_(self, menuItem): return True
                         
                                 if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
-                                        if v and v.get("name") and v.get("id") and v.get("url"):
-                                            generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
+                                        if v and v.get("name") and v.get("id") and v.get("url"): generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]", "shortcut_info": v})
 
                                 main_app = self
                                 self.cocoa_app = NSApplication.sharedApplication()
@@ -697,49 +622,31 @@ if __name__ == "__main__":
                             def new_bootstrap(self, action="", action_name=""):
                                 if not (action == "") and type(action) is str:
                                     url_scheme_path = f"{app_path}/URLSchemeExchange"
-                                    with open(url_scheme_path, "w", encoding="utf-8") as f:
-                                        f.write(f"orangeblox://{action}?quick-action=true")
-                                subprocess.Popen(f'open -n -a "{macos_path}/OrangeBlox.app/Contents/MacOS/OrangeBlox"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-                                if not (action_name == "") and type(action_name) is str:
-                                    printMainMessage(f"Launched Bootstrap with action: {action_name}")
-                                else:
-                                    printMainMessage(f"Launched Bootstrap in new window!")
-                            def new_bootstrap_play_roblox(self):
-                                self.new_bootstrap("continue", "Play Roblox")
-                            def new_bootstrap_play_roblox_studio(self):
-                                self.new_bootstrap("run-studio", "Run Roblox Studio")
-                            def new_bootstrap_play_multi_roblox(self):
-                                self.new_bootstrap("new", "Multi-Play Roblox")
-                            def new_bootstrap_play_reconnect(self):
-                                self.new_bootstrap("reconnect", "Connect to Existing Roblox Window")
-                            def new_bootstrap_play_reconnect_studio(self):
-                                self.new_bootstrap("reconnect-studio", "Connect to Existing Roblox Studio Window")
-                            def new_bootstrap_clear_roblox_logs(self):
-                                self.new_bootstrap("clear-logs", "Clear Roblox Logs")
-                            def new_bootstrap_roblox_installer(self):
-                                self.new_bootstrap("roblox-installer-options", "Open Roblox Installer Options")
-                            def new_bootstrap_end_roblox(self):
-                                self.new_bootstrap("end-roblox", "End Roblox")
-                            def new_bootstrap_end_roblox_studio(self):
-                                self.new_bootstrap("end-roblox-studio", "End Roblox Studio")
-                            def new_bootstrap_run_fflag_installer(self):
-                                self.new_bootstrap("fflag-install", "Run Fast Flag Installer")
-                            def new_bootstrap_open_settings(self):
-                                self.new_bootstrap("settings", "Open Settings")
-                            def new_bootstrap_open_mods_manager(self):
-                                self.new_bootstrap("mods", "Open Mods Manager")
-                            def new_bootstrap_open_credits(self):
-                                self.new_bootstrap("credits", "Open Credits")
-                            def new_bootstrap_open_shortcuts(self):
-                                self.new_bootstrap("shortcuts/", "Open Shortcuts Menu")
+                                    with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(f"orangeblox://{action}?quick-action=true")
+                                subprocess.Popen(["/usr/bin/open", "-n", "-a", os.path.join(macos_path, "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                if not (action_name == "") and type(action_name) is str: printMainMessage(f"Launched Bootstrap with action: {action_name}")
+                                else: printMainMessage(f"Launched Bootstrap in new window!")
+                            def new_bootstrap_play_roblox(self): self.new_bootstrap("continue", "Play Roblox")
+                            def new_bootstrap_play_roblox_studio(self): self.new_bootstrap("run-studio", "Run Roblox Studio")
+                            def new_bootstrap_play_multi_roblox(self): self.new_bootstrap("new", "Multi-Play Roblox")
+                            def new_bootstrap_play_reconnect(self): self.new_bootstrap("reconnect", "Connect to Existing Roblox Window")
+                            def new_bootstrap_play_reconnect_studio(self): self.new_bootstrap("reconnect-studio", "Connect to Existing Roblox Studio Window")
+                            def new_bootstrap_clear_roblox_logs(self): self.new_bootstrap("clear-logs", "Clear Roblox Logs")
+                            def new_bootstrap_roblox_installer(self): self.new_bootstrap("roblox-installer-options", "Open Roblox Installer Options")
+                            def new_bootstrap_end_roblox(self): self.new_bootstrap("end-roblox", "End Roblox")
+                            def new_bootstrap_end_roblox_studio(self): self.new_bootstrap("end-roblox-studio", "End Roblox Studio")
+                            def new_bootstrap_run_fflag_installer(self): self.new_bootstrap("fflag-install", "Run Fast Flag Installer")
+                            def new_bootstrap_open_settings(self): self.new_bootstrap("settings", "Open Settings")
+                            def new_bootstrap_open_mods_manager(self): self.new_bootstrap("mods", "Open Mods Manager")
+                            def new_bootstrap_open_credits(self): self.new_bootstrap("credits", "Open Credits")
+                            def new_bootstrap_open_shortcuts(self): self.new_bootstrap("shortcuts/", "Open Shortcuts Menu")
                             def clear_logs(self):
                                 global logs
                                 logs = []
                                 self.output_area.config(state=tk.NORMAL)
                                 self.output_area.delete("1.0", tk.END)
                                 self.output_area.config(state=tk.DISABLED)
-                            def force_load_logs(self):
-                                self.load_logs("oranges")
+                            def force_load_logs(self): self.load_logs("oranges")
                             def unlock_tkinter_lock(self):
                                 if os.path.exists(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}")): os.remove(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"))
                             def kill_bootstrap_window(self, event=""):
@@ -761,8 +668,7 @@ if __name__ == "__main__":
                                         )
                                         if result.returncode == 0:
                                             if event == "": printErrorMessage("Please close the console window in order to close this window!!")
-                                except Exception as e:
-                                    printErrorMessage(f"Error while trying to request kill of Terminal window.")
+                                except Exception as e: printErrorMessage(f"Error while trying to request kill of Terminal window.")
                             def instant_debug_window(self):
                                 self.button_click_count = 10
                                 self.master.focus_force()
@@ -801,12 +707,12 @@ if __name__ == "__main__":
                                 icon_label.image = self.app_icon
                                 icon_label.pack()
                                 
-                                label = tk.Label(self.validation_frame, text="OrangeBlox", font=("San Francisco", 16, "bold"))
-                                label.pack(pady=2)
+                                label = tk.Label(self.validation_frame, text="OrangeBlox", font=("San Francisco", 20, "bold"))
+                                label.pack(pady=5)
                                 label2 = tk.Label(self.validation_frame, text=f"Uh oh! There was an issue trying to validate hashes for the following files:", font=("San Francisco", 12))
-                                label2.pack(pady=5)
-                                label3 = tk.Label(self.validation_frame, text=f"{', '.join(unable_to_validate)}", font=("San Francisco", 12))
-                                label3.pack(pady=5)
+                                label2.pack(pady=3)
+                                label3 = tk.Label(self.validation_frame, text=f"{', '.join(unable_to_validate2)}", font=("San Francisco", 12))
+                                label3.pack(pady=3)
                                 button = tk.Button(self.validation_frame, text=f"Continue without validation", command=self.start_bootstrap_without_validation)
                                 button.pack(pady=5)
                             def show_help_menu(self):
@@ -847,8 +753,7 @@ if __name__ == "__main__":
                                         self.debug_mode_window_enabled = True
                                     else:
                                         if ended == False: self.activate_terminal_window()
-                                except Exception as e: 
-                                    printErrorMessage(f"Unable to activate window: {str(e)}")
+                                except Exception as e:  printErrorMessage(f"Unable to activate window: {str(e)}")
                             def load_logs(self, e=""):
                                 try:
                                     new_logs = logs[self.last_checked_index:]
@@ -860,12 +765,8 @@ if __name__ == "__main__":
                                             self.output_area.insert(tk.END, f" {line}\n", color_tag)
                                             self.output_area.config(state=tk.DISABLED)
                                     self.last_checked_index = len(logs)
-                                    
-                                    if self.is_at_bottom:
-                                        self.output_area.see(tk.END)
-
-                                except Exception as e:
-                                    printErrorMessage(f"There was an error loading logs! Error: {str(e)}")
+                                    if self.is_at_bottom: self.output_area.see(tk.END)
+                                except Exception as e: printErrorMessage(f"There was an error loading logs! Error: {str(e)}")
                                 if e == "": self.master.after(100, self.load_logs)
                             def on_mouse_wheel(self, event):
                                 if event.delta > 0:
@@ -875,10 +776,8 @@ if __name__ == "__main__":
                                     self.is_at_bottom = True
                                     self.output_area.yview_scroll(1, "units")
                                 scrollbar_position = self.output_area.yview()
-                                if scrollbar_position[1] == 1.0:
-                                    self.is_at_bottom = True
-                                else:
-                                    self.is_at_bottom = False
+                                if scrollbar_position[1] == 1.0: self.is_at_bottom = True
+                                else: self.is_at_bottom = False
                             def reset_button_click(self):
                                 if self.debug_mode_window_enabled == False:
                                     self.button_click_count = 0
@@ -895,10 +794,8 @@ if __name__ == "__main__":
                                         else:
                                             printSuccessMessage("Bootstrap window has been closed successfully! You may close this window normally!")
                                             self.button.destroy()
-                                    else:
-                                        self.master.after(100, self.check_end)
-                                except Exception as e:
-                                    printErrorMessage(f"Tkinter App Closing Failed! Error: {str(e)}")
+                                    else: self.master.after(100, self.check_end)
+                                except Exception as e: printErrorMessage(f"Tkinter App Closing Failed! Error: {str(e)}")
                             def start_bootstrap_without_validation(self):
                                 if self.validation_frame: 
                                     self.validation_frame.destroy()
@@ -915,20 +812,16 @@ if __name__ == "__main__":
                                 self.master.geometry("1x1")
                                 self.master.resizable(False, False)
                                 self.master.attributes("-alpha", 0.0)
-                            def activate_terminal_window(self, event=""): 
-                                activateTerminalWindow(event)
+                            def activate_terminal_window(self, event=""):  activateTerminalWindow(event)
                         try:
                             app_root = tk.Tk()
                             app = App(app_root)
                             if main_config.get("EFlagEnableTkinterDockMenu") == True: threading.Thread(target=app.generate_dock_menu, daemon=True).start()
                             app_root.after(100, app_root.deiconify)
                             app_root.mainloop()
-                        except Exception as e:
-                            printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
-                    except Exception as e:
-                        printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
-                except Exception as e:
-                    printErrorMessage(str(e))
+                        except Exception as e: printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
+                    except Exception as e: printErrorMessage(f"Tkinter App Failed! Error: {str(e)}")
+                except Exception as e: printErrorMessage(str(e))
             
             if not (main_config.get("EFlagDisableCreatingTkinterApp") == True):
                 threading.Thread(target=notificationLoop, daemon=False).start()
@@ -937,24 +830,17 @@ if __name__ == "__main__":
                     threading.Thread(target=startBootstrap, daemon=False).start()
                     app_count = pip_class.getAmountOfProcesses("OrangeBlox")
                     if app_count < main_config.get("EFlagNumberOfTkinterAppsAllowed", 1): 
-                        with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f:
-                            f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                        with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                         createTkinterAppReplication()
-                        try:
-                            os.remove(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"))
-                        except Exception:
-                            printMainMessage("Unable to remove tkinter app holder")
+                        try: os.remove(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"))
+                        except Exception: printMainMessage("Unable to remove tkinter app holder")
                     else:
-                        while ended == False and os.path.exists(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}")):
-                            time.sleep(0.5)
+                        while ended == False and os.path.exists(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}")): time.sleep(0.5)
                         if ended == False: 
-                            with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f:
-                                f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                            with open(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                             createTkinterAppReplication()
-                            try:
-                                os.remove(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"))
-                            except Exception:
-                                printMainMessage("Unable to remove tkinter app holder")
+                            try: os.remove(os.path.join(app_path, f"TkinterAppOpened_{user_folder_name}"))
+                            except Exception: printMainMessage("Unable to remove tkinter app holder")
                 else:
                     threading.Thread(target=startBootstrap, daemon=False).start()
                     createTkinterAppReplication()
@@ -991,11 +877,9 @@ if __name__ == "__main__":
                                 sys.exit(0)
             else:
                 def cool():
-                    with open(os.path.join(app_path, "BootstrapCooldown"), "w", encoding="utf-8") as f:
-                        f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 1))
+                    with open(os.path.join(app_path, "BootstrapCooldown"), "w", encoding="utf-8") as f: f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 1))
                     time.sleep(main_config.get("EFlagBootstrapCooldownAmount", 1))
-                    if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
-                        os.remove(os.path.join(app_path, "BootstrapCooldown"))
+                    if os.path.exists(os.path.join(app_path, "BootstrapCooldown")): os.remove(os.path.join(app_path, "BootstrapCooldown"))
                 threading.Thread(target=cool, daemon=True).start()
 
             if len(args) > 1:
@@ -1003,11 +887,9 @@ if __name__ == "__main__":
                 if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
                     printMainMessage(f"Creating URL Exchange file..")
                     if os.path.exists(app_path):
-                        with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f:
-                            f.write(filtered_args)
+                        with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                     else:
-                        with open("URLSchemeExchange", "w", encoding="utf-8") as f:
-                            f.write(filtered_args)
+                        with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
             printMainMessage("Finding Python Executable..")
             if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
@@ -1033,15 +915,13 @@ if __name__ == "__main__":
                     printMainMessage("Starting Notification Loop..")
                     while True:
                         try:
-                            if ended == True:
-                                break
+                            if ended == True: break
                             if os.path.exists(os.path.join(app_path, "AppNotification")):
                                 with open(os.path.join(app_path, "AppNotification"), "r", encoding="utf-8") as f:
                                     try:
                                         notification = json.load(f)
                                         if type(notification) is list:
-                                            class InvalidNotificationException(Exception):
-                                                pass
+                                            class InvalidNotificationException(Exception): pass
                                             raise InvalidNotificationException("The following data for notification is not valid.")
                                     except Exception as e:
                                         printDebugMessage(str(e))
@@ -1049,45 +929,30 @@ if __name__ == "__main__":
                                 if os.path.exists(os.path.join(app_path, "AppNotification")): os.remove(os.path.join(app_path, "AppNotification"))
                                 if notification.get("title") and notification.get("message"): displayNotification(notification["title"], notification["message"])
                             seconds += 1
-                        except Exception as e:
-                            printErrorMessage(f"There was an issue making a notification: {str(e)}")
+                        except Exception as e: printErrorMessage(f"There was an issue making a notification: {str(e)}")
                         time.sleep(0.05)
                 def startBootstrap():
                     global ended
                     try:
                         printMainMessage(f"Validating Bootstrap Scripts..")
-                        a_file_hash = generateFileHash(os.path.join(app_path, "Main.py"))
-                        b_file_hash = generateFileHash(os.path.join(app_path, "RobloxFastFlagsInstaller.py"))
-                        c_file_hash = generateFileHash(os.path.join(app_path, "Install.py"))
-                        d_file_hash = generateFileHash(os.path.join(app_path, "OrangeAPI.py"))
-                        e_file_hash = generateFileHash(os.path.join(app_path, "DiscordPresenceHandler.py"))
-                        f_file_hash = generateFileHash(os.path.join(app_path, "PipHandler.py"))
-
-                        validated = True
                         unable_to_validate = []
+                        unable_to_validate2 = []
+                        validated = None
                         integrated_app_hashes = current_version.get("hashes", {})
-                        if not (a_file_hash == integrated_app_hashes.get("main")): validated = False; unable_to_validate.append("Main.py")
-                        if not (b_file_hash == integrated_app_hashes.get("fflag_install")): validated = False; unable_to_validate.append("RobloxFastFlagsInstaller.py")
-                        if not (c_file_hash == integrated_app_hashes.get("install")): validated = False; unable_to_validate.append("Install.py")
-                        if not (d_file_hash == integrated_app_hashes.get("bootstrap_api")): validated = False; unable_to_validate.append("OrangeAPI.py")
-                        if not (e_file_hash == integrated_app_hashes.get("discord_presence")): validated = False; unable_to_validate.append("DiscordPresenceHandler.py")
-                        if not (f_file_hash == integrated_app_hashes.get("pip_handler")): validated = False; unable_to_validate.append("PipHandler.py")
-
-                        if not (validated == True or main_config.get("EFlagDisableSecureHashSecurity") == True):
-                            printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate)}")
+                        for i, v in integrated_app_hashes.items():
+                            if i == "OrangeBlox.py": continue
+                            file_hash = generateFileHash(os.path.join(app_path, i))
+                            if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
+                        if validated == False and not (main_config.get("EFlagDisableSecureHashSecurity") == True):
+                            printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
                             printErrorMessage(f"Would you like to skip verification? Hashes that are unable to be validated are listed below:")
-                            if not (a_file_hash == integrated_app_hashes["main"]):  printMainMessage(f'Main.py | {integrated_app_hashes["main"]} => {a_file_hash}')
-                            if not (b_file_hash == integrated_app_hashes["fflag_install"]): printMainMessage(f'RobloxFastFlagsInstaller.py | {integrated_app_hashes["fflag_install"]} => {b_file_hash}')
-                            if not (c_file_hash == integrated_app_hashes["install"]): printMainMessage(f'Install.py | {integrated_app_hashes["install"]} => {c_file_hash}')
-                            if not (d_file_hash == integrated_app_hashes["bootstrap_api"]): printMainMessage(f'OrangeAPI.py | {integrated_app_hashes["bootstrap_api"]} => {d_file_hash}')
-                            if not (e_file_hash == integrated_app_hashes["discord_presence"]): printMainMessage(f'DiscordPresenceHandler.py | {integrated_app_hashes["discord_presence"]} => {e_file_hash}')
-                            if not (f_file_hash == integrated_app_hashes["pip_handler"]): printMainMessage(f'PipHandler.py | {integrated_app_hashes["pip_handler"]} => {f_file_hash}')
-                            if isYes(input("> ")) == False: ended = True; sys.exit(0)
-                            displayNotification("Uh oh!", "Your copy of OrangeBlox was unable to be validated!")
+                            for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
+                            if isYes(input("> ")) == False: ended = True; sys.exit(0); return
+                        validated = True
                         printMainMessage(f"Running Bootstrap..")
-                        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification("Security Notice", "Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!")
-                        result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], shell=True, cwd=os.path.join(app_path))
+                        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+                        result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0: printSuccessMessage(f"Bootstrap Run Success: {result.returncode}")

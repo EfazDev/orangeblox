@@ -46,7 +46,7 @@ main_exe = EXE(
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIcon.ico",
-    version="Version.txt",
+    version="../Resources/Version.txt",
     runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeBlox_{uuid.uuid4().hex}")
 )
 play_roblox_exe = EXE(
@@ -60,7 +60,7 @@ play_roblox_exe = EXE(
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconPlayRoblox.ico",
-    version="VersionPlay.txt",
+    version="../Resources/VersionPlay.txt",
     runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangePlayRoblox_{uuid.uuid4().hex}")
 )
 run_studio_exe = EXE(
@@ -74,7 +74,7 @@ run_studio_exe = EXE(
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconRunStudio.ico",
-    version="VersionStudio.txt",
+    version="../Resources/VersionStudio.txt",
     runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeRunStudio_{uuid.uuid4().hex}")
 )
 combined_coll = COLLECT(

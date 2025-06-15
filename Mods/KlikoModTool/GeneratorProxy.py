@@ -17,7 +17,8 @@ fold_name = mod_style_json["name"]
 if is_studio == True: fold_name = f'{mod_style_json["name"]} [STUDIO]'
 print("\033[38;5;226mProxied Script Outside of OrangeBlox Instance.\033[0m")
 try:
-    s = mod_mode_module.run(installed, fold_name, mod_style_json["colors"], mod_style_json["angle"], studio=True)
+    if mod_style_json.get("advanced"): s = mod_mode_module.run(installed, fold_name, mod_style_json.get("advanced"), mod_style_json["angle"], studio=is_studio == True)
+    else: s = mod_mode_module.run(installed, fold_name, mod_style_json["colors"], mod_style_json["angle"], studio=is_studio == True)
     if s: 
         shutil.copytree(s, os.path.join(current_path_location, "../", fold_name), dirs_exist_ok=True)
         with open(os.path.join(os.path.join(current_path_location, "../", fold_name), "Manifest.json"), "w", encoding="utf-8") as f:

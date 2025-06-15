@@ -50,6 +50,7 @@ def onRobloxAppStart(data):
     printMainMessage("This is ran when Roblox opened earlier.")
     printMainMessage("If you know python, try editing this script from the Template Mod folder and installing through Install.py!")
     printDebugMessage(f"You can only see this if you're in debug mode! Template Mod Script has ran {template_count} times!")
+    printYellowMessage("However, please do rename the Template folder to a new name to prevent updating from new OrangeBlox updates!")
     printWarnMessage("--- Template ---")
 def onRobloxCrash(data):
     printMainMessage("Oof! Roblox crashed!")

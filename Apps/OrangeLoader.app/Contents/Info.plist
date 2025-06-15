@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>2.0.3</string>
+    <string>2.1.0</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -31,7 +31,6 @@
             <array>
                 <string>roblox-player</string>
                 <string>roblox-studio</string>
-                <string>roblox-studio-auth</string>
                 <string>roblox</string>
             </array>
         </dict>
@@ -140,7 +139,7 @@
         </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>2.0.3</string>
+    <string>2.1.0</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.utilities</string>
     <key>LSMinimumSystemVersion</key>

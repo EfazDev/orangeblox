@@ -2,15 +2,10 @@ from pathlib import Path
 import urllib.request
 import os
 import time
-
 from mod_generator.modules import Logger
-
 from mod_generator.exceptions import FileDownloadError
 
-
 COOLDOWN: float = 2
-
-
 def download(source: str, destination: str | Path, attempts: int = 3) -> None:
     destination = Path(destination)
     temp: Path = destination.with_suffix(".tmp")

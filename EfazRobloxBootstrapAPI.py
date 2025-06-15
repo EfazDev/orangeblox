@@ -1,7 +1,7 @@
 # 
 # EfazRobloxBootstrapAPI
 # Made by Efaz from efaz.dev
-# Documentation Edition for v2.0.3
+# Documentation Edition for v2.1.0
 # 
 # Provided to Mod Scripts using variable EfazRobloxBootstrapAPI for versions 1.5.9 or lower
 # Later versions must use the OrangeAPI for documentation of features made after v1.5.9 but are allowed to use the variable in runtime.
@@ -10,11 +10,22 @@
 # EfazRobloxBootstrapAPI: import EfazRobloxBootstrapAPI as ERBAPI; EfazRobloxBootstrapAPI = ERBAPI.EfazRobloxBootstrapAPI()
 # OrangeAPI: import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 # 
+"""
+EfazRobloxBootstrapAPI | Made by Efaz from efaz.dev | Documentation Edition for v2.1.0
+
+Provided to Mod Scripts using variable EfazRobloxBootstrapAPI for versions 1.5.9 or lower.
+Later versions must use the OrangeAPI for documentation of features made after v1.5.9 but are allowed to use the variable in runtime.
+This version of EfazRobloxBootstrapAPI is a mapped version of OrangeAPI and redirects to OrangeAPI when used.
+```python
+EfazRobloxBootstrapAPI: import EfazRobloxBootstrapAPI as ERBAPI; EfazRobloxBootstrapAPI = ERBAPI.EfazRobloxBootstrapAPI()
+OrangeAPI: import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
+```
+"""
 
 from typing import Union
 
 # Variables
-current_version = {"version": "2.0.3"}
+current_version = {"version": "2.1.0"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -573,3 +584,5 @@ class EfazRobloxBootstrapAPI:
         ```
         """
         raise UnusedAPI()
+import OrangeAPI as orange
+OrangeAPI = orange.OrangeAPI

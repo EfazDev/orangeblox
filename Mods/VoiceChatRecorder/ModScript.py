@@ -42,10 +42,13 @@ if alleged_path and os.path.isdir(alleged_path):
     recording_folder_path = alleged_path
 else:
     if OrangeAPI.getIfRobloxLaunched() == False:
-        printMainMessage("Please select a directory to save voice chat recordings to!")
-        prompter = promptlib.Files()
-        selected_dir = prompter.dir()
-        if selected_dir:
+        if OrangeAPI.getPlatform() == "macOS":
+            selected_dir = OrangeAPI.requestInput("Please drag the directory you want to use here! (or manually enter the folder path.)", "> ").strip().strip('"').strip("'")
+        else:
+            printMainMessage("Please select a directory to save voice chat recordings to!")
+            prompter = promptlib.Files()
+            selected_dir = prompter.dir()
+        if os.path.exists(selected_dir) and os.path.isdir(selected_dir):
             recording_folder_path = selected_dir
             OrangeAPI.setConfiguration("saveFolderPath", recording_folder_path)
             printSuccessMessage(f"Saved selected directory to settings! Path: {recording_folder_path}")
@@ -61,7 +64,7 @@ def onRobloxVoiceChatStart(data):
     if recording_folder_path:
         recording_stream = PvRecorder(device_index=-1, frame_length=512)
         recording_stream.start()
-        streaming_file_path = os.path.join(recording_folder_path, f"{datetime.datetime.now().strftime("%B_%d_%Y_%H_%M_%S_%f")}.wav")
+        streaming_file_path = os.path.join(recording_folder_path, f"{datetime.datetime.now().strftime('%B_%d_%Y_%H_%M_%S_%f')}.wav")
         def record():
             global received_audio
             while recording_stream:
@@ -69,7 +72,7 @@ def onRobloxVoiceChatStart(data):
                     frame = recording_stream.read()
                     received_audio.extend(frame)
             if len(received_audio) > 1:
-                with wave.open(streaming_file_path, "w", encoding="utf-8") as f:
+                with wave.open(streaming_file_path, "w") as f:
                     f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                     f.writeframes(struct.pack("h" * len(received_audio), *received_audio))
                 printYellowMessage(f"The voice chat had ended! File Path: {streaming_file_path}")

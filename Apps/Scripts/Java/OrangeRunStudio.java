@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class OrangeRunStudio {
-    public static String current_version = "2.0.3";
+    public static String current_version = "2.1.0";
     public static String main_os = "Windows";
     public static void main(String[] args) throws IOException {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {

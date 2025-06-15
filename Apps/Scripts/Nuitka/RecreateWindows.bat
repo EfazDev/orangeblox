@@ -6,15 +6,75 @@ python Apps\Scripts\GenerateHash.py
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Compiling OrangeBlox with Nuitka using Python..' -ForegroundColor Green"
 rem Compile OrangeBlox
-call python -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=PipHandler.py=PipHandler.py --include-data-files=Version.json=Version.json --output-dir="Apps" --windows-icon-from-ico=./BootstrapImages/AppIcon.ico --target="OrangeBlox" "./Apps/Scripts/OrangeBlox.py"
+python -m nuitka ^
+    --standalone ^
+    --windows-console-mode=force ^
+    --onefile ^
+    --assume-yes-for-downloads ^
+    --remove-output ^
+    --enable-plugin=pylint-warnings ^
+    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
+    --include-data-files=PipHandler.py=PipHandler.py ^
+    --include-data-files=Version.json=Version.json ^
+    --msvc=latest ^
+    --company-name=EfazDev ^
+    --product-name=OrangeBlox ^
+    --file-version=2.1.0 ^
+    --product-version=2.1.0 ^
+    --file-description="OrangeBlox" ^
+    --copyright="Copyright (c) EfazDev" ^
+    --output-dir="Apps" ^
+    --windows-icon-from-ico=./BootstrapImages/AppIcon.ico ^
+    --target="OrangeBlox" ^
+    "./Apps/Scripts/OrangeBlox.py"
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Compiling OrangePlayRoblox with Nuitka using Python..' -ForegroundColor Green"
 rem Compile PlayRoblox (OrangePlayRoblox.py)
-call python -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=PipHandler.py=PipHandler.py --include-data-files=Version.json=Version.json --output-dir="Apps" --windows-icon-from-ico=./BootstrapImages/AppIconPlayRoblox.ico --target="OrangePlayRoblox" "./Apps/Scripts/OrangePlayRoblox.py"
+python -m nuitka ^
+    --standalone ^
+    --windows-console-mode=force ^
+    --onefile ^
+    --assume-yes-for-downloads ^
+    --remove-output ^
+    --enable-plugin=pylint-warnings ^
+    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
+    --include-data-files=PipHandler.py=PipHandler.py ^
+    --include-data-files=Version.json=Version.json ^
+    --msvc=latest ^
+    --company-name=EfazDev ^
+    --product-name="Play Roblox (OrangeBlox)" ^
+    --file-version=2.1.0 ^
+    --product-version=2.1.0 ^
+    --file-description="Play Roblox" ^
+    --copyright="Copyright (c) EfazDev" ^
+    --output-dir="Apps" ^
+    --windows-icon-from-ico=./BootstrapImages/AppIconPlayRoblox.ico ^
+    --target="OrangePlayRoblox" ^
+    "./Apps/Scripts/OrangePlayRoblox.py"
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Compiling OrangeRunStudio with Nuitka using Python..' -ForegroundColor Green"
 rem Compile RunStudio (OrangeRunStudio.py)
-call python -m nuitka --standalone --windows-console-mode=force --onefile --include-data-files=PipHandler.py=PipHandler.py --include-data-files=Version.json=Version.json --output-dir="Apps" --windows-icon-from-ico=./BootstrapImages/AppIconRunStudio.ico --target="OrangeRunStudio" "./Apps/Scripts/OrangeRunStudio.py"
+python -m nuitka ^
+    --standalone ^
+    --windows-console-mode=force ^
+    --onefile ^
+    --assume-yes-for-downloads ^
+    --remove-output ^
+    --enable-plugin=pylint-warnings ^
+    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
+    --include-data-files=PipHandler.py=PipHandler.py ^
+    --include-data-files=Version.json=Version.json ^
+    --msvc=latest ^
+    --company-name=EfazDev ^
+    --product-name="Run Studio (OrangeBlox)" ^
+    --file-version=2.1.0 ^
+    --product-version=2.1.0 ^
+    --file-description="Run Studio" ^
+    --copyright="Copyright (c) EfazDev" ^
+    --output-dir="Apps" ^
+    --windows-icon-from-ico=./BootstrapImages/AppIconRunStudio.ico ^
+    --target="OrangeRunStudio" ^
+    "./Apps/Scripts/OrangeRunStudio.py"
 
 rem Create OrangeBloxWindows Folder
 powershell -c "Write-Host 'Rebuild OrangeBlox: Creating OrangeBloxWindows.zip..' -ForegroundColor Green"

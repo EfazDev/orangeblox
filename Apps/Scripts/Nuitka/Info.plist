@@ -13,11 +13,11 @@
 	<key>CFBundleName</key>
 	<string>OrangeBlox</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.3</string>
+	<string>2.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.0.3</string>
+	<string>2.1.0</string>
     <key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>LSApplicationCategoryType</key>
@@ -27,6 +27,8 @@
 	<key>LSMultipleInstancesProhibited</key>
 	<false/>
 	<key>NSAppSleepDisabled</key>
+	<true/>
+    <key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>OrangeBlox uses the Terminal to open the bootstrap with a window!</string>

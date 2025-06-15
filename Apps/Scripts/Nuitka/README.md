@@ -1,5 +1,4 @@
 # Nuitka Compiling
-This folder contains the bat files that can be used to make a Windows/macOS OrangeBlox loader in Nuitka. 
-
->[!IMPORTANT]
-> MacOS building is currently broken due to some tkinter issues.
+Nuitka is most secure way to build OrangeBlox for macOS because it compiles Python code into C which increases performance and security through obfuscation!
+> [!INFO]
+> To rebuild, read the credits in the main bootstrap menu for a command!

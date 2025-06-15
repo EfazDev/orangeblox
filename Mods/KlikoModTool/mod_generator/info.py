@@ -1,17 +1,17 @@
+# Original Licenses from Kliko's Modloader during the making of this OrangeBlox extension
+# - Efaz 🍊 :)
+
 class ProjectData:
     NAME: str = r"Kliko's modloader"
     DESCRIPTION: str = "Roblox mods made easy"
     AUTHOR: str = "TheKliko"
     REPOSITORY: str = r"https://github.com/TheKliko/klikos-modloader"
     VERSION: str = "1.7.9"
-
 class Help:
     DISCORD: str = r"https://discord.gg/nEjUwdSP9P"
     GITHUB: str = r"https://github.com/TheKliko/klikos-modloader"
     RELEASES: str = r"https://github.com/TheKliko/klikos-modloader/releases"
     LATEST_VERSION: str = r"https://github.com/TheKliko/klikos-modloader/releases/latest"
-
-
 LICENSES: list[dict] = [
     {
         "name": "Kliko's modloader",
@@ -143,11 +143,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
     }
 ]
-
-
 CONTRIBUTORS: list[dict[str, str]] = []
-
-
 FEATURE_SUGGESTIONS: list[dict[str, str]] = [
     {
         "text": "Vortex",
@@ -161,6 +157,4 @@ FEATURE_SUGGESTIONS: list[dict[str, str]] = [
         "text": "kw_roblox"
     }
 ]
-
-
 SPECIAL_THANKS: list[dict[str, str]] = []

@@ -1,7 +1,7 @@
 @echo off
 
 rem Generate Main.py Hash
-py Apps\Scripts\GenerateHash.py
+python Apps\Scripts\GenerateHash.py
 
 rem Build Pyinstaller Package
 powershell -c "Write-Host 'Rebuild OrangeBlox: Building Pyinstaller Package..' -ForegroundColor Green"
@@ -86,7 +86,7 @@ rmdir /S /Q OrangeBloxWindows
 if not "%1"=="installer" (
     rem Run Installer
     powershell -c "Write-Host 'Rebuild OrangeBlox: Running Installer..' -ForegroundColor Green"
-    py Install.py --rebuild-mode
+    python Install.py --rebuild-mode
 )
 
 rem Cleaning Up

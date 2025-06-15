@@ -86,13 +86,6 @@ std::string getAppPath() {
 }
 
 int launchApp() {
-    if (!isProcessOpened("/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal")) {
-        printMainMessage("Opening Terminal.app in order for console to show..");
-        int result = system("open -j -F -a /System/Applications/Utilities/Terminal.app");
-        if (result != 0) {
-            printErrorMessage("Unable to start Terminal.app!");
-        }
-    }
     printMainMessage("Loading OrangeBlox executable!");
     std::string appPath = getAppPath();
     std::string command = "open -n -a \"" + appPath + "/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox\"";
@@ -158,7 +151,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.0.3";
+    std::string current_version = "2.1.0";
     std::string main_os;
     std::string app_path;
     
@@ -188,13 +181,34 @@ int main(int argc, char* argv[]) {
                 if (i > 1) oss << ' ';
                 oss << argv[i];
             }
-            url_scheme = oss.str();
+            url_scheme = "obx-launch-player " + oss.str();
         } else {
-            url_scheme = "orangeblox://continue";
+            url_scheme = "obx-launch-player orangeblox://continue";
+            if (isAppRunningBundled()) {
+                char exePath[1024];
+                uint32_t size = sizeof(exePath);
+                std::string shortcut_app_path;
+                if (_NSGetExecutablePath(exePath, &size) == 0) {
+                    shortcut_app_path = std::filesystem::path(exePath).parent_path().string();
+                } else {
+                    printErrorMessage("Buffer size too small for executable path");
+                }
+                shortcut_app_path = std::filesystem::path(shortcut_app_path).parent_path().string();
+                std::string alternative_link_path = shortcut_app_path + "/Resources/AlternativeLink";
+                if (std::filesystem::exists(alternative_link_path)) {
+                    std::ifstream file(alternative_link_path);
+                    if (file.is_open()) {
+                        std::string alternative_link;
+                        std::getline(file, alternative_link);
+                        file.close();
+                        url_scheme = alternative_link;
+                    }
+                }
+            }
         }
 
         if (file.is_open()) {
-            file << "obx-launch-player " + url_scheme;
+            file << url_scheme;
             file.close();
             printMainMessage("Created URL Exchange File: " + url_scheme_path);
         }

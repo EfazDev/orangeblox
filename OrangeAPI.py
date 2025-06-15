@@ -1,15 +1,26 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.0.3
+# v2.1.0
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
 # import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 # 
 
+"""
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.1.0
+\n
+Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
+Developers may use the following line to get the full API notes in Visual Studio Code:
+```python
+import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
+```
+"""
+
+import os
 import time
-import uuid
+import hashlib
 import threading
 import platform
 import typing
@@ -17,7 +28,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.0.3"}
+current_version = {"version": "2.1.0"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False
@@ -54,15 +65,12 @@ class Request:
     def __init__(self, bootstrap_api, requested_function: str, args: dict={}):
         global requested_functions
         if type(bootstrap_api) is OrangeAPI:
-            generated_function_id = str(uuid.uuid4())
+            generated_function_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
             if type(requested_function) is str:
                 self.requested = requested_function
-                if type(args) is dict:
-                    self.args = args
-                elif type(args) is list:
-                    self.args = args
-                else:
-                    self.args = {}
+                if type(args) is dict: self.args = args
+                elif type(args) is list: self.args = args
+                else: self.args = {}
                 self.id = generated_function_id
                 def timeout():
                     time.sleep(5)
@@ -73,21 +81,16 @@ class Request:
                 requested_functions[generated_function_id] = self
                 while (self.timed_out == False):
                     if self.fulfilled == True:
-                        if self.code == 0:
-                            self.success = True
-                        else:
-                            self.success = False
+                        if self.code == 0: self.success = True
+                        else: self.success = False
                         return
                     time.sleep(0.05)
                 self.success = False
                 self.code = 5
                 self.value = None
-            else:
-                raise InvalidRequested()
-        else:
-            raise InvalidOrangeAPI()
-    def generateResponse(self):
-        return Response(self)
+            else: raise InvalidRequested()
+        else: raise InvalidOrangeAPI()
+    def generateResponse(self): return Response(self)
 class Response:
     """This is a class used for returning data back in details such as success, code, response data, etc."""
     success = False
@@ -107,14 +110,13 @@ class Response:
             self.code = main_req.code
             self.timed_out = main_req.timed_out
             self.command = main_req.requested
-        else:
-            raise InvalidRequest()
+        else: raise InvalidRequest()
 class OrangeAPI:
     """
     The OrangeAPI is an API that Mod Scripts can use for getting or setting data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxFastFlagInstaller.py, etc.]
    
     **OrangeAPI is only supported on OrangeBlox v2.0.0+. Any other versions like Efaz's Roblox Bootstrap v1.5.9 or below is unable to use this API.**
-    **Please use the Efaz's Roblox Bootstrap API in order to support Efaz's Roblox Bootstrap v1.3.0-v1.5.9.**
+    **Please use the Efaz's Roblox Bootstrap API in order to support Efaz's Roblox Bootstrap (EfazRobloxBootstrapAPI) v1.3.0-v1.5.9.**
 
     ```python
     import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
@@ -185,14 +187,10 @@ class OrangeAPI:
         smallImage=None
         """The small image link value of the Discord Presence."""
         def __init__(self, details: str=None, state: str=None, timeStart: float=None, timeEnd: float=None, largeImage: dict=None, smallImage: dict=None):
-            if type(details) is str:
-                self.details = details
-            if type(state) is str:
-                self.state = state
-            if type(timeStart) is float or type(timeStart) is int:
-                self.timeStart = timeStart
-            if type(timeEnd) is float or type(timeEnd) is int:
-                self.timeEnd = timeEnd
+            if type(details) is str: self.details = details
+            if type(state) is str: self.state = state
+            if type(timeStart) is float or type(timeStart) is int: self.timeStart = timeStart
+            if type(timeEnd) is float or type(timeEnd) is int: self.timeEnd = timeEnd
             if type(largeImage) is dict:
                 generated_large_image = {
                     "assetId": None,
@@ -200,25 +198,17 @@ class OrangeAPI:
                     "clear": False,
                     "reset": False
                 }
-                if type(largeImage.get("assetId")) is int:
-                    generated_large_image["assetId"] = largeImage.get("assetId")
+                if type(largeImage.get("assetId")) is int: generated_large_image["assetId"] = largeImage.get("assetId")
                 elif type(largeImage.get("assetId")) is str:
                     try:
                         parsed_link = urlparse(largeImage.get("assetId"))
-                        if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"):
-                            generated_large_image["assetId"] = largeImage.get("assetId")
-                        else:
-                            generated_large_image["assetId"] = None
-                    except Exception as e:
-                        generated_large_image["assetId"] = None
-                if type(largeImage.get("hoverText")) is str:
-                    generated_large_image["hoverText"] = largeImage.get("hoverText")
-                if type(largeImage.get("clear")) is bool:
-                    generated_large_image["clear"] = largeImage.get("clear")
-                if type(largeImage.get("reset")) is bool:
-                    generated_large_image["reset"] = largeImage.get("reset")
-                if generated_large_image["assetId"] == None and generated_large_image["hoverText"] == None:
-                    generated_large_image = None
+                        if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"): generated_large_image["assetId"] = largeImage.get("assetId")
+                        else: generated_large_image["assetId"] = None
+                    except Exception as e: generated_large_image["assetId"] = None
+                if type(largeImage.get("hoverText")) is str: generated_large_image["hoverText"] = largeImage.get("hoverText")
+                if type(largeImage.get("clear")) is bool: generated_large_image["clear"] = largeImage.get("clear")
+                if type(largeImage.get("reset")) is bool: generated_large_image["reset"] = largeImage.get("reset")
+                if generated_large_image["assetId"] == None and generated_large_image["hoverText"] == None: generated_large_image = None
                 self.largeImage = generated_large_image
             if type(smallImage) is dict:
                 generated_small_image = {
@@ -227,25 +217,17 @@ class OrangeAPI:
                     "clear": False,
                     "reset": False
                 }
-                if type(smallImage.get("assetId")) is int:
-                    generated_small_image["assetId"] = smallImage.get("assetId")
+                if type(smallImage.get("assetId")) is int: generated_small_image["assetId"] = smallImage.get("assetId")
                 elif type(smallImage.get("assetId")) is str:
                     try:
                         parsed_link = urlparse(smallImage.get("assetId"))
-                        if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"):
-                            generated_small_image["assetId"] = smallImage.get("assetId")
-                        else:
-                            generated_small_image["assetId"] = None
-                    except Exception as e:
-                        generated_small_image["assetId"] = None
-                if type(smallImage.get("hoverText")) is str:
-                    generated_small_image["hoverText"] = smallImage.get("hoverText")
-                if type(smallImage.get("clear")) is bool:
-                    generated_small_image["clear"] = smallImage.get("clear")
-                if type(smallImage.get("reset")) is bool:
-                    generated_small_image["reset"] = smallImage.get("reset")
-                if generated_small_image["assetId"] == None and generated_small_image["hoverText"] == None:
-                    generated_small_image = None
+                        if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"): generated_small_image["assetId"] = smallImage.get("assetId")
+                        else: generated_small_image["assetId"] = None
+                    except Exception as e: generated_small_image["assetId"] = None
+                if type(smallImage.get("hoverText")) is str: generated_small_image["hoverText"] = smallImage.get("hoverText")
+                if type(smallImage.get("clear")) is bool: generated_small_image["clear"] = smallImage.get("clear")
+                if type(smallImage.get("reset")) is bool: generated_small_image["reset"] = smallImage.get("reset")
+                if generated_small_image["assetId"] == None and generated_small_image["hoverText"] == None: generated_small_image = None
                 self.smallImage = generated_small_image
         def generate_json(self):
             """Generate a usable BloxstrapRPC JSON based on details, state, images and time."""
@@ -269,6 +251,14 @@ class OrangeAPI:
         """This is if the field is inline or not."""
         def __init__(self, name: str, value: str, inline: bool=False): self.name = name; self.value = value; self.inline = inline
         def convert(self): """This converts the class into a usable JSON table!"""; return {"name": str(self.name), "value": str(self.value), "inline": self.inline==True}
+    class UnzipResponse:
+        """
+        This is the response class used after using the unzipFile function.
+        """
+        returncode = 0
+        """This is the return code of the unzipping process."""
+        path = ""
+        """This is the path of the exported folder."""
 
     # Functions
     def getMainConfiguration(self) -> dict | None: # Permission: getMainConfiguration
@@ -416,12 +406,9 @@ class OrangeAPI:
         }) # -> Response class
         ```
         """
-        if type(data) is OrangeAPI.BloxstrapRichPresence:
-            generated_rpc_data = data.generate_json()
-        elif type(data) is dict or type(data) is str:
-            generated_rpc_data = data
-        else:
-            generated_rpc_data = {}
+        if type(data) is OrangeAPI.BloxstrapRichPresence: generated_rpc_data = data.generate_json()
+        elif type(data) is dict or type(data) is str: generated_rpc_data = data
+        else: generated_rpc_data = {}
         return Request(self, "sendBloxstrapRPC", [{"command": command, "data": generated_rpc_data}, (disableWebhook == True)]).generateResponse()
     def getRobloxLogFolderSize(self, static: bool=False) -> str | int | None: # Permission: getRobloxLogFolderSize
         """
@@ -658,6 +645,120 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getRobloxAppSettings").generateResponse().response
+    def getIfOSSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)) -> bool | None: # Permission: getIfOSSupported
+        """
+        Get if your operating system version is within a certain version.
+        
+        Permission: getIfOSSupported | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        is_supported = OrangeAPI.getIfOSSupported(windows_build=17134, macos_version=(10,13,0)) # -> True
+        ```
+        """
+        return Request(self, "getIfOSSupported", {"windows_build": windows_build, "macos_version": macos_version}).generateResponse().response
+    def getIfPythonSupported(self, major: int=3, minor: int=13, patch: int=2) -> bool | None: # Permission: getIfPythonSupported
+        """
+        Get if the running Python executable is supported within a version number.
+        
+        Permission: getIfPythonSupported | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        # Python 3.13.4
+        is_supported = OrangeAPI.getIfPythonSupported(3, 13, 0) # -> True
+
+        # Python 3.12.1
+        is_supported = OrangeAPI.getIfPythonSupported(3, 13, 0) # -> False
+        ```
+        """
+        return Request(self, "getIfPythonSupported", {"major": major, "minor": minor, "patch": patch}).generateResponse().response
+    def getIfConnectedToInternet(self) -> bool | None: # Permission: getIfConnectedToInternet
+        """
+        Get if the user is connected to the internet.
+        
+        Permission: getIfConnectedToInternet | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        connected_to_internet = OrangeAPI.getIfConnectedToInternet() # -> True
+        ```
+        """
+        return Request(self, "getIfConnectedToInternet").generateResponse().response
+    def unzipFile(self, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True) -> UnzipResponse: # Permission: unzipFile
+        """
+        Unzip a ZIP file into a specific directory
+        
+        Permission: unzipFile | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        unzip_res = OrangeAPI.unzipFile("./packed.zip", "./resources") # -> OrangeAPI.UnzipResponse
+        ```
+        """
+        response = Request(self, "unzipFile", {"path": path, "output": output, "look_for": look_for, "export_out": export_out, "either": either, "check": check}).generateResponse().response
+        new_unzip_response = self.UnzipResponse()
+        if response: new_unzip_response.path = response.path; new_unzip_response.returncode = response.returncode
+        return new_unzip_response
+    def getRequest(self, url: str, headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: getRequest
+        """
+        Make a GET request to any website and retrieve data from it.
+        
+        Permission: getRequest | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        get_request = OrangeAPI.getRequest("https://api.efaz.dev").json # -> {"success": True, "message": "OK", "code": 200}
+        ```
+        """
+        return Request(self, "getRequest", {"url": url, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
+    def postRequest(self, url: str, data: typing.Union[dict, list, str], headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: postRequest
+        """
+        Make a POST request to any website and send data to it.
+        
+        Permission: postRequest | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        post_request = OrangeAPI.postRequest("https://api.efaz.dev/api/hello/welcome", "{}").json # -> 
+        # {
+        #     "success": true, 
+        #     "message": "Welcome!", 
+        #     "method": "POST", 
+        #     "ip-address": "###.###.###.###", 
+        #     "x-efazdev-api": "#######-####-####-####-############", 
+        #     "code": 200
+        # }
+        ```
+        """
+        return Request(self, "postRequest", {"url": url, "data": data, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
+    def deleteRequest(self, url: str, headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: deleteRequest
+        """
+        Make a DELETE request to any website and delete data from it.
+        
+        Permission: deleteRequest | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        delete_request = OrangeAPI.deleteRequest("https://api.efaz.dev/api/hello/bye").json # -> 
+        # {
+        #     "success": true, 
+        #     "message": "Bye!", 
+        #     "method": "DELETE", 
+        #     "ip-address": "###.###.###.###", 
+        #     "x-efazdev-api": "#######-####-####-####-############", 
+        #     "code": 200
+        # }
+        ```
+        """
+        return Request(self, "deleteRequest", {"url": url, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
     def getPlatform(self, static: bool=False) -> str: # No Permission Needed
         """
         Get the current running platform name. It may return Windows, macOS or Linux for when static is disabled. If it enabled, it will return platform.system()
@@ -740,6 +841,19 @@ class OrangeAPI:
             return input(prompt)
         else:
             return None
+    def getIf32BitWindows(self) -> bool | None: # No Permission Needed
+        """
+        Get if the user is running the bootstrap on a 32 bit copy of Python for Windows.
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.1.0+**
+
+        ```python
+        32_bit_windows = OrangeAPI.getIf32BitWindows() # -> False
+        ```
+        """
+        return Request(self, "getIf32BitWindows").generateResponse().response
     def getIfRobloxLaunched(self) -> bool | None: # No Permission Needed
         """
         Get if Roblox was launched by the bootstrap yet. [Useful for determining before interrupting the main loop]
@@ -876,10 +990,8 @@ class OrangeAPI:
             try:
                 a = json.dumps(data)
                 return Request(self, "setConfiguration", {"name": name, "data": data}).generateResponse()
-            except Exception as e:
-                raise InvalidRequest()
-        else:
-            raise InvalidRequest()
+            except Exception as e: raise InvalidRequest()
+        else: raise InvalidRequest()
     def about(self) -> dict[str, typing.Any] | None: # No Permission Needed
         """
         Get basic info about the bootstrap such as version of both API and bootstrap itself!

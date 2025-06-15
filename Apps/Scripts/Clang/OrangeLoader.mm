@@ -75,13 +75,6 @@ std::string getAppPath() {
 }
 
 int launchApp() {
-    if (!isProcessOpened("/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal")) {
-        printMainMessage("Opening Terminal.app in order for console to show..");
-        int result = system("open -j -F -a /System/Applications/Utilities/Terminal.app");
-        if (result != 0) {
-            printErrorMessage("Unable to start Terminal.app!");
-        }
-    }
     printMainMessage("Loading OrangeBlox executable!");
     std::string appPath = getAppPath();
     std::string command = "open -n -a \"" + appPath + "/MacOS/OrangeBlox.app/Contents/MacOS/OrangeBlox\"";
@@ -147,7 +140,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.0.3";
+    std::string current_version = "2.1.0";
     std::string main_os;
     std::string app_path;
     
