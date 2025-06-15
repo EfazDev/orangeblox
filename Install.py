@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.1.0
+# v2.1.1
 # 
 
 # Modules
@@ -252,7 +252,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.1.0"}
+    current_version = {"version": "2.1.1"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1114,9 +1114,58 @@ if __name__ == "__main__":
         else:
             printMainMessage("Welcome to OrangeBlox Installer 🍊!")
             printMainMessage("OrangeBlox is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
-            printMainMessage("Before we continue to installing, you must complete these questions before you can install!")
-            printMainMessage("If you want to say yes, type \"y\". Otherwise, type \"n\". Anyway, here ya go!")
             if overwrited == False:
+                printMainMessage("Before we continue to installing, you must follow this guide on how to navigate, so you can use for when you're using the bootstrap!")
+                printWarnMessage("--- Step 1 ---")
+                printMainMessage("First, it's important that you best understand on how the choosing works.")
+                printMainMessage('Let\'s start off with a quick input! Let\'s say you want to enable this option (use the prompt here for the example), enter "y" or "yes"!')
+                def a():
+                    b = input("> ")
+                    if isYes(b) == True: return
+                    else:
+                        printErrorMessage("Uhm, not quite. Try again!")
+                        a()
+                a()
+                printWarnMessage("--- Step 2 ---")
+                printMainMessage("Congrats! You completed the first step!")
+                printMainMessage('Now, let\'s try that again! But instead, enter "n" or "no" for you don\'t want this option!')
+                def a():
+                    b = input("> ")
+                    if isNo(b) == True: return
+                    else:
+                        printErrorMessage("Uhm, not quite. Try again!")
+                        a()
+                a()
+                printWarnMessage("--- Step 3 ---")
+                printMainMessage("You're getting good at this!")
+                printMainMessage('Now, let\'s learn about how you select from a list. Take the list below for an example.')
+                printMainMessage("Try selecting a number that is next to that option!")
+                generated_ui_options = []
+                main_ui_options = {}
+                generated_ui_options.append({"index": 1, "message": "Do jumping-jacks"})
+                generated_ui_options.append({"index": 2, "message": "Do push-ups"})
+                generated_ui_options.append({"index": 3, "message": "Do curl-ups"})
+                generated_ui_options.append({"index": 4, "message": "Do weight-lifting"})
+                generated_ui_options.append({"index": 5, "message": "Do neither"})
+                generated_ui_options.append({"index": 6, "message": "Do all of the above"})
+                generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
+                printWarnMessage("--- Select Option ---")
+                count = 1
+                for i in generated_ui_options:
+                    printMainMessage(f"[{str(count)}] = {i['message']}")
+                    main_ui_options[str(count)] = i
+                    count += 1
+                def a():
+                    res = input("> ")
+                    if main_ui_options.get(res):
+                        opt = main_ui_options[res]
+                        printSuccessMessage(f"You have selected {opt.get('message')}!")
+                    else:
+                        printErrorMessage("Uhm, not quite an option here, try again!")
+                        return a()
+                a()
+                printMainMessage("And now you're ready on how to navigate! You will have to repeat this again once you install it but at least you know how to do it!")
+                printMainMessage("Anyway, here's some questions to answer regarding the install.")
                 printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
                 a = input("> ")
                 if isYes(a) == True:

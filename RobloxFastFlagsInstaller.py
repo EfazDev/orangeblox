@@ -4722,7 +4722,7 @@ if __name__ == "__main__":
 
     # Important Information
     printWarnMessage("--- Important Information ---")
-    printMainMessage("May 2nd, 2025 - v2.1.0")
+    printMainMessage("May 2nd, 2025 - v2.0.3")
     printMainMessage("As of some updates from Roblox, some FFlags may not work in the future. Other functions such as Roblox Opening and Activity Tracking is still available from this module.")
 
     # Setup Information

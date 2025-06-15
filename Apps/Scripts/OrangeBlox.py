@@ -13,7 +13,7 @@ import hashlib
 import PipHandler
 
 if __name__ == "__main__":
-    current_version = {"version": "2.1.0"}
+    current_version = {"version": "2.1.1"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])

@@ -35,8 +35,10 @@ cp ./Apps/Scripts/Nuitka/Info.plist ./Apps/OrangeBlox.app/Contents/Info.plist
 
 # Add Tkinter Data
 printMessage "Adding Tk-inter Data.."
+ditto -xk './Apps/Scripts/Nuitka/macos_tkinter_data.zip' './Apps/Scripts/Nuitka/macos_tkinter_data'
 cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tcl_data ./Apps/OrangeBlox.app/Contents/Resources/_tcl_data
 cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tk_data ./Apps/OrangeBlox.app/Contents/Resources/_tk_data
+rm -rf './Apps/Scripts/Nuitka/macos_tkinter_data'
 
 # Strip Package
 printMessage "Stripping macOS Package.."

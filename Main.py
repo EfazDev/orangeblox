@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.1.0
+# v2.1.1
 # 
 
 # Python Modules
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     installed_update = False
     connect_instead = False
     run_studio = False
-    current_version = {"version": "2.1.0"}
+    current_version = {"version": "2.1.1"}
     given_args = list(filter(None, sys.argv))
     submit_status = PipHandler.ProgressBar()
     user_folder_name = os.path.basename(pip_class.getUserFolder())
@@ -809,7 +809,9 @@ if __name__ == "__main__":
                                 e = subprocess.run(args=[sys.executable, os.path.join(dow_tar, "Install.py")], cwd=dow_tar)
                                 if e.returncode == 0: printSuccessMessage("OrangeBlox Installer has succeeded successfully! Once you continue, this script will reload.")
                                 else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
-                                if temp_sync == False and os.path.exists(dow_tar): shutil.rmtree(dow_tar, ignore_errors=True)
+                                if temp_sync == False and os.path.exists(dow_tar): 
+                                    if os.path.exists(os.path.join(dow_tar, "Backup.obx")): shutil.move(os.path.join(dow_tar, "Backup.obx"), os.path.join(user_folder, "Documents", "OrangeBlox_Backup.obx"))
+                                    shutil.rmtree(dow_tar, ignore_errors=True)
                                 input("> ")
                                 pip_class.restartScript("Main.py", sys.argv)
                                 sys.exit(0)
@@ -2338,16 +2340,25 @@ if __name__ == "__main__":
     def continueToCredits(): # Credits
         printWarnMessage("--- Credits ---")
         printMainMessage("1. Made by \033[38;5;202m@EfazDev 🍊\033[0m")
-        printMainMessage("2. Old Death Sound and Cursors were sourced from \033[38;5;165mBloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)\033[0m")
+        printMainMessage("2. Old Player Sounds and Cursors were sourced from \033[38;5;165mBloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)\033[0m")
         printMainMessage("3. Avatar Editor Maps were from \033[38;5;197mMielesgames's Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)\033[0m slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
-        printMainMessage("4. The logo of OrangeBlox was made thanks of \033[38;5;226m@CabledRblx 🦆\033[0m. Thanks :)")
-        printMainMessage("5. Server Locations was made thanks to \033[38;5;39mipinfo.io 🌐\033[0m as it wouldn't be possible to convert ip addresses without them!")
+        printMainMessage("4. The Kliko's Mod Tool Mod Script was edited and made from \033[38;5;196mKliko's Mod Tool and Kliko's modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)\033[0m")
+        printMainMessage("5. Python Module Creators:")
+        printMainMessage(" • \033[38;5;34mqwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)\033[0m")
+        printMainMessage(" • \033[38;5;40mRonald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)\033[0m")
+        printMainMessage(" • \033[38;5;226mPhilip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)\033[0m")
+        printMainMessage(" • \033[38;5;129mMark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)\033[0m")
+        printMainMessage(" • \033[38;5;214mKivy (plyer) 🧰 (https://github.com/kivy/plyer)\033[0m")
+        printMainMessage(" • \033[38;5;226mPython Software Foundation (requests) 🌐 (https://github.com/psf/requests)\033[0m")
+        printMainMessage(" • \033[38;5;16mGiampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)\033[0m")
+        printMainMessage("6. The logo of OrangeBlox was made thanks of \033[38;5;226m@CabledRblx 🦆\033[0m. Thanks :)")
+        printMainMessage("7. Server Locations was made thanks to \033[38;5;39mipinfo.io 🌐\033[0m as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
-            printMainMessage(f'6. macOS App was built using \033[38;5;226mNuitka 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. macOS App was built using \033[38;5;226mNuitka 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py --rebuild-mode --rebuild-nuitka --rebuild-clang")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
-            printMainMessage(f'6. Windows App was built using \033[38;5;39mpyinstaller 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. Windows App was built using \033[38;5;39mpyinstaller 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py --rebuild-mode --rebuild-pyinstaller")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
