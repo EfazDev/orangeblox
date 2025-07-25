@@ -8,11 +8,9 @@ set "arch=%PROCESSOR_ARCHITECTURE%"
 echo %os_name% | find /i "Windows" >nul
 
 if "%arch%"=="AMD64" (
-    if "%PROCESSOR_ARCHITEW6432%"=="ARM64" (
-        set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-arm64.exe"
-    ) else (
-        set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-amd64.exe"
-    )
+    set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-amd64.exe"
+) else if "%arch%"=="ARM64" (
+    set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-arm64.exe"
 ) else (
     set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5.exe"
 )

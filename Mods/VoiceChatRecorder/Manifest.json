@@ -1,6 +1,6 @@
 {
     "name": "Voice Chat Recorder!",
-    "version": "1.1.1",
+    "version": "1.1.5",
     "mod_script": true,
     "list_in_normal_mods": false,
     "mod_script_requirements": [

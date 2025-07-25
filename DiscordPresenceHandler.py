@@ -10,9 +10,9 @@ try:
     import uuid
     import sys
     import threading
-    from PipHandler import pip
+    from PyKits import pip
 except Exception as e:
-    from PipHandler import pip
+    from PyKits import pip
     pypresence = pip().importModule("pypresence", install_module_if_not_found=True)
     import logging
     import warnings
@@ -31,11 +31,15 @@ def suppress_hook():
     sys.__excepthook__ = a
     warnings.simplefilter("ignore", ResourceWarning)
 
-def printMainMessage(mes): print(f"\033[38;5;255m{mes}\033[0m")
-def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m")
-def printSuccessMessage(mes): print(f"\033[38;5;82m{mes}\033[0m")
-def printWarnMessage(mes): print(f"\033[38;5;202m{mes}\033[0m")
-def printYellowMessage(mes): print(f"\033[38;5;226m{mes}\033[0m")
+def ts(mes):
+    mes = str(mes)
+    if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
+    return mes
+def printMainMessage(mes): print(f"\033[38;5;255m{ts(mes)}\033[0m")
+def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m")
+def printSuccessMessage(mes): print(f"\033[38;5;82m{ts(mes)}\033[0m")
+def printWarnMessage(mes): print(f"\033[38;5;202m{ts(mes)}\033[0m")
+def printYellowMessage(mes): print(f"\033[38;5;226m{ts(mes)}\033[0m")
 
 class Presence(pypresence.Presence):
     connected = False
@@ -153,4 +157,4 @@ class Presence(pypresence.Presence):
             return {"success": True, "code": 0}
         else: return {"success": False, "code": 1}
     def printDebugMessage(self, mes):
-        if self.debug_mode == True: print(f"\033[38;5;226m[Discord Presence] [DEBUG]: {mes}\033[0m")
+        if self.debug_mode == True: print(f"\033[38;5;226m[Discord Presence] [DEBUG]: {ts(mes)}\033[0m")

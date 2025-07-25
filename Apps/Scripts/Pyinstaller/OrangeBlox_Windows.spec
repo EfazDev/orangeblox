@@ -1,4 +1,4 @@
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs
 import os
 import tempfile
 import uuid
@@ -6,28 +6,24 @@ try:
     from PyInstaller.building.api import *
     from PyInstaller.building.build_main import *
     from PyInstaller.building.osx import *
-except:
-    print("Disabled Visual Studio Code Mode")
+except: print("Disabled Visual Studio Code Mode")
 
 block_cipher = None
 
 a = Analysis(
-    ["../OrangeBlox.py", "../OrangePlayRoblox.py", "../OrangeRunStudio.py", "../../../PipHandler.py"],
+    ["../OrangeBlox.py", "../OrangePlayRoblox.py", "../OrangeRunStudio.py", "../../../PyKits.py"],
     pathex=[],
-    binaries=[],
+    binaries=collect_dynamic_libs("ssl"),
     datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
-    hiddenimports=[
-        "plyer",
-        "plyer.platforms",
-        "plyer.platforms.win.notification",
-        "plyer.platforms.win",
-        "ctypes._layout"
-    ],
+    hiddenimports=["plyer.platforms.win.notification"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
-        "tkinter"
+        "tkinter",
+        "urllib3", 
+        "requests",
+        "numpy"
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
@@ -42,12 +38,11 @@ main_exe = EXE(
     name="OrangeBlox",
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIcon.ico",
     version="../Resources/Version.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeBlox_{uuid.uuid4().hex}")
+    strip=True
 )
 play_roblox_exe = EXE(
     pyz,
@@ -56,12 +51,11 @@ play_roblox_exe = EXE(
     name="PlayRoblox",
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconPlayRoblox.ico",
     version="../Resources/VersionPlay.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangePlayRoblox_{uuid.uuid4().hex}")
+    strip=True
 )
 run_studio_exe = EXE(
     pyz,
@@ -70,12 +64,11 @@ run_studio_exe = EXE(
     name="RunStudio",
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIconRunStudio.ico",
     version="../Resources/VersionStudio.txt",
-    runtime_tmpdir=os.path.join(tempfile.gettempdir(), f"OrangeRunStudio_{uuid.uuid4().hex}")
+    strip=True
 )
 combined_coll = COLLECT(
     main_exe,
@@ -84,9 +77,9 @@ combined_coll = COLLECT(
     a.binaries,
     a.zipfiles,
     a.datas,
-    strip=False,
     upx=True,
     upx_exclude=[],
     name="OrangeBlox",
+    strip=True,
     distpath="dist",
 )

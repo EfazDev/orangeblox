@@ -4,7 +4,7 @@ import subprocess
 import platform
 import logging
 import datetime
-import PipHandler
+import PyKits
 
 def printMainMessage(mes): print(f"\033[38;5;255m{mes}\033[0m"); logging.info(mes)
 def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m"); logging.error(mes)
@@ -16,18 +16,18 @@ def setLoggingHandler(handler_name):
     global main_os
     log_path = os.path.join(app_path, "Logs")
     if main_os == "Darwin": log_path = os.path.join(pip_class.getLocalAppData(), "Logs", "OrangeBlox")
-    if not os.path.exists(log_path): os.makedirs(log_path)
+    if not os.path.exists(log_path): os.makedirs(log_path,mode=511)
     sys.stdout.reconfigure(encoding='utf-8')
     logging.basicConfig(filename=os.path.join(log_path, f'OrangeBlox_{handler_name}_{datetime.datetime.now().strftime("%B_%d_%Y_%H_%M_%S_%f")}.log'), level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.1.1"}
+    current_version = {"version": "2.2.0"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv
     app_path = ""
-    pip_class = PipHandler.pip()
+    pip_class = PyKits.pip()
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         if main_os == "Windows": app_path = os.path.dirname(sys.executable)
         else: app_path = os.path.abspath(os.path.join("../", os.path.dirname(sys.executable)))
@@ -71,7 +71,8 @@ if __name__ == "__main__":
             with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
             printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")
             printMainMessage("Loading OrangeBlox.exe!")
-            result = subprocess.run(f'{os.path.join(app_path, "OrangeBlox.exe")}')
+            result = subprocess.run(os.path.join(app_path, "OrangeBlox.exe"))
+            if not (result.returncode == 0): printSuccessMessage(f"Play Roblox has failed! Return Code: {result.returncode}")
             sys.exit(0)
         elif os.path.exists(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt")):
             installed_path = open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r", encoding="utf-8").read()
@@ -82,7 +83,8 @@ if __name__ == "__main__":
             with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(write_arg)
             printMainMessage(f"Created URL Exchange File: {url_scheme_path} : {write_arg}")
             printMainMessage("Loading OrangeBlox.exe!")
-            result = subprocess.run(f'{os.path.join(installed_path, "OrangeBlox.exe")}')
+            result = subprocess.run(os.path.join(installed_path, "OrangeBlox.exe"))
+            if not (result.returncode == 0): printSuccessMessage(f"Play Roblox has failed! Return Code: {result.returncode}")
             sys.exit(0)
         else:
             printErrorMessage("Bootstrap Launch Failed: App is not installed.")

@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.1.1
+# v2.2.0
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.1.1
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.0
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -28,9 +28,10 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.1.1"}
+current_version = {"version": "2.2.0"}
 requested_functions = {}
 cached_information = {}
+translator = None
 debug_mode = False
 studio_mode = False
 launched_from_bootstrap = False
@@ -263,25 +264,23 @@ class OrangeAPI:
     # Functions
     def getMainConfiguration(self) -> dict | None: # Permission: getMainConfiguration
         """
-        This gets the current user's bootstrap configuration data.
+        Get the current user's bootstrap configuration data.
 
         Permission: getMainConfiguration | Level: 1 [Warning]
 
-        **The following keys are not shown due to security: EFlagDiscordWebhookURL**
-        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
+        **The following keys are not shown due to security: EFlagDiscordWebhookURL, EFlagRobloxLinkShortcuts**
 
         ```python
         main_config = OrangeAPI.getMainConfiguration()
-        print(main_config) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
+        print(main_config) # --> {"EFlagBlahBlah": True}
         ```
         """
         return Request(self, "getMainConfiguration").generateResponse().response
     def setMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setMainConfiguration
         """
-        This sets the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        Set the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
-        Permission: setMainConfiguration | Level: 2 [Caution]
-        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
+        Permission: setMainConfiguration | Level: 3 [Dangerous]
 
         ```python
         response = OrangeAPI.setMainConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
@@ -290,13 +289,11 @@ class OrangeAPI:
         return Request(self, "setMainConfiguration", [configuration, full]).generateResponse()
     def saveMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveMainConfiguration
         """
-        This sets the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        Set the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
         Permission: saveMainConfiguration | Level: 2 [Caution]
 
-        **Unless the user has recovery tools, data overwritten by this function is non-recoverable. Therefore, please check your code and make validation checks if needed! For security, EFlags keys are not able to be saved and are ignored when tried.**
-        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
-
+        **Unless the user has recovery tools, data overwritten by this function is non-recoverable. Therefore, please check your code and make validation checks if needed!**
         ```python
         response = OrangeAPI.saveMainConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
         ```
@@ -304,42 +301,35 @@ class OrangeAPI:
         return Request(self, "saveMainConfiguration", [configuration, full]).generateResponse()
     def getFastFlagConfiguration(self) -> dict | None: # Permission: getFastFlagConfiguration
         """
-        This gets the current user's bootstrap configuration data.
+        Get the current user's Roblox Player or Studio flags.
 
         Permission: getFastFlagConfiguration | Level: 1 [Warning]
 
-        **The following keys are not shown due to security: EFlagDiscordWebhookURL**
-        **This function was renamed to getFastFlagConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
-
         ```python
-        main_config = OrangeAPI.getFastFlagConfiguration()
-        print(main_config) # --> {"EFlagBlahBlah": True, "FFlagBlahBlah": "something"}
+        fflag_config = OrangeAPI.getFastFlagConfiguration()
+        print(fflag_config) # --> {"FFlagBlahBlah": "something"}
         ```
         """
         return Request(self, "getFastFlagConfiguration").generateResponse().response
     def setFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setFastFlagConfiguration
         """
-        This sets the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        Set the current user's Roblox Player or Studio flags.
         
         Permission: setFastFlagConfiguration | Level: 2 [Caution]
-        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
 
         ```python
-        response = OrangeAPI.setFastFlagConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
+        response = OrangeAPI.setFastFlagConfiguration({"FFlagFlag": True}, False) # -> Response class
         ```
         """
         return Request(self, "setFastFlagConfiguration", [configuration, full]).generateResponse()
     def saveFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveFastFlagConfiguration
         """
-        This sets the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
+        Set the current user's Roblox Player or Studio flags and save it into Configuration.json. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
         Permission: saveFastFlagConfiguration | Level: 2 [Caution]
 
-        **Unless the user has recovery tools, data overwritten by this function is non-recoverable. Therefore, please check your code and make validation checks if needed! For security, EFlags keys are not able to be saved and are ignored when tried.**
-        **This function was renamed to getMainConfiguration on v2.0.1. FastFlagConfiguration functions will still function until v2.5.0.**
-
         ```python
-        response = OrangeAPI.saveFastFlagConfiguration({"EFlagDiscordWebhookRobloxAppStart": True}, False) # -> Response class
+        response = OrangeAPI.saveFastFlagConfiguration({"FFlagFlag": True}, False) # -> Response class
         ```
         """
         return Request(self, "saveFastFlagConfiguration", [configuration, full]).generateResponse()
@@ -654,7 +644,7 @@ class OrangeAPI:
         **This function is only available in OrangeAPI v2.1.0+**
 
         ```python
-        is_supported = OrangeAPI.getIfOSSupported(windows_build=17134, macos_version=(10,13,0)) # -> True
+        is_supported = OrangeAPI.getIfOSSupported(windows_build=17763, macos_version=(10,13,0)) # -> True
         ```
         """
         return Request(self, "getIfOSSupported", {"windows_build": windows_build, "macos_version": macos_version}).generateResponse().response
@@ -879,7 +869,7 @@ class OrangeAPI:
         OrangeAPI.printMainMessage("Hello World!") # -> None
         ```
         """
-        print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
+        print(f"\033[38;5;255m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
     def printColoredMessage(self, mes: str, ansi: int) -> None: # No Permission Needed
         """
         Print a message on the python console using an ANSI 256 bit color number.
@@ -894,7 +884,7 @@ class OrangeAPI:
         """
         if type(ansi) is int: 
             if ansi == 202 or ansi == 208 or ansi == 166: return
-            print(f"\033[38;5;{ansi}m[MOD SCRIPT]: {mes}\033[0m")
+            print(f"\033[38;5;{ansi}m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
     def printErrorMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a red message on the python console using the bootstrap. [Indicates error]
@@ -907,7 +897,7 @@ class OrangeAPI:
         OrangeAPI.printErrorMessage("Uh oh!") # -> None
         ```
         """
-        print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
+        print(f"\033[38;5;196m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
     def printSuccessMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a green message on the python console using the bootstrap. [Indicates success]
@@ -920,7 +910,7 @@ class OrangeAPI:
         OrangeAPI.printSuccessMessage("Woo!") # -> None
         ```
         """
-        print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
+        print(f"\033[38;5;82m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
     def printWarnMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -933,7 +923,7 @@ class OrangeAPI:
         OrangeAPI.printWarnMessage("Wait!") # -> None
         ```
         """
-        print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+        print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
     def printYellowMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -946,7 +936,7 @@ class OrangeAPI:
         OrangeAPI.printWarnMessage("Wait!") # -> None
         ```
         """
-        return self.printWarnMessage(mes)
+        return self.printWarnMessage(self.translate(mes))
     def printDebugMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap IF debug mode is enabled.
@@ -959,7 +949,22 @@ class OrangeAPI:
         OrangeAPI.printDebugMessage("Wait!") # -> None
         ```
         """
-        if debug_mode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
+        if debug_mode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+    def translate(self, mes: str) -> str: # No Permission Needed
+        """
+        Translate a message to the current user's selected language using a localization set. If no localization set is found, it will return the original message.
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.2.0+**
+
+        ```python
+        translated_message = OrangeAPI.translate("Hello!") # -> "¡Hola!"
+        ```
+        """
+        mes = str(mes)
+        if translator: mes = translator.translate(mes)
+        return mes
     def getConfiguration(self, name: str="*") -> dict | typing.Any | None: # No Permission Needed
         """
         Get all configurations from name "*" or one configuration from name if existing.

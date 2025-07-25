@@ -20,16 +20,11 @@ apiVersion = OrangeAPI.about()
 current_path_location = os.path.dirname(os.path.abspath(__file__))
     
 # Printing Functions
-def printMainMessage(mes): # White System Console Text
-    OrangeAPI.printMainMessage(mes)
-def printErrorMessage(mes): # Error Colored Console Text
-    OrangeAPI.printErrorMessage(mes)
-def printSuccessMessage(mes): # Success Colored Console Text
-    OrangeAPI.printSuccessMessage(mes)
-def printYellowMessage(mes): # Yellow Colored Console Text
-    OrangeAPI.printWarnMessage(mes)
-def printDebugMessage(mes): # Debug Console Text
-    OrangeAPI.printDebugMessage(mes)
+def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
+def printErrorMessage(mes): OrangeAPI.printErrorMessage(mes) # Error Colored Console Text
+def printSuccessMessage(mes): OrangeAPI.printSuccessMessage(mes) # Success Colored Console Text
+def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
+def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
 def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
 
 OrangeAPI.printColoredMessage("Kliko Mod Tool 🍎 for OrangeBlox 🍊", 197)
@@ -48,19 +43,15 @@ if installed["success"] == True:
         printMainMessage("[2] = Update Old Mods")
         a = OrangeAPI.requestInput("What type of mod action would you like to use? (To reset, delete your Configuration file)", "> ")
         if a:
-            if a == "1":
-                OrangeAPI.setConfiguration("KlikoHandlingModType", 1)
-            elif a == "2":
-                OrangeAPI.setConfiguration("KlikoHandlingModType", 2)
-            else:
-                printDebugMessage("Invalid mod type option.")
+            if a == "1": OrangeAPI.setConfiguration("KlikoHandlingModType", 1)
+            elif a == "2": OrangeAPI.setConfiguration("KlikoHandlingModType", 2)
+            else: printDebugMessage("Invalid mod type option.")
     mod_type = OrangeAPI.getConfiguration("KlikoHandlingModType")
     if (type(mod_type) is int):
         if mod_type == 1:
             mod_style_config = OrangeAPI.getConfiguration("ModConfiguration")
             mod_style_file = None
-            if mod_style_config and os.path.isfile(mod_style_config):
-                mod_style_file = mod_style_config
+            if mod_style_config and os.path.isfile(mod_style_config): mod_style_file = mod_style_config
             else:
                 if OrangeAPI.getIfRobloxLaunched() == False:
                     printMainMessage("Would you like to use an existing Generative Mod Configuration or would you like to make a new configuration?")
@@ -89,8 +80,7 @@ if installed["success"] == True:
                                 printDebugMessage(f"Validated Color!: {r}")
                                 colors.append(r)
                                 return addColor()
-                            elif r.lower() == "exit":
-                                return
+                            elif r.lower() == "exit": return
                             else:
                                 printErrorMessage("Please try again!")
                                 return addColor()
@@ -107,8 +97,7 @@ if installed["success"] == True:
                         printSuccessMessage("Successfully saved Configuration!")
                         printSuccessMessage(f"File Path: {selected_file}")
                     else:
-                        if OrangeAPI.getPlatform() == "macOS":
-                            selected_file = OrangeAPI.requestInput("Please drag your Generative Mod Configuration file here! (or manually enter the file path of the configuration.)", "> ").strip().strip('"').strip("'")
+                        if OrangeAPI.getPlatform() == "macOS": selected_file = OrangeAPI.requestInput("Please drag your Generative Mod Configuration file here! (or manually enter the file path of the configuration.)", "> ").strip().strip('"').strip("'")
                         else:
                             printMainMessage("Please select your Generative Mod Configuration file!")
                             prompter = promptlib.Files()
@@ -117,25 +106,20 @@ if installed["success"] == True:
                             mod_style_file = selected_file
                             OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
                             printSuccessMessage(f"Saved selected mod configuration to settings! Path: {mod_style_file}")
-                        else:
-                            printErrorMessage("No file was given. Disabled Generative Mods.")
-                else:
-                    printErrorMessage("File was unable to be asked for. Disabled Generative Mods.")
+                        else: printErrorMessage("No file was given. Disabled Generative Mods.")
+                else: printErrorMessage("File was unable to be asked for. Disabled Generative Mods.")
             if not (type(OrangeAPI.getConfiguration("EnabledRobloxStudio")) is bool):
                 a = OrangeAPI.requestInput("Would you like to enable mod generation for Roblox Studio too? (y/n)", "> ")
                 if a:
-                    if isYes(a) == True:
-                        OrangeAPI.setConfiguration("EnabledRobloxStudio", True)
-                    else:
-                        OrangeAPI.setConfiguration("EnabledRobloxStudio", False)
+                    if isYes(a) == True: OrangeAPI.setConfiguration("EnabledRobloxStudio", True)
+                    else: OrangeAPI.setConfiguration("EnabledRobloxStudio", False)
             if OrangeAPI.getConfiguration("EnabledRobloxStudio") == False and studio == True:
                 printDebugMessage("Skipped Generating Mods for Roblox Studio due to generation disabled..")
                 mod_style_file = None
             if mod_style_file:
                 if type(mod_style_file) is str and os.path.isfile(mod_style_file):
                     try:
-                        with open(mod_style_file, "r", encoding="utf-8") as f:
-                            mod_style_json = json.load(f)
+                        with open(mod_style_file, "r", encoding="utf-8") as f: mod_style_json = json.load(f)
                         if mod_style_json.get("name") and (mod_style_json.get("colors") or mod_style_json.get("advanced")) and mod_style_json.get("angle"):
                             if not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"]):
                                 printMainMessage("Running Proxy using Python Executable..")
@@ -143,13 +127,13 @@ if installed["success"] == True:
                                 if studio == True: fold_name = f'{mod_style_json["name"]} [STUDIO]'
                                 if mod_style_json.get("advanced"):
                                     resources_folder = os.path.join(current_path_location, "resources", mod_style_json["name"])
-                                    if not os.path.exists(resources_folder): os.makedirs(resources_folder)
+                                    if not os.path.exists(resources_folder): os.makedirs(resources_folder,mode=511)
                                     def file_extension(s: str): return "." + s.split(".")[-1]
                                     def generate_f(s: str): return os.path.join(resources_folder, f"{s}{file_extension(mod_style_json['advanced'][s])}")
                                     def convert_relative(s: str): return s.replace("./", os.path.dirname(mod_style_file)).replace("{main}", os.path.dirname(mod_style_file))
                                     for i, v in mod_style_json["advanced"].items():
                                         if type(v) is str and os.path.exists(convert_relative(v)): 
-                                            if not os.path.exists(os.path.dirname(generate_f(i))): os.makedirs(os.path.dirname(generate_f(i)))
+                                            if not os.path.exists(os.path.dirname(generate_f(i))): os.makedirs(os.path.dirname(generate_f(i)),mode=511)
                                             shutil.copy(convert_relative(v), generate_f(i)); mod_style_json["advanced"][i] = generate_f(i)
                                 res = subprocess.run([sys.executable, os.path.join(current_path_location, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
                                 if res.returncode == 0: 
@@ -161,8 +145,7 @@ if installed["success"] == True:
                                 else:
                                     printErrorMessage("Proxy has ended with an error!")
                                     OrangeAPI.sendDiscordWebhookMessage("Mod Building Failed!", f"Your gradient mod \"{mod_style_json.get('name')}\" was unable to be built using the Kliko's Mod Tool OrangeBlox extension!", 16711680, [OrangeAPI.DiscordWebhookField("Target Mod Location", os.path.realpath(os.path.join(current_path_location, "..", fold_name)), True), OrangeAPI.DiscordWebhookField("Client Version", installed["version"], True), OrangeAPI.DiscordWebhookField("Client Channel", installed["channel"], True)], "https://cdn.efaz.dev/cdn/png/orange_error.png")
-                            else:
-                                printSuccessMessage("No changes are needed as the latest mod generated is installed!")
+                            else: printSuccessMessage("No changes are needed as the latest mod generated is installed!")
                         else:
                             printDebugMessage("Mod configuration is invalid!")
                             OrangeAPI.setConfiguration("ModConfiguration", None)
@@ -176,10 +159,8 @@ if installed["success"] == True:
             if not (type(OrangeAPI.getConfiguration("EnabledRobloxStudio")) is bool):
                 a = OrangeAPI.requestInput("Would you like to enable mod generation for Roblox Studio too? (y/n)", "> ")
                 if a:
-                    if isYes(a) == True:
-                        OrangeAPI.setConfiguration("EnabledRobloxStudio", True)
-                    else:
-                        OrangeAPI.setConfiguration("EnabledRobloxStudio", False)
+                    if isYes(a) == True: OrangeAPI.setConfiguration("EnabledRobloxStudio", True)
+                    else: OrangeAPI.setConfiguration("EnabledRobloxStudio", False)
             mod_manifest = OrangeAPI.generateModsManifest()
             if not OrangeAPI.getConfiguration("EnabledMods"):
                 if OrangeAPI.getIfRobloxLaunched() == False:
@@ -192,10 +173,8 @@ if installed["success"] == True:
                             if i.get("name") == "Original": continue
                             if i.get("list_in_normal_mods") == False and i.get("enabled") == False: continue
                             co += 1
-                            if type(i.get("name")) is str:
-                                final_name = f"{i.get('name')} [{i.get('id')}]"
-                            else:
-                                final_name = f"{i.get('name')}"
+                            if type(i.get("name")) is str: final_name = f"{i.get('name')} [{i.get('id')}]"
+                            else: final_name = f"{i.get('name')}"
                             printMainMessage(f"[{'✅' if i['id'] in enabled_mods else '❌'}] [{co}] = {final_name}")
                             q[str(co)] = i
                         printMainMessage(f"[exit] = Exit Mod Selector")
@@ -213,18 +192,14 @@ if installed["success"] == True:
                             printDebugMessage(f"Invalid response.")
                             b()
                     b()
-                else:
-                    printErrorMessage("Mod was unable to be asked for. Disabled Generative Mods.")
+                else: printErrorMessage("Mod was unable to be asked for. Disabled Generative Mods.")
             enabled_mods = OrangeAPI.getConfiguration("EnabledMods") or []
             verified_mods = []
             for i in enabled_mods:
                 if os.path.exists(os.path.join(current_path_location, "../", i)):
-                    if os.path.exists(os.path.join(current_path_location, "../", i, "info.json")):
-                        verified_mods.append(os.path.join(current_path_location, "../", i))
-                    else:
-                        printDebugMessage(f"The mod '{i}' is not supported for updating due to a lack of version.")
-                else:
-                    printDebugMessage(f"Mod doesn't exist! Mod: {i}")
+                    if os.path.exists(os.path.join(current_path_location, "../", i, "info.json")): verified_mods.append(os.path.join(current_path_location, "../", i))
+                    else: printDebugMessage(f"The mod '{i}' is not supported for updating due to a lack of version.")
+                else: printDebugMessage(f"Mod doesn't exist! Mod: {i}")
             if OrangeAPI.getConfiguration("EnabledRobloxStudio") == False and studio == True:
                 printDebugMessage("Skipped Generating Mods for Roblox Studio due to generation disabled..")
                 mod_style_file = None
@@ -247,5 +222,4 @@ if installed["success"] == True:
             else:
                 printSuccessMessage("No mods are available to update! Resetting configuration..")
                 OrangeAPI.setConfiguration("EnabledMods", [])
-    else:
-        printDebugMessage("Unable to respond for type of mod action.")
+    else: printDebugMessage("Unable to respond for type of mod action.")

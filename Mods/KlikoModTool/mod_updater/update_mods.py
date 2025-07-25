@@ -47,9 +47,9 @@ def update_mods(check: dict[str, list[Path]], versions: str) -> None:
         output_directory = Path(output_dir)
         deploy_history: DeployHistory = get_deploy_history(latest_version)
         progress_bar.submit("[MOD_UPDATE] Making Base Directories..", 0)
-        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"))
+        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"),mode=511)
         if os.path.exists(os.path.join(current_path_location, "result")): shutil.rmtree(os.path.join(current_path_location, "result"), ignore_errors=True)
-        os.makedirs(os.path.join(current_path_location, "result"))
+        os.makedirs(os.path.join(current_path_location, "result"),mode=511)
         channel = vers_channel
         # Each mod will be updated simultaneously
         threads: list[Thread] = []

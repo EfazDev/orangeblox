@@ -117,17 +117,28 @@ else:
         gradient = np.cos(angle_rad) * x + np.sin(angle_rad) * y
         gradient = (gradient - gradient.min()) / (gradient.max() - gradient.min())
 
-        scaled = gradient * num_segments
-        indices = np.clip(scaled.astype(int), 0, num_segments - 1)
-        t = scaled - indices
+        if num_segments == 0:
+            # Only one color, fill the image
+            result = np.zeros((height, width, 3), dtype=np.uint8)
+            for channel in range(3):
+                result[..., channel] = rgb_colors[0][channel]
+            return Image.fromarray(result)
 
-        rgb_arrays = [np.array([c[i] for c in rgb_colors]) for i in range(3)]
+        scaled = gradient * num_segments
+        indices = np.floor(scaled).astype(int)
+        indices_c1 = np.clip(indices, 0, num_segments - 1)
+        indices_c2 = np.clip(indices + 1, 0, num_segments)
+        t = scaled - indices_c1
+
         result = np.zeros((height, width, 3), dtype=np.uint8)
-        for i in range(3):
-            clipped_indices = np.clip(indices, 0, 2)
-            c1 = rgb_arrays[i][clipped_indices]
-            c2 = rgb_arrays[i][np.clip(clipped_indices + 1, 0, 2)]
-            result[:, :, i] = (c1 + (c2 - c1) * t).astype(np.uint8)
+        for channel in range(3):
+            color_channel = np.array([color[channel] for color in rgb_colors]).flatten()
+            # Ensure indices are 2D and color_channel is 1D
+            c1 = np.take(color_channel, indices_c1, mode='clip')
+            c2 = np.take(color_channel, indices_c2, mode='clip')
+            # Interpolate and cast
+            result[..., channel] = np.round(c1 + (c2 - c1) * t).astype(np.uint8)
+
         return Image.fromarray(result)
 def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: str="*") -> Image.Image:
     # Generate a unique cache key based on all colors, angle, and size
@@ -164,21 +175,9 @@ def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: st
         if image.mode != "RGBA":
             image = image.convert("RGBA")
 
-        image_width, image_height = image.size
-        target_width, target_height = size
-
-        image_ratio: float = image_width / image_height
-        target_ratio: float = target_width / target_height
-
-        if image_ratio != target_ratio:
-            cropped: Image.Image = _crop_to_fit(image, target_ratio)
-        else:
-            cropped = image
-
-        cropped.thumbnail(size, resample=Image.Resampling.LANCZOS)
-
-        IMAGE_CACHE[cache_key] = cropped
-        return cropped
+        image.resize(size, resample=Image.Resampling.LANCZOS)
+        IMAGE_CACHE[cache_key] = image
+        return image
     else:
         # Gradient with multiple colors
         mask = create_gradient_image(size, colors, angle)
@@ -214,8 +213,7 @@ def generate_user_selected_files(
         modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int) -> None:
     current_path_location = os.path.dirname(os.path.abspath(__file__))
-    if getattr(sys, "frozen", False): mod_generator_files: Path = Path(sys._MEIPASS, "mod_generator_files")
-    else: mod_generator_files = Path(current_path_location) / "modules" / "additional_files"
+    mod_generator_files = Path(current_path_location) / "modules" / "additional_files"
     index_filepath: Path = mod_generator_files / "index.json"
     if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! index.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
@@ -230,17 +228,23 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
             r, g, b, a = image.split()
         if type(colors) is dict and colors.get(filepath.name):
             if type(colors.get(filepath.name)) is str:
-                custom_roblox_logo_path = Path(colors.get(filepath.name))
-                custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
-                custom_roblox_logo.thumbnail(image.size, resample=Image.Resampling.LANCZOS)
-                clear_area = Image.new("RGBA", image.size, (0, 0, 0, 0))
-                image.paste(clear_area, (0,0))
-                centered_logo = Image.new("RGBA", image.size, (0, 0, 0, 0))
-                x = (image.size[0] - custom_roblox_logo.width) // 2
-                y = (image.size[1] - custom_roblox_logo.height) // 2
-                centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
-                image.paste(centered_logo, (0,0), mask=centered_logo)
-                image.save(target_path, format="PNG", optimize=False)
+                if colors.get(filepath.name).startswith("mask-"):
+                    colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
+                    modded_icon = get_mask(colors, angle, image.size, f"{filepath.name}_temp")
+                    modded_icon.putalpha(a)
+                    modded_icon.save(target_path, format="PNG", optimize=False)
+                else:
+                    custom_roblox_logo_path = Path(colors.get(filepath.name))
+                    custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
+                    custom_roblox_logo.thumbnail(image.size, resample=Image.Resampling.LANCZOS)
+                    clear_area = Image.new("RGBA", image.size, (0, 0, 0, 0))
+                    image.paste(clear_area, (0,0))
+                    centered_logo = Image.new("RGBA", image.size, (0, 0, 0, 0))
+                    x = (image.size[0] - custom_roblox_logo.width) // 2
+                    y = (image.size[1] - custom_roblox_logo.height) // 2
+                    centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
+                    image.paste(centered_logo, (0,0), mask=centered_logo)
+                    image.save(target_path, format="PNG", optimize=False)
             else:
                 modded_icon = get_mask(colors, angle, image.size, filepath.name)
                 modded_icon.putalpha(a)
@@ -289,17 +293,23 @@ def generate_imagesets(
                 r, g, b, a = icon.split()
                 if type(colors) is dict and colors.get(icon_name):
                     if type(colors.get(icon_name)) is str:
-                        custom_roblox_logo_path = Path(colors.get(icon_name))
-                        custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
-                        custom_roblox_logo.thumbnail(icon.size, resample=Image.Resampling.LANCZOS)
-                        clear_area = Image.new("RGBA", icon.size, (0, 0, 0, 0))
-                        image.paste(clear_area, box)
-                        centered_logo = Image.new("RGBA", icon.size, (0, 0, 0, 0))
-                        x = (icon.size[0] - custom_roblox_logo.width) // 2
-                        y = (icon.size[1] - custom_roblox_logo.height) // 2
-                        centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
-                        image.paste(centered_logo, box, mask=centered_logo)
-                        continue
+                        if colors.get(icon_name).startswith("mask-"):
+                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("mask-", "", 1)
+                            modded_icon = get_mask(colors, angle, icon.size, f"{icon_name}_temp")
+                            modded_icon.putalpha(a)
+                            masked_icon = modded_icon
+                        else:
+                            custom_roblox_logo_path = Path(colors.get(icon_name))
+                            custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
+                            custom_roblox_logo.thumbnail(icon.size, resample=Image.Resampling.LANCZOS)
+                            clear_area = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+                            image.paste(clear_area, box)
+                            centered_logo = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+                            x = (icon.size[0] - custom_roblox_logo.width) // 2
+                            y = (icon.size[1] - custom_roblox_logo.height) // 2
+                            centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
+                            image.paste(centered_logo, box, mask=centered_logo)
+                            continue
                     else:
                         modded_icon = get_mask(colors, angle, icon.size, icon_name)
                         modded_icon.putalpha(a)

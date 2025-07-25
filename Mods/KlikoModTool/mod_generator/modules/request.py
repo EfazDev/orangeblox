@@ -15,7 +15,7 @@ def getLatestRobloxStudioAppSettings(debug=False, bootstrapper=False, bucket="")
     try:    
         if bucket == "LIVE" or bucket == "production": bucket = ""
         if platform.system() == "Darwin":
-            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{bootstrapper == True and 'MacStudioBootstrapper' or 'MacStudioApp'}{not bucket == '' and f'/bucket/{bucket}' or ''}")
+            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'MacStudioBootstrapper' if bootstrapper == True else 'MacStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
             if res.ok:
                 jso = res.json()
                 if jso.get("applicationSettings"):
@@ -25,7 +25,7 @@ def getLatestRobloxStudioAppSettings(debug=False, bootstrapper=False, bucket="")
             else:
                 return {"success": False, "message": "Something went wrong."}
         elif platform.system() == "Windows":
-            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{bootstrapper == True and 'PCStudioBootstrapper' or 'PCStudioApp'}{not bucket == '' and f'/bucket/{bucket}' or ''}")
+            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'PCStudioBootstrapper' if bootstrapper == True else 'PCStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
             if res.ok:
                 jso = res.json()
                 if jso.get("applicationSettings"):
@@ -68,7 +68,7 @@ class Api:
                 if bootstrapper_settings["success"] == True:
                     starter_url = ""
                     bootstrapper_settings = bootstrapper_settings["application_settings"]
-                    if bootstrapper_settings.get("FFlagReplaceChannelNameForDownload"):
+                    if bootstrapper_settings.get("FFlagReplaceChannelNameForDownload", True):
                         starter_url = "channel/common/"
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"
@@ -85,7 +85,7 @@ class Api:
                 if bootstrapper_settings["success"] == True:
                     starter_url = ""
                     bootstrapper_settings = bootstrapper_settings["application_settings"]
-                    if bootstrapper_settings.get("FFlagReplaceChannelNameForDownload"):
+                    if bootstrapper_settings.get("FFlagReplaceChannelNameForDownload", True):
                         starter_url = "channel/common/"
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"

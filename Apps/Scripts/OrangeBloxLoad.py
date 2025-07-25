@@ -4,7 +4,7 @@ import subprocess
 import platform
 import logging
 import datetime
-from PipHandler import pip
+from PyKits import pip
 
 def printMainMessage(mes): print(f"\033[38;5;255m{mes}\033[0m"); logging.info(mes)
 def printErrorMessage(mes): print(f"\033[38;5;196m{mes}\033[0m"); logging.error(mes)
@@ -16,13 +16,13 @@ def setLoggingHandler(handler_name):
     global main_os
     log_path = os.path.join(app_path, "Logs")
     if main_os == "Darwin": log_path = os.path.join(pip_class.getLocalAppData(), "Logs", "OrangeBlox")
-    if not os.path.exists(log_path): os.makedirs(log_path)
+    if not os.path.exists(log_path): os.makedirs(log_path,mode=511)
     sys.stdout.reconfigure(encoding='utf-8')
     logging.basicConfig(filename=os.path.join(log_path, f'OrangeBlox_{handler_name}_{datetime.datetime.now().strftime("%B_%d_%Y_%H_%M_%S_%f")}.log'), level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
     return True
 
 if __name__ == "__main__":
-    current_version = {"version": "2.1.1"}
+    current_version = {"version": "2.2.0"}
     main_os = platform.system()
     direct_run = False
     args = sys.argv

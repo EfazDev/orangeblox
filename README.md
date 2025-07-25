@@ -1,4 +1,4 @@
-<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" height="50%" width="50%"></h1>
+<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" height="105" width="378"></h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
@@ -9,14 +9,17 @@
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://obx.efaz.dev/BootstrapImages/Collage.png" height="75%" width="75%" alt="Server Location Notification"><br>
+    <img align="center" src="https://obx.efaz.dev/BootstrapImages/Collage.png" alt="OrangeBlox Collage"><br>
 </p>
 
 > [!IMPORTANT]
 > Hello! If you were an user of Efaz's Roblox Bootstrap on v1.5.9 or lower, you might have noticed we have rebranded to OrangeBlox! Any mods and data are transferred as of this change and your mod scripts are able to still work under the EfazRobloxBootstrapAPI. However, you'll have to install manually rather than automatically downloading from the bootstrap. For more information, [click here.](https://github.com/efazdev/orangeblox/wiki/Rebranding-to-OrangeBlox)
 
 ## What is OrangeBlox?
-OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+console+terminal&udm=2) program heavily inspired by Bloxstrap made for macOS and Windows! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
+OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+console+terminal&udm=2) program heavily inspired by Bloxstrap made for macOS and Windows that applies modifications onto the Roblox Client using files! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
+
+> [!IMPORTANT]
+> This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
 1. Set FFlag and Global Setting Customizations on your Roblox installation!
@@ -32,13 +35,15 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Read Logs from Roblox using RobloxFastFlagsInstaller* (requires Debug Mode)!
 13. Way more features to be explored!
+> [!NOTE]
+> Features may need to be enabled in order to be used. Check the Settings from the main menu in order to enable.
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
-2. [Windows 10.0.17134+ (April 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) (You may install Python 3.13.5 from InstallPython.bat (Windows) or from InstallPython.sh (macOS))
+2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.13.5 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
 4. Python Modules: <br>
-   macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc requests plyer psutil <br>
+   macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc requests psutil <br>
    Windows: pip install pypresence requests pywin32 plyer psutil
 
 ## Install
@@ -61,24 +66,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `e67b8ee6611104220884729c2a8b7159` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `5f6e735acdb53681f7c1ab4121f08f32` |
-| Installer (Install.py) | `49104fbeb7c418499b439ef5cfd96b80` |
-| Bootstrap API (OrangeAPI.py) | `349291b86fa93a6422792b1c57b47ed7` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `9018aab7f95347a3cd94f0669cd9cfdb` |
-| Bootstrap Loader (OrangeBlox.py) | `79742df827d12681d7ed3d66a0fb4d50` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `a417cda5ca6e07b78540b49a871b253a` |
-| Pip Handler (PipHandler.py) | `a25f43b23109725094cde3c95c34f3ad` |
+| Main Bootstrap (Main.py) | `3402e9955e43ce2c8d4dcce84d65f0f0` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a925b3bcb190edfdda1886e7e2977681` |
+| Installer (Install.py) | `106c30e5484fb79dda67693cad161a69` |
+| Bootstrap API (OrangeAPI.py) | `01678c094835db4e864346accb0431b5` |
+| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `cbcfbc323505afc4f2c2d4b96fd7c8c2` |
+| Bootstrap Loader (OrangeBlox.py) | `2fb324e6fc58edb2d8486396d9c0db61` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `69f120936f5a99b40099352c42d42fd2` |
+| PyKits API (PyKits.py) | `df7055f58f373dd552dee5118c746dcf` |
 
 ## Credits
-1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" style="margin-bottom: -4px;" alt="@EfazDev 🍊"></a>
-2. Old Player Sounds and Cursors were sourced from <a href="https://github.com/pizzaboxer/bloxstrap"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Bloxstrap%20%F0%9F%8E%AE" style="margin-bottom: -4px;" alt="Bloxstrap 🎮"></a>
-3. Avatar Editor Maps were from <a href="https://github.com/Mielesgames/RobloxAvatarEditorMaps"><img src="https://img.shields.io/static/v1?label=&color=ff0062&message=Mielesgames%27s%20Map%20Files%20%F0%9F%97%BA%EF%B8%8F" style="margin-bottom: -4px;" alt="Mielesgames's Map Files 🗺️"></a> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
-4. The Kliko's Mod Tool Mod Script was edited and made from <a href="https://github.com/klikos-modloader/klikos-modloader"><img src="https://img.shields.io/static/v1?label=&color=ff0000&message=Kliko%27s%20Mod%20Tool%20and%20Kliko%27s%20modloader%20%F0%9F%8E%AE" style="margin-bottom: -4px;" alt="Kilko's Mod Tool & Kliko's modloader 🎮"></a>
-5. Python Module Creators: <a href="https://github.com/qwertyquerty/pypresence"><img src="https://img.shields.io/static/v1?label=&color=00b000&message=qwertyquerty%20%28pypresence%29%20%F0%9F%A6%96" style="margin-bottom: -4px;" alt="qwertyquerty (pypresence) 🦖"></a>, <a href="https://github.com/ronaldoussoren/pyobjc"><img src="https://img.shields.io/static/v1?label=&color=00d000&message=Ronald%20Oussoren%20(pyobjc)%20%F0%9F%94%81" style="margin-bottom: -4px;" alt="Ronald Oussoren (pyobjc) 🔁"></a>, <a href="https://github.com/osvenskan/posix_ipc"><img src="https://img.shields.io/static/v1?label=&color=ffec00&message=Philip%20Semanchuk%20(posix-ipc)%20%F0%9F%99%82" style="margin-bottom: -4px;" alt="Philip Semanchuk (posix-ipc) 🙂"></a>, <a href="https://github.com/mhammond/pywin32"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Mark%20Hammond%20(pywin32)%20%F0%9F%AA%9F" style="margin-bottom: -4px;" alt="Mark Hammond (pywin32) 🪟"></a>, <a href="https://github.com/kivy/plyer"><img src="https://img.shields.io/static/v1?label=&color=ffaa00&message=Kivy%20(plyer)%20%F0%9F%A7%B0" style="margin-bottom: -4px;" alt="Kivy (plyer) 🧰"></a>, <a href="https://github.com/psf/requests"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=Python%20Software%20Foundation%20(requests)%20%F0%9F%8C%90" style="margin-bottom: -4px;" alt="Python Software Foundation (requests) 🌐"></a>, <a href="https://github.com/giampaolo/psutil"><img src="https://img.shields.io/static/v1?label=&color=000000&message=Giampaolo%20Rodola%20(psutil)%20%F0%9F%94%8C" style="margin-bottom: -4px;" alt="Giampaolo Rodola (psutil) 🔌"></a>
-6. Server Locations was made thanks to <a href="https://ipinfo.io/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=ipinfo.io%20%F0%9F%8C%90" style="margin-bottom: -4px;" alt="ipinfo.io 🌐"></a> as it wouldn't be possible to get IP address locations without them!
-7. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" style="margin-bottom: -4px;" alt="@CabledRblx 🦆"></a>. Thanks :)
-8. macOS App was built using <a href="https://nuitka.net/"><img src="https://img.shields.io/static/v1?label=&color=FFFF00&message=Nuitka%20%F0%9F%93%A6" style="margin-bottom: -4px;" alt="Nuitka 📦"></a>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-nuitka --rebuild-clang`
-9. Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" style="margin-bottom: -4px;" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py --rebuild-mode --rebuild-pyinstaller`
+1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
+2. Old Player Sounds and Cursors were sourced from <a href="https://github.com/pizzaboxer/bloxstrap"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Bloxstrap%20%F0%9F%8E%AE" alt="Bloxstrap 🎮"></a>
+3. Avatar Editor Maps were from <a href="https://github.com/Mielesgames/RobloxAvatarEditorMaps"><img src="https://img.shields.io/static/v1?label=&color=ff0062&message=Mielesgames%27s%20Map%20Files%20%F0%9F%97%BA%EF%B8%8F" alt="Mielesgames's Map Files 🗺️"></a> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
+4. The Kliko's Mod Tool Mod Script was edited and made from <a href="https://github.com/klikos-modloader/klikos-modloader"><img src="https://img.shields.io/static/v1?label=&color=ff0000&message=Kliko%27s%20Mod%20Tool%20and%20Kliko%27s%20modloader%20%F0%9F%8E%AE" alt="Kilko's Mod Tool & Kliko's modloader 🎮"></a>
+5. Python Module Creators: <a href="https://github.com/qwertyquerty/pypresence"><img src="https://img.shields.io/static/v1?label=&color=00b000&message=qwertyquerty%20%28pypresence%29%20%F0%9F%A6%96" alt="qwertyquerty (pypresence) 🦖"></a>, <a href="https://github.com/ronaldoussoren/pyobjc"><img src="https://img.shields.io/static/v1?label=&color=00d000&message=Ronald%20Oussoren%20(pyobjc)%20%F0%9F%94%81" alt="Ronald Oussoren (pyobjc) 🔁"></a>, <a href="https://github.com/osvenskan/posix_ipc"><img src="https://img.shields.io/static/v1?label=&color=ffec00&message=Philip%20Semanchuk%20(posix-ipc)%20%F0%9F%99%82" alt="Philip Semanchuk (posix-ipc) 🙂"></a>, <a href="https://github.com/mhammond/pywin32"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Mark%20Hammond%20(pywin32)%20%F0%9F%AA%9F" alt="Mark Hammond (pywin32) 🪟"></a>, <a href="https://github.com/kivy/plyer"><img src="https://img.shields.io/static/v1?label=&color=ffaa00&message=Kivy%20(plyer)%20%F0%9F%A7%B0" alt="Kivy (plyer) 🧰"></a>, <a href="https://github.com/psf/requests"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=Python%20Software%20Foundation%20(requests)%20%F0%9F%8C%90" alt="Python Software Foundation (requests) 🌐"></a>, <a href="https://github.com/giampaolo/psutil"><img src="https://img.shields.io/static/v1?label=&color=000000&message=Giampaolo%20Rodola%20(psutil)%20%F0%9F%94%8C" alt="Giampaolo Rodola (psutil) 🔌"></a>
+6. Server Locations was made thanks to <a href="https://ipinfo.io/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=ipinfo.io%20%F0%9F%8C%90" alt="ipinfo.io 🌐"></a> as it wouldn't be possible to get IP address locations without them!
+7. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" alt="@CabledRblx 🦆"></a>. Thanks :)
+8. macOS App was built using <a href="https://nuitka.net/"><img src="https://img.shields.io/static/v1?label=&color=FFFF00&message=Nuitka%20%F0%9F%93%A6" alt="Nuitka 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rn -rc`
+9. Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp`
 > [!IMPORTANT]
-> This command can be used using the native operating system your computer has. You will also need to run the rebuilding process in the OrangeBlox folder as current path. For Windows, in order to build a x86 exe file in x64, install Python in x86 and include the `--full-rebuild` argument. The argument `--rebuild-clang` is only available in macOS and requires Xcode Command Tools to be installed. Nuitka requires a C compiler to be installed on your computer in order to build. For Windows, use Microsoft Visual Studio 2022 compilation. For more information about Nuitka compiling, use this manual: https://nuitka.net/user-documentation/user-manual.html
+> This command can be depending on the native operating system your computer has. For example, if you're running Windows on arm64, you can rebuild full Windows OrangeBlox if you install Python in arm64, x86 and x64 while including the `--full-rebuild` argument while in normal x64, you can only rebuild x86. The argument `--rebuild-clang` is only available in macOS and requires Xcode Command Tools to be installed. Pyinstaller is more suggested for quick testing and easier rebuilds while Nuitka requires a C compiler to be installed on your computer (use Microsoft Visual Studio 2022 for compilation). For more information about Nuitka compiling, use this manual: https://nuitka.net/user-documentation/user-manual.html

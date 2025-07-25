@@ -22,16 +22,16 @@ printMessage "Signing Package.."
 codesig1() {
     while true; do
     rm -rf ./Apps/OrangeBlox.app/Contents/_CodeSignature/
-    if [ "$1" != "nosudo" ]; then
-        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
-        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
-        sudo xattr -cr "./Apps/OrangeBlox.app"
-        sudo codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
-    else
+    if [ "$1" != "sudo" ]; then
         xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
         xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
         xattr -cr "./Apps/OrangeBlox.app"
-        codesign -s ${3:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+        codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+    else
+        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
+        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
+        sudo xattr -cr "./Apps/OrangeBlox.app"
+        sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
     fi
     STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -39,7 +39,7 @@ codesig1() {
         fi
     done
 }
-codesig1 "$2"
+codesig1 "$1"
 
 # Create OrangeBloxMac.zip
 printMessage "Creating OrangeBloxMac.zip.."
@@ -49,12 +49,6 @@ zip -r -y ./Apps/OrangeBloxMac.zip "./Apps/OrangeBlox.app" "./Apps/OrangePlayRob
 printMessage "Partial Cleaning.."
 rm -rf ./build/
 
-# Install OrangeBlox
-if [ "$1" != "installer" ]; then
-    printMessage "Running Installer.."
-    python3 Install.py --rebuild-mode
-fi
-
 # Clean Up Apps
 printMessage "Cleaning Up.."
 rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox/ ./__pycache__/
@@ -62,6 +56,3 @@ rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox/ ./__pycache__/
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"
 printMessage "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMac.zip"
-if [ "$1" != "installer" ]; then
-    read -p "> "
-fi

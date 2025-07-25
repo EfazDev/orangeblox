@@ -11,6 +11,8 @@
 #include <mach-o/dyld.h>
 #endif
 
+extern char **environ;
+
 void printMainMessage(const std::string& mes) {
     std::cout << "\033[38;5;255m" << mes << "\033[0m" << std::endl;
 }
@@ -151,7 +153,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.1.1";
+    std::string current_version = "2.2.0";
     std::string main_os;
     std::string app_path;
     

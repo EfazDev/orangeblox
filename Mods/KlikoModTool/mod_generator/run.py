@@ -52,9 +52,9 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         progress_bar.submit("[MOD_GEN] Making Base Directories..", 5)
         output_dir = os.path.join(current_path_location, "test")
         output_dir = Path(output_dir)
-        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"))
+        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"),mode=511)
         if os.path.exists(os.path.join(current_path_location, "result")): shutil.rmtree(os.path.join(current_path_location, "result"), ignore_errors=True)
-        os.makedirs(os.path.join(current_path_location, "result"))
+        os.makedirs(os.path.join(current_path_location, "result"),mode=511)
         """
         if os.path.exists(os.path.join(current_path_location, "test", name)):
             shutil.copytree(os.path.join(current_path_location, "test", name), os.path.join(current_path_location, "result", name), dirs_exist_ok=True)

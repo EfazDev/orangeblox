@@ -13,14 +13,14 @@ python -m nuitka ^
     --assume-yes-for-downloads ^
     --remove-output ^
     --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
-    --include-data-files=PipHandler.py=PipHandler.py ^
+    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
+    --include-data-files=PyKits.py=PyKits.py ^
     --include-data-files=Version.json=Version.json ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name=OrangeBlox ^
-    --file-version=2.1.1 ^
-    --product-version=2.1.1 ^
+    --file-version=2.2.0 ^
+    --product-version=2.2.0 ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^
@@ -37,14 +37,14 @@ python -m nuitka ^
     --assume-yes-for-downloads ^
     --remove-output ^
     --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
-    --include-data-files=PipHandler.py=PipHandler.py ^
+    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
+    --include-data-files=PyKits.py=PyKits.py ^
     --include-data-files=Version.json=Version.json ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name="Play Roblox (OrangeBlox)" ^
-    --file-version=2.1.1 ^
-    --product-version=2.1.1 ^
+    --file-version=2.2.0 ^
+    --product-version=2.2.0 ^
     --file-description="Play Roblox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^
@@ -61,14 +61,14 @@ python -m nuitka ^
     --assume-yes-for-downloads ^
     --remove-output ^
     --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=tkinter,unittest,test,distutils,setuptools ^
-    --include-data-files=PipHandler.py=PipHandler.py ^
+    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
+    --include-data-files=PyKits.py=PyKits.py ^
     --include-data-files=Version.json=Version.json ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name="Run Studio (OrangeBlox)" ^
-    --file-version=2.1.1 ^
-    --product-version=2.1.1 ^
+    --file-version=2.2.0 ^
+    --product-version=2.2.0 ^
     --file-description="Run Studio" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^
@@ -79,47 +79,33 @@ python -m nuitka ^
 rem Create OrangeBloxWindows Folder
 powershell -c "Write-Host 'Rebuild OrangeBlox: Creating OrangeBloxWindows.zip..' -ForegroundColor Green"
 mkdir OrangeBloxWindows
+mkdir OrangeBloxWindows\x64
 if exist Apps\OrangeBlox.exe (
-    move /Y Apps\OrangeBlox.exe OrangeBloxWindows\OrangeBlox.exe
+    move /Y Apps\OrangeBlox.exe OrangeBloxWindows\x64\OrangeBlox.exe
 )
 if exist Apps\OrangePlayRoblox.exe (
-    move /Y Apps\OrangePlayRoblox.exe OrangeBloxWindows\PlayRoblox.exe
+    move /Y Apps\OrangePlayRoblox.exe OrangeBloxWindows\x64\PlayRoblox.exe
 )
 if exist Apps\OrangeRunStudio.exe (
-    move /Y Apps\OrangeRunStudio.exe OrangeBloxWindows\RunStudio.exe
+    move /Y Apps\OrangeRunStudio.exe OrangeBloxWindows\x64\RunStudio.exe
 )
-if "%2"=="signexe" (
-    if exist OrangeBloxWindows\OrangeBlox.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\OrangeBlox.exe"
-    )
-    if exist OrangeBloxWindows\OrangeBlox32.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\OrangeBlox32.exe"
+if "%1"=="signexe" (
+    if exist OrangeBloxWindows\x64\OrangeBlox.exe (
+        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\x64\OrangeBlox.exe"
     )
     if exist OrangeBloxWindows\PlayRoblox.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\PlayRoblox.exe"
-    )
-    if exist OrangeBloxWindows\PlayRoblox32.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\PlayRoblox32.exe"
+        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\x64\PlayRoblox.exe"
     )
     if exist OrangeBloxWindows\RunStudio.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\RunStudio.exe"
-    )
-    if exist OrangeBloxWindows\RunStudio32.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\RunStudio32.exe"
+        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\x64\RunStudio.exe"
     )
 )
 powershell Compress-Archive -Path OrangeBloxWindows\* -Update -DestinationPath Apps\OrangeBloxWindows.zip
 rmdir /S /Q OrangeBloxWindows
 
-if not "%1"=="installer" (
-    rem Run Installer
-    powershell -c "Write-Host 'Rebuild OrangeBlox: Running Installer..' -ForegroundColor Green"
-    python Install.py --rebuild-mode
-)
-
 rem Cleaning Up
 powershell -c "Write-Host 'Rebuild OrangeBlox: Cleaning Up..' -ForegroundColor Green"
-rmdir /S /Q __pycache__ Apps\OrangeBlox Apps\OrangeBlox32 build Apps\OrangeBlox32 Apps\OrangeBlox.build Apps\OrangeBlox.dist Apps\OrangeBlox.onefile-build Apps\OrangePlayRoblox.build Apps\OrangePlayRoblox.dist Apps\OrangePlayRoblox.onefile-build Apps\OrangeRunStudio.build Apps\OrangeRunStudio.dist Apps\OrangeRunStudio.onefile-build
+rmdir /S /Q __pycache__ Apps\OrangeBlox build Apps\OrangeBlox.build Apps\OrangeBlox.dist Apps\OrangeBlox.onefile-build Apps\OrangePlayRoblox.build Apps\OrangePlayRoblox.dist Apps\OrangePlayRoblox.onefile-build Apps\OrangeRunStudio.build Apps\OrangeRunStudio.dist Apps\OrangeRunStudio.onefile-build > NUL 2>&1
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Successfully rebuilt OrangeBlox!' -ForegroundColor Green"
 powershell -c "Write-Host 'Rebuild OrangeBlox: Check the Apps folder for the generated ZIP file! File: Apps\OrangeBloxWindows.zip' -ForegroundColor Green"

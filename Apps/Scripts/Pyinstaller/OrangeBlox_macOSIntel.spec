@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../BootstrapImages/AppIcon.icns"
-current_version = {"version": "2.1.1"}
+current_version = {"version": "2.2.0"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -33,15 +33,15 @@ main_plist = {
 block_cipher = None
 
 main_analysis = Analysis(
-    ["../OrangeBlox.py", "../../../PipHandler.py"],
+    ["../OrangeBlox.py", "../../../PyKits.py"],
     pathex=[],
     binaries=[],
     datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
-    hiddenimports=["pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "tkinter"],
+    hiddenimports=["Quartz", "AppKit", "Foundation"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=["cryptography", "OpenSSL", "urllib3", "requests", "plyer"],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
@@ -52,7 +52,7 @@ main_pyz = PYZ(main_analysis.pure, main_analysis.zipped_data, cipher=block_ciphe
 
 main_exe = EXE(
     main_pyz,
-    [main_analysis.scripts[2]],
+    [main_analysis.scripts[1]],
     exclude_binaries=True,
     name="OrangeBlox",
     debug=False,
