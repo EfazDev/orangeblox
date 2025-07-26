@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.5
+# v2.2.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 current_path_location = os.path.dirname(os.path.abspath(__file__))
 user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.5"
+script_version = "2.2.6"
 def getLocalAppData():
     import platform
     import os
@@ -4001,7 +4001,6 @@ class Handler:
                                         makedirs(f'{installPath}{export_destination}')
                                         if i.endswith(".zip"):
                                             zip_extract = pip_class.unzipFile(os.path.join(installPath, i), f'{installPath}{export_destination}')
-                                            per_step += 1
                                             if zip_extract.returncode == 0:
                                                 os.remove(os.path.join(installPath, i))
                                                 if debug == True: printDebugMessage(f"Successfully exported {i}!")

@@ -67,7 +67,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 | File | MD5 Hash |
 | --- | --- |
 | Main Bootstrap (Main.py) | `c640da3de29989b0d31deb1236f54a1f` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a925b3bcb190edfdda1886e7e2977681` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `3d992b8ce62568ff6360944c42a56b0f` |
 | Installer (Install.py) | `f7d8c282625d2c310472a75074fdda0d` |
 | Bootstrap API (OrangeAPI.py) | `9f97e9a5979351ba92a3024faee7e3cc` |
 | Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `86249b59d5d771ab3d62f54fd2399e3d` |
