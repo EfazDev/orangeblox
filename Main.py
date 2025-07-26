@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.1
+# v2.2.2
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run_studio = False
     custom_cookies = {}
     stdout: PyKits.stdout = None
-    current_version = {"version": "2.2.1"}
+    current_version = {"version": "2.2.2"}
     given_args = list(filter(None, sys.argv))
     user_folder_name = os.path.basename(pip_class.getUserFolder())
     user_folder = (main_os == "Darwin" and os.path.expanduser("~") or pip_class.getLocalAppData())
@@ -3844,13 +3844,15 @@ if __name__ == "__main__":
                                         if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
                                             versio_name = ts(f'\033[38;5;{unic}mNew Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}]\033[0m')
                                             if os.path.exists(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}")):
-                                                with open(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"), "r") as f: ss = f.read()
+                                                with open(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
                                             with open(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(versio_name)
                                             displayNotification(ts("OrangeBlox Update Available!"), ts(f'OrangeBlox v{latest_vers.get("latest_version", "1.0.0")} is now available for download! Install the update by opening the main menu, checking for updates and then install!'))
+                                        else:
+                                            if os.path.exists(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}")): os.remove(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"))
                     threading.Thread(target=bootstrap_update_check, daemon=True).start()
                     if os.path.exists(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}")):
-                        with open(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"), "r") as f: versio_name = f.read()
+                        with open(os.path.join(current_path_location, f"OrangeBloxUpdate_{user_folder_name}"), "r", encoding="utf-8") as f: versio_name = f.read()
                         generated_ui_options.append({
                             "index": 9, 
                             "message": versio_name, 

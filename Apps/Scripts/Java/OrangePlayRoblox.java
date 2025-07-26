@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class OrangePlayRoblox {
-    public static String current_version = "2.2.1";
+    public static String current_version = "2.2.2";
     public static String main_os = "Windows";
     public static void main(String[] args) throws IOException {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {

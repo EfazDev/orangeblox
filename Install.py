@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.1
+# v2.2.2
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.1"}
+    current_version = {"version": "2.2.2"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -866,13 +866,14 @@ if __name__ == "__main__":
                         if os.path.exists(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
                             printMainMessage("Removing Old Scripts..")
                             for i in os.listdir(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
-                                if i.endswith(".py"): os.remove(f"{stored_main_app[main_os][1]}/Contents/Resources/{i}")
+                                if i.endswith(".py") and not os.path.exists(os.path.join(current_path_location, i)): os.remove(f"{stored_main_app[main_os][1]}/Contents/Resources/{i}")
 
-                        # Export ./ to /Contents/Resources/
-                        printMainMessage("Copying Main Resources..")
-                        if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources")): pip_class.copyTreeWithMetadata(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources"), f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
-                        pip_class.copyTreeWithMetadata(f"{current_path_location}/", f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
-                        
+                        if update_mode == False:
+                            # Export ./ to /Contents/Resources/
+                            printMainMessage("Copying Main Resources..")
+                            if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources")): pip_class.copyTreeWithMetadata(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources"), f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
+                            pip_class.copyTreeWithMetadata(f"{current_path_location}/", f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
+                            
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “OrangeBlox.app” is free of malware that may harm your Mac or compromise your privacy.
                         if disable_download_for_app == True:
@@ -1207,11 +1208,12 @@ if __name__ == "__main__":
                         if os.path.exists(stored_main_app[main_os][0]):
                             printMainMessage("Removing Old Scripts..")
                             for i in os.listdir(stored_main_app[main_os][0]):
-                                if i.endswith(".py"): os.remove(os.path.join(stored_main_app[main_os][0], i))
+                                if i.endswith(".py") and not os.path.exists(os.path.join(current_path_location, i)): os.remove(os.path.join(stored_main_app[main_os][0], i))
 
-                        # Export ./ to {app_path}/
-                        printMainMessage("Copying Main Resources..")
-                        pip_class.copyTreeWithMetadata(current_path_location, stored_main_app[main_os][0], dirs_exist_ok=True, ignore=ignore_files_func)
+                        if update_mode == False:
+                            # Export ./ to {app_path}/
+                            printMainMessage("Copying Main Resources..")
+                            pip_class.copyTreeWithMetadata(current_path_location, stored_main_app[main_os][0], dirs_exist_ok=True, ignore=ignore_files_func)
 
                         # Handle Existing Configuration Files
                         printMainMessage("Configurating App Data..")
