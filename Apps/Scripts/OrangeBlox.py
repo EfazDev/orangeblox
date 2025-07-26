@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.2"}
+    current_version = {"version": "2.2.3"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
@@ -291,7 +291,8 @@ if __name__ == "__main__":
                     title=title,
                     message=message,
                     app_name="OrangeBlox",
-                    app_icon=os.path.join(app_path, "BootstrapImages", "AppIcon.ico")
+                    app_icon=os.path.join(app_path, "BootstrapImages", "AppIcon.ico"),
+                    toast=True
                 )
             except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
     def generateFileHash(file_path):

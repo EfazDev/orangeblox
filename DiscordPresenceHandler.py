@@ -57,7 +57,7 @@ class Presence(pypresence.Presence):
         if main_os == "Darwin":
             if pip_class.getIfProcessIsOpened("Discord Helper") or pip_class.getIfProcessIsOpened("Discord PTB Helper") or pip_class.getIfProcessIsOpened("Discord Canary Helper"): return True
         elif main_os == "Windows":
-            if pip_class.getIfProcessIsOpened("Discord.exe"): return True
+            if pip_class.getIfProcessIsOpened("Discord.exe") or pip_class.getIfProcessIsOpened("DiscordPTB.exe") or pip_class.getIfProcessIsOpened("DiscordCanary.exe"): return True
         else:
             if pip_class.getIfProcessIsOpened("Discord"): return True
         return False

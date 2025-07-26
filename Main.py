@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.2
+# v2.2.3
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run_studio = False
     custom_cookies = {}
     stdout: PyKits.stdout = None
-    current_version = {"version": "2.2.2"}
+    current_version = {"version": "2.2.3"}
     given_args = list(filter(None, sys.argv))
     user_folder_name = os.path.basename(pip_class.getUserFolder())
     user_folder = (main_os == "Darwin" and os.path.expanduser("~") or pip_class.getLocalAppData())
