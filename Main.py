@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.3
+# v2.2.4
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run_studio = False
     custom_cookies = {}
     stdout: PyKits.stdout = None
-    current_version = {"version": "2.2.3"}
+    current_version = {"version": "2.2.4"}
     given_args = list(filter(None, sys.argv))
     user_folder_name = os.path.basename(pip_class.getUserFolder())
     user_folder = (main_os == "Darwin" and os.path.expanduser("~") or pip_class.getLocalAppData())
@@ -3429,7 +3429,7 @@ if __name__ == "__main__":
                                                 if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args)):
                                                     printMainMessage(f"Creating URL Exchange file..")
                                                     with open(os.path.join(current_path_location, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
-                                            silent_install = subprocess.run(f'start cmd.exe /c "\'{sys.executable}\' {os.path.join(current_path_location, "Install.py")} --update-mode"', shell=True, cwd=current_path_location)
+                                            silent_install = subprocess.run(f'start cmd.exe /c ""{sys.executable}" "{os.path.join(current_path_location, "Install.py")}" --update-mode"', shell=True, cwd=current_path_location)
                                             if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                             try:
                                                 printMainMessage("Cleaning up files..")
