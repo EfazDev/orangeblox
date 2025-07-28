@@ -29,8 +29,8 @@ def download_luapackages(version: str, channel: str, output_directory: str | Pat
         download(Api.Roblox.Deployment.download(version, "RobloxStudioApp.zip", channel, True), output_directory / "download" / f"{version}-RobloxStudioApp.zip")
         progress_bar.submit("[MOD_GEN] Extracting Roblox Studio..", 35)
         extract(os.path.join(output_directory, "download", f"{version}-RobloxStudioApp.zip"), output_directory / version / "RobloxStudio.app", False, ["RobloxStudio.app/Contents/Resources/content/*", "RobloxStudio.app/Contents/Resources/ExtraContent/*"])
-        shutil.copytree(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "content"), output_directory / version / "content", dirs_exist_ok=True)
-        shutil.copytree(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "ExtraContent"), output_directory / version / "ExtraContent", dirs_exist_ok=True)
+        shutil.move(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "content"), output_directory / version / "content")
+        shutil.move(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "ExtraContent"), output_directory / version / "ExtraContent")
         shutil.rmtree(os.path.join(output_directory, version, "RobloxStudio.app"), ignore_errors=True)
     else:
         progress_bar.submit("[MOD_GEN] Downloading Extra Content Textures..", 30)

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.4
+# v2.2.5
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run_studio = False
     custom_cookies = {}
     stdout: PyKits.stdout = None
-    current_version = {"version": "2.2.4"}
+    current_version = {"version": "2.2.5"}
     given_args = list(filter(None, sys.argv))
     user_folder_name = os.path.basename(pip_class.getUserFolder())
     user_folder = (main_os == "Darwin" and os.path.expanduser("~") or pip_class.getLocalAppData())
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         "EFlagOverwriteUnneededStudioFonts": "bool",
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
-        "EFlagDisableEndingRobloxCrashHandler": "bool"
+        "EFlagEnableEndingRobloxCrashHandler": "bool"
     }
     language_names = {
         "en": "English",
@@ -2439,19 +2439,23 @@ if __name__ == "__main__":
             friend_list_json = {"data": []}
             query = {"limit": "50", "findFriendsType": "0"}
             while reached_end == False:
-                friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
-                friend_req_json = friend_list_req.json
-                if friend_list_req.ok and friend_req_json.get("PageItems"):
-                    reached_end2 = False
-                    while reached_end2 == False:
-                        user_ids = []
-                        for i in friend_list_json["data"]: user_ids.append(i.get("id"))
-                        user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
-                        if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
-                        else: time.sleep(1)
-                    friend_list_json["data"] += friend_req_json.get("PageItems")
-                    if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
-                    else: reached_end = True
+                try:
+                    friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
+                    friend_req_json = friend_list_req.json
+                    if friend_list_req.ok and friend_req_json.get("PageItems"):
+                        reached_end2 = False
+                        while reached_end2 == False:
+                            try:
+                                user_ids = []
+                                for i in friend_list_json["data"]: user_ids.append(i.get("id"))
+                                user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
+                                if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
+                                else: time.sleep(1)
+                            except Exception as e: pass
+                        friend_list_json["data"] += friend_req_json.get("PageItems")
+                        if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
+                        else: reached_end = True
+                except Exception as e: pass
                 time.sleep(1)
             
             last_pinged_friend_list = {}
@@ -3903,19 +3907,23 @@ if __name__ == "__main__":
                                 friend_list_json = {"data": []}
                                 query = {"limit": "50", "findFriendsType": "0"}
                                 while reached_end == False:
-                                    friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
-                                    friend_req_json = friend_list_req.json
-                                    if friend_list_req.ok and friend_req_json.get("PageItems"):
-                                        reached_end2 = False
-                                        while reached_end2 == False:
-                                            user_ids = []
-                                            for i in friend_list_json["data"]: user_ids.append(i.get("id"))
-                                            user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
-                                            if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
-                                            else: time.sleep(1)
-                                        friend_list_json["data"] += friend_req_json.get("PageItems")
-                                        if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
-                                        else: reached_end = True
+                                    try:
+                                        friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
+                                        friend_req_json = friend_list_req.json
+                                        if friend_list_req.ok and friend_req_json.get("PageItems"):
+                                            reached_end2 = False
+                                            while reached_end2 == False:
+                                                try:
+                                                    user_ids = []
+                                                    for i in friend_list_json["data"]: user_ids.append(i.get("id"))
+                                                    user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
+                                                    if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
+                                                    else: time.sleep(1)
+                                                except Exception as e: pass
+                                            friend_list_json["data"] += friend_req_json.get("PageItems")
+                                            if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
+                                            else: reached_end = True
+                                    except Exception as e: pass
                                     time.sleep(1)
                                 if friend_list_req.ok:
                                     last_pinged_friend_list = {}
@@ -5491,19 +5499,23 @@ if __name__ == "__main__":
                     friend_list_json = {"data": []}
                     query = {"limit": "50", "findFriendsType": "0"}
                     while reached_end == False:
-                        friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
-                        friend_req_json = friend_list_req.json
-                        if friend_list_req.ok and friend_req_json.get("PageItems"):
-                            reached_end2 = False
-                            while reached_end2 == False:
-                                user_ids = []
-                                for i in friend_list_json["data"]: user_ids.append(i.get("id"))
-                                user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
-                                if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
-                                else: time.sleep(1)
-                            friend_list_json["data"] += friend_req_json.get("PageItems")
-                            if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
-                            else: reached_end = True
+                        try:
+                            friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
+                            friend_req_json = friend_list_req.json
+                            if friend_list_req.ok and friend_req_json.get("PageItems"):
+                                reached_end2 = False
+                                while reached_end2 == False:
+                                    try:
+                                        user_ids = []
+                                        for i in friend_list_json["data"]: user_ids.append(i.get("id"))
+                                        user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
+                                        if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
+                                        else: time.sleep(1)
+                                    except Exception as e: pass
+                                friend_list_json["data"] += friend_req_json.get("PageItems")
+                                if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
+                                else: reached_end = True
+                        except Exception as e: pass
                         time.sleep(1)
                     if friend_list_req.ok:
                         last_pinged_friend_list = {}
@@ -5564,12 +5576,11 @@ if __name__ == "__main__":
             # Roblox Studio Ready Message
             printSuccessMessage("Done! Roblox Studio is ready!")
             printWarnMessage("--- Running Roblox Studio ---")
-            if waitForInternet() == True: printWarnMessage("-----------")
         else:
             # Roblox Ready Message
             printSuccessMessage("Done! Roblox is ready!")
             printWarnMessage("--- Running Roblox ---")
-            if waitForInternet() == True: printWarnMessage("-----------")
+        if waitForInternet() == True: printWarnMessage("-----------")
 
         # Activity Tracking Functions
         if run_studio == True:
@@ -5649,9 +5660,9 @@ if __name__ == "__main__":
                             generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                             generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                         if generated_thumbnail_api_res.ok and generated_place_api_res.ok and generated_universe_api_res.ok:
-                            generated_thumbnail_api_json = generated_thumbnail_api_res.json
-                            generated_place_api_json = generated_place_api_res.json
-                            generated_universe_api_json = generated_universe_api_res.json
+                            generated_thumbnail_api_json = generated_thumbnail_api_res.json()
+                            generated_place_api_json = generated_place_api_res.json()
+                            generated_universe_api_json = generated_universe_api_res.json()
                             thumbnail_url = "https://obx.efaz.dev/BootstrapImages/AppIconRunStudio.png"
                             if generated_thumbnail_api_json.get("data"):
                                 if len(generated_thumbnail_api_json.get("data")) > 0: thumbnail_url = generated_thumbnail_api_json.get("data")[0]["imageUrl"]
@@ -6269,78 +6280,80 @@ if __name__ == "__main__":
                                                         if not formatted_info["launch_data"] == "": formatted_info["launch_data"] = f"&launchData={formatted_info['launch_data']}"; add_exam = False
                                                         if formatted_info["small_image"] == "https://obx.efaz.dev/BootstrapImages/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
                                                         if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!"
-                                                        if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and main_config.get("EFlagAllowPrivateServerJoining") == True and set_current_private_server_key:
-                                                            if add_exam == True: launch_data = f'{launch_data}?gameInstanceId={current_place_info.get("jobId")}?accessCode={set_current_private_server_key}'
-                                                            else: launch_data = f'{launch_data}&gameInstanceId={current_place_info.get("jobId")}&accessCode={set_current_private_server_key}'
-                                                        else:
-                                                            if add_exam == True: launch_data = f'{launch_data}?gameInstanceId={current_place_info.get("jobId")}'
-                                                            else: launch_data = f'{launch_data}&gameInstanceId={current_place_info.get("jobId")}'
-                                                        cur_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
-                                                        if formatted_info.get("stop") and formatted_info.get("stop") < cur_time:
-                                                            formatted_info["stop"] = None
-                                                            formatted_info["start"] = None
-                                                        if formatted_info.get("start") and formatted_info.get("start") > cur_time:
-                                                            formatted_info["start"] = None
-                                                            formatted_info["stop"] = None
-                                                        formatted_info["launch_data"] = launch_data
-                                                        try:
-                                                            isInstance = False
-                                                            if formatted_info.get("start") and formatted_info.get("end"): isInstance = True
-                                                            if rpc:
-                                                                try:
-                                                                    if main_config.get("EFlagEnableDiscordRPCJoining") == True:
-                                                                        req = rpc.update(
-                                                                            loop_key=loop_key, 
-                                                                            details=formatted_info["details"], 
-                                                                            state=formatted_info["state"], 
-                                                                            start=formatted_info["start"], 
-                                                                            end=formatted_info["stop"], 
-                                                                            large_image=formatted_info["large_image"], 
-                                                                            large_text=formatted_info["large_text"], 
-                                                                            instance=isInstance, 
-                                                                            small_image=formatted_info["small_image"], 
-                                                                            small_text=formatted_info["small_text"], 
-                                                                            buttons=[
-                                                                                {
-                                                                                    "label": "Join Server! 🚀",
-                                                                                    "url": f"roblox://experiences/start?placeId={current_place_info['placeId']}{formatted_info['launch_data']}"
-                                                                                }, 
-                                                                                {
+                                                        if current_place_info:
+                                                            if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and main_config.get("EFlagAllowPrivateServerJoining") == True and set_current_private_server_key:
+                                                                if add_exam == True: launch_data = f'{launch_data}?gameInstanceId={current_place_info.get("jobId")}?accessCode={set_current_private_server_key}'
+                                                                else: launch_data = f'{launch_data}&gameInstanceId={current_place_info.get("jobId")}&accessCode={set_current_private_server_key}'
+                                                            else:
+                                                                if add_exam == True: launch_data = f'{launch_data}?gameInstanceId={current_place_info.get("jobId")}'
+                                                                else: launch_data = f'{launch_data}&gameInstanceId={current_place_info.get("jobId")}'
+                                                            cur_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
+                                                            if formatted_info.get("stop") and formatted_info.get("stop") < cur_time:
+                                                                formatted_info["stop"] = None
+                                                                formatted_info["start"] = None
+                                                            if formatted_info.get("start") and formatted_info.get("start") > cur_time:
+                                                                formatted_info["start"] = None
+                                                                formatted_info["stop"] = None
+                                                            formatted_info["launch_data"] = launch_data
+                                                            try:
+                                                                isInstance = False
+                                                                if formatted_info.get("start") and formatted_info.get("end"): isInstance = True
+                                                                if rpc:
+                                                                    try:
+                                                                        if main_config.get("EFlagEnableDiscordRPCJoining") == True:
+                                                                            req = rpc.update(
+                                                                                loop_key=loop_key, 
+                                                                                details=formatted_info["details"], 
+                                                                                state=formatted_info["state"], 
+                                                                                start=formatted_info["start"], 
+                                                                                end=formatted_info["stop"], 
+                                                                                large_image=formatted_info["large_image"], 
+                                                                                large_text=formatted_info["large_text"], 
+                                                                                instance=isInstance, 
+                                                                                small_image=formatted_info["small_image"], 
+                                                                                small_text=formatted_info["small_text"], 
+                                                                                buttons=[
+                                                                                    {
+                                                                                        "label": "Join Server! 🚀",
+                                                                                        "url": f"roblox://experiences/start?placeId={current_place_info['placeId']}{formatted_info['launch_data']}"
+                                                                                    }, 
+                                                                                    {
+                                                                                        "label": "Open Game Page 🌐", 
+                                                                                        "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
+                                                                                    }
+                                                                                ]
+                                                                            )
+                                                                        else:
+                                                                            req = rpc.update(
+                                                                                loop_key=loop_key, 
+                                                                                details=formatted_info["details"], 
+                                                                                state=formatted_info["state"], 
+                                                                                start=formatted_info["start"], 
+                                                                                end=formatted_info["stop"], 
+                                                                                large_image=formatted_info["large_image"], 
+                                                                                large_text=formatted_info["large_text"], 
+                                                                                instance=isInstance, 
+                                                                                small_image=formatted_info["small_image"], 
+                                                                                small_text=formatted_info["small_text"], 
+                                                                                buttons=[{
                                                                                     "label": "Open Game Page 🌐", 
                                                                                     "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
-                                                                                }
-                                                                            ]
-                                                                        )
-                                                                    else:
-                                                                        req = rpc.update(
-                                                                            loop_key=loop_key, 
-                                                                            details=formatted_info["details"], 
-                                                                            state=formatted_info["state"], 
-                                                                            start=formatted_info["start"], 
-                                                                            end=formatted_info["stop"], 
-                                                                            large_image=formatted_info["large_image"], 
-                                                                            large_text=formatted_info["large_text"], 
-                                                                            instance=isInstance, 
-                                                                            small_image=formatted_info["small_image"], 
-                                                                            small_text=formatted_info["small_text"], 
-                                                                            buttons=[{
-                                                                                "label": "Open Game Page 🌐", 
-                                                                                "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
-                                                                            }]
-                                                                        )
-                                                                    if req.get("code") == 2: break
-                                                                except Exception as e:
-                                                                    if err_count > 9:
-                                                                        printDebugMessage("Discord RPC Session may be broken. Loop has been broken.")
-                                                                        break
-                                                                    else: err_count += 1
-                                                        except Exception as e:
-                                                            if err_count > 9:
-                                                                printDebugMessage("Discord RPC Session may be broken. Loop has been broken.")
-                                                                break
-                                                            else:
-                                                                err_count += 1
-                                                                printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
+                                                                                }]
+                                                                            )
+                                                                        if req.get("code") == 2: break
+                                                                    except Exception as e:
+                                                                        if err_count > 9:
+                                                                            printDebugMessage("Discord RPC Session may be broken. Loop has been broken.")
+                                                                            break
+                                                                        else: err_count += 1
+                                                            except Exception as e:
+                                                                if err_count > 9:
+                                                                    printDebugMessage("Discord RPC Session may be broken. Loop has been broken.")
+                                                                    break
+                                                                else:
+                                                                    err_count += 1
+                                                                    printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
+                                                        else: break
                                                         time.sleep(0.1)
                                                 except Exception as e: printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
                                             embed_thread = threading.Thread(target=embed, daemon=True)
@@ -6944,7 +6957,7 @@ if __name__ == "__main__":
                         cri.setRobloxEventCallback("onRobloxVoiceChatMute", onRobloxVoiceChatMute)
                         cri.setRobloxEventCallback("onRobloxVoiceChatUnmute", onRobloxVoiceChatUnmute)
                 else: printDebugMessage("No RobloxInstance class was registered")
-            if not (main_config.get("EFlagDisableEndingRobloxCrashHandler") == True): handler.endRobloxCrashHandler()
+            if main_config.get("EFlagEnableEndingRobloxCrashHandler") == True: handler.endRobloxCrashHandler()
             if run_studio == True:
                 if connect_instead == True:
                     connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(studio=True), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=True, await_log_creation=True)

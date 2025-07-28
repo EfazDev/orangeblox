@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.4
+# v2.2.5
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.4"}
+    current_version = {"version": "2.2.5"}
     current_path_location = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -222,7 +222,7 @@ if __name__ == "__main__":
         "EFlagOverwriteUnneededStudioFonts": "bool",
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
-        "EFlagDisableEndingRobloxCrashHandler": "bool"
+        "EFlagEnableEndingRobloxCrashHandler": "bool"
     }
     handler = RFFI.Handler()
 

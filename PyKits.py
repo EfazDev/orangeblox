@@ -68,6 +68,7 @@ class request:
         import re
         import shutil
         import time
+        import socket
         import threading
         import urllib.request
         from urllib.parse import urlparse
@@ -77,6 +78,7 @@ class request:
         self._os = os
         self._re = re
         self._shutil = shutil
+        self._socket = socket
         self._time = time
         self._threading = threading
         self._urlreq = urllib.request
@@ -85,6 +87,8 @@ class request:
         self._main_os = platform.system()
     def get(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -115,6 +119,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def post(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "POST", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -145,6 +151,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def patch(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PATCH", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -175,6 +183,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def put(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PUT", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -205,6 +215,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def delete(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "DELETE", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -235,6 +247,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def head(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "HEAD", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -265,6 +279,8 @@ class request:
         except Exception as e: raise self.UnknownResponse(url, e)
     def custom(self, url: str, method: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         try:
+            if not self.get_if_connected():
+                while not self.get_if_connected(): self._time.sleep(0.5)
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", method, "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
@@ -297,6 +313,8 @@ class request:
         mai = self.get(*k, **s)
         return self.OpenContext(mai)
     def download(self, path: str, output: str, check: bool=False, delete_existing: bool=True, submit_status=None) -> FileDownload:
+        if not self.get_if_connected():
+            while not self.get_if_connected(): self._time.sleep(0.5)
         if self._os.path.exists(output) and delete_existing == False: raise FileExistsError(f"This file already exists in {output}!")
         elif self._os.path.exists(output) and self._os.path.isdir(output): self._shutil.rmtree(output, ignore_errors=True)
         elif self._os.path.exists(output) and self._os.path.isfile(output): self._os.remove(output)
@@ -386,6 +404,9 @@ class request:
     def get_if_ok(self, code: int): return int(code) < 300 and int(code) >= 200
     def get_if_redirect(self, code: int): return int(code) < 400 and int(code) >= 300
     def get_if_cooldown(self, code: int): return int(code) == 429
+    def get_if_connected(self):
+        try: self._socket.create_connection(("8.8.8.8", 443), timeout=3).close(); return True # Connect to Google failed?
+        except Exception as e: return False
     def get_url_scheme(self, url: str): 
         obj = self._urlparse(url)
         return obj.scheme
@@ -572,7 +593,6 @@ class pip:
         import shutil
         import hashlib
         import urllib.parse
-        import socket
         import time
         import mmap
 
@@ -589,7 +609,6 @@ class pip:
         self._shutil = shutil
         self._hashlib = hashlib
         self._urllib_parse = urllib.parse
-        self._socket = socket
         self._time = time
         self._mmap = mmap
 
@@ -1073,11 +1092,18 @@ class pip:
             elif main_os == "Windows": self._subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=self._subprocess.DEVNULL)
             else: self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
     def importModule(self, module_name: str, install_module_if_not_found: bool=False):
-        try: return self._importlib.import_module(module_name)
+        self._importlib.invalidate_caches()
+        try: 
+            s = self._importlib.import_module(module_name)
+            if type(s) is None: raise ModuleNotFoundError("")
+            else: return s
         except ModuleNotFoundError:
             try:
                 if install_module_if_not_found == True and self.isSameRunningPythonExecutable(): self.install([module_name])
-                return self._importlib.import_module(module_name)
+                self._importlib.invalidate_caches()
+                s = self._importlib.import_module(module_name)
+                if type(s) is None: raise ModuleNotFoundError("")
+                else: return s
             except Exception: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
         except Exception as e: raise ImportError(f'Unable to import module "{module_name}" in Python {self.getCurrentPythonVersion()} environment. Exception: {str(e)}')
     def unzipFile(self, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True, moving_file_func: typing.Callable=None):
@@ -1175,9 +1201,7 @@ class pip:
             result = self._subprocess.run(f"pgrep -f '{process_name}'", stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, shell=True)
             process_ids = result.stdout.decode("utf-8").strip().split("\n")
             return len([pid for pid in process_ids if pid.isdigit()])
-    def getIfConnectedToInternet(self):
-        try: self._socket.create_connection(("8.8.8.8", 443), timeout=3); return True
-        except Exception as e: return False
+    def getIfConnectedToInternet(self): return self.requests.get_if_connected()
     def getProcessWindows(self, pid: int):
         if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
             if self._main_os == "Windows":

@@ -140,7 +140,7 @@ int launchApp() {
 #endif
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.2.4";
+    std::string current_version = "2.2.5";
     std::string main_os;
     std::string app_path;
     

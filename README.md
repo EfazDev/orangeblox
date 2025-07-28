@@ -33,8 +33,9 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
 10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts!
 11. Play Roblox/Run Studio app so you can run Roblox directly!
-12. Read Logs from Roblox using RobloxFastFlagsInstaller* (requires Debug Mode)!
-13. Way more features to be explored!
+12. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
+13. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
+14. Way more features to be explored!
 > [!NOTE]
 > Features may need to be enabled in order to be used. Check the Settings from the main menu in order to enable.
 
@@ -66,14 +67,14 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `7638c891d950ae87acd51d9aab338ba7` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `3d992b8ce62568ff6360944c42a56b0f` |
-| Installer (Install.py) | `7ff8dabb64bc84b52b3489fd33d821d1` |
-| Bootstrap API (OrangeAPI.py) | `cc69645a0d942dfb2daf3b23a4d811ef` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `8223c36e06bffaceb2712d6144455c54` |
-| Bootstrap Loader (OrangeBlox.py) | `1bf80a9f5ff853e0eecce4c8b2115bdf` |
+| Main Bootstrap (Main.py) | `379fe9f246285674f5c63ba26cd4b83e` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `6c176e9fbb8cae340e402e9e79ae20da` |
+| Installer (Install.py) | `d610e6fbef080a8d9af6eb5bd1eb4efd` |
+| Bootstrap API (OrangeAPI.py) | `9529e1f4bd8e14d041fb5c9f4e47c003` |
+| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `ef03681d6a5ae92ff03910e91a078924` |
+| Bootstrap Loader (OrangeBlox.py) | `31230011fa2e0cfd438f366d817fec8b` |
 | Discord Presence Handler (DiscordPresenceHandler.py) | `3f6c62bceb8fa396d81ef0b8b3b31d2e` |
-| PyKits API (PyKits.py) | `df7055f58f373dd552dee5118c746dcf` |
+| PyKits API (PyKits.py) | `557f669814308415de50cde4cc1a8a0e` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
