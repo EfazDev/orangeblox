@@ -1785,8 +1785,8 @@ class Handler:
                 for i in self.__events__:
                     if i and i["name"] == eventName: self.__events__.remove(i)
         def endInstance(self): 
-            if self.is_studio == True: self.main_handler.endRobloxStudio(self.pid)
-            else: self.main_handler.endRoblox(self.pid)
+            if self.is_studio == True: self.main_handler.endRobloxStudio(pid=self.pid)
+            else: self.main_handler.endRoblox(pid=self.pid)
         def newestFile(self, path: str):
             files = os.listdir(path)
             paths = []
@@ -2746,7 +2746,7 @@ class Handler:
             elif main_os == "Darwin": subprocess.run(["osascript", "-e", f'tell application "System Events" to set frontmost of (every process whose unix id is {self.pid}) to true'])
         def destroyWindow(self):
             if main_os == "Windows": win32gui.DestroyWindow(self.system_handler)
-            elif main_os == "Darwin": self.main_handler.endRoblox(str(self.pid))
+            elif main_os == "Darwin": self.main_handler.endRoblox(pid=str(self.pid))
         def setWindowTitle(self, title: str):
             if main_os == "Windows": win32gui.SetWindowText(self.system_handler, title)
             elif main_os == "Darwin": printLog("Setting Window Title is unavailable for macOS.")
@@ -3788,7 +3788,7 @@ class Handler:
                                     if channel_res.get("success") == True: downloadChannel = channel_res.get("channel", "LIVE")
                                     else: downloadChannel = "LIVE"
                                 if submit_status: submit_status.submit("[INSTALL] Downloading Roblox Installer..", 20)
-                                self.downloadRobloxInstaller(studio, copyRobloxInstallerPath, downloadChannel, debug)
+                                self.downloadRobloxInstaller(studio=studio, filePath=copyRobloxInstallerPath, channel=downloadChannel, debug=debug)
                             else:
                                 if os.path.exists(os.path.join((macOS_studioDir if studio == True else macOS_dir), macOS_beforeClientServices, f"Roblox{client_label}Installer.app")):
                                     try:
@@ -3831,7 +3831,7 @@ class Handler:
                     if latest_vers["success"] == True:
                         if submit_status: submit_status.submit("[INSTALL] Installing Roblox Bundle!", 80)
                         self.endRoblox(studio=studio)
-                        s = self.installRobloxBundle(studio, macOS_installedPath, (macOS_studioDir if studio == True else macOS_dir), downloadChannel, debug, verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=macOS_installedPath, appPath=(macOS_studioDir if studio == True else macOS_dir), channel=downloadChannel, debug=debug, verify=verifyInstall)
                         if submit_status: submit_status.submit("[INSTALL] Installed Roblox Bundle!", 100)
                         return s
                     else:
@@ -3877,7 +3877,7 @@ class Handler:
                             if channel_res.get("success") == True: downloadChannel = channel_res.get("channel", "LIVE")
                             else: downloadChannel = "LIVE"
                         if submit_status: submit_status.submit(f"[INSTALL] Downloading Roblox {client_label} Installer..", 20)
-                        self.downloadRobloxInstaller(studio, copyRobloxInstallerPath, downloadChannel, debug)
+                        self.downloadRobloxInstaller(studio=studio, filePath=copyRobloxInstallerPath, channel=downloadChannel, debug=debug)
                         if not os.path.exists(copyRobloxInstallerPath):
                             printLog("Roblox Installer couldn't be found.")
                             if submit_status: submit_status.submit("\033ERR[INSTALL] Installer couldn't be found!", 50)
@@ -3918,13 +3918,13 @@ class Handler:
                     if submit_status: submit_status.submit(f"[INSTALL] Installing Roblox {client_label} Bundle..", 80)
                     if studio == True and not (windows_studio_folder_name == ""): 
                         makedirs(os.path.join(windows_versions_dir, windows_studio_folder_name))
-                        s = self.installRobloxBundle(studio, os.path.join(windows_versions_dir, windows_studio_folder_name), "", downloadChannel, debug, verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_studio_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
                     elif studio == False and not (windows_player_folder_name == ""): 
                         makedirs(os.path.join(windows_versions_dir, windows_player_folder_name))
-                        s = self.installRobloxBundle(studio, os.path.join(windows_versions_dir, windows_player_folder_name), "", downloadChannel, debug, verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_player_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
                     else:
                         makedirs(os.path.join(windows_versions_dir))
-                        s = self.installRobloxBundle(studio, os.path.join(windows_versions_dir), "", downloadChannel, debug, verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
                     if submit_status: submit_status.submit(f"[INSTALL] Installed Roblox {client_label} Bundle!", 100)
                     return s
                 else:

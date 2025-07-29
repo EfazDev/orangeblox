@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.5
+# v2.2.6
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run_studio = False
     custom_cookies = {}
     stdout: PyKits.stdout = None
-    current_version = {"version": "2.2.5"}
+    current_version = {"version": "2.2.6"}
     given_args = list(filter(None, sys.argv))
     user_folder_name = os.path.basename(pip_class.getUserFolder())
     user_folder = (main_os == "Darwin" and os.path.expanduser("~") or pip_class.getLocalAppData())
@@ -1384,10 +1384,10 @@ if __name__ == "__main__":
                     printErrorMessage("Vanilla Roblox Studio is not installed right now! Please install it from the Roblox website to get it back!")
                     return ts("Roblox Studio was not uninstalled.")
             elif main_os == "Windows":
-                if not (handler.getRobloxInstallFolder(os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"))) and fullReset == 7:
+                if not (handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"))) and fullReset == 7:
                     printErrorMessage("Vanilla Roblox is not installed right now! Please install it from the Roblox website to get it back!")
                     return ts("Roblox was not uninstalled.")
-                elif not (handler.getRobloxInstallFolder(os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True)) and fullReset == 8:
+                elif not (handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True)) and fullReset == 8:
                     printErrorMessage("Vanilla Roblox Studio is not installed right now! Please install it from the Roblox website to get it back!")
                     return ts("Roblox Studio was not uninstalled.")
                 
@@ -1409,7 +1409,7 @@ if __name__ == "__main__":
                     sys.exit(0)
                     return ts("Roblox has been uninstalled with user data removed!")
                 elif fullReset == 6:
-                    if not (handler.getRobloxInstallFolder("", studio=True)):
+                    if not (handler.getRobloxInstallFolder(directory="", studio=True)):
                         printErrorMessage("Roblox Studio is not installed right now! Please enable Roblox Studio mode in Bootstrap Settings to reinstall back!")
                         return ts("Roblox Studio was not uninstalled.")
                     submit_status.start()
@@ -1453,7 +1453,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f'File Handling "{extension}" has been set for "{exe_path}"')
                             except Exception as e: printErrorMessage(f"An error occurred: {e}")
                             
-                        cur_studio = handler.getRobloxInstallFolder(os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True)
+                        cur_studio = handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True)
                         if cur_studio:
                             rbx_studio_beta = os.path.join(cur_studio, "RobloxStudioBeta.exe")
                             set_url_scheme("roblox-studio", rbx_studio_beta)
@@ -1472,7 +1472,7 @@ if __name__ == "__main__":
                         return ts("Vanilla Roblox has been uninstalled!")
                     elif main_os == "Windows":
                         org_dir = os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions")
-                        if not (handler.getRobloxInstallFolder(org_dir)):
+                        if not (handler.getRobloxInstallFolder(directory=org_dir)):
                             printErrorMessage("Vanilla Roblox is not installed right now! Please install it from the Roblox website to get it back!")
                             return ts("Roblox was not uninstalled.")
                         for i in os.listdir(org_dir):
@@ -1492,7 +1492,7 @@ if __name__ == "__main__":
                         return ts("Vanilla Roblox Studio has been uninstalled!")
                     elif main_os == "Windows":
                         org_dir = os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions")
-                        if not (handler.getRobloxInstallFolder(org_dir, studio=True)):
+                        if not (handler.getRobloxInstallFolder(directory=org_dir, studio=True)):
                             printErrorMessage("Vanilla Roblox Studio is not installed right now! Please install it from the Roblox website to get it back!")
                             return ts("Roblox Studio was not uninstalled.")
                         for i in os.listdir(org_dir):
@@ -1542,7 +1542,7 @@ if __name__ == "__main__":
                     co += 1
                     printMainMessage(f"[{co}] = Install Vanilla Roblox Studio")
                     li[str(co)] = [goToReinstall, 8]
-                    if handler.getRobloxInstallFolder(os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), True): 
+                    if handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True): 
                         co += 1
                         printMainMessage(f"[{co}] = Uninstall Vanilla Roblox Studio")
                         li[str(co)] = [goToUninstall, 8]
@@ -1563,7 +1563,7 @@ if __name__ == "__main__":
                     printMainMessage(f"[{co}] = Uninstall Vanilla Roblox")
                     li[str(co)] = [goToUninstall, 7]
             elif main_os == "Windows":
-                if handler.getRobloxInstallFolder(os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions")): 
+                if handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions")): 
                     co += 1
                     printMainMessage(f"[{co}] = Uninstall Vanilla Roblox")
                     li[str(co)] = [goToUninstall, 7]
@@ -4308,7 +4308,7 @@ if __name__ == "__main__":
                                 url_channel = s[s.index("-RobloxChannel") + 1]
                                 given_args = ["Main.py", "orangeblox://run-studio"]
                             elif url.startswith("roblox-studio"):
-                                url_data = handler.parseRobloxLauncherURL(url)
+                                url_data = handler.parseRobloxLauncherURL(url=url)
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
@@ -4407,7 +4407,7 @@ if __name__ == "__main__":
                                 url_channel = s[s.index("-RobloxChannel") + 1]
                                 given_args = ["Main.py", "orangeblox://continue"]
                             elif url.startswith("roblox-player:"):
-                                url_data = handler.parseRobloxLauncherURL(url)
+                                url_data = handler.parseRobloxLauncherURL(url=url)
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
@@ -4469,7 +4469,7 @@ if __name__ == "__main__":
                                 url_channel = s[s.index("-RobloxChannel") + 1]
                                 given_args = ["Main.py", "orangeblox://continue"]
                             elif url.startswith("roblox-player:"):
-                                url_data = handler.parseRobloxLauncherURL(url)
+                                url_data = handler.parseRobloxLauncherURL(url=url)
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
