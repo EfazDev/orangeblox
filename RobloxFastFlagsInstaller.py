@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.6
+# v2.2.7
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -26,10 +26,10 @@ import concurrent.futures
 import xml.etree.ElementTree as ET
 
 main_os = platform.system()
-current_path_location = os.path.dirname(os.path.abspath(__file__))
-user_folder = (main_os == "Darwin" and os.path.expanduser("~") or os.getenv('LOCALAPPDATA'))
+cur_path = os.path.dirname(os.path.abspath(__file__))
+user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.6"
+script_version = "2.2.7"
 def getLocalAppData():
     import platform
     import os
@@ -69,7 +69,7 @@ macOS_dir = os.path.join(getInstallableApplicationsFolder(), "Roblox.app")  # Th
 macOS_studioDir = os.path.join(getInstallableApplicationsFolder(), "RobloxStudio.app")  # This is Roblox macOS path
 macOS_beforeClientServices = os.path.join("Contents", "MacOS") # This is a partial path for the executables are located for macOS Roblox, do not edit
 macOS_installedPath = os.path.join(getInstallableApplicationsFolder()) # This is where Roblox is installed on macOS
-windows_dir = os.path.join(os.getenv('LOCALAPPDATA') or "", "Roblox") # This is the Roblox folder in Windows App Data
+windows_dir = os.path.join(os.getenv('LOCALAPPDATA') if os.getenv('LOCALAPPDATA') else "", "Roblox") # This is the Roblox folder in Windows App Data
 windows_versions_dir = os.path.join(windows_dir, "Versions") # This is the Roblox versions folder path
 windows_player_folder_name = "" # This is the version folder name for Roblox Player
 windows_studio_folder_name = "" # This is the version folder name for Roblox Studio
@@ -532,18 +532,18 @@ class request:
     def get_curl(self):
         pos_which = self._shutil.which("curl")
         if self._os.path.exists(pos_which): return pos_which
-        elif self._main_os == "Windows" and self._os.path.exists(self._os.path.join(current_path_location, "curl")): return self._os.path.join(current_path_location, "curl", "curl.exe")
-        elif self._os.path.exists(self._os.path.join(current_path_location, "curl")): return self._os.path.join(current_path_location, "curl", "curl")
+        elif self._main_os == "Windows" and self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl.exe")
+        elif self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl")
         else: 
-            current_path_location = self._os.path.dirname(self._os.path.abspath(__file__))
+            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
             if self._main_os == "Darwin": return None
             elif self._main_os == "Windows":
                 pip_class = pip()
-                if self._platform.architecture()[0] == "32bit": self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win32-mingw.zip", self._os.path.join(current_path_location, "curl_download.zip"))
-                else: self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win64-mingw.zip", self._os.path.join(current_path_location, "curl_download.zip"))
-                if self._os.path.exists(self._os.path.join(current_path_location, "curl_download.zip")):
-                    unzip_res = pip_class.unzipFile(self._os.path.join(current_path_location, "curl_download.zip"), self._os.path.join(current_path_location, "curl"), ["curl.exe"])
-                    if unzip_res.returncode == 0: return self._os.path.join(current_path_location, "curl", "curl.exe")
+                if self._platform.architecture()[0] == "32bit": self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win32-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
+                else: self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win64-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
+                if self._os.path.exists(self._os.path.join(cur_path, "curl_download.zip")):
+                    unzip_res = pip_class.unzipFile(self._os.path.join(cur_path, "curl_download.zip"), self._os.path.join(cur_path, "curl"), ["curl.exe"])
+                    if unzip_res.returncode == 0: return self._os.path.join(cur_path, "curl", "curl.exe")
                     else: return None 
                 else: return None 
             else: return None
@@ -732,7 +732,6 @@ class pip:
         import re
         import platform
         import importlib
-        import importlib.metadata
         import subprocess
         import glob
         import stat
@@ -748,7 +747,6 @@ class pip:
         self._re = re
         self._platform = platform
         self._importlib = importlib
-        self._importlib_metadata = importlib.metadata
         self._subprocess = subprocess
         self._glob = glob
         self._stat = stat
@@ -864,7 +862,7 @@ class pip:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
-                current_path_location = self._os.path.dirname(self._os.path.abspath(__file__))
+                cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
                 if repository_mode == True:
                     url_paths = []
                     url_paths_2 = []
@@ -873,7 +871,7 @@ class pip:
                             path_parts = self._urllib_parse.urlparse(i).path.strip('/').split('/')
                             url_paths.append(path_parts[-1])
                             url_paths_2.append(path_parts[-2])
-                    down_path = self._os.path.join(current_path_location, '-'.join(url_paths) + "_download")
+                    down_path = self._os.path.join(cur_path, '-'.join(url_paths) + "_download")
                     if self._os.path.isdir(down_path): self._shutil.rmtree(down_path, ignore_errors=True)
                     self._os.makedirs(down_path, mode=511)
                     co = 0
@@ -885,7 +883,7 @@ class pip:
                         co += 1
                     return {"success": True, "path": down_path, "package_files": downed_paths}
                 else:
-                    down_path = self._os.path.join(current_path_location, '-'.join(generated_list) + "_download")
+                    down_path = self._os.path.join(cur_path, '-'.join(generated_list) + "_download")
                     if self._os.path.isdir(down_path): self._shutil.rmtree(down_path, ignore_errors=True)
                     self._os.makedirs(down_path, mode=511)
                     self.ensure()
@@ -900,7 +898,7 @@ class pip:
     def update(self):
         self.ensure()
         try:
-            a = self._subprocess.call([self.executable, "-m", "pip", "install", "--upgrade", "pip"], stdout=(not self.debug) and self._subprocess.DEVNULL or None, stderr=(not self.debug) and self._subprocess.DEVNULL or None)
+            a = self._subprocess.call([self.executable, "-m", "pip", "install", "--upgrade", "pip"], stdout=self._subprocess.DEVNULL if (not self.debug) else None, stderr=self._subprocess.DEVNULL if (not self.debug) else None)
             if a == 0: return {"success": True, "message": "Successfully installed latest version of pip!"}
             else: return {"success": False, "message": f"Command has failed!"}
         except Exception as e: return {"success": False, "message": str(e)}
@@ -1065,7 +1063,7 @@ class pip:
             s = self._subprocess.run(f'"{self.executable}" ./install_local_python_certs.py', shell=True, stdout=self._subprocess.DEVNULL, stderr=self._subprocess.DEVNULL)
             self._os.remove("./install_local_python_certs.py")
             if not (s.returncode == 0) and self.debug == True: print(f"Unable to install local python certificates!")
-    def getIf32BitWindows(self):  return self._main_os == "Windows" and self.getArchitecture() == "x86"
+    def getIf32BitWindows(self): return self._main_os == "Windows" and self.getArchitecture() == "x86"
     def getIfArmWindows(self): return self._main_os == "Windows" and self.getArchitecture() == "arm"
     def getIfRunningWindowsAdmin(self):
         if self._main_os == "Windows":
@@ -3135,7 +3133,7 @@ class Handler:
         return {
             "success": True, 
             "loggedInUser": {
-                "id": (type(appStorage.get("UserId")) is str and appStorage.get("UserId").isnumeric()) and int(appStorage.get("UserId")) or None,
+                "id": int(appStorage.get("UserId")) if (type(appStorage.get("UserId")) is str and appStorage.get("UserId").isnumeric()) else None,
                 "name": appStorage.get("Username"),
                 "under13": appStorage.get("IsUnder13")=="true",
                 "displayName": appStorage.get("DisplayName"),
@@ -3147,9 +3145,9 @@ class Handler:
             "outputDeviceGUID": appStorage.get("SelectedOutputDeviceGuid"),
             "robloxLocaleId": appStorage.get("RobloxLocaleId"),
             "browerTrackerId": appStorage.get("BrowserTrackerId"),
-            "appConfiguration": appStorage.get("AppConfiguration") and json.loads(appStorage.get("AppConfiguration")) or {},
-            "experimentCache": appStorage.get("ExperimentCache") and json.loads(appStorage.get("ExperimentCache")) or {},
-            "policyServiceResponse": appStorage.get("PolicyServiceHttpResponse") and json.loads(appStorage.get("PolicyServiceHttpResponse")) or {}
+            "appConfiguration": json.loads(appStorage.get("AppConfiguration")) if appStorage.get("AppConfiguration") else {},
+            "experimentCache": json.loads(appStorage.get("ExperimentCache")) if appStorage.get("ExperimentCache") else {},
+            "policyServiceResponse": json.loads(appStorage.get("PolicyServiceHttpResponse")) if appStorage.get("PolicyServiceHttpResponse") else {}
         }
     def getRobloxGlobalBasicSettings(self, studio: bool=False):
         roblox_app_location = ""
@@ -3317,7 +3315,7 @@ class Handler:
         macOS_studioDir = os.path.join(getInstallableApplicationsFolder(), "RobloxStudio.app")
         macOS_beforeClientServices = os.path.join("Contents", "MacOS")
         macOS_installedPath = os.path.join(getInstallableApplicationsFolder())
-        windows_dir = os.path.join(os.getenv('LOCALAPPDATA') or "", "Roblox")
+        windows_dir = os.path.join(os.getenv('LOCALAPPDATA') if os.getenv('LOCALAPPDATA') else "", "Roblox")
         windows_versions_dir = os.path.join(windows_dir, "Versions")
         windows_player_folder_name = ""
         windows_studio_folder_name = ""
@@ -3449,11 +3447,11 @@ class Handler:
                     cur_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=channel)
                     if cur_vers and cur_vers.get("success") == True:
                         if debug == True: printDebugMessage(f"Downloading Roblox {client_label} DMG from Roblox's servers..")
-                        cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{'arm64/' if platform.machine() == 'arm64' else ''}{cur_vers.get("client_version")}-Roblox{"Studio" if studio == True else ""}.zip'
+                        cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-Roblox{"Studio" if studio == True else ""}.zip'
                         if debug == True: printDebugMessage(f"Downloading from: {cur_vers_down_link}")
-                        requests.download(cur_vers_down_link, os.path.join(current_path_location, f"Roblox{client_label}Install.zip"))
-                        zip_extract = pip_class.unzipFile(os.path.join(current_path_location, f"Roblox{client_label}Install.zip"), filePath, ["Contents"])
-                        if zip_extract.returncode == 0: os.remove(os.path.join(current_path_location, f"Roblox{client_label}Install.zip"))
+                        requests.download(cur_vers_down_link, os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
+                        zip_extract = pip_class.unzipFile(os.path.join(cur_path, f"Roblox{client_label}Install.zip"), filePath, ["Contents"])
+                        if zip_extract.returncode == 0: os.remove(os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
                         else:
                             if debug == True: printDebugMessage(f"Unable to unzip Roblox {client_label} installer due to an error.")
                     else:
@@ -3584,7 +3582,7 @@ class Handler:
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
                     if orangeblox_mode == True and os.path.exists("Configuration.json"):
                         data_in_string = zlib.compress(json.dumps(fflags).encode('utf-8'))
-                        with open(os.path.join(current_path_location, "Configuration.json"), "wb") as f: f.write(data_in_string)
+                        with open(os.path.join(cur_path, "Configuration.json"), "wb") as f: f.write(data_in_string)
                     else:
                         with open(set_location, "w", encoding="utf-8") as f:
                             if flat == True: json.dump(fflags, f)

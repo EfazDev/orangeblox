@@ -1,8 +1,8 @@
 # UTF-8 encoded version file for Windows executables
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(2, 2, 6, 0),
-    prodvers=(2, 2, 6, 0),
+    filevers=(2, 2, 7, 0),
+    prodvers=(2, 2, 7, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -17,12 +17,12 @@ VSVersionInfo(
         "040904B0",
         [StringStruct("CompanyName", "EfazDev"),
         StringStruct("FileDescription", "OrangeBlox"),
-        StringStruct("FileVersion", "2.2.6"),
+        StringStruct("FileVersion", "2.2.7"),
         StringStruct("LegalCopyright", "Copyright (c) EfazDev"),
         StringStruct("InternalName", "OrangePlayRoblox"),
         StringStruct("OriginalFilename", "OrangePlayRoblox.exe"),
         StringStruct("ProductName", "Play Roblox"),
-        StringStruct("ProductVersion", "2.2.6")])
+        StringStruct("ProductVersion", "2.2.7")])
       ]),
     VarFileInfo([VarStruct("Translation", [1033, 1200])])
   ]

@@ -11,5 +11,5 @@
         "onRobloxVoiceChatUnmute"
     ],
     "python_modules": ["pvrecorder", "promptlib"],
-    "mod_script_supports": "1.4.4"
+    "mod_script_supports": "2.0.0"
 }

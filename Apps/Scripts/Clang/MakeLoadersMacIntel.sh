@@ -7,13 +7,13 @@ printMessage() {
 
 # Build Package
 printMessage "Building Clang Package for OrangeLoader.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -o "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -o "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g -o "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm -g0
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm
 
 # Sign Package
 printMessage "Signing Package.."

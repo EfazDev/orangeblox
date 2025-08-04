@@ -1,15 +1,15 @@
 {
-    "version": "2.2.6",
-    "latest_version": "2.2.6",
+    "version": "2.2.7",
+    "latest_version": "2.2.7",
     "hashes": {
-        "OrangeAPI.py": "5521d586e31ec621dd6ec31532dde514",
-        "RobloxFastFlagsInstaller.py": "cca2beb9f29745713358ff81c90d1c33",
-        "PyKits.py": "557f669814308415de50cde4cc1a8a0e",
-        "DiscordPresenceHandler.py": "3f6c62bceb8fa396d81ef0b8b3b31d2e",
-        "EfazRobloxBootstrapAPI.py": "d99e00d86247a327de643ae3d2f317b9",
-        "Install.py": "2307e6d59e24272c67e209e7f904a934",
-        "Main.py": "197b7f0977e760d61feb6c127b74d4d7",
-        "OrangeBlox.py": "bc4db5ece0cbdeebf1b2788a233e00a4"
+        "OrangeAPI.py": "dc1ffb62dc481c888c013244a6cecf99",
+        "RobloxFastFlagsInstaller.py": "bd37ef11250091695ab75766d6c72f90",
+        "PyKits.py": "b646c45c4829f057461b66fdb981db9a",
+        "DiscordPresenceHandler.py": "e57bf18964ca1051872cbb1fc2543705",
+        "EfazRobloxBootstrapAPI.py": "53b09f6060371d7e5fda1192213d508d",
+        "Install.py": "10a046a0d33eb93db632064371cfbb70",
+        "Main.py": "a1cb8fc07d7e804d47666c6b41c3ee9b",
+        "OrangeBlox.py": "dd13d8f55c169271f7557be056fba841"
     },
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

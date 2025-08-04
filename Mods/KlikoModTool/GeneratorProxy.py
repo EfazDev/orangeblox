@@ -4,8 +4,8 @@ import os
 import sys
 import json
 
-current_path_location = os.path.dirname(os.path.abspath(__file__))
-spec = importlib.util.spec_from_file_location("run", f"{current_path_location}/mod_generator/run.py")
+cur_path = os.path.dirname(os.path.abspath(__file__))
+spec = importlib.util.spec_from_file_location("run", f"{cur_path}/mod_generator/run.py")
 mod_mode_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod_mode_module)
 installed = json.loads(sys.argv[1])
@@ -20,8 +20,8 @@ try:
     if mod_style_json.get("advanced"): s = mod_mode_module.run(installed, fold_name, mod_style_json.get("advanced"), mod_style_json["angle"], studio=is_studio == True)
     else: s = mod_mode_module.run(installed, fold_name, mod_style_json["colors"], mod_style_json["angle"], studio=is_studio == True)
     if s: 
-        shutil.copytree(s, os.path.join(current_path_location, "../", fold_name), dirs_exist_ok=True)
-        with open(os.path.join(os.path.join(current_path_location, "../", fold_name), "Manifest.json"), "w", encoding="utf-8") as f:
+        shutil.copytree(s, os.path.join(cur_path, "../", fold_name), dirs_exist_ok=True)
+        with open(os.path.join(os.path.join(cur_path, "../", fold_name), "Manifest.json"), "w", encoding="utf-8") as f:
             json.dump({
                 "name": fold_name,
                 "version": "1.0.0",

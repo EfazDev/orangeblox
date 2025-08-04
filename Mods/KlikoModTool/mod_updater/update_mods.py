@@ -33,7 +33,7 @@ class ProgressBar():
     def start(self): pass
     def end(self): pass
 ssl._create_default_https_context = ssl._create_unverified_context
-current_path_location = os.path.dirname(os.path.abspath(__file__))
+cur_path = os.path.dirname(os.path.abspath(__file__))
 progress_bar = ProgressBar()
 channel = None
 def update_mods(check: dict[str, list[Path]], versions: str) -> None:
@@ -41,15 +41,15 @@ def update_mods(check: dict[str, list[Path]], versions: str) -> None:
     vers_channel = versions["channel"]
     global channel
     try:
-        output_dir = os.path.join(current_path_location, "result")
+        output_dir = os.path.join(cur_path, "result")
         progress_bar.start()
         progress_bar.submit("[MOD_UPDATE] Starting Mod Updater!", 0)
         output_directory = Path(output_dir)
         deploy_history: DeployHistory = get_deploy_history(latest_version)
         progress_bar.submit("[MOD_UPDATE] Making Base Directories..", 0)
-        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"),mode=511)
-        if os.path.exists(os.path.join(current_path_location, "result")): shutil.rmtree(os.path.join(current_path_location, "result"), ignore_errors=True)
-        os.makedirs(os.path.join(current_path_location, "result"),mode=511)
+        if not os.path.exists(os.path.join(cur_path, "test")): os.makedirs(os.path.join(cur_path, "test"),mode=511)
+        if os.path.exists(os.path.join(cur_path, "result")): shutil.rmtree(os.path.join(cur_path, "result"), ignore_errors=True)
+        os.makedirs(os.path.join(cur_path, "result"),mode=511)
         channel = vers_channel
         # Each mod will be updated simultaneously
         threads: list[Thread] = []
@@ -65,7 +65,7 @@ def update_mods(check: dict[str, list[Path]], versions: str) -> None:
             threads.append(thread)
         for thread in threads: thread.join()
         progress_bar.submit("[MOD_UPDATE] Cleaning up..", 95)
-        if os.path.exists(os.path.join(current_path_location, "test")): shutil.rmtree(os.path.join(current_path_location, "test"), ignore_errors=True)
+        if os.path.exists(os.path.join(cur_path, "test")): shutil.rmtree(os.path.join(cur_path, "test"), ignore_errors=True)
         if not exception_queue.empty():
             e: Exception = exception_queue.get()
             Logger.error(f"{type(e).__name__}: {e}", prefix="mod_updater.update_mods()")
@@ -86,7 +86,7 @@ def hash_specific_worker_thread(deploy_history: DeployHistory, exception_queue: 
     global channel
     if hash == deploy_history.get_hash(deploy_history.LatestVersion.studio) or not mods: return
     try:
-        temporary_directory: Path = Path(os.path.join(current_path_location, "test"))
+        temporary_directory: Path = Path(os.path.join(cur_path, "test"))
         progress_bar.submit("[MOD_UPDATE] Copying Mods to Testing!", 10)
         Logger.info("Copying mods to temporary directory...", prefix=f"mod_updater.worker_thread({hash})")
         for mod in mods: shutil.copytree(mod, temporary_directory / mod.name, dirs_exist_ok=True)

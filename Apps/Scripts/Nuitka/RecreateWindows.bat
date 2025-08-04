@@ -19,8 +19,8 @@ python -m nuitka ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name=OrangeBlox ^
-    --file-version=2.2.6 ^
-    --product-version=2.2.6 ^
+    --file-version=2.2.7 ^
+    --product-version=2.2.7 ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^
@@ -43,8 +43,8 @@ python -m nuitka ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name="Play Roblox (OrangeBlox)" ^
-    --file-version=2.2.6 ^
-    --product-version=2.2.6 ^
+    --file-version=2.2.7 ^
+    --product-version=2.2.7 ^
     --file-description="Play Roblox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^
@@ -67,8 +67,8 @@ python -m nuitka ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name="Run Studio (OrangeBlox)" ^
-    --file-version=2.2.6 ^
-    --product-version=2.2.6 ^
+    --file-version=2.2.7 ^
+    --product-version=2.2.7 ^
     --file-description="Run Studio" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps" ^

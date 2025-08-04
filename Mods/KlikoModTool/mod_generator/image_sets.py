@@ -212,8 +212,8 @@ def generate_user_selected_files(
         modded_icon.putalpha(a)
         modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int) -> None:
-    current_path_location = os.path.dirname(os.path.abspath(__file__))
-    mod_generator_files = Path(current_path_location) / "modules" / "additional_files"
+    cur_path = os.path.dirname(os.path.abspath(__file__))
+    mod_generator_files = Path(cur_path) / "modules" / "additional_files"
     index_filepath: Path = mod_generator_files / "index.json"
     if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! index.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)

@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.6"}
+    current_version = {"version": "2.2.7"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         else: app_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "MacOS")
     else:
         if main_os == "Windows": app_path = os.path.dirname(sys.argv[0]); macos_path = os.path.dirname(sys.argv[0])
-        else: current_path_location = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(current_path_location).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(current_path_location).split(os.sep)[:-3]), "MacOS")
+        else: cur_path = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "MacOS")
     
     if main_os == "Darwin":
         def loadConfiguration():
@@ -283,11 +283,11 @@ if __name__ == "__main__":
             except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
         elif main_os == "Windows":
             try:
-                try: from plyer.platforms.win.notification import WindowsNotification
+                try: from plyer.platforms.win.notification import instance
                 except Exception as e:
                     pip_class.install(["plyer"])
-                    WindowsNotification = pip_class.importModule("plyer.platforms.win.notification").WindowsNotification
-                WindowsNotification().notify(
+                    instance = pip_class.importModule("plyer.platforms.win.notification").instance
+                instance().notify(
                     title=title,
                     message=message,
                     app_name="OrangeBlox",
