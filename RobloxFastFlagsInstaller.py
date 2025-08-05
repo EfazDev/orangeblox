@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.7
+# v2.2.7a
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.7"
+script_version = "2.2.7a"
 def getLocalAppData():
     import platform
     import os

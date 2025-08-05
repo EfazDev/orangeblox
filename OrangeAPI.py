@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7
+# v2.2.7a
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.7
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.7a
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -28,7 +28,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.2.7"}
+current_version = {"version": "2.2.7a"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -950,7 +950,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.2.7+**
+        **This function is only available in OrangeAPI v2.2.0+**
 
         ```python
         translated_message = OrangeAPI.translate("Hello!") # -> "¡Hola!"
