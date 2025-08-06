@@ -2040,5 +2040,7 @@
  "There was an error on getting friends user info! Error: (*)": "친구 정보를 얻는 데 오류가있었습니다! 오류: (*)",
  "There was an error on getting friends! Error: (*)": "친구를 사귀는 데 오류가있었습니다! 오류: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "베타는 Roblox 설치를 깨뜨릴 수있는 버그가 포함될 수 있습니다!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBlox 베타를 활성화 하시겠습니까? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBlox 베타를 활성화 하시겠습니까? (y/n)",
+ "Install was finished and installed!": "설치가 완료되고 설치되었습니다!",
+ "Install was not finished and an error might have occurred!": "설치가 완료되지 않았고 오류가 발생했을 수 있습니다!"
 }

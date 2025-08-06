@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.7a
+# v2.2.8
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.7a"
+script_version = "2.2.8"
 def getLocalAppData():
     import platform
     import os
@@ -3933,7 +3933,7 @@ class Handler:
             self.unsupportedFunction()
             if submit_status: submit_status.submit("\033ERR[INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
             return {"success": False}
-    def installRobloxBundle(self, studio: bool=False, installPath: str="", appPath: str="", channel: str="LIVE", debug: bool=False, verify: bool=True):
+    def installRobloxBundle(self, studio: bool=False, installPath: str="", appPath: str="", channel: str="LIVE", debug: bool=False, verify: bool=True, lock: bool=True):
         if self.__main_os__ == "Darwin" or self.__main_os__ == "Windows":
             try:
                 client_label = "Studio" if studio == True else "Player"
@@ -3953,128 +3953,177 @@ class Handler:
                         else: starter_url = f"channel/{channel.lower()}/"
                         if self.__main_os__ == "Windows":
                             if submit_status: submit_status.submit("[BUNDLE] Fetching Package Manifest..", 30)
-                            if debug == True: printDebugMessage(f"Fetching Latest Package Manifest from Roblox's servers..")
-                            rbx_manifest_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxPkgManifest.txt'
-                            rbx_hashes_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxManifest.txt'
-                            rbx_man_req = requests.get(rbx_manifest_link)
-                            rbx_hashes_link = requests.get(rbx_hashes_link)
-                            if rbx_man_req.ok:
-                                rbx_man_res = rbx_man_req.text
-                                rbx_lines = rbx_man_res.splitlines()
-                                def is_filename(rbx_line): return not rbx_line.isdigit() and not re.fullmatch(r'[a-fA-F0-9]{32}', rbx_line) and rbx_line != "v0"
-                                marked_install_files = [rbx_line for rbx_line in rbx_lines if is_filename(rbx_line)]
-                                rbx_hashes_res = rbx_hashes_link.text.strip().split("\n")
-                                rbx_hash_dict = {}
-                                for i in range(0, len(rbx_hashes_res), 2):
-                                    file_path = rbx_hashes_res[i].strip()
-                                    file_hash = rbx_hashes_res[i + 1].strip()
-                                    rbx_hash_dict[file_path] = file_hash
-                                if submit_status: submit_status.submit("[BUNDLE] Downloading Packages..", 40)
-                                try:
-                                    def calculate_rbx_hash(file_path):
-                                        try:
-                                            with open(file_path, "rb") as f:
-                                                hasher = hashlib.md5()
-                                                chunk = f.read(8192)
-                                                while chunk: 
-                                                    hasher.update(chunk)
+                            alleged_path = None
+                            if lock == True:
+                                if installPath.endswith("/"): installPathA = installPath[:-1]
+                                elif installPath.endswith("\\"): installPathA = installPath[:-1]
+                                else: installPathA = installPath
+                                alleged_path = os.path.join(installPathA, f"RFFIInstall{client_label}BundleLock")
+                                if os.path.exists(alleged_path):
+                                    if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
+                                    while os.path.exists(alleged_path): time.sleep(0.05)
+                                    if os.path.exists(installPath):
+                                        if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                        if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
+                                        return {"success": True}
+                                    else:
+                                        if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                        if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
+                                        return {"success": False}
+                                else:
+                                    with open(alleged_path, "w") as f: f.write(f"Installing Roblox right now!")
+                            try:
+                                if debug == True: printDebugMessage(f"Fetching Latest Package Manifest from Roblox's servers..")
+                                rbx_manifest_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxPkgManifest.txt'
+                                rbx_hashes_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxManifest.txt'
+                                rbx_man_req = requests.get(rbx_manifest_link)
+                                rbx_hashes_link = requests.get(rbx_hashes_link)
+                                if rbx_man_req.ok:
+                                    rbx_man_res = rbx_man_req.text
+                                    rbx_lines = rbx_man_res.splitlines()
+                                    def is_filename(rbx_line): return not rbx_line.isdigit() and not re.fullmatch(r'[a-fA-F0-9]{32}', rbx_line) and rbx_line != "v0"
+                                    marked_install_files = [rbx_line for rbx_line in rbx_lines if is_filename(rbx_line)]
+                                    rbx_hashes_res = rbx_hashes_link.text.strip().split("\n")
+                                    rbx_hash_dict = {}
+                                    for i in range(0, len(rbx_hashes_res), 2):
+                                        file_path = rbx_hashes_res[i].strip()
+                                        file_hash = rbx_hashes_res[i + 1].strip()
+                                        rbx_hash_dict[file_path] = file_hash
+                                    if submit_status: submit_status.submit("[BUNDLE] Downloading Packages..", 40)
+                                    try:
+                                        def calculate_rbx_hash(file_path):
+                                            try:
+                                                with open(file_path, "rb") as f:
+                                                    hasher = hashlib.md5()
                                                     chunk = f.read(8192)
-                                            return hasher.hexdigest()
-                                        except Exception: return None
-                                    downloaded_zip_files = []
-                                    per_step = 0
-                                    for i in marked_install_files:
-                                        per_step += 1
-                                        if not i == "":
-                                            if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round((per_step/(len(marked_install_files)))*100, 2))
-                                            if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
-                                            requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
-                                            downloaded_zip_files.append(i)
-                                    if verify == True:
+                                                    while chunk: 
+                                                        hasher.update(chunk)
+                                                        chunk = f.read(8192)
+                                                return hasher.hexdigest()
+                                            except Exception: return None
+                                        downloaded_zip_files = []
                                         per_step = 0
-                                        verified = True
-                                        if submit_status: submit_status.submit(f"[BUNDLE] Verifying Packages..", 0)
+                                        for i in marked_install_files:
+                                            per_step += 1
+                                            if not i == "":
+                                                if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round((per_step/(len(marked_install_files)))*100, 2))
+                                                if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
+                                                requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
+                                                downloaded_zip_files.append(i)
+                                        if verify == True:
+                                            per_step = 0
+                                            verified = True
+                                            if submit_status: submit_status.submit(f"[BUNDLE] Verifying Packages..", 0)
+                                            for i in downloaded_zip_files:
+                                                per_step += 1
+                                                if submit_status: submit_status.submit(f"[BUNDLE] Verifying Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
+                                                if debug == True: printDebugMessage(f"Verifying from Roblox's server: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
+                                                if rbx_hash_dict.get(i):
+                                                    hash_value = rbx_hash_dict.get(i)
+                                                    calculated_hash = calculate_rbx_hash(os.path.join(installPath, i))
+                                                    if calculated_hash == None:
+                                                        if debug == True: printDebugMessage(f"Unable to verify file: {i}")
+                                                        continue
+                                                    elif not (calculated_hash == hash_value):
+                                                        if debug == True: printDebugMessage(f"Unable to verify file: {hash_value} => {calculated_hash}")
+                                                        verified = False
+                                                        break
+                                            if verified == False:
+                                                printErrorMessage(f"Unable to install Roblox due to a verification error.")
+                                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                                if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to install Roblox due to a verification error.", 80)
+                                                if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
+                                                return {"success": False}
+                                        per_step = 0
+                                        if submit_status: submit_status.submit(f"[BUNDLE] Installing Packages..", 0)
                                         for i in downloaded_zip_files:
                                             per_step += 1
-                                            if submit_status: submit_status.submit(f"[BUNDLE] Verifying Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
-                                            if debug == True: printDebugMessage(f"Verifying from Roblox's server: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
-                                            if rbx_hash_dict.get(i):
-                                                hash_value = rbx_hash_dict.get(i)
-                                                calculated_hash = calculate_rbx_hash(os.path.join(installPath, i))
-                                                if calculated_hash == None:
-                                                    if debug == True: printDebugMessage(f"Unable to verify file: {i}")
-                                                    continue
-                                                elif not (calculated_hash == hash_value):
-                                                    if debug == True: printDebugMessage(f"Unable to verify file: {hash_value} => {calculated_hash}")
-                                                    verified = False
-                                                    break
-                                        if verified == False:
-                                            printErrorMessage(f"Unable to install Roblox due to a verification error.")
-                                            if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to install Roblox due to a verification error.", 80)
-                                            if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
-                                            return {"success": False}
-                                    per_step = 0
-                                    if submit_status: submit_status.submit(f"[BUNDLE] Installing Packages..", 0)
-                                    for i in downloaded_zip_files:
-                                        per_step += 1
-                                        if submit_status: submit_status.submit(f"[BUNDLE] Installing Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
-                                        if debug == True: printDebugMessage(f"Installing package: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
-                                        if studio == True and self.roblox_studio_bundle_files.get(i): export_destination = self.roblox_studio_bundle_files.get(i)
-                                        elif not (studio == True) and self.roblox_bundle_files.get(i): export_destination = self.roblox_bundle_files.get(i)
-                                        elif i.endswith(".zip"): export_destination = "/"
-                                        makedirs(f'{installPath}{export_destination}')
-                                        if i.endswith(".zip"):
-                                            zip_extract = pip_class.unzipFile(os.path.join(installPath, i), f'{installPath}{export_destination}')
-                                            if zip_extract.returncode == 0:
-                                                os.remove(os.path.join(installPath, i))
-                                                if debug == True: printDebugMessage(f"Successfully exported {i}!")
-                                            elif debug == True: printDebugMessage(f"Unable to export: {i}")
-                                        if i == "WebView2RuntimeInstaller.zip":
-                                            try:
-                                                reg_sets = [
-                                                    (win32con.HKEY_LOCAL_MACHINE, "SOFTWAREWOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0),
-                                                    (win32con.HKEY_CURRENT_USER, "Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0)
-                                                ]
-                                                if pip_class.getIf32BitWindows():
+                                            if submit_status: submit_status.submit(f"[BUNDLE] Installing Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
+                                            if debug == True: printDebugMessage(f"Installing package: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
+                                            if studio == True and self.roblox_studio_bundle_files.get(i): export_destination = self.roblox_studio_bundle_files.get(i)
+                                            elif not (studio == True) and self.roblox_bundle_files.get(i): export_destination = self.roblox_bundle_files.get(i)
+                                            elif i.endswith(".zip"): export_destination = "/"
+                                            makedirs(f'{installPath}{export_destination}')
+                                            if i.endswith(".zip"):
+                                                zip_extract = pip_class.unzipFile(os.path.join(installPath, i), f'{installPath}{export_destination}')
+                                                if zip_extract.returncode == 0:
+                                                    os.remove(os.path.join(installPath, i))
+                                                    if debug == True: printDebugMessage(f"Successfully exported {i}!")
+                                                elif debug == True: printDebugMessage(f"Unable to export: {i}")
+                                            if i == "WebView2RuntimeInstaller.zip":
+                                                try:
                                                     reg_sets = [
-                                                        (win32con.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", win32con.KEY_WOW64_64KEY),
+                                                        (win32con.HKEY_LOCAL_MACHINE, "SOFTWAREWOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0),
                                                         (win32con.HKEY_CURRENT_USER, "Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0)
                                                     ]
-                                                vers = None
-                                                for hive, path, view in reg_sets:
+                                                    if pip_class.getIf32BitWindows():
+                                                        reg_sets = [
+                                                            (win32con.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", win32con.KEY_WOW64_64KEY),
+                                                            (win32con.HKEY_CURRENT_USER, "Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0)
+                                                        ]
+                                                    vers = None
+                                                    for hive, path, view in reg_sets:
+                                                        try:
+                                                            reg_key = win32api.RegOpenKeyEx(hive, path, 0, win32con.KEY_READ | view)
+                                                            version, _ = win32api.RegQueryValueEx(reg_key, "pv")
+                                                            win32api.RegCloseKey(reg_key)
+                                                            vers = version
+                                                        except Exception: pass
+                                                    if vers:
+                                                        if debug == True: printDebugMessage(f"WebView2 (vers: {version}) is currently installed!")
+                                                    else: raise Exception("oranges!!")
+                                                except Exception:
                                                     try:
-                                                        reg_key = win32api.RegOpenKeyEx(hive, path, 0, win32con.KEY_READ | view)
-                                                        version, _ = win32api.RegQueryValueEx(reg_key, "pv")
-                                                        win32api.RegCloseKey(reg_key)
-                                                        vers = version
-                                                    except Exception: pass
-                                                if vers:
-                                                    if debug == True: printDebugMessage(f"WebView2 (vers: {version}) is currently installed!")
-                                                else: raise Exception("oranges!!")
-                                            except Exception:
-                                                try:
-                                                    web2_res = subprocess.run([os.path.join(installPath, "WebView2RuntimeInstaller", "MicrosoftEdgeWebview2Setup.exe"), "/silent", "/install"])
-                                                    if web2_res.returncode == 0: printDebugMessage(f"WebView2 has been installed successfully!")
-                                                    elif web2_res.returncode == 2147747880: printDebugMessage(f"WebView2 is currently installed!")
-                                                    else: printErrorMessage(f"WebView2 has failed to be installed! Code: {web2_res.returncode}")
-                                                except Exception as e: printErrorMessage(f"WebView2 has failed to be installed! Exception: {str(e)}")
-                                    with open(os.path.join(installPath, "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
-                                    with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>')
-                                    if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
-                                    if debug == True: printDebugMessage(f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
-                                    return {"success": True}
-                                except Exception as e:
-                                    if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
-                                    if debug == True: printDebugMessage(f"Unable to install Roblox Bundle: {str(e)}")
+                                                        web2_res = subprocess.run([os.path.join(installPath, "WebView2RuntimeInstaller", "MicrosoftEdgeWebview2Setup.exe"), "/silent", "/install"])
+                                                        if web2_res.returncode == 0: printDebugMessage(f"WebView2 has been installed successfully!")
+                                                        elif web2_res.returncode == 2147747880: printDebugMessage(f"WebView2 is currently installed!")
+                                                        else: printErrorMessage(f"WebView2 has failed to be installed! Code: {web2_res.returncode}")
+                                                    except Exception as e: printErrorMessage(f"WebView2 has failed to be installed! Exception: {str(e)}")
+                                        with open(os.path.join(installPath, "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
+                                        with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>')
+                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                        if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
+                                        if debug == True: printDebugMessage(f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
+                                        return {"success": True}
+                                    except Exception as e:
+                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                        if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
+                                        if debug == True: printDebugMessage(f"Unable to install Roblox Bundle: {str(e)}")
+                                        if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
+                                        return {"success": False}
+                                else:
+                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                    if debug == True: printDebugMessage(f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
+                                    if submit_status: submit_status.submit("\033ERR[BUNDLE] Unable to fetch Roblox manifest file!", 100)
                                     if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                     return {"success": False}
-                            else:
-                                if debug == True: printDebugMessage(f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
-                                if submit_status: submit_status.submit("\033ERR[BUNDLE] Unable to fetch Roblox manifest file!", 100)
+                            except Exception as e:
+                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
+                                if debug == True: printDebugMessage(f"Unable to install Roblox Bundle: {str(e)}")
                                 if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                 return {"success": False}
                         elif self.__main_os__ == "Darwin":
                             zip_name = f'Roblox{"StudioApp" if studio == True else "Player"}.zip'
+                            alleged_path = None
+                            if lock == True:
+                                if installPath.endswith("/"): installPathA = installPath[:-1]
+                                elif installPath.endswith("\\"): installPathA = installPath[:-1]
+                                else: installPathA = installPath
+                                alleged_path = os.path.join(installPathA, f"RFFIInstall{'Studio' if studio == True else 'Player'}BundleLock")
+                                if os.path.exists(alleged_path):
+                                    if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
+                                    while os.path.exists(alleged_path): time.sleep(0.05)
+                                    if os.path.exists(installPath):
+                                        if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                        if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
+                                        return {"success": True}
+                                    else:
+                                        if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                        if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
+                                        return {"success": False}
+                                else:
+                                    with open(alleged_path, "w") as f: f.write(f"Installing Roblox right now!")
                             roblox_player_down = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-{zip_name}'
                             if submit_status: submit_status.submit(f"[BUNDLE] Downloading Roblox App!", 0)
                             if debug == True: printDebugMessage(f"Downloading {client_label} from Roblox's server: {roblox_player_down}")
@@ -4100,21 +4149,25 @@ class Handler:
                                         with open(os.path.join(appPath, "Contents", "MacOS", "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
                                         if debug == True: printDebugMessage(f"Successfully installed Roblox to: {installPath} [Client: {cur_vers.get('client_version')}]")
+                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         return {"success": True}
                                     else:
                                         if debug == True: printDebugMessage(f"Unable to extract {client_label} due to an error!")
                                         if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Failed to extract Roblox {client_label}.", 100)
                                         if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
+                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         return {"success": False}
                                 else:
                                     if debug == True: printDebugMessage(f"Unable to download the Roblox {client_label}.")
                                     if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Failed to download Roblox {client_label}.", 100)
                                     if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
+                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                     return {"success": False}
                             except Exception as e:
                                 if debug == True: printDebugMessage(f"Unable to download and install the Roblox {client_label}."); printDebugMessage(f"Exception: {str(e)}")
                                 if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Failed to download and install Roblox {client_label}.", 100)
                                 if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
+                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                 return {"success": False}
                     else:
                         if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")

@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "มีข้อผิดพลาดในการรับข้อมูลผู้ใช้เพื่อน! ข้อผิดพลาด: (*)",
  "There was an error on getting friends! Error: (*)": "มีข้อผิดพลาดในการหาเพื่อน! ข้อผิดพลาด: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Betas อาจมีข้อบกพร่องที่สามารถทำลายการติดตั้ง Roblox ของคุณได้!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "คุณต้องการเปิดใช้งาน OrangeBlox Beta หรือไม่? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "คุณต้องการเปิดใช้งาน OrangeBlox Beta หรือไม่? (y/n)",
+ "Install was finished and installed!": "ติดตั้งเสร็จแล้วและติดตั้ง!",
+ "Install was not finished and an error might have occurred!": "การติดตั้งยังไม่เสร็จและอาจเกิดข้อผิดพลาด!"
 }

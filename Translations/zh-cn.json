@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "获取朋友用户信息存在错误!错误: (*)",
  "There was an error on getting friends! Error: (*)": "结交朋友有一个错误!错误: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Beta可能包含可能破坏Roblox安装的错误!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "您想启用OrangeBlox Beta吗? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "您想启用OrangeBlox Beta吗? (y/n)",
+ "Install was finished and installed!": "安装完成并安装!",
+ "Install was not finished and an error might have occurred!": "安装尚未完成,并且可能发生了错误!"
 }

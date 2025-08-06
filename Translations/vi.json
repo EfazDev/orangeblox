@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Có một lỗi về việc nhận thông tin người dùng của bạn bè! Lỗi: (*)",
  "There was an error on getting friends! Error: (*)": "Có một lỗi khi kết bạn! Lỗi: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Betas có thể chứa các lỗi có thể phá vỡ cài đặt Roblox của bạn!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Bạn có muốn kích hoạt beta OrangeBlox không? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Bạn có muốn kích hoạt beta OrangeBlox không? (y/n)",
+ "Install was finished and installed!": "Cài đặt đã hoàn thành và cài đặt!",
+ "Install was not finished and an error might have occurred!": "Cài đặt chưa kết thúc và một lỗi có thể đã xảy ra!"
 }

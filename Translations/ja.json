@@ -2040,5 +2040,7 @@
  "There was an error on getting friends user info! Error: (*)": "友達のユーザー情報を取得することにエラーがありました!エラー: (*)",
  "There was an error on getting friends! Error: (*)": "友達を獲得することにエラーがありました!エラー: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "ベータは,Robloxのインストールを破る可能性のあるバグを含めることができます!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBloxベータを有効にしますか? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBloxベータを有効にしますか? (y/n)",
+ "Install was finished and installed!": "インストールが完了し,インストールされました!",
+ "Install was not finished and an error might have occurred!": "インストールが終了しておらず,エラーが発生した可能性があります!"
 }

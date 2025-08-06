@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Υπήρχε ένα σφάλμα για τη λήψη πληροφοριών χρήστη φίλων! Σφάλμα: (*)",
  "There was an error on getting friends! Error: (*)": "Υπήρχε ένα λάθος για να πάρει φίλους! Σφάλμα: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Οι Betas θα μπορούσαν να περιέχουν σφάλματα που θα μπορούσαν να σπάσουν την εγκατάσταση Roblox!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Θα θέλατε να ενεργοποιήσετε το OrangeBlox Beta; (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Θα θέλατε να ενεργοποιήσετε το OrangeBlox Beta; (y/n)",
+ "Install was finished and installed!": "Η εγκατάσταση ολοκληρώθηκε και εγκαταστάθηκε!",
+ "Install was not finished and an error might have occurred!": "Η εγκατάσταση δεν ολοκληρώθηκε και θα μπορούσε να έχει συμβεί σφάλμα!"
 }

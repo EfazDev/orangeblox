@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Была ошибка в получении информации о пользователе друзей! Ошибка: (*)",
  "There was an error on getting friends! Error: (*)": "Была ошибка при получении друзей! Ошибка: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Бета -версии могут содержать ошибки, которые могут сломать вашу установку Roblox!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Хотите включить бета -версию OrangeBlox? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Хотите включить бета -версию OrangeBlox? (y/n)",
+ "Install was finished and installed!": "Установка была закончена и установлена!",
+ "Install was not finished and an error might have occurred!": "Установка не была закончена, и могла произойти ошибка!"
 }

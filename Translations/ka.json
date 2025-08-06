@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Შეცდომა დაუშვა მეგობრების მომხმარებლის ინფორმაციის მიღებაზე! შეცდომა: (*)",
  "There was an error on getting friends! Error: (*)": "Შეცდომა დაუშვა მეგობრების მიღებაზე! შეცდომა: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Ბეტა შეიძლება შეიცავდეს შეცდომებს, რომლებმაც შეიძლება დაარღვიონ თქვენი Roblox ინსტალაცია!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Გსურთ ჩართოთ OrangeBlox Beta? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Გსურთ ჩართოთ OrangeBlox Beta? (y/n)",
+ "Install was finished and installed!": "Ინსტალაცია დასრულდა და დაინსტალირებული!",
+ "Install was not finished and an error might have occurred!": "Ინსტალაცია არ დასრულებულა და შეცდომა შეიძლება მომხდარიყო!"
 }

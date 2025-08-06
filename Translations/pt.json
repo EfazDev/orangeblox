@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Houve um erro em obter informações do usuário dos amigos! Erro: (*)",
  "There was an error on getting friends! Error: (*)": "Houve um erro em conseguir amigos! Erro: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "As betas podem conter bugs que podem quebrar sua instalação do Roblox!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Você gostaria de ativar o OrangeBlox beta? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Você gostaria de ativar o OrangeBlox beta? (y/n)",
+ "Install was finished and installed!": "A instalação foi concluída e instalada!",
+ "Install was not finished and an error might have occurred!": "A instalação não foi concluída e um erro poderia ter ocorrido!"
 }

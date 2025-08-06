@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7a
+# v2.2.7b
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.7a"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.7b"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -119,12 +119,8 @@ if __name__ == "__main__":
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
-        "EFlagDisableCreatingTkinterApp": "EFlagDisableCreatingGUIApp",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
-        "EFlagNumberOfTkinterAppsAllowed": "EFlagNumberOfGUIAppsAllowed",
-        "EFlagDisableCreatingGUIApp": "bool",
         "EFlagEnableGUIOptionMenus": "bool",
-        "EFlagNumberOfGUIAppsAllowed": "int",
         "EFlagAllowFullDebugMode": "bool",
         "EFlagRobloxClientChannel": "str",
         "EFlagDisableRobloxUpdateChecks": "bool",
@@ -2150,29 +2146,9 @@ if __name__ == "__main__":
                     d = handleBasicSetting("EFlagDisableShortcutsInstall", False, False)
                     if d: return d
                 elif main_os == "Darwin":
-                    if not (main_config.get("EFlagDisableCreatingGUIApp") == True):
-                        printMainMessage("Would you like to enable Dock Bar and System Tray options when right clicking the app icon? (y/n)")
-                        d = handleBasicSetting("EFlagEnableGUIOptionMenus", True)
-                        if d: return d
-                        printMainMessage("Would you like to set a limit of GUI apps to be run? (y/n)")
-                        printMainMessage(f'Current Setting: {(main_config.get("EFlagNumberOfGUIAppsAllowed", 1))}')
-                        printYellowMessage("It is useful if you don't want your taskbar to be flooded but it may limit some features.")
-                        d = input("> ")
-                        if isYes(d) == True:
-                            printMainMessage("Enter an amount of GUI apps that can be allowed.")
-                            r = input("> ")
-                            if r.isnumeric():
-                                main_config["EFlagNumberOfGUIAppsAllowed"] = int(r)
-                                printDebugMessage(f"User selected: {int(r)}")
-                            else:
-                                main_config["EFlagNumberOfGUIAppsAllowed"] = 1
-                                printDebugMessage("User selected: 1")
-                        elif isRequestClose(d) == True:
-                            printMainMessage("Closing settings..")
-                            return ts("Settings was closed.")
-                        elif isNo(d) == True:
-                            main_config["EFlagNumberOfGUIAppsAllowed"] = 0
-                            printDebugMessage(f"User selected: 0")
+                    printMainMessage("Would you like to enable Dock Bar and System Tray options when right clicking the app icon? (y/n)")
+                    d = handleBasicSetting("EFlagEnableGUIOptionMenus", True)
+                    if d: return d
             def debugging():
                 printWarnMessage("--- Debugging ---")
                 global main_config

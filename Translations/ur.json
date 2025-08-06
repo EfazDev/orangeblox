@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "دوستوں کے صارف کی معلومات حاصل کرنے میں ایک غلطی تھی! خرابی: (*)",
  "There was an error on getting friends! Error: (*)": "دوست حاصل کرنے میں ایک غلطی تھی! خرابی: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "بیٹا میں کیڑے شامل ہوسکتے ہیں جو آپ کی روبلوکس کی تنصیب کو توڑ سکتے ہیں!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "کیا آپ اورنج بلوکس بیٹا کو قابل بنانا چاہیں گے؟ (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "کیا آپ اورنج بلوکس بیٹا کو قابل بنانا چاہیں گے؟ (y/n)",
+ "Install was finished and installed!": "انسٹال ختم اور انسٹال ہوا!",
+ "Install was not finished and an error might have occurred!": "انسٹال ختم نہیں ہوا تھا اور ہوسکتا ہے کہ کوئی غلطی واقع ہو۔"
 }

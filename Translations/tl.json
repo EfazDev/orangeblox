@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Nagkaroon ng isang error sa pagkuha ng impormasyon ng gumagamit ng mga kaibigan! Error: (*)",
  "There was an error on getting friends! Error: (*)": "Nagkaroon ng isang error sa pagkuha ng mga kaibigan! Error: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Maaaring maglaman ang mga betas ng mga bug na maaaring masira ang iyong pag -install ng Roblox!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "Nais mo bang paganahin ang OrangeBlox beta? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "Nais mo bang paganahin ang OrangeBlox beta? (y/n)",
+ "Install was finished and installed!": "Natapos ang pag -install at naka -install!",
+ "Install was not finished and an error might have occurred!": "Ang pag -install ay hindi natapos at maaaring nangyari ang isang error!"
 }

@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "বন্ধুদের ব্যবহারকারীর তথ্য পাওয়ার ক্ষেত্রে একটি ত্রুটি ছিল! ত্রুটি: (*)",
  "There was an error on getting friends! Error: (*)": "বন্ধু পেতে একটি ত্রুটি ছিল! ত্রুটি: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "বিটাসে এমন বাগ থাকতে পারে যা আপনার রোব্লক্স ইনস্টলেশনটি ভেঙে দিতে পারে!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "আপনি কি অরেঞ্জব্লক্স বিটা সক্ষম করতে চান? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "আপনি কি অরেঞ্জব্লক্স বিটা সক্ষম করতে চান? (y/n)",
+ "Install was finished and installed!": "ইনস্টল শেষ এবং ইনস্টল করা হয়েছিল!",
+ "Install was not finished and an error might have occurred!": "ইনস্টল শেষ হয়নি এবং একটি ত্রুটি হতে পারে!"
 }

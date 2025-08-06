@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "كان هناك خطأ في الحصول على معلومات مستخدم الأصدقاء! خطأ: (*)",
  "There was an error on getting friends! Error: (*)": "كان هناك خطأ في الحصول على الأصدقاء! خطأ: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "يمكن أن تحتوي بيتا على الأخطاء التي يمكن أن تكسر تثبيت Roblox الخاص بك!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "هل ترغب في تمكين بيتا OrangeBlox؟ (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "هل ترغب في تمكين بيتا OrangeBlox؟ (y/n)",
+ "Install was finished and installed!": "تم الانتهاء من التثبيت وتثبيته!",
+ "Install was not finished and an error might have occurred!": "لم ينته التثبيت وربما حدث خطأ!"
 }

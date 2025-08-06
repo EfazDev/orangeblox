@@ -2039,5 +2039,7 @@
  "There was an error on getting friends user info! Error: (*)": "Arkadaşların kullanıcı bilgilerini almak için bir hata vardı! Hata: (*)",
  "There was an error on getting friends! Error: (*)": "Arkadaş edinirken bir hata vardı! Hata: (*)",
  "Betas could contain bugs that could break your Roblox installation!": "Betas, Roblox kurulumunuzu kırabilecek hatalar içerebilir!",
- "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBlox beta'yı etkinleştirmek ister misiniz? (y/n)"
+ "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBlox beta'yı etkinleştirmek ister misiniz? (y/n)",
+ "Install was finished and installed!": "Kurulum bitti ve kuruldu!",
+ "Install was not finished and an error might have occurred!": "Kurulum bitmedi ve bir hata oluşmuş olabilir!"
 }

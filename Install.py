@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7a
+# v2.2.7b
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.7a"}
+    current_version = {"version": "2.2.7b"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -168,12 +168,8 @@ if __name__ == "__main__":
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
-        "EFlagDisableCreatingTkinterApp": "EFlagDisableCreatingGUIApp",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
-        "EFlagNumberOfTkinterAppsAllowed": "EFlagNumberOfGUIAppsAllowed",
-        "EFlagDisableCreatingGUIApp": "bool",
         "EFlagEnableGUIOptionMenus": "bool",
-        "EFlagNumberOfGUIAppsAllowed": "int",
         "EFlagAllowFullDebugMode": "bool",
         "EFlagRobloxClientChannel": "str",
         "EFlagDisableRobloxUpdateChecks": "bool",
