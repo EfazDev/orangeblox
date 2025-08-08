@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.8
+# v2.2.9
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.8"
+script_version = "2.2.9"
 def getLocalAppData():
     import platform
     import os
@@ -3960,18 +3960,22 @@ class Handler:
                                 else: installPathA = installPath
                                 alleged_path = os.path.join(installPathA, f"RFFIInstall{client_label}BundleLock")
                                 if os.path.exists(alleged_path):
-                                    if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
-                                    while os.path.exists(alleged_path): time.sleep(0.05)
-                                    if os.path.exists(installPath):
-                                        if debug == True: printDebugMessage(f"Install was finished and installed!")
-                                        if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
-                                        return {"success": True}
+                                    with open(alleged_path, "r", encoding="utf-8") as f: pid_str = f.read()
+                                    if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                                        if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
+                                        while os.path.exists(alleged_path): time.sleep(0.05)
+                                        if os.path.exists(installPath):
+                                            if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                            if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
+                                            return {"success": True}
+                                        else:
+                                            if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                            if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
+                                            return {"success": False}
                                     else:
-                                        if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
-                                        if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
-                                        return {"success": False}
+                                        with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                                 else:
-                                    with open(alleged_path, "w") as f: f.write(f"Installing Roblox right now!")
+                                    with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                             try:
                                 if debug == True: printDebugMessage(f"Fetching Latest Package Manifest from Roblox's servers..")
                                 rbx_manifest_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxPkgManifest.txt'
