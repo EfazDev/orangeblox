@@ -2042,5 +2042,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "베타는 Roblox 설치를 깨뜨릴 수있는 버그가 포함될 수 있습니다!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBlox 베타를 활성화 하시겠습니까? (y/n)",
  "Install was finished and installed!": "설치가 완료되고 설치되었습니다!",
- "Install was not finished and an error might have occurred!": "설치가 완료되지 않았고 오류가 발생했을 수 있습니다!"
+ "Install was not finished and an error might have occurred!": "설치가 완료되지 않았고 오류가 발생했을 수 있습니다!",
+ "--- Unknown file ---": "--- 알 수없는 파일 ---",
+ "Install Information!": "정보를 설치하십시오!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "이것은 안티 바이러스 소프트웨어로 스캔을 우회하지 않습니다. 운영 체제에서만 운영 할 수 있습니다..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "파일 핸들러가 추가되지 않아 OrangeBlox 파일을 읽을 수 없습니다.."
 }

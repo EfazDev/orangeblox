@@ -4,18 +4,29 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Resources/AppIconRunStudio.icns</key>
+		<key>Resources/AppIcon.icns</key>
 		<data>
 		Bvck4pVGtK92uB1nQIY0+vCEGHg=
+		</data>
+		<key>Resources/RobloxStudioLauncher</key>
+		<data>
+		MatDhbveKim4hU2NGq1OSsixFcI=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Resources/AppIconRunStudio.icns</key>
+		<key>Resources/AppIcon.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			BOfb+HVjE0E4kMidni1UNJOdZ86h/DIpbUnEserG2Xo=
+			</data>
+		</dict>
+		<key>Resources/RobloxStudioLauncher</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Z+bvJraokAIc0vTCyWHg08WilWbJT8IDmpRf070Fjtk=
 			</data>
 		</dict>
 	</dict>

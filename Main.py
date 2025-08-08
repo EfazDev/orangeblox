@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7b
+# v2.2.7c
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.7b"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.7c"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -794,7 +794,7 @@ if __name__ == "__main__":
                 sys.exit(0)
             if main_os == "Windows":
                 pip_class.copyTreeWithMetadata(os.path.join(cur_path, "_internal"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
-                shutil.copy(os.path.join(cur_path, "PlayRoblox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerInstaller.exe"))
+                shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerInstaller.exe"))
                 with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
             elif main_os == "Darwin":
                 if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
@@ -1420,7 +1420,7 @@ if __name__ == "__main__":
                                 file_type, _ = win32api.RegQueryValueEx(key, "")
                                 win32api.RegCloseKey(key)
                                 return file_type
-                            except FileNotFoundError:
+                            except Exception:
                                 return None
                         def set_file_type_reg(extension, exe_path, file_type):
                             try:
@@ -2698,18 +2698,18 @@ if __name__ == "__main__":
                                             printMainMessage("Generating Shortcut App..")
                                             if main_os == "Windows":
                                                 import win32com.client as win32client # type: ignore
-                                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                                     shell = win32client.Dispatch('WScript.Shell')
                                                     if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                                     shortcut = shell.CreateShortcut(shortcut_path)
                                                     shortcut.TargetPath = target_path
-                                                    shortcut.Arguments = f"orangeblox://shortcuts/{key}"
+                                                    if arguments: shortcut.Arguments = arguments
                                                     if working_directory: shortcut.WorkingDirectory = working_directory
                                                     if icon_path: shortcut.IconLocation = icon_path
                                                     shortcut.Save()
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), f"{info['name']}.lnk"))
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"))
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"))     
+                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}")
+                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "BootstrapImages", "AppIconRunStudio.ico"))
+                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "BootstrapImages", "AppIconRunStudio.ico"))     
                                                 printSuccessMessage("Generated Shortcut App!")
                                             elif main_os == "Darwin":
                                                 if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
@@ -3907,8 +3907,9 @@ if __name__ == "__main__":
                     getSettings()
                 elif len(given_args) > 1: # URL Scheme Handler
                     url = given_args[1]
-                    if "efaz-bootstrap" in url or ("orangeblox" in url and not url.endswith(".obx") and not ("obx-launch-studio " in url or "obx-launch-player " in url)):
+                    if ("efaz-bootstrap" in url or url.startswith("obx-launch") or ("orangeblox" in url and not url.endswith(".obx"))) and not (url.startswith("obx-launch-studio") or url.startswith("obx-launch-player")) and not os.path.isfile(url):
                         try:
+                            if "obx-launch" in url: given_args[1] = given_args[1].replace("obx-launch ", "").replace("obx-launch", "")
                             if "continue" in url: continueToRoblox()
                             elif "run-studio" in url: continueToRoblox(studio=True)
                             elif "new" in url: continueToRoblox()
@@ -3982,12 +3983,12 @@ if __name__ == "__main__":
                             printErrorMessage(f"Location Code: 2")
                             if not ("?quick-action=true" in url): handleOptionSelect()
                             else: handleOptionSelect(isRedirectedFromApp=True)
-                    elif "roblox-studio" in url or "obx-launch-studio " in url:
+                    elif "roblox-studio" in url or url.startswith("obx-launch-studio"):
                         printWarnMessage("--- Redirecting to Roblox Studio! ---")
                         printMainMessage("Successfully loaded Roblox Studio URL Scheme! Continuing to Roblox Studio..")
                         run_studio = True
                         if "obx-launch-studio" in url: given_args[1] = given_args[1].replace("obx-launch-studio ", "").replace("obx-launch-studio", "")
-                    elif "roblox" in url or "obx-launch-player " in url:
+                    elif "roblox" in url or url.startswith("obx-launch-player"):
                         printWarnMessage("--- Redirecting to Roblox! ---")
                         if main_config.get("EFlagEnableDuplicationOfClients") == True: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox [Multi-Instance]..")
                         else: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox..")
@@ -4098,6 +4099,11 @@ if __name__ == "__main__":
                                 printErrorMessage(f"Unable to read OrangeBlox file due to the file not existing or unable to be accessed.")
                                 input("> ")
                                 sys.exit(0)
+                        else:
+                            printWarnMessage("--- Unknown file ---")
+                            printErrorMessage(f"Unable to read OrangeBlox file due to the file handler not added.")
+                            input("> ")
+                            sys.exit(0)
                     else:
                         printWarnMessage("--- Unknown URL ---")
                         printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
@@ -4195,7 +4201,7 @@ if __name__ == "__main__":
                     sys.exit(0)
                 if main_os == "Windows":
                     pip_class.copyTreeWithMetadata(os.path.join(cur_path, "_internal"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
-                    shutil.copy(os.path.join(cur_path, "RunStudio.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioInstaller.exe"))
+                    shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioInstaller.exe"))
                     with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
                     if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
@@ -4239,13 +4245,14 @@ if __name__ == "__main__":
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
-                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""
+                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""; current_roblox_version["channel"] = "LIVE"
+                            else: current_roblox_version["channel"] = url_channel
                             if main_os == "Darwin":
                                 res = plist_class.writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxStudioChannel.plist"), {"www.roblox.com": url_channel}, binary=True, ns_mode=True)
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_WRITE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_ALL_ACCESS)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4289,7 +4296,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_WRITE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_ALL_ACCESS)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -4338,13 +4345,14 @@ if __name__ == "__main__":
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
-                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""
+                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""; current_roblox_version["channel"] = "LIVE"
+                            else: current_roblox_version["channel"] = url_channel
                             if main_os == "Darwin":
                                 res = plist_class.writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"), {"www.roblox.com": url_channel}, binary=True, ns_mode=True)
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_WRITE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4400,13 +4408,14 @@ if __name__ == "__main__":
                                 if url_data and url_data.get("channel"): url_channel = url_data.get("channel")
                         if url_channel:
                             printDebugMessage(f"Setting Channel Based on URL: {url_channel}")
-                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""
+                            if url_channel == "production" or url_channel == "LIVE": url_channel = ""; current_roblox_version["channel"] = "LIVE"
+                            else: current_roblox_version["channel"] = url_channel
                             if main_os == "Darwin":
                                 res = plist_class.writePListFile(os.path.join(user_folder, "Library", "Preferences", "com.roblox.RobloxPlayerChannel.plist"), {"www.roblox.com": url_channel}, binary=True, ns_mode=True)
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_WRITE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4450,7 +4459,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_WRITE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -4620,11 +4629,12 @@ if __name__ == "__main__":
                     printMainMessage("Changing App Shortcuts Icon..")
                     if os.path.exists(os.path.join(brand_fold, "AppIcon.ico")): 
                         import win32com.client as win32client # type: ignore
-                        def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                        def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                             shell = win32client.Dispatch('WScript.Shell')
                             if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                             shortcut = shell.CreateShortcut(shortcut_path)
                             shortcut.TargetPath = target_path
+                            if arguments: shortcut.Arguments = arguments
                             if working_directory: shortcut.WorkingDirectory = working_directory
                             if icon_path: shortcut.IconLocation = icon_path
                             shortcut.Save()
@@ -4632,20 +4642,20 @@ if __name__ == "__main__":
                         create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                         create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
                         if run_studio == True:
-                            create_shortcut(os.path.join(cur_path, "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
-                            create_shortcut(os.path.join(cur_path, "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
-                            create_shortcut(os.path.join(cur_path, "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
                         else:
-                            create_shortcut(os.path.join(cur_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
-                            create_shortcut(os.path.join(cur_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
-                            create_shortcut(os.path.join(cur_path, "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
+                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
                         printSuccessMessage("Successfully changed current shortcut icons! It may take a moment for Windows to identify it!")
                 if (run_studio == True and main_config.get("EFlagEnableChangeBrandIcons2") == True) or (run_studio == False and main_config.get("EFlagEnableChangeBrandIcons") == True): printSuccessMessage("Successfully changed brand images!")
                 else: printSuccessMessage("Successfully changed brand images to original!")
                 printMainMessage("Installing Updater Apps..")
                 if main_os == "Windows":
                     pip_class.copyTreeWithMetadata(os.path.join(cur_path, "_internal"), os.path.join(content_folder_paths[main_os], "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
-                    shutil.copy(os.path.join(cur_path, "RunStudio.exe" if run_studio == True else "PlayRoblox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe"))
+                    shutil.copy(os.path.join(cur_path, "OrangeBlox.exe" if run_studio == True else "OrangeBlox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe" if run_studio == True else "RobloxPlayerInstaller.exe"))
                     with open(os.path.join(content_folder_paths[main_os], "RobloxStudioBetaPlayRobloxRestart.txt" if run_studio == True else "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
                     backspacing = os.path.join(cur_path, "../", "../", "../")
@@ -4896,11 +4906,12 @@ if __name__ == "__main__":
                         try:
                             printMainMessage("Setting up shortcuts..")
                             import win32com.client as win32client # type: ignore
-                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                 shell = win32client.Dispatch('WScript.Shell')
                                 if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                 shortcut = shell.CreateShortcut(shortcut_path)
                                 shortcut.TargetPath = target_path
+                                if arguments: shortcut.Arguments = arguments
                                 if working_directory: shortcut.WorkingDirectory = working_directory
                                 if icon_path: shortcut.IconLocation = icon_path
                                 shortcut.Save()
@@ -6526,8 +6537,8 @@ if __name__ == "__main__":
                 printDebugMessage(f"Channel Set Result: {res}")
             elif main_os == "Windows":
                 reg = r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel" if run_studio == True else r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel"
-                try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, reg, 0, win32con.KEY_SET_VALUE)
-                except FileNotFoundError: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, 0, win32con.KEY_WRITE)
+                try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, reg)
+                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, win32con.KEY_ALL_ACCESS)
                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                 win32api.RegCloseKey(registry_key)
 

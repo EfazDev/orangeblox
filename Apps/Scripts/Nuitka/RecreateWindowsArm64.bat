@@ -83,29 +83,15 @@ mkdir OrangeBloxWindows\arm64
 if exist Apps\OrangeBlox.exe (
     move /Y Apps\OrangeBlox.exe OrangeBloxWindows\arm64\OrangeBlox.exe
 )
-if exist Apps\OrangePlayRoblox.exe (
-    move /Y Apps\OrangePlayRoblox.exe OrangeBloxWindows\arm64\PlayRoblox.exe
-)
-if exist Apps\OrangeRunStudio.exe (
-    move /Y Apps\OrangeRunStudio.exe OrangeBloxWindows\arm64\RunStudio.exe
-)
-if "%1"=="signexe" (
-    if exist OrangeBloxWindows\arm64\OrangeBlox.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\arm64\OrangeBlox.exe"
-    )
-    if exist OrangeBloxWindows\arm64\PlayRoblox.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\arm64\PlayRoblox.exe"
-    )
-    if exist OrangeBloxWindows\arm64\RunStudio.exe (
-        signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\arm64\RunStudio.exe"
-    )
+if exist OrangeBloxWindows\arm64\OrangeBlox.exe (
+    signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\arm64\OrangeBlox.exe"
 )
 powershell Compress-Archive -Path OrangeBloxWindows\* -Update -DestinationPath Apps\OrangeBloxWindows.zip
 rmdir /S /Q OrangeBloxWindows
 
 rem Cleaning Up
 powershell -c "Write-Host 'Rebuild OrangeBlox: Cleaning Up..' -ForegroundColor Green"
-rmdir /S /Q __pycache__ Apps\OrangeBlox build Apps\OrangeBlox.build Apps\OrangeBlox.dist Apps\OrangeBlox.onefile-build Apps\OrangePlayRoblox.build Apps\OrangePlayRoblox.dist Apps\OrangePlayRoblox.onefile-build Apps\OrangeRunStudio.build Apps\OrangeRunStudio.dist Apps\OrangeRunStudio.onefile-build > NUL 2>&1
+rmdir /S /Q __pycache__ Apps\OrangeBlox build Apps\OrangeBlox.build Apps\OrangeBlox.dist Apps\OrangeBlox.onefile-build > NUL 2>&1
 
 powershell -c "Write-Host 'Rebuild OrangeBlox: Successfully rebuilt OrangeBlox!' -ForegroundColor Green"
 powershell -c "Write-Host 'Rebuild OrangeBlox: Check the Apps folder for the generated ZIP file! File: Apps\OrangeBloxWindows.zip' -ForegroundColor Green"

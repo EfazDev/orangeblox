@@ -11,11 +11,11 @@ clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -arch arm64 -o "./Apps/Oran
 strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -arch arm64 -o "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm
+cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"
 strip -S "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -arch arm64 -o "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm
+cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"
 strip -S "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" 2>/dev/null \;
 
 # Sign Package

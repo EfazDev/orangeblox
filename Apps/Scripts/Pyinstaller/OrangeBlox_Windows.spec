@@ -11,7 +11,7 @@ except: print("Disabled Visual Studio Code Mode")
 block_cipher = None
 
 a = Analysis(
-    ["../OrangeBlox.py", "../OrangePlayRoblox.py", "../OrangeRunStudio.py", "../../../PyKits.py"],
+    ["../OrangeBlox.py", "../../../PyKits.py"],
     pathex=[],
     binaries=collect_dynamic_libs("ssl"),
     datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
@@ -44,36 +44,8 @@ main_exe = EXE(
     version="../Resources/Version.txt",
     strip=True
 )
-play_roblox_exe = EXE(
-    pyz,
-    [a.scripts[2]],
-    exclude_binaries=True,
-    name="PlayRoblox",
-    debug=False,
-    bootloader_ignore_signals=False,
-    console=True,
-    upx=True,
-    icon="../../../BootstrapImages/AppIconPlayRoblox.ico",
-    version="../Resources/VersionPlay.txt",
-    strip=True
-)
-run_studio_exe = EXE(
-    pyz,
-    [a.scripts[3]],
-    exclude_binaries=True,
-    name="RunStudio",
-    debug=False,
-    bootloader_ignore_signals=False,
-    console=True,
-    upx=True,
-    icon="../../../BootstrapImages/AppIconRunStudio.ico",
-    version="../Resources/VersionStudio.txt",
-    strip=True
-)
 combined_coll = COLLECT(
     main_exe,
-    play_roblox_exe,
-    run_studio_exe,
     a.binaries,
     a.zipfiles,
     a.datas,

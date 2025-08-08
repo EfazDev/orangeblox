@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "يمكن أن تحتوي بيتا على الأخطاء التي يمكن أن تكسر تثبيت Roblox الخاص بك!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "هل ترغب في تمكين بيتا OrangeBlox؟ (y/n)",
  "Install was finished and installed!": "تم الانتهاء من التثبيت وتثبيته!",
- "Install was not finished and an error might have occurred!": "لم ينته التثبيت وربما حدث خطأ!"
+ "Install was not finished and an error might have occurred!": "لم ينته التثبيت وربما حدث خطأ!",
+ "--- Unknown file ---": "--- ملف غير معروف ---",
+ "Install Information!": "تثبيت المعلومات!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "هذا لن يتجاوز عمليات المسح بواسطة برنامج مكافحة الفيروسات. سوف يسمح فقط بتشغيل نظام التشغيل..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "غير قادر على قراءة ملف OrangeBlox بسبب عدم إضافة معالج الملفات.."
 }

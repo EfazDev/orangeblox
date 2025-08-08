@@ -2042,5 +2042,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "ベータは,Robloxのインストールを破る可能性のあるバグを含めることができます!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "OrangeBloxベータを有効にしますか? (y/n)",
  "Install was finished and installed!": "インストールが完了し,インストールされました!",
- "Install was not finished and an error might have occurred!": "インストールが終了しておらず,エラーが発生した可能性があります!"
+ "Install was not finished and an error might have occurred!": "インストールが終了しておらず,エラーが発生した可能性があります!",
+ "--- Unknown file ---": "--- 不明なファイル ---",
+ "Install Information!": "情報をインストールしてください!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "これは,アンチウイルスソフトウェアによるスキャンをバイパスしません.オペレーティングシステムでのみ実行できます..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "ファイルハンドラーが追加されていないため,OrangeBloxファイルを読み取ることができません.."
 }

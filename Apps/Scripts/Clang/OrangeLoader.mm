@@ -3,6 +3,8 @@
 #include <string>
 #include <filesystem>
 #include <mach-o/dyld.h>
+#include <cstdlib>
+#include <sstream>
 #import <Cocoa/Cocoa.h>
 
 void printMainMessage(const std::string& mes) {
@@ -22,45 +24,57 @@ void printWarnMessage(const std::string& mes) {
 }
 
 bool isAppRunningBundled() {
-    #ifdef _WIN32
-        char executablePath[MAX_PATH];
-        GetModuleFileNameA(NULL, executablePath, MAX_PATH);
-        std::string path = std::filesystem::path(executablePath).parent_path().string();
-        return path.find("AppData\\Local") != std::string::npos;
-    #elif __APPLE__
+    char exePath[1024];
+    uint32_t size = sizeof(exePath);
+    if (_NSGetExecutablePath(exePath, &size) == 0) {
+        std::string path = std::filesystem::path(exePath).string();
+        return path.find(".app") != std::string::npos;
+    }
+    return false;
+}
+
+std::string getMainAppPath() {
+    std::string appPath;
+    if (isAppRunningBundled()) {
         char exePath[1024];
         uint32_t size = sizeof(exePath);
         if (_NSGetExecutablePath(exePath, &size) == 0) {
-            std::string path = std::filesystem::path(exePath).string();
-            return path.find(".app") != std::string::npos;
+            appPath = std::filesystem::path(exePath).parent_path().string();
+        } else {
+            printErrorMessage("Buffer size too small for executable path");
         }
-        return false;
-    #else
-        return false;
-    #endif
+        appPath = std::filesystem::path(appPath).parent_path().string();
+    }
+    return appPath;
 }
 
 std::string getAppPath() {
-    std::string appPath;
-    #ifdef _WIN32
-        if (isAppRunningBundled()) {
-            char executablePath[MAX_PATH];
-            GetModuleFileNameA(NULL, executablePath, MAX_PATH);
-            appPath = std::filesystem::path(executablePath).parent_path().string();
-        }
-    #else
-        if (isAppRunningBundled()) {
-            char exePath[1024];
-            uint32_t size = sizeof(exePath);
-            if (_NSGetExecutablePath(exePath, &size) == 0) {
-                appPath = std::filesystem::path(exePath).parent_path().string();
-            } else {
-                printErrorMessage("Buffer size too small for executable path");
+    std::string appPath = getMainAppPath();
+    if (isAppRunningBundled()) {
+        std::string locatedFile = appPath + "/Resources/LocatedAppDirectory";
+        if (std::filesystem::exists(locatedFile) && !(std::filesystem::exists(appPath + "/Resources/Main.py"))) {
+            std::ifstream file(locatedFile);
+            if (file.is_open()) {
+                std::string newAppPath;
+                std::getline(file, newAppPath);
+                file.close();
+                appPath = newAppPath;
             }
-            appPath = std::filesystem::path(appPath).parent_path().string();
         }
-    #endif
+    }
     return appPath;
+}
+
+std::string getNameTxt() {
+    std::string nameTxt = "";
+    std::string appPath = getMainAppPath();
+    if (std::filesystem::exists(appPath + "/Resources/RobloxStudioLauncher")) {
+        return "obx-launch-studio";
+    } else if (std::filesystem::exists(appPath + "/Resources/RobloxPlayerLauncher")) {
+        return "obx-launch-player";
+    } else {
+        return "";
+    }
 }
 
 int launchApp() {
@@ -132,6 +146,39 @@ int main(int argc, char* argv[]) {
     printWarnMessage("v" + current_version);
     printWarnMessage("-----------");
     printMainMessage("Determining System OS...");
+    std::string app_path = getAppPath();
+    std::string url_scheme_path = app_path + "/Resources/URLSchemeExchange";
+    std::string url_scheme;
+    if (argc > 1) {
+        std::ostringstream oss;
+        for (int i = 1; i < argc; ++i) {
+            if (i > 1) oss << ' ';
+            oss << argv[i];
+        }
+        url_scheme = getNameTxt() + " " + oss.str();
+    } else {
+        url_scheme = getNameTxt();
+        std::string shortcut_app_path = getMainAppPath();
+        std::string alternative_link_path = shortcut_app_path + "/Resources/AlternativeLink";
+        if (std::filesystem::exists(alternative_link_path)) {
+            std::ifstream file(alternative_link_path);
+            if (file.is_open()) {
+                std::string alternative_link;
+                std::getline(file, alternative_link);
+                file.close();
+                url_scheme = alternative_link;
+            }
+        }
+    }
+
+    if (!(url_scheme == "")) {
+        std::ofstream file(url_scheme_path);
+        if (file.is_open()) {
+            file << url_scheme;
+            file.close();
+            printMainMessage("Created URL Exchange File: " + url_scheme_path);
+        }
+    }
     @autoreleasepool {
         NSApplication *app = [NSApplication sharedApplication];
         AppDelegate *delegate = [[AppDelegate alloc] init];

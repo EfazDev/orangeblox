@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "Бета -версии могут содержать ошибки, которые могут сломать вашу установку Roblox!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "Хотите включить бета -версию OrangeBlox? (y/n)",
  "Install was finished and installed!": "Установка была закончена и установлена!",
- "Install was not finished and an error might have occurred!": "Установка не была закончена, и могла произойти ошибка!"
+ "Install was not finished and an error might have occurred!": "Установка не была закончена, и могла произойти ошибка!",
+ "--- Unknown file ---": "--- Неизвестный файл ---",
+ "Install Information!": "Установите информацию!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Это не будет обходить сканирование вашим антивирусным программным обеспечением. Это позволит работать только с помощью операционной системы..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "Невозможно прочитать файл OrangeBlox из -за того, что обработчик файла не добавлен.."
 }

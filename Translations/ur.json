@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "بیٹا میں کیڑے شامل ہوسکتے ہیں جو آپ کی روبلوکس کی تنصیب کو توڑ سکتے ہیں!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "کیا آپ اورنج بلوکس بیٹا کو قابل بنانا چاہیں گے؟ (y/n)",
  "Install was finished and installed!": "انسٹال ختم اور انسٹال ہوا!",
- "Install was not finished and an error might have occurred!": "انسٹال ختم نہیں ہوا تھا اور ہوسکتا ہے کہ کوئی غلطی واقع ہو۔"
+ "Install was not finished and an error might have occurred!": "انسٹال ختم نہیں ہوا تھا اور ہوسکتا ہے کہ کوئی غلطی واقع ہو۔",
+ "--- Unknown file ---": "--- نامعلوم فائل ---",
+ "Install Information!": "معلومات انسٹال کریں!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "یہ آپ کے اینٹی وائرس سافٹ ویئر کے ذریعہ اسکین کو نظرانداز نہیں کرے گا۔ یہ صرف آپریٹنگ سسٹم کے ذریعہ چلانے کی اجازت دے گا۔",
+ "Unable to read OrangeBlox file due to the file handler not added.": "فائل ہینڈلر کو شامل نہ کرنے کی وجہ سے اورنج بلوکس فائل کو پڑھنے سے قاصر ہے۔"
 }

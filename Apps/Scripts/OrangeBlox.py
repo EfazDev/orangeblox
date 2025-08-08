@@ -204,6 +204,16 @@ if __name__ == "__main__":
         if main_os == "Windows": app_path = os.path.dirname(sys.argv[0]); macos_path = os.path.dirname(sys.argv[0])
         else: cur_path = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "MacOS")
     
+    def getIfCertainPlayer():
+        if main_os == "Windows":
+            if os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")): 
+                with open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "studio"
+            elif os.path.exists(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt")): 
+                with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
+            else: return None, None
+        else: return None, None
+    certain_player, certain_type = getIfCertainPlayer()
+    if certain_player: app_path = certain_player
     if main_os == "Darwin":
         def loadConfiguration():
             global main_config
@@ -1465,13 +1475,26 @@ if __name__ == "__main__":
                 threading.Thread(target=cool, daemon=True).start()
 
             if len(args) > 1:
-                filtered_args = args[1]
-                if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
-                    printMainMessage(f"Creating URL Exchange file..")
+                if certain_player: 
+                    filtered_args = f"obx-launch-{certain_type} " + " ".join(args)
                     if os.path.exists(app_path):
                         with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                     else:
                         with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                else:
+                    filtered_args = args[1]
+                    if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
+                        printMainMessage(f"Creating URL Exchange file..")
+                        if os.path.exists(app_path):
+                            with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                        else:
+                            with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+            elif certain_player:
+                filtered_args = f"obx-launch-{certain_type}"
+                if os.path.exists(app_path):
+                    with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                else:
+                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
             if pip_class.getIfRunningWindowsAdmin():
                 printErrorMessage("Please run OrangeBlox under user permissions instead of running administrator!")

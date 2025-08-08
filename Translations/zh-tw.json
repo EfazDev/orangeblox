@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "Beta可能包含可能破壞Roblox安裝的錯誤!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "您想啟用OrangeBlox Beta嗎? (y/n)",
  "Install was finished and installed!": "安裝完成並安裝!",
- "Install was not finished and an error might have occurred!": "安裝尚未完成,並且可能發生了錯誤!"
+ "Install was not finished and an error might have occurred!": "安裝尚未完成,並且可能發生了錯誤!",
+ "--- Unknown file ---": "--- 未知文件 ---",
+ "Install Information!": "安裝信息!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "這不會繞過您的反病毒軟件掃描.它將僅允許操作系統運行..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "由於未添加文件處理程序,無法讀取橙色文件.."
 }

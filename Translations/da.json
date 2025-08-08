@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "Betas kunne indeholde bugs, der kunne bryde din Roblox -installation!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "Vil du aktivere OrangeBlox Beta? (y/n)",
  "Install was finished and installed!": "Installation blev færdig og installeret!",
- "Install was not finished and an error might have occurred!": "Installation var ikke færdig, og en fejl kunne have fundet sted!"
+ "Install was not finished and an error might have occurred!": "Installation var ikke færdig, og en fejl kunne have fundet sted!",
+ "--- Unknown file ---": "--- Ukendt fil ---",
+ "Install Information!": "Installer information!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Dette vil ikke omgå scanninger af din antivirus-software. Det tillader kun at køre efter operativsystemet..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "Kan ikke læse OrangeBlox -fil på grund af filhandleren ikke tilføjet.."
 }

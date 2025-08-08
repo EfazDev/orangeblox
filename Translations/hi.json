@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "बेटास में कीड़े हो सकते हैं जो आपके Roblox स्थापना को तोड़ सकते हैं!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "क्या आप ऑरेंजब्लॉक्स बीटा को सक्षम करना चाहेंगे? (y/n)",
  "Install was finished and installed!": "स्थापित किया गया था और स्थापित किया गया था!",
- "Install was not finished and an error might have occurred!": "इंस्टॉल समाप्त नहीं हुआ था और एक त्रुटि हो सकती है!"
+ "Install was not finished and an error might have occurred!": "इंस्टॉल समाप्त नहीं हुआ था और एक त्रुटि हो सकती है!",
+ "--- Unknown file ---": "--- अज्ञात फ़ाइल ---",
+ "Install Information!": "जानकारी स्थापित करें!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "यह आपके एंटी-वायरस सॉफ्टवेयर द्वारा स्कैन को बायपास नहीं करेगा। यह केवल ऑपरेटिंग सिस्टम द्वारा चलने की अनुमति देगा।",
+ "Unable to read OrangeBlox file due to the file handler not added.": "फाइल हैंडलर के कारण ऑरेंजब्लॉक्स फ़ाइल को पढ़ने में असमर्थ नहीं जोड़ा गया।"
 }

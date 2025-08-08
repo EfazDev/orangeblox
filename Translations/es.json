@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "¡Las betas podrían contener errores que podrían romper su instalación de Roblox!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "¿Le gustaría habilitar OrangeBlox Beta? (y/n)",
  "Install was finished and installed!": "¡La instalación fue terminada e instalada!",
- "Install was not finished and an error might have occurred!": "¡La instalación no estaba terminada y podría haber ocurrido un error!"
+ "Install was not finished and an error might have occurred!": "¡La instalación no estaba terminada y podría haber ocurrido un error!",
+ "--- Unknown file ---": "--- Archivo desconocido ---",
+ "Install Information!": "Instalar información!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Esto no omitirá los escaneos por su software antivirus. Solo permitirá la ejecución por el sistema operativo..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "No se puede leer el archivo OrangeBlox debido al controlador de archivos no agregado.."
 }

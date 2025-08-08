@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "বিটাসে এমন বাগ থাকতে পারে যা আপনার রোব্লক্স ইনস্টলেশনটি ভেঙে দিতে পারে!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "আপনি কি অরেঞ্জব্লক্স বিটা সক্ষম করতে চান? (y/n)",
  "Install was finished and installed!": "ইনস্টল শেষ এবং ইনস্টল করা হয়েছিল!",
- "Install was not finished and an error might have occurred!": "ইনস্টল শেষ হয়নি এবং একটি ত্রুটি হতে পারে!"
+ "Install was not finished and an error might have occurred!": "ইনস্টল শেষ হয়নি এবং একটি ত্রুটি হতে পারে!",
+ "--- Unknown file ---": "--- অজানা ফাইল ---",
+ "Install Information!": "তথ্য ইনস্টল করুন!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "এটি আপনার অ্যান্টি-ভাইরাস সফ্টওয়্যার দ্বারা স্ক্যানগুলি বাইপাস করবে না। এটি কেবল অপারেটিং সিস্টেম দ্বারা চলমান অনুমতি দেবে।",
+ "Unable to read OrangeBlox file due to the file handler not added.": "ফাইল হ্যান্ডলার যুক্ত না হওয়ার কারণে অরেঞ্জব্লক্স ফাইলটি পড়তে অক্ষম।"
 }

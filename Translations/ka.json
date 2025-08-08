@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "Ბეტა შეიძლება შეიცავდეს შეცდომებს, რომლებმაც შეიძლება დაარღვიონ თქვენი Roblox ინსტალაცია!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "Გსურთ ჩართოთ OrangeBlox Beta? (y/n)",
  "Install was finished and installed!": "Ინსტალაცია დასრულდა და დაინსტალირებული!",
- "Install was not finished and an error might have occurred!": "Ინსტალაცია არ დასრულებულა და შეცდომა შეიძლება მომხდარიყო!"
+ "Install was not finished and an error might have occurred!": "Ინსტალაცია არ დასრულებულა და შეცდომა შეიძლება მომხდარიყო!",
+ "--- Unknown file ---": "--- Უცნობი ფაილი ---",
+ "Install Information!": "Დააინსტალირეთ ინფორმაცია!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Ეს არ გვერდის ავლით სკანირებას თქვენი ანტივირუსული პროგრამით. ეს საშუალებას მისცემს მხოლოდ ოპერაციული სისტემის მუშაობას..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "Ვერ წაიკითხეთ OrangeBlox ფაილი იმის გამო, რომ ფაილის გამტარებელი არ დაემატა.."
 }

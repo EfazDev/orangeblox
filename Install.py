@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7b
+# v2.2.7c
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.7b"}
+    current_version = {"version": "2.2.7c"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -98,7 +98,6 @@ if __name__ == "__main__":
     rebuild_from_source = None
     use_sudo_for_codesign = False
     use_installation_syncing = True
-    disable_download_for_app = True
     remove_unneeded_messages = True
     rebuild_from_source_clang = False
     disabled_shortcuts_installation = None
@@ -682,7 +681,6 @@ if __name__ == "__main__":
         global rebuild_from_source_clang
         global disable_remove_other_operating_systems
         global disabled_shortcuts_installation
-        global disable_download_for_app
         global use_installation_syncing
         global rebuild_target
         started_build_time = datetime.datetime.now().timestamp()
@@ -872,10 +870,11 @@ if __name__ == "__main__":
                             
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “OrangeBlox.app” is free of malware that may harm your Mac or compromise your privacy.
-                        if disable_download_for_app == True:
-                            printMainMessage("Reducing Download Safety Measures..")
-                            subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][1])], stdout=subprocess.DEVNULL)
-                            
+                        printMainMessage("Reducing Download Safety Measures..")
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][1])], stdout=subprocess.DEVNULL)
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][2])], stdout=subprocess.DEVNULL)
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][3])], stdout=subprocess.DEVNULL)
+                        
                         # Remove Apps Folder in /Contents/Resources/
                         printMainMessage("Cleaning App..")
                         if os.path.exists(os.path.join(stored_main_app[main_os][0], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(stored_main_app[main_os][0], "Contents", "Resources", "Apps"))
@@ -964,7 +963,7 @@ if __name__ == "__main__":
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Pyinstaller Rebuild for {target_arch}..")
                             pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa, "signexe"], cwd=cur_path)
+                            rebuild_status = subprocess.run([pa], cwd=cur_path)
                             os.remove(pa)
                             if rebuild_status.returncode == 0: printSuccessMessage("Pyinstaller Rebuild Success!")
                             else:
@@ -980,7 +979,7 @@ if __name__ == "__main__":
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Nuitka Rebuild for {target_arch}..")
                             pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Nuitka", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa, "signexe"], cwd=cur_path)
+                            rebuild_status = subprocess.run([pa], cwd=cur_path)
                             os.remove(pa)
                             if rebuild_status.returncode == 0: printSuccessMessage("Nuitka Rebuild success!")
                             else:
@@ -1043,42 +1042,29 @@ if __name__ == "__main__":
                     try:
                         if pip_class.getIf32BitWindows() or use_x86_windows == True:
                             shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                            shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                            shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
                             pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                         else:
                             if pip_class.getIfArmWindows() and os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe")):
                                 shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "arm64", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "arm64", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
                                 pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                             elif os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe")):
                                 shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "x64", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "x64", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
                                 pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                             else:
                                 printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
                                 a = input("> ")
                                 if not (a.lower() == "n"):
                                     shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                    shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "x86", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                    shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows",  "x86", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
                                     pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                                 else: sys.exit(0)
                     except Exception as e: printErrorMessage(f"There was an issue installing the EXE file: {str(e)}")
 
                     # Reduce Download Safety Measures
                     # This can prevent messages from Microsoft Smartscreen
-                    if disable_download_for_app == True:
-                        printMainMessage("Reducing Download Safety Measures..")
-                        unblock_1 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[main_os][1]}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_1.returncode == 0): printErrorMessage(f"Unable to unblock main bootstrap app: {unblock_1.returncode}")
-                        unblock_2 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_2.returncode == 0): printErrorMessage(f"Unable to unblock Play Roblox app: {unblock_2.returncode}")
-                        unblock_3 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[main_os][2], "RunStudio.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_3.returncode == 0): printErrorMessage(f"Unable to unblock Run Studio app: {unblock_3.returncode}")
-
+                    printMainMessage("Reducing Download Safety Measures..")
+                    unblock_1 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[main_os][1]}"'], shell=True, stdout=subprocess.DEVNULL)
+                    if not (unblock_1.returncode == 0): printErrorMessage(f"Unable to unblock main bootstrap app: {unblock_1.returncode}")
+                    
                     # Setup URL Schemes
                     if instant_install == False:
                         if not (disabled_url_scheme_installation == True):
@@ -1102,7 +1088,7 @@ if __name__ == "__main__":
                                     file_type, _ = win32api.RegQueryValueEx(key, "")
                                     win32api.RegCloseKey(key)
                                     return file_type
-                                except FileNotFoundError: return None
+                                except Exception: return None
                             def set_file_type_reg(extension, exe_path, file_type):
                                 try:
                                     extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1149,7 +1135,7 @@ if __name__ == "__main__":
                                     file_type, _ = win32api.RegQueryValueEx(key, "")
                                     win32api.RegCloseKey(key)
                                     return file_type
-                                except FileNotFoundError: return None
+                                except Exception: return None
                             def set_file_type_reg(extension, exe_path, file_type):
                                 try:
                                     extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1179,22 +1165,23 @@ if __name__ == "__main__":
                     if not (disabled_shortcuts_installation == True or main_config.get("EFlagDisableShortcutsInstall") == True):
                         printMainMessage("Setting up shortcuts..")
                         try:
-                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                 shell = win32client.Dispatch('WScript.Shell')
                                 if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                 shortcut = shell.CreateShortcut(shortcut_path)
                                 shortcut.TargetPath = target_path
+                                if arguments: shortcut.Arguments = arguments
                                 if working_directory: shortcut.WorkingDirectory = working_directory
                                 if icon_path: shortcut.IconLocation = icon_path
                                 shortcut.Save()
                             create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                             create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
                         except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
                     # Copy App Resources
@@ -1286,9 +1273,9 @@ if __name__ == "__main__":
                             app_key = r"Software\EfazRobloxBootstrap"
                             uninstall_key = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, app_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{app_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{app_key}" not found.')
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, uninstall_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
                             try:
                                 def remove_path(pat):
                                     if os.path.exists(pat): os.remove(pat)
@@ -1445,10 +1432,10 @@ if __name__ == "__main__":
                     printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
                     a = input("> ")
                     if isYes(a) == False: disabled_shortcuts_installation = True
+                printMainMessage("Install Information!")
                 printMainMessage("In order to allow running for the first time, we're gonna reduce download securities for the app bundle. [This won't affect other apps or downloaded files]")
-                printMainMessage("This will not bypass scans by your anti-virus software. It will only allow running by the operating system. (y/n)")
+                printMainMessage("This will not bypass scans by your anti-virus software. It will only allow running by the operating system.")
                 a = input("> ")
-                if isYes(a) == False: disable_download_for_app = False
                 printMainMessage("Would you like to allow syncing configurations and mods from this folder to the app? (Only 1 installation folder can be used) (y/n)")
                 a = input("> ")
                 if isYes(a) == False: use_installation_syncing = False
@@ -1599,7 +1586,7 @@ if __name__ == "__main__":
                                         file_type, _ = win32api.RegQueryValueEx(key, "")
                                         win32api.RegCloseKey(key)
                                         return file_type
-                                    except FileNotFoundError: return None
+                                    except Exception: return None
                                 def set_file_type_reg(extension, exe_path, file_type):
                                     try:
                                         extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1637,11 +1624,12 @@ if __name__ == "__main__":
                             try:
                                 def remove_path(pat):
                                     if os.path.exists(pat):  os.remove(pat)
-                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                     shell = win32client.Dispatch('WScript.Shell')
                                     if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                     shortcut = shell.CreateShortcut(shortcut_path)
                                     shortcut.TargetPath = target_path
+                                    if arguments: shortcut.Arguments = arguments
                                     if working_directory: shortcut.WorkingDirectory = working_directory
                                     if icon_path: shortcut.IconLocation = icon_path
                                     shortcut.Save()
@@ -1666,9 +1654,9 @@ if __name__ == "__main__":
                             app_key = r"Software\OrangeBlox"
                             uninstall_key = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, app_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{app_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{app_key}" not found.')
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, uninstall_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
 
                             # Remove App
                             if os.path.exists(stored_main_app[main_os][0]):

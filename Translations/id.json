@@ -2041,5 +2041,9 @@
  "Betas could contain bugs that could break your Roblox installation!": "Betas bisa berisi bug yang dapat merusak instalasi Roblox Anda!",
  "Would you like to enable OrangeBlox Beta? (y/n)": "Apakah Anda ingin mengaktifkan beta OrangeBlox? (y/t)",
  "Install was finished and installed!": "Instal sudah selesai dan diinstal!",
- "Install was not finished and an error might have occurred!": "Instal belum selesai dan kesalahan mungkin terjadi!"
+ "Install was not finished and an error might have occurred!": "Instal belum selesai dan kesalahan mungkin terjadi!",
+ "--- Unknown file ---": "--- File yang tidak diketahui ---",
+ "Install Information!": "Instal Informasi!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Ini tidak akan melewati pemindaian oleh perangkat lunak anti-virus Anda. Ini hanya akan memungkinkan berjalan dengan sistem operasi..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "Tidak dapat membaca file OrangeBlox karena penangan file yang tidak ditambahkan.."
 }

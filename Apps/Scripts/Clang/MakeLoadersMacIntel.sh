@@ -8,12 +8,15 @@ printMessage() {
 # Build Package
 printMessage "Building Clang Package for OrangeLoader.."
 clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm
+strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox" ./Apps/Scripts/Clang/OrangePlayRoblox.mm
+cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"
+strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio" ./Apps/Scripts/Clang/OrangeRunStudio.mm
+cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"
+strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 # Sign Package
 printMessage "Signing Package.."
