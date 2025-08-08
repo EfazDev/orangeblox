@@ -3963,7 +3963,7 @@ class Handler:
                                     with open(alleged_path, "r", encoding="utf-8") as f: pid_str = f.read()
                                     if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
                                         if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
-                                        while os.path.exists(alleged_path): time.sleep(0.05)
+                                        while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
                                         if os.path.exists(installPath):
                                             if debug == True: printDebugMessage(f"Install was finished and installed!")
                                             if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
@@ -4116,18 +4116,22 @@ class Handler:
                                 else: installPathA = installPath
                                 alleged_path = os.path.join(installPathA, f"RFFIInstall{'Studio' if studio == True else 'Player'}BundleLock")
                                 if os.path.exists(alleged_path):
-                                    if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
-                                    while os.path.exists(alleged_path): time.sleep(0.05)
-                                    if os.path.exists(installPath):
-                                        if debug == True: printDebugMessage(f"Install was finished and installed!")
-                                        if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
-                                        return {"success": True}
+                                    with open(alleged_path, "r", encoding="utf-8") as f: pid_str = f.read()
+                                    if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                                        if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
+                                        while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
+                                        if os.path.exists(installPath):
+                                            if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                            if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
+                                            return {"success": True}
+                                        else:
+                                            if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                            if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
+                                            return {"success": False}
                                     else:
-                                        if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
-                                        if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
-                                        return {"success": False}
+                                        with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                                 else:
-                                    with open(alleged_path, "w") as f: f.write(f"Installing Roblox right now!")
+                                    with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                             roblox_player_down = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-{zip_name}'
                             if submit_status: submit_status.submit(f"[BUNDLE] Downloading Roblox App!", 0)
                             if debug == True: printDebugMessage(f"Downloading {client_label} from Roblox's server: {roblox_player_down}")

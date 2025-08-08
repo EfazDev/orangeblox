@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8a
+# v2.2.8b
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.8a"}
+    current_version = {"version": "2.2.8b"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
