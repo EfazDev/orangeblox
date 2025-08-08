@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7c
+# v2.2.7d
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.7c"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.7d"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -4252,7 +4252,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_ALL_ACCESS)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4296,7 +4296,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_ALL_ACCESS)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -4352,7 +4352,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4415,7 +4415,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4459,7 +4459,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_ALL_ACCESS)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -5518,12 +5518,13 @@ if __name__ == "__main__":
                 else:
                     if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
                     else: brand_fold = os.path.join(cur_path, "RobloxBrand", "Original")
-                windows = connected_roblox_instance.getWindowsOpened()
-                if windows:
-                    for i in windows:
-                        icon = os.path.join(brand_fold, "AppIcon.ico")
-                        if os.path.exists(icon): i.setWindowIcon(icon)
-                        else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
+                if connected_roblox_instance:
+                    windows = connected_roblox_instance.getWindowsOpened()
+                    if windows:
+                        for i in windows:
+                            icon = os.path.join(brand_fold, "AppIcon.ico")
+                            if os.path.exists(icon): i.setWindowIcon(icon)
+                            else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
                 time.sleep(2)
         def generateEmbedField(name, value, inline=True): return {"name": name, "value": str(value), "inline": inline}
         def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
@@ -6538,7 +6539,7 @@ if __name__ == "__main__":
             elif main_os == "Windows":
                 reg = r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel" if run_studio == True else r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel"
                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, reg)
-                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, win32con.KEY_ALL_ACCESS)
+                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, win32con.KEY_SET_VALUE)
                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                 win32api.RegCloseKey(registry_key)
 
