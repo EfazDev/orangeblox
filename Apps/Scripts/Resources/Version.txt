@@ -17,12 +17,12 @@ VSVersionInfo(
         "040904B0",
         [StringStruct("CompanyName", "EfazDev"),
         StringStruct("FileDescription", "OrangeBlox"),
-        StringStruct("FileVersion", "2.2.7"),
+        StringStruct("FileVersion", "2.2.8"),
         StringStruct("LegalCopyright", "Copyright (c) EfazDev"),
         StringStruct("InternalName", "OrangeBlox"),
         StringStruct("OriginalFilename", "OrangeBlox.exe"),
         StringStruct("ProductName", "OrangeBlox"),
-        StringStruct("ProductVersion", "2.2.7")])
+        StringStruct("ProductVersion", "2.2.8")])
       ]),
     VarFileInfo([VarStruct("Translation", [1033, 1200])])
   ]

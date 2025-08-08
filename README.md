@@ -72,7 +72,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 | Installer (Install.py) | `0545736e6b49ea61daf36a6e8c7b2748` |
 | Bootstrap API (OrangeAPI.py) | `e52c1d490b58e7b44ee7dda1c151f2e7` |
 | Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `ab789c63f221f0bb00b820e8b623ff22` |
-| Bootstrap Loader (OrangeBlox.py) | `6f4b57974ad3fc30759c7c9b51a613a4` |
+| Bootstrap Loader (OrangeBlox.py) | `33e945c61aad86cfa25d7e0fce58a9ae` |
 | Discord Presence Handler (DiscordPresenceHandler.py) | `e57bf18964ca1051872cbb1fc2543705` |
 | PyKits API (PyKits.py) | `b646c45c4829f057461b66fdb981db9a` |
 
