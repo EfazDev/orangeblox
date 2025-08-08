@@ -4252,7 +4252,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_SET_VALUE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4296,7 +4296,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", win32con.KEY_SET_VALUE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel", 0, win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -4352,7 +4352,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4415,7 +4415,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                                 win32api.RegCloseKey(registry_key)
                     except Exception as e: printDebugMessage(f"Unable to find channel from URL. Exception: \n{trace()}")
@@ -4459,7 +4459,7 @@ if __name__ == "__main__":
                                 printDebugMessage(f"Channel Set Result: {res}")
                             elif main_os == "Windows":
                                 try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
-                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", win32con.KEY_SET_VALUE)
+                                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel", 0, win32con.KEY_SET_VALUE)
                                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, download_channel)
                                 win32api.RegCloseKey(registry_key)
                     else:
@@ -6538,8 +6538,8 @@ if __name__ == "__main__":
                 printDebugMessage(f"Channel Set Result: {res}")
             elif main_os == "Windows":
                 reg = r"Software\ROBLOX Corporation\Environments\RobloxStudio\Channel" if run_studio == True else r"Software\ROBLOX Corporation\Environments\RobloxPlayer\Channel"
-                try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, reg)
-                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, win32con.KEY_SET_VALUE)
+                try: registry_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, reg, 0, win32con.KEY_SET_VALUE)
+                except Exception: registry_key = win32api.RegCreateKeyEx(win32con.HKEY_CURRENT_USER, reg, 0, win32con.KEY_SET_VALUE)
                 win32api.RegSetValueEx(registry_key, "www.roblox.com", 0, win32con.REG_SZ, url_channel)
                 win32api.RegCloseKey(registry_key)
 
