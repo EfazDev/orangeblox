@@ -263,7 +263,7 @@
  "Ctrl+Shift+N = Toggles GUIs that appear above players": "Ctrl+Shift+N = Soggles Guis التي تظهر فوق اللاعبين",
  "DONE!": "منتهي!",
  "Debug Window Mode is now enabled! Now when clicking the taskbar icon, it will show this window instead of going to the terminal directly.": "تم تمكين وضع نافذة التصحيح! الآن عند النقر على أيقونة شريط المهام ، سيعرض هذه النافذة بدلاً من الذهاب إلى المحطة مباشرة..",
- "Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!": "اعتمادًا على نظام التشغيل (Windows أو MacOS) ، قد تتمكن من تحديد السماح بميزات مثل مواقع الخادم للعمل!",
+ "Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!": "اعتمادًا على نظام التشغيل (Windows أو macOS) ، قد تتمكن من تحديد السماح بميزات مثل مواقع الخادم للعمل!",
  "Details": "تفاصيل",
  "Determining System OS..": "تحديد نظام نظام التشغيل..",
  "Directory is not valid.": "الدليل غير صالح..",
@@ -326,7 +326,7 @@
  "For Windows, it is required to use Microsoft Visual Code 2022 compilation for using Nuitka.": "بالنسبة لنظام التشغيل Windows ، يجب استخدام مجموعة Microsoft Visual Code 2022 لاستخدام Nuitka..",
  "For example, Windows Defender may detect OrangeBlox with Win32/Wacapew.C! Ml. You may need to authorize the app through your anti-virus or build the app directly in order to allow use.": "على سبيل المثال ، قد يكتشف Windows Defender OrangeBlox مع win32/wacapew.c! مل. قد تحتاج إلى تفويض التطبيق من خلال مكافحة الفيروسات أو إنشاء التطبيق مباشرة للسماح بالاستخدام..",
  "For example, it may ask you to allow access to the Roblox app files or allow access to a Terminal. Please put it in always allow in order to allow OrangeBlox to function properly!": "على سبيل المثال ، قد يطلب منك السماح بالوصول إلى ملفات تطبيق Roblox أو السماح بالوصول إلى محطة. يرجى وضعه دائمًا من أجل السماح لـ OrangeBlox بالعمل بشكل صحيح!",
- "For macOS users, it is suggested to install Xcode Command Line Tools from the official Apple website.": "بالنسبة لمستخدمي MacOS ، يُقترح تثبيت أدوات سطر أوامر Xcode من موقع Apple الرسمي..",
+ "For macOS users, it is suggested to install Xcode Command Line Tools from the official Apple website.": "بالنسبة لمستخدمي macOS ، يُقترح تثبيت أدوات سطر أوامر Xcode من موقع Apple الرسمي..",
  "For no url needing, enter nothing and continue.": "لعدم الحاجة إلى عنوان url ، أدخل لا شيء واستمر..",
  "For now, before you continue, I hope you have a great day!": "في الوقت الحالي ، قبل أن تستمر ، أتمنى لك يومًا سعيدًا!",
  "For selecting your color, use this Google link and use the Hex value.": "لتحديد لونك ، استخدم رابط Google هذا واستخدم قيمة Hex..",
@@ -447,8 +447,8 @@
  "OrangeBlox is not installed on this system.": "لم يتم تثبيت OrangeBlox على هذا النظام..",
  "OrangeBlox is not installed!": "لم يتم تثبيت OrangeBlox!",
  "OrangeBlox is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "يتم دعم OrangeBlox فقط لنظام التشغيل Windows 10.0.17763 (أكتوبر 2018) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
- "OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "يتم دعم OrangeBlox فقط لـ MacOS 10.13 (Sierra High) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
- "OrangeBlox is only supported for macOS and Windows.": "يتم دعم OrangeBlox فقط لنظام التشغيل MacOS و Windows..",
+ "OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "يتم دعم OrangeBlox فقط لـ macOS 10.13 (Sierra High) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
+ "OrangeBlox is only supported for macOS and Windows.": "يتم دعم OrangeBlox فقط لنظام التشغيل macOS و Windows..",
  "Otherwise, you may close the app by just continuing without typing.": "خلاف ذلك ، يمكنك إغلاق التطبيق من خلال الاستمرار دون الكتابة..",
  "Overwriting Dock..": "رصيف الكتابة فوق..",
  "Party Server": "خادم الحزب",
@@ -474,7 +474,7 @@
  "Please restart OrangeBlox in order to reinstall Roblox!": "يرجى إعادة تشغيل OrangeBlox من أجل إعادة تثبيت Roblox!",
  "Please restart the script to install!": "يرجى إعادة تشغيل البرنامج النصي للتثبيت!",
  "Please reverify this mod script in order to continue!": "يرجى تقديس هذا البرنامج النصي Mod من أجل المتابعة!",
- "Please run this script on macOS/Windows.": "يرجى تشغيل هذا البرنامج النصي على MacOS/Windows..",
+ "Please run this script on macOS/Windows.": "يرجى تشغيل هذا البرنامج النصي على macOS/Windows..",
  "Please run OrangeBlox under user permissions instead of running administrator!": "يرجى تشغيل OrangeBlox ضمن أذونات المستخدم بدلاً من تشغيل المسؤول!",
  "Please select a directory to save voice chat recordings to!": "يرجى تحديد دليل لحفظ تسجيلات الدردشة الصوتية!",
  "Please select an installer option you want to do!": "الرجاء تحديد خيار التثبيت الذي تريد القيام به!",
@@ -495,9 +495,9 @@
  "Proxy has ended with a success!": "وقد انتهى الوكيل بنجاح!",
  "Proxy has ended with an error!": "انتهى الوكيل بخطأ!",
  "Public Server": "الخادم العام",
- "Pyinstaller Rebuild Success!": "Pyinstaller إعادة بناء النجاح!",
- "Pyinstaller is required to be installed for this to work.": "مطلوب تثبيت Pyinstaller لهذا العمل..",
- "Pyinstaller x86 Rebuild Success!": "Pyinstaller x86 إعادة بناء النجاح!",
+ "Pyinstaller Rebuild Success!": "pyinstaller إعادة بناء النجاح!",
+ "Pyinstaller is required to be installed for this to work.": "مطلوب تثبيت pyinstaller لهذا العمل..",
+ "Pyinstaller x86 Rebuild Success!": "pyinstaller x86 إعادة بناء النجاح!",
  "Python Installation was may be canceled or Python was not installed!": "قد يتم إلغاء تثبيت Python ولم يتم تثبيت Python!",
  "Python Installer should launch after a moment. Follow the prompts to install!": "يجب إطلاق Python Installer بعد لحظة. اتبع المطالبات للتثبيت!",
  "Quick Modification mode is an option to move the preparation process and Mod Script scripts to the background when you load from the webbrowser or when Roblox is currently active.": "يعد وضع التعديل السريع خيارًا لنقل عملية التحضير وبرامج البرمجة النصية للبرنامج النصي إلى الخلفية عند التحميل من WebBrowser أو عندما يكون Roblox نشطًا حاليًا..",
@@ -568,19 +568,19 @@
  "Roblox was not uninstalled.": "لم يتم إلغاء تثبيت Roblox..",
  "Roblox window was closed! Closing Bootstrap App..": "تم إغلاق نافذة Roblox! إغلاق تطبيق bootstrap..",
  "RobloxFastFlagsInstaller is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "يتم دعم RobloxFastFlagsInstaller فقط لنظام التشغيل Windows 10.0.17763 (أكتوبر 2018) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
- "RobloxFastFlagsInstaller is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "يتم دعم RobloxFastFlagsInstaller فقط لـ MACOS 10.13 (High Sierra) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
- "RobloxFastFlagsInstaller is only supported for macOS and Windows.": "يتم دعم RobloxFastFlagsInstaller فقط لنظام التشغيل MacOS و Windows..",
+ "RobloxFastFlagsInstaller is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "يتم دعم RobloxFastFlagsInstaller فقط لـ macOS 10.13 (High Sierra) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
+ "RobloxFastFlagsInstaller is only supported for macOS and Windows.": "يتم دعم RobloxFastFlagsInstaller فقط لنظام التشغيل macOS و Windows..",
  "Round Ending": "نهاية جولة",
  "Round Starting": "بدء الجولة",
  "Running Clang++ Rebuild..": "تشغيل Clang ++Rebuild..",
  "Running Installer..": "تشغيل المثبت..",
  "Running Intel Nuitka Rebuild..": "تشغيل Intel Nuitka Rebuild..",
- "Running Intel Pyinstaller Rebuild..": "تشغيل Intel Pyinstaller Rebuild..",
+ "Running Intel Pyinstaller Rebuild..": "تشغيل Intel pyinstaller Rebuild..",
  "Running Nuitka Rebuild in x86..": "تشغيل Nuitka Rebuild في x86..",
  "Running Nuitka Rebuild..": "تشغيل Nuitka Rebuild..",
  "Running Proxy using Python Executable..": "تشغيل الوكيل باستخدام Python قابل للتنفيذ..",
  "Running Pyinstaller Rebuild in x86..": "تشغيل pyinstaller إعادة بناء في x86..",
- "Running Pyinstaller Rebuild..": "تشغيل Pyinstaller Rebuild..",
+ "Running Pyinstaller Rebuild..": "تشغيل pyinstaller Rebuild..",
  "Running RobloxPlayerInstaller executable..": "تشغيل RobloxPlayerInstaller قابل للتنفيذ..",
  "Running RobloxStudioInstaller executable..": "تشغيل RobloxStudioInstaller قابلة للتنفيذ..",
  "Running latest version of Roblox Studio!": "تشغيل أحدث إصدار من استوديو Roblox!",
@@ -647,7 +647,7 @@
  "Successfully called to open a new instance! Please wait for Roblox to open and run a game before continuing the next account!": "استدعت بنجاح لفتح مثيل جديد! يرجى انتظار فتح Roblox وتشغيل لعبة قبل مواصلة الحساب التالي!",
  "Successfully changed brand images to original!": "تغيير صور العلامة التجارية بنجاح إلى الأصل!",
  "Successfully changed brand images!": "غيرت صور العلامة التجارية بنجاح!",
- "Successfully changed current app icon! It may take a moment for macOS to identify it!": "غيرت بنجاح أيقونة التطبيق الحالي! قد يستغرق الأمر لحظة لتحديد MacOS!",
+ "Successfully changed current app icon! It may take a moment for macOS to identify it!": "غيرت بنجاح أيقونة التطبيق الحالي! قد يستغرق الأمر لحظة لتحديد macOS!",
  "Successfully changed current avatar editor to original background!": "غيرت بنجاح محرر الصورة الرمزية الحالية إلى الخلفية الأصلية!",
  "Successfully changed current avatar editor with a set background!": "تم تغيير محرر الصورة الرمزية الحالية بنجاح مع خلفية محددة!",
  "Successfully changed current cursor with a set cursor image!": "نجحت في تغيير المؤشر الحالي مع صورة مؤشر مجموعة!",
@@ -1008,7 +1008,7 @@
  "[Also, if you just added a new map folder into the AvatarEditorMaps folder, please rerun Install.py in order for it to seen.]": "[أيضًا ، إذا قمت للتو بإضافة مجلد خريطة جديد إلى مجلد avatoretormaps ، فيرجى إعادة تشغيل Install.py حتى يتم رؤيته.]",
  "[Also, if you just added a new sound pack into the PlayerSounds folder, please rerun Install.py in order for it to seen.]": "[أيضًا ، إذا قمت للتو بإضافة حزمة صوت جديدة إلى مجلد اللاعبين ، فيرجى إعادة تشغيل Install.py حتى يتم رؤيتها.]",
  "[DO NOT EVER ENABLE IF SOMEONE TOLD YOU SO OR YOU USUALLY RECORD!!]": "[لا تتمكين أبدًا إذا أخبرك أحدهم بذلك أو عادةً ما تسجل !!]",
- "[Some avatar maps may not able to run on macOS due to missing objects that are expected in macOS than Windows.]": "[قد لا تتمكن بعض خرائط الآلهة من تشغيل macos بسبب الكائنات المفقودة المتوقعة في macos من windows.]",
+ "[Some avatar maps may not able to run on macOS due to missing objects that are expected in macOS than Windows.]": "[قد لا تتمكن بعض خرائط الآلهة من تشغيل macOS بسبب الكائنات المفقودة المتوقعة في macOS من windows.]",
  "[WARNING! This will expose information like login to Roblox.]": "[تحذير! سيؤدي هذا إلى كشف معلومات مثل تسجيل الدخول إلى Roblox.]",
  "[(*)] = Flat JSON Install": "[(*)] = تثبيت مسطح Json",
  "[(*)] = Flat-No-Merge Install": "[(*)] = تثبيت مسطح لا",
@@ -1025,7 +1025,7 @@
  "https://github.com/EfazDev/orangeblox/issues": "https://github.com/EfazDev/orangeblox/issues",
  "https://nuitka.net/user-documentation/user-manual.html": "https://nuitka.net/user-documentation/user-manual.html",
  "https://www.google.com/search?q=color+picker": "https://www.google.com/search؟q=Color+Picker",
- "macOS Application finished launching..": "انتهى تطبيق MacOS من إطلاق..",
+ "macOS Application finished launching..": "انتهى تطبيق macOS من إطلاق..",
  "⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev": "⚠ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط للانتقال إلى خادم Discord EfazDev: https://discord.efaz.dev",
  "⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.": "⚠ هذا الإصدار هو إصدار تجريبي من OrangeBlox وقد يتسبب في مشاكل مع التثبيت..",
  "✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "✅ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط: https://github.com/EfazDev/orangeblox/releases",
@@ -1039,8 +1039,8 @@
  "(*) Would you like to return to settings or exit it?": "(*)هل ترغب في العودة إلى الإعدادات أو الخروج منها؟",
  "- Install and Use Python Modules: (*)": "- تثبيت واستخدام وحدات Python : (*)",
  "- Unknown Requirement": "- متطلبات غير معروفة",
- "8. Windows App was built using (*)pyinstaller 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. تم بناء تطبيق Windows باستخدام (*)Pyinstaller 📦(*). يمكنك إعادة إنشاء ونشر الأمر التالي! استخدم readme.md لمزيد من المعلومات..",
- "8. macOS App was built using (*)Nuitka 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. تم بناء تطبيق MacOS باستخدام (*)nuitka 📦(*). يمكنك إعادة إنشاء ونشر الأمر التالي! استخدم readme.md لمزيد من المعلومات..",
+ "8. Windows App was built using (*)pyinstaller 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. تم بناء تطبيق Windows باستخدام (*)pyinstaller 📦(*). يمكنك إعادة إنشاء ونشر الأمر التالي! استخدم readme.md لمزيد من المعلومات..",
+ "8. macOS App was built using (*)Nuitka 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. تم بناء تطبيق macOS باستخدام (*)nuitka 📦(*). يمكنك إعادة إنشاء ونشر الأمر التالي! استخدم readme.md لمزيد من المعلومات..",
  "A new version of Roblox Studio is available! Versions: (*) => (*)": "يتوفر إصدار جديد من استوديو Roblox! الإصدارات: (*)=> (*)",
  "A new version of Roblox is available! Versions: (*) => (*)": "يتوفر نسخة جديدة من Roblox! الإصدارات: (*)=> (*)",
  "Added mod: (*)": "تمت إضافة وزارة الدفاع: (*)",
@@ -1164,7 +1164,7 @@
  "Preparing Mod Script ((*))..": "إعداد البرنامج النصي للوزارة ((*))..",
  "PyObjc App Failed! Error: (*)": "فشل تطبيق Pyobjc! خطأ: (*)",
  "PyObjc app finished launching! Terminal ID: (*)": "انتهى تطبيق Pyobjc من الإطلاق! معرف الطرفية: (*)",
- "Pyinstaller Rebuild failed! Status code: (*)": "فشل إعادة بناء Pyinstaller! رمز الحالة: (*)",
+ "Pyinstaller Rebuild failed! Status code: (*)": "فشل إعادة بناء pyinstaller! رمز الحالة: (*)",
  "Python (*) has been successfully installed! Would you like to restart Python? (y/n)": "تم تثبيت Python (*)بنجاح! هل ترغب في إعادة تشغيل Python؟ (y/n)",
  "Python Exception: (*)": "استثناء بيثون: (*)",
  "Python Version: (*)(*)": "نسخة بيثون: (*)(*)",
@@ -1172,9 +1172,9 @@
  "Rebuild failed! Status code: (*)": "فشل إعادة البناء! رمز الحالة: (*)",
  "Rebuilding Clang App succeeded! Continuing to installation..": "لقد نجحت إعادة بناء تطبيق Clang! الاستمرار في التثبيت..",
  "Rebuilding Intel Nuitka App succeeded! Continuing to installation..": "نجحت إعادة بناء تطبيق Intel Nuitka! الاستمرار في التثبيت..",
- "Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..": "نجحت إعادة بناء تطبيق Intel Pyinstaller! الاستمرار في التثبيت..",
+ "Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..": "نجحت إعادة بناء تطبيق Intel pyinstaller! الاستمرار في التثبيت..",
  "Rebuilding Nuitka App succeeded! Continuing to installation..": "لقد نجحت إعادة بناء تطبيق Nuitka! الاستمرار في التثبيت..",
- "Rebuilding Pyinstaller App succeeded! Continuing to installation..": "لقد نجحت إعادة بناء تطبيق Pyinstaller! الاستمرار في التثبيت..",
+ "Rebuilding Pyinstaller App succeeded! Continuing to installation..": "لقد نجحت إعادة بناء تطبيق pyinstaller! الاستمرار في التثبيت..",
  "Received Terminal ID from Receiver: (*)": "معرف الطرفي المستلم من المتلقي: (*)",
  "Registering Sync Directory..": "تسجيل دليل المزامنة..",
  "Registry key \"(*)\" not found.": "مفتاح التسجيل \"(*)\" غير موجود..",
@@ -1221,7 +1221,7 @@
  "Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?": "تعيين أيقونة Windows على وقت تشغيل Roblox مع أيقونة غير موجودة؟",
  "Skipped full build because x86 version of Nuitka is not installed": "تخطي البناء الكامل لأن إصدار x86 من Nuitka غير مثبت",
  "Skipped full build because x86 version of Python is not installed": "تم تخطي البناء الكامل لأن إصدار x86 من Python غير مثبت",
- "Skipped full build because x86 version of pyinstaller is not installed": "تم تخطي البناء الكامل لأن إصدار x86 من Pyinstaller غير مثبت",
+ "Skipped full build because x86 version of pyinstaller is not installed": "تم تخطي البناء الكامل لأن إصدار x86 من pyinstaller غير مثبت",
  "Something went wrong deleting Roblox: (*)": "حدث خطأ ما حذف روبوكس: (*)",
  "Something went wrong during installation: (*)": "حدث خطأ ما أثناء التثبيت: (*)",
  "Something went wrong during uninstallation: (*)": "حدث خطأ ما أثناء إلغاء التثبيت: (*)",
@@ -1239,7 +1239,7 @@
  "Something went wrong setting up shortcuts: (*)": "حدث خطأ ما إعداد اختصارات: (*)",
  "Something went wrong starting Roblox Installer: (*)": "حدث خطأ ما بدء تثبيت roblox: (*)",
  "Something went wrong while trying to generate a merged JSON: (*)": "حدث خطأ ما أثناء محاولة توليد json المدمج: (*)",
- "Something went wrong while trying to unzip macOS apps file: (*)": "حدث خطأ ما أثناء محاولة فك ضغط تطبيقات MacOS: (*)",
+ "Something went wrong while trying to unzip macOS apps file: (*)": "حدث خطأ ما أثناء محاولة فك ضغط تطبيقات macOS: (*)",
  "Something went wrong with pinging the Mod Script script: (*)": "حدث خطأ ما في تحريك البرنامج النصي النصي للوزارة: (*)",
  "Something went wrong with pinging the mod script (*): (*)": "حدث خطأ ما في تحريك نص Mod (*): (*)",
  "Something went wrong with running functions! Error: (*)": "حدث خطأ ما في تشغيل وظائف! خطأ: (*)",
@@ -1281,9 +1281,9 @@
  "System OS: (*) ((*))": "نظام نظام التشغيل: (*)((*))",
  "System OS: (*) ((*)) | Python Version: (*)": "نظام نظام التشغيل: (*)((*)) | نسخة بيثون: (*)",
  "System OS: (*) ((*)) | Python Version: (*)(*)": "نظام نظام التشغيل: (*)((*)) | نسخة بيثون: (*)(*)",
- "System OS: (*) (macOS (*))": "نظام التشغيل: (*)(MacOS (*))",
- "System OS: (*) (macOS (*)) | Python Version: (*)": "نظام نظام التشغيل: (*)(MacOS (*)) | نسخة بيثون: (*)",
- "System OS: (*) (macOS (*)) | Python Version: (*)(*)": "نظام نظام التشغيل: (*)(MacOS (*)) | نسخة بيثون: (*)(*)",
+ "System OS: (*) (macOS (*))": "نظام التشغيل: (*)(macOS (*))",
+ "System OS: (*) (macOS (*)) | Python Version: (*)": "نظام نظام التشغيل: (*)(macOS (*)) | نسخة بيثون: (*)",
+ "System OS: (*) (macOS (*)) | Python Version: (*)(*)": "نظام نظام التشغيل: (*)(macOS (*)) | نسخة بيثون: (*)(*)",
  "The mod '(*)' is not supported for updating due to a lack of version.": "لا يتم دعم Mod '(*)' للتحديث بسبب نقص الإصدار..",
  "The voice chat had ended! File Path: (*)": "انتهت الدردشة الصوتية! مسار الملف: (*)",
  "The voice chat had ended! No audio file was made due to the recording being empty.": "انتهت الدردشة الصوتية! لم يتم إجراء أي ملف صوتي بسبب التسجيل فارغ..",
@@ -1315,7 +1315,7 @@
  "This mod script has reached their end support! Creator Note:": "وصل هذا البرنامج النصي Mod إلى دعمه النهائي! ملاحظة المبدع:",
  "This mod script is not supported. Please update to OrangeBlox v(*)": "هذا البرنامج النصي Mod غير مدعوم. يرجى التحديث إلى OrangeBlox v(*)",
  "This mod script is only supported for Windows!": "هذا البرنامج النصي Mod مدعوم فقط لنظام التشغيل Windows!",
- "This mod script is only supported for macOS or Windows!": "يتم دعم البرنامج النصي هذا فقط لنظام التشغيل MacOS أو Windows!",
+ "This mod script is only supported for macOS or Windows!": "يتم دعم البرنامج النصي هذا فقط لنظام التشغيل macOS أو Windows!",
  "This mod script is only supported for macOS!": "هذا البرنامج النصي Mod مدعوم فقط لماكوسات!",
  "This mod script is unsupported! Please update to OrangeBlox v(*) in order to use!": "هذا البرنامج النصي Mod غير مدعوم! يرجى التحديث إلى OrangeBlox v(*)من أجل الاستخدام!",
  "UI update error: (*)": "خطأ تحديث واجهة المستخدم: (*)",
@@ -1726,14 +1726,14 @@
  "(*) [BUNDLE] Failed to download Roblox Player. (*)": "(*) [BUNDLE] فشل في تنزيل Roblox Player. (*)",
  "(*) [BUNDLE] Failed to download and install Roblox Player. (*)": "(*) [BUNDLE] فشل في تنزيل وتثبيت Roblox Player. (*)",
  "(*) [BUNDLE] Failed to extract Roblox Player. (*)": "(*) [BUNDLE] فشل في استخراج لاعب Roblox. (*)",
- "(*) [BUNDLE] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [BUNDLE] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل MacOs و Windows. (*)",
+ "(*) [BUNDLE] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [BUNDLE] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل macOS و Windows. (*)",
  "(*) [BUNDLE] Unable to download and install Roblox Bundle! (*)": "(*) [BUNDLE] غير قادر على تنزيل وتثبيت حزمة Roblox! (*)",
  "(*) [BUNDLE] Unable to download and install Roblox Studio Bundle! (*)": "(*) [BUNDLE] غير قادر على تنزيل وتثبيت Roblox Studio Bundle! (*)",
  "(*) [BUNDLE] Unable to fetch Roblox manifest file! (*)": "(*) [BUNDLE] غير قادر على جلب ملف Roblox البيان! (*)",
  "(*) [BUNDLE] Unable to fetch bootstrapper settings. (*)": "(*) [BUNDLE] غير قادر على جلب إعدادات bootstrapper. (*)",
  "(*) [FFLAGS] Roblox couldn't be found! (*)": "(*) [FFLAGS] لا يمكن العثور على Roblox! (*)",
- "(*) [FFLAGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [FFLAGS] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل MacOs و Windows. (*)",
- "(*) [GLOBALSETTINGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [GLOBALSETTINGS] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل MacOs و Windows. (*)",
+ "(*) [FFLAGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [FFLAGS] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل macOS و Windows. (*)",
+ "(*) [GLOBALSETTINGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [GLOBALSETTINGS] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل macOS و Windows. (*)",
  "(*) [GLOBALSETTINGS] Unable to find file. (*)": "(*) [GLOBALSETTINGS] غير قادر على العثور على ملف. (*)",
  "(*) [INSTALL] Failed to download Roblox Studio. (*)": "(*) [INSTALL] فشل في تنزيل Roblox Studio. (*)",
  "(*) [INSTALL] Failed to download and install Roblox Studio. (*)": "(*) [INSTALL] فشل في تنزيل وتثبيت Roblox Studio. (*)",
@@ -1742,7 +1742,7 @@
  "(*) [INSTALL] Installer couldn't be started! (*)": "(*) [INSTALL] لا يمكن بدء تثبيت! (*)",
  "(*) [INSTALL] Installer has been failed! (*)": "(*) [INSTALL] تم فشل التثبيت! (*)",
  "(*) [INSTALL] Latest Version couldn't be fetched! (*)": "(*) [INSTALL] لا يمكن جلب أحدث إصدار! (*)",
- "(*) [INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [INSTALL] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل MacOS و Windows. (*)",
+ "(*) [INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [INSTALL] RobloxFastFlagsInstaller مدعوم فقط لنظام التشغيل macOS و Windows. (*)",
  "(*) [INSTALL] Unable to download and install Roblox Bundle! (*)": "(*) [INSTALL] غير قادر على تنزيل وتثبيت حزمة Roblox! (*)",
  "(*) [INSTALL] Unable to download and install Roblox Studio Bundle! (*)": "(*) [INSTALL] غير قادر على تنزيل وتثبيت حزمة استوديو Roblox! (*)",
  "(*) [INSTALL] Unable to fetch Roblox manifest file! (*)": "(*) [INSTALL] غير قادر على جلب ملف Roblox البيان! (*)",
@@ -2016,5 +2016,34 @@
  "Downloading from: (*)": "التنزيل من: (*)",
  "Published Game": "لعبة المنشورة",
  "Would you like to enable deleting localized Studio fonts? (y/n)": "هل ترغب في تمكين حذف خطوط الاستوديو المترجمة؟ (y/n)",
- "Would you like to enable limiting Localized Studio Documentations to English (United States)? (Select your Roblox language to English (US) for this) (y/n)": "هل ترغب في تمكين الحد من وثائق الاستوديو المترجمة على اللغة الإنجليزية (الولايات المتحدة)؟ (حدد لغة Roblox الخاصة بك إلى اللغة الإنجليزية (الولايات المتحدة) لهذا الغرض) (y/n)"
+ "Would you like to enable limiting Localized Studio Documentations to English (United States)? (Select your Roblox language to English (US) for this) (y/n)": "هل ترغب في تمكين الحد من وثائق الاستوديو المترجمة على اللغة الإنجليزية (الولايات المتحدة)؟ (حدد لغة Roblox الخاصة بك إلى اللغة الإنجليزية (الولايات المتحدة) لهذا الغرض) (y/n)",
+ "[Connection Handler]: Unable to connect to Discord (1)! Error: (*)": "[معالج الاتصال]: غير قادر على الاتصال بالخلاف (1)! خطأ: (*)",
+ "[Connection Handler]: Unable to connect to Discord (2)! Error: (*)": "[معالج الاتصال]: غير قادر على الاتصال بالخلاف (2)! خطأ: (*)",
+ "8. macOS App was built using (*)pyinstaller 📦(*) and (*)clang 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. تم بناء تطبيق macOS باستخدام (*)pyinstaller 📦(*)و (*)clang 📦(*). يمكنك إعادة إنشاء ونشر الأمر التالي! استخدم readme.md لمزيد من المعلومات..",
+ "Join Server! 🚀": "انضم إلى الخادم! 🚀",
+ "Made by (*)": "من قبل (*)",
+ "Open Game Page 🌐": "فتح صفحة اللعبة 🌐",
+ "Open Logged User Page 🌐": "افتح صفحة المستخدم المسجلة 🌐",
+ "Opened Studio as (*) (@(*))!": "فتح الاستوديو كـ (*)(@(*))!",
+ "Opened as Local File!": "افتتح كملف محلي!",
+ "Playing @(*) as (*)!": "اللعب @(*)كـ (*)!",
+ "Roblox": "روبوكس",
+ "Roblox - Playing (*)": "Roblox - اللعب (*)",
+ "Roblox - Playing @(*) [ID: (*)] as (*)!": "Roblox - play @(*) [Id: (*)] as (*)!",
+ "Roblox - Playing @(*) [ID: (*)]!": "Roblox - play @(*) [Id: (*)]!",
+ "Roblox Studio": "استوديو Roblox",
+ "Roblox Studio - Opened (*)": "Roblox Studio - فتح (*)",
+ "Roblox Studio - Opened @(*) [ID: (*)] as (*)!": "Roblox Studio - فتح @(*) [Id: (*)] كـ (*)!",
+ "Roblox Studio - Opened @(*) [ID: (*)]!": "Roblox Studio - فتح @(*) [Id: (*)]!",
+ "Fetching Friends! This may take a moment.": "جلب الأصدقاء! هذا قد يستغرق لحظة..",
+ "There was an error on getting friends user info! Error: (*)": "كان هناك خطأ في الحصول على معلومات مستخدم الأصدقاء! خطأ: (*)",
+ "There was an error on getting friends! Error: (*)": "كان هناك خطأ في الحصول على الأصدقاء! خطأ: (*)",
+ "Betas could contain bugs that could break your Roblox installation!": "يمكن أن تحتوي بيتا على الأخطاء التي يمكن أن تكسر تثبيت Roblox الخاص بك!",
+ "Would you like to enable OrangeBlox Beta? (y/n)": "هل ترغب في تمكين بيتا OrangeBlox؟ (y/n)",
+ "Install was finished and installed!": "تم الانتهاء من التثبيت وتثبيته!",
+ "Install was not finished and an error might have occurred!": "لم ينته التثبيت وربما حدث خطأ!",
+ "--- Unknown file ---": "--- ملف غير معروف ---",
+ "Install Information!": "تثبيت المعلومات!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "هذا لن يتجاوز عمليات المسح بواسطة برنامج مكافحة الفيروسات. سوف يسمح فقط بتشغيل نظام التشغيل..",
+ "Unable to read OrangeBlox file due to the file handler not added.": "غير قادر على قراءة ملف OrangeBlox بسبب عدم إضافة معالج الملفات.."
 }

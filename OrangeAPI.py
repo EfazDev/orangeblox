@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.2.6
+# v2.2.7
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.6
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.7
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -28,7 +28,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.2.6"}
+current_version = {"version": "2.2.7"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -73,12 +73,6 @@ class Request:
                 elif type(args) is list: self.args = args
                 else: self.args = {}
                 self.id = generated_function_id
-                def timeout():
-                    time.sleep(5)
-                    self.timed_out = True
-                    requested_functions[generated_function_id] = None
-                timeout_thread = threading.Thread(target=timeout, daemon=True)
-                timeout_thread.start()
                 requested_functions[generated_function_id] = self
                 while (self.timed_out == False):
                     if self.fulfilled == True:
@@ -493,7 +487,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, "getRobloxInstallFolder").generateResponse().response   
-    def getIfRobloxIsOpen(self, pid="") -> bool | None: # Permission: getIfRobloxIsOpen
+    def getIfRobloxIsOpen(self, pid: str="") -> bool | None: # Permission: getIfRobloxIsOpen
         """
         This gets if Roblox is currently open using the following PID provided if got or using the latest open Roblox window.
 
@@ -956,7 +950,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.2.6+**
+        **This function is only available in OrangeAPI v2.2.0+**
 
         ```python
         translated_message = OrangeAPI.translate("Hello!") # -> "¡Hola!"

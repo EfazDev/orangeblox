@@ -28,7 +28,7 @@ class ProgressBar():
     def start(self): pass
     def end(self): pass
 ssl._create_default_https_context = ssl._create_unverified_context
-current_path_location = os.path.dirname(os.path.abspath(__file__))
+cur_path = os.path.dirname(os.path.abspath(__file__))
 progress_bar = ProgressBar()
 def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=False, user_selected_files: list[dict[str, Path | list[str]]] | None = None) -> None:
     try:
@@ -50,23 +50,23 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
                 version: str = DeployHistory("").get_latest_studio_version(macos=platform.system()=="Darwin")
                 channel = "LIVE"
         progress_bar.submit("[MOD_GEN] Making Base Directories..", 5)
-        output_dir = os.path.join(current_path_location, "test")
+        output_dir = os.path.join(cur_path, "test")
         output_dir = Path(output_dir)
-        if not os.path.exists(os.path.join(current_path_location, "test")): os.makedirs(os.path.join(current_path_location, "test"),mode=511)
-        if os.path.exists(os.path.join(current_path_location, "result")): shutil.rmtree(os.path.join(current_path_location, "result"), ignore_errors=True)
-        os.makedirs(os.path.join(current_path_location, "result"),mode=511)
+        if not os.path.exists(os.path.join(cur_path, "test")): os.makedirs(os.path.join(cur_path, "test"),mode=511)
+        if os.path.exists(os.path.join(cur_path, "result")): shutil.rmtree(os.path.join(cur_path, "result"), ignore_errors=True)
+        os.makedirs(os.path.join(cur_path, "result"),mode=511)
         """
-        if os.path.exists(os.path.join(current_path_location, "test", name)):
-            shutil.copytree(os.path.join(current_path_location, "test", name), os.path.join(current_path_location, "result", name), dirs_exist_ok=True)
-            shutil.rmtree(os.path.join(current_path_location, "test"), ignore_errors=True)
-            raise Exception(os.path.join(current_path_location, "result", name))
+        if os.path.exists(os.path.join(cur_path, "test", name)):
+            shutil.copytree(os.path.join(cur_path, "test", name), os.path.join(cur_path, "result", name), dirs_exist_ok=True)
+            shutil.rmtree(os.path.join(cur_path, "test"), ignore_errors=True)
+            raise Exception(os.path.join(cur_path, "result", name))
         """
 
         # Generate mods for latest Player version, instead of the latest Studio version
         deployment = ""
         studio_version = version
         progress_bar.submit("[MOD_GEN] Creating Temporary Directories..", 10)
-        temporary_directory: Path = Path(os.path.join(current_path_location, "test"))
+        temporary_directory: Path = Path(os.path.join(cur_path, "test"))
         temp_target: Path = temporary_directory / name
         temp_target.mkdir(parents=True, exist_ok=True)
         progress_bar.submit("[MOD_GEN] Generating Mod Folder..", 15)
@@ -94,10 +94,10 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
             img_sets.generate_user_selected_files(temp_target, colors, angle, user_selected_files)
         img_sets.add_watermark((temp_target / imageset_path))
         progress_bar.submit("[MOD_GEN] Cleaning up..", 98)
-        if os.path.exists(os.path.join(current_path_location, "test", name)):
-            shutil.copytree(os.path.join(current_path_location, "test", name), os.path.join(current_path_location, "result", name), dirs_exist_ok=True)
-            shutil.rmtree(os.path.join(current_path_location, "test"), ignore_errors=True)
-            raise Exception(os.path.join(current_path_location, "result", name))
+        if os.path.exists(os.path.join(cur_path, "test", name)):
+            shutil.copytree(os.path.join(cur_path, "test", name), os.path.join(cur_path, "result", name), dirs_exist_ok=True)
+            shutil.rmtree(os.path.join(cur_path, "test"), ignore_errors=True)
+            raise Exception(os.path.join(cur_path, "result", name))
         else: raise Exception("Mod doesn't exist.")
     except Exception as e:
         if os.path.exists(str(e)):
@@ -107,5 +107,5 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         else:
             progress_bar.submit("\033ERR[MOD_GEN] Something went wrong with making mod!", 100)
             progress_bar.end()
-            if os.path.exists(os.path.join(current_path_location, "test")): shutil.rmtree(os.path.join(current_path_location, "test"), ignore_errors=True)
+            if os.path.exists(os.path.join(cur_path, "test")): shutil.rmtree(os.path.join(cur_path, "test"), ignore_errors=True)
             raise e

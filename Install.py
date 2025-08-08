@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.6
+# v2.2.7
 # 
 
 # Modules
@@ -82,8 +82,8 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.6"}
-    current_path_location = os.path.dirname(os.path.abspath(__file__))
+    current_version = {"version": "2.2.7"}
+    cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
     silent_mode = False
@@ -98,7 +98,6 @@ if __name__ == "__main__":
     rebuild_from_source = None
     use_sudo_for_codesign = False
     use_installation_syncing = True
-    disable_download_for_app = True
     remove_unneeded_messages = True
     rebuild_from_source_clang = False
     disabled_shortcuts_installation = None
@@ -168,12 +167,8 @@ if __name__ == "__main__":
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
-        "EFlagDisableCreatingTkinterApp": "EFlagDisableCreatingGUIApp",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
-        "EFlagNumberOfTkinterAppsAllowed": "EFlagNumberOfGUIAppsAllowed",
-        "EFlagDisableCreatingGUIApp": "bool",
         "EFlagEnableGUIOptionMenus": "bool",
-        "EFlagNumberOfGUIAppsAllowed": "int",
         "EFlagAllowFullDebugMode": "bool",
         "EFlagRobloxClientChannel": "str",
         "EFlagDisableRobloxUpdateChecks": "bool",
@@ -276,9 +271,9 @@ if __name__ == "__main__":
                 app_configuration = plist_class.readPListFile(macos_preference_expected)
                 if app_configuration.get("Configuration"): main_config = app_configuration.get("Configuration")
                 else:
-                    with open(os.path.join(current_path_location, "Configuration.json")) as f: main_config = json.load(f)
+                    with open(os.path.join(cur_path, "Configuration.json")) as f: main_config = json.load(f)
             else:
-                with open(os.path.join(current_path_location, "Configuration.json")) as f: main_config = json.load(f)
+                with open(os.path.join(cur_path, "Configuration.json")) as f: main_config = json.load(f)
         else:
             try:
                 with open(directory, "rb") as f: obfuscated_json = f.read()
@@ -286,7 +281,7 @@ if __name__ == "__main__":
                 except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
                 main_config = obfuscated_json
             except Exception as e:
-                with open(os.path.join(current_path_location, "Configuration.json")) as f: main_config = json.load(f)
+                with open(os.path.join(cur_path, "Configuration.json")) as f: main_config = json.load(f)
         if main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
             try:
                 req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "installer"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
@@ -670,7 +665,7 @@ if __name__ == "__main__":
                     printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
                     printMainMessage(f"Current Roblox Studio Version: {installed_roblox_studio_version['version']}")
             else: printMainMessage(f"Current Roblox Version: {installed_roblox_version['version']}")
-    printMainMessage(f"Installation Folder: {current_path_location}")
+    printMainMessage(f"Installation Folder: {cur_path}")
     overwrited = False
 
     if os.path.exists(expected_app_paths[main_os][0]) and os.path.exists(expected_app_paths[main_os][1]):
@@ -686,11 +681,10 @@ if __name__ == "__main__":
         global rebuild_from_source_clang
         global disable_remove_other_operating_systems
         global disabled_shortcuts_installation
-        global disable_download_for_app
         global use_installation_syncing
         global rebuild_target
         started_build_time = datetime.datetime.now().timestamp()
-        if os.path.exists(os.path.join(current_path_location, "Apps")):
+        if os.path.exists(os.path.join(cur_path, "Apps")):
             if main_os == "Darwin":
                 # Get FastFlagConfiguration.json Data
                 if overwrited == True:
@@ -702,8 +696,8 @@ if __name__ == "__main__":
                     else: main_config = getSettings(directory=fast_config_path)
                 else:
                     main_config = {}
-                    if os.path.exists(os.path.join(current_path_location, "FastFlagConfiguration.json")):
-                        with open(os.path.join(current_path_location, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
+                    if os.path.exists(os.path.join(cur_path, "FastFlagConfiguration.json")):
+                        with open(os.path.join(cur_path, "FastFlagConfiguration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
 
                 # Adapt Fast Flags from Efaz's Roblox Bootstrap
                 if not main_config.get("EFlagRobloxPlayerFlags"):
@@ -720,10 +714,10 @@ if __name__ == "__main__":
                     printMainMessage("Running Clang++ Rebuild..")
                     extra_detail = []
                     if use_sudo_for_codesign == True: extra_detail = []
-                    if os.path.exists(os.path.join(current_path_location, "SigningCertificateName")): 
-                        with open(os.path.join(current_path_location, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMac.sh') if platform.machine() == "arm64" else os.path.join(current_path_location, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMacIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=current_path_location)
+                    if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
+                        with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
+                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMac.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMacIntel.sh'), pip_class)
+                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Clang App succeeded! Continuing to installation..")
                         os.remove(pa)
@@ -736,11 +730,11 @@ if __name__ == "__main__":
                 if rebuild_from_source == 1 or (main_config.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
                     extra_detail = []
                     if use_sudo_for_codesign == True: extra_detail = []
-                    if os.path.exists(os.path.join(current_path_location, "SigningCertificateName")): 
-                        with open(os.path.join(current_path_location, "SigningCertificateName")) as f: extra_detail = extra_detail.append("'" + f.read() + "'")
+                    if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
+                        with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail = extra_detail.append("'" + f.read() + "'")
                     printMainMessage("Running Pyinstaller Rebuild..")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=current_path_location)
+                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
+                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Pyinstaller App succeeded! Continuing to installation..")
                         os.remove(pa)
@@ -750,19 +744,19 @@ if __name__ == "__main__":
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Pyinstaller Rebuild..")
-                        pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=current_path_location)
+                        pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
+                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
                         if rebuild_status.returncode == 0: printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
                         else: printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
                         os.remove(pa)
                 elif rebuild_from_source == 2 or (main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
                     extra_detail = []
                     if use_sudo_for_codesign == True: extra_detail = []
-                    if os.path.exists(os.path.join(current_path_location, "SigningCertificateName")): 
-                        with open(os.path.join(current_path_location, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
+                    if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
+                        with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
                     printMainMessage("Running Nuitka Rebuild..")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(current_path_location, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=current_path_location)
+                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
+                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
                     if rebuild_status.returncode == 0:
                         printSuccessMessage(f"Rebuilding Nuitka App succeeded! Continuing to installation..")
                         os.remove(pa)
@@ -772,34 +766,34 @@ if __name__ == "__main__":
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Nuitka Rebuild..")
-                        pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOSIntel.sh'), pip_class)
-                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=current_path_location)
+                        pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOSIntel.sh'), pip_class)
+                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
                         if rebuild_status.returncode == 0: printSuccessMessage(f"Rebuilding Intel Nuitka App succeeded! Continuing to installation..")
                         else: printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
                         os.remove(pa)
 
                 if platform.machine() == "arm64":
-                    if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxMac.zip")):
+                    if os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxMac.zip")):
                         # Unzip Installation ZIP
                         printMainMessage("Unzipping Installation ZIP File..")
-                        try: zip_extract = pip_class.unzipFile(f'{current_path_location}/Apps/OrangeBloxMac.zip', f'{current_path_location}/Apps/OrangeBloxMac/', ["OrangeBlox.app", "OrangePlayRoblox.app", "OrangeRunStudio.app"])
+                        try: zip_extract = pip_class.unzipFile(f'{cur_path}/Apps/OrangeBloxMac.zip', f'{cur_path}/Apps/OrangeBloxMac/', ["OrangeBlox.app", "OrangePlayRoblox.app", "OrangeRunStudio.app"])
                         except Exception as e: printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
                         time.sleep(1)
                     else: printYellowMessage("Something went wrong finding OrangeBloxMac.zip. It will require a OrangeBloxMac folder in order for installation to finish.")
                 else:
-                    if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxMacIntel.zip")):
+                    if os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxMacIntel.zip")):
                         # Unzip Installation ZIP
                         printMainMessage("Unzipping Installation ZIP File..")
-                        try: zip_extract = pip_class.unzipFile(f'{current_path_location}/Apps/OrangeBloxMacIntel.zip', f'{current_path_location}/Apps/OrangeBloxMac/', ["OrangeBlox.app", "OrangePlayRoblox.app", "OrangeRunStudio.app"])
+                        try: zip_extract = pip_class.unzipFile(f'{cur_path}/Apps/OrangeBloxMacIntel.zip', f'{cur_path}/Apps/OrangeBloxMac/', ["OrangeBlox.app", "OrangePlayRoblox.app", "OrangeRunStudio.app"])
                         except Exception as e: printErrorMessage(f"Something went wrong while trying to unzip macOS apps file: {str(e)}")
                         time.sleep(1)
                     else: printYellowMessage("Something went wrong finding OrangeBloxMacIntel.zip. It will require a OrangeBloxMac folder in order for installation to finish.")
-                if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxMac")):
+                if os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxMac")):
                     # Delete Other Operating System Files
                     if not (disable_remove_other_operating_systems == True or main_config.get("EFlagDisableDeleteOtherOSApps") == True):
                         deleted_other_os = False
-                        if os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxWindows.zip")):
-                            os.remove(os.path.join(current_path_location, "Apps", "OrangeBloxWindows.zip"))
+                        if os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxWindows.zip")):
+                            os.remove(os.path.join(cur_path, "Apps", "OrangeBloxWindows.zip"))
                             deleted_other_os = True
                         if deleted_other_os == True: printMainMessage("To help save space, the script has automatically deleted files made for other operating systems!")
 
@@ -834,14 +828,14 @@ if __name__ == "__main__":
                         shutil.rmtree(f"{stored_main_app[main_os][3]}/Contents/Frameworks/", ignore_errors=True)
 
                     # Convert All Mod Modes to Mods
-                    if os.path.exists(f"{current_path_location}/ModModes/"):
+                    if os.path.exists(f"{cur_path}/ModModes/"):
                         printMainMessage("Converting Mod Modes to Mods..")
-                        for i in os.listdir(f"{current_path_location}/ModModes/"):
-                            mod_mode_path = os.path.join(f"{current_path_location}/ModModes/", i)
+                        for i in os.listdir(f"{cur_path}/ModModes/"):
+                            mod_mode_path = os.path.join(f"{cur_path}/ModModes/", i)
                             if os.path.isdir(mod_mode_path):
-                                if not os.path.exists(f"{current_path_location}/Mods/{i}/"): makedirs(f"{current_path_location}/Mods/{i}/")
-                                pip_class.copyTreeWithMetadata(mod_mode_path, f"{current_path_location}/Mods/{i}/", dirs_exist_ok=True)
-                        shutil.rmtree(f"{current_path_location}/ModModes/")
+                                if not os.path.exists(f"{cur_path}/Mods/{i}/"): makedirs(f"{cur_path}/Mods/{i}/")
+                                pip_class.copyTreeWithMetadata(mod_mode_path, f"{cur_path}/Mods/{i}/", dirs_exist_ok=True)
+                        shutil.rmtree(f"{cur_path}/ModModes/")
                     if os.path.exists(f"{stored_main_app[main_os][1]}/Contents/Resources/ModModes/"):
                         printMainMessage("Converting Mod Modes to Mods..")
                         for i in os.listdir(f"{stored_main_app[main_os][1]}/Contents/Resources/ModModes/"):
@@ -853,11 +847,11 @@ if __name__ == "__main__":
                     
                     # Install to /Applications/
                     printMainMessage("Installing to Applications Folder..")
-                    copyTreeWithSymlinks(f"{current_path_location}/Apps/OrangeBloxMac/OrangeLoader.app", stored_main_app[main_os][1])
-                    if os.path.exists(stored_main_app[main_os][0]): copyTreeWithSymlinks(f"{current_path_location}/Apps/OrangeBloxMac/OrangeBlox.app", stored_main_app[main_os][0], ignore_files=ignore_files)
-                    else: copyTreeWithSymlinks(f"{current_path_location}/Apps/OrangeBloxMac/OrangeBlox.app", stored_main_app[main_os][0])
-                    copyTreeWithSymlinks(f"{current_path_location}/Apps/OrangeBloxMac/OrangePlayRoblox.app", stored_main_app[main_os][2])
-                    copyTreeWithSymlinks(f"{current_path_location}/Apps/OrangeBloxMac/OrangeRunStudio.app", stored_main_app[main_os][3])
+                    copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeLoader.app", stored_main_app[main_os][1])
+                    if os.path.exists(stored_main_app[main_os][0]): copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeBlox.app", stored_main_app[main_os][0], ignore_files=ignore_files)
+                    else: copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeBlox.app", stored_main_app[main_os][0])
+                    copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangePlayRoblox.app", stored_main_app[main_os][2])
+                    copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeRunStudio.app", stored_main_app[main_os][3])
 
                     # Prepare Contents of .app files
                     printMainMessage("Fetching App Folder..")
@@ -866,20 +860,21 @@ if __name__ == "__main__":
                         if os.path.exists(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
                             printMainMessage("Removing Old Scripts..")
                             for i in os.listdir(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
-                                if i.endswith(".py") and not os.path.exists(os.path.join(current_path_location, i)): os.remove(f"{stored_main_app[main_os][1]}/Contents/Resources/{i}")
+                                if i.endswith(".py") and not os.path.exists(os.path.join(cur_path, i)): os.remove(f"{stored_main_app[main_os][1]}/Contents/Resources/{i}")
 
                         if update_mode == False:
                             # Export ./ to /Contents/Resources/
                             printMainMessage("Copying Main Resources..")
                             if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources")): pip_class.copyTreeWithMetadata(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources"), f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
-                            pip_class.copyTreeWithMetadata(f"{current_path_location}/", f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
+                            pip_class.copyTreeWithMetadata(f"{cur_path}/", f"{stored_main_app[main_os][1]}/Contents/Resources/", dirs_exist_ok=True, ignore=ignore_files_func)
                             
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “OrangeBlox.app” is free of malware that may harm your Mac or compromise your privacy.
-                        if disable_download_for_app == True:
-                            printMainMessage("Reducing Download Safety Measures..")
-                            subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][1])], stdout=subprocess.DEVNULL)
-                            
+                        printMainMessage("Reducing Download Safety Measures..")
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][1])], stdout=subprocess.DEVNULL)
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][2])], stdout=subprocess.DEVNULL)
+                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(stored_main_app[main_os][3])], stdout=subprocess.DEVNULL)
+                        
                         # Remove Apps Folder in /Contents/Resources/
                         printMainMessage("Cleaning App..")
                         if os.path.exists(os.path.join(stored_main_app[main_os][0], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(stored_main_app[main_os][0], "Contents", "Resources", "Apps"))
@@ -889,7 +884,7 @@ if __name__ == "__main__":
 
                         # Sync Configuration Files
                         printMainMessage("Configurating App Data..")
-                        if not ("OrangeBlox.app" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
+                        if not ("OrangeBlox.app" in cur_path): main_config["EFlagOrangeBloxSyncDir"] = cur_path
                         main_config["EFlagAvailableInstalledDirectories"] = stored_main_app
                         saveSettings(main_config, directory=os.path.join(stored_main_app[main_os][1], "Contents", "Resources", "FastFlagConfiguration.json"))
                         with open(os.path.join(stored_main_app[main_os][2], "Contents", "Resources", "LocatedAppDirectory"), "w", encoding="utf-8") as f: f.write(os.path.join(stored_main_app[main_os][1], "Contents"))
@@ -935,7 +930,7 @@ if __name__ == "__main__":
                         if overwrited == True: printSuccessMessage(f"Successfully updated OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         else: printSuccessMessage(f"Successfully installed OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                     else: printErrorMessage("Something went wrong trying to find the application folder.")
-                    shutil.rmtree(f"{current_path_location}/Apps/OrangeBloxMac/", ignore_errors=True)
+                    shutil.rmtree(f"{cur_path}/Apps/OrangeBloxMac/", ignore_errors=True)
                 else: printErrorMessage("Something went wrong trying to find the installation folder.")
             elif main_os == "Windows":
                 # Get FastFlagConfiguration.json Data
@@ -944,11 +939,11 @@ if __name__ == "__main__":
                     fast_config_path = os.path.join(f"{stored_main_app[main_os][0]}", "Configuration.json")
                     if os.path.exists(os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app["OverallInstall"], "EfazRobloxBootstrap", "FastFlagConfiguration.json")
                     elif os.path.exists(os.path.join(stored_main_app[main_os][0], "FastFlagConfiguration.json")): fast_config_path = os.path.join(stored_main_app[main_os][0], "FastFlagConfiguration.json")
-                    main_config = getSettings(directory=fast_config_path if os.path.exists(fast_config_path) else os.path.join(current_path_location, "Configuration.json"))
+                    main_config = getSettings(directory=fast_config_path if os.path.exists(fast_config_path) else os.path.join(cur_path, "Configuration.json"))
                 else:
                     main_config = {}
-                    if os.path.exists(os.path.join(current_path_location, "Configuration.json")):
-                        with open(os.path.join(current_path_location, "Configuration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
+                    if os.path.exists(os.path.join(cur_path, "Configuration.json")):
+                        with open(os.path.join(cur_path, "Configuration.json"), "r", encoding="utf-8") as f: main_config = json.load(f)
 
                 # Adapt Fast Flags from Efaz's Roblox Bootstrap
                 if not main_config.get("EFlagRobloxPlayerFlags"):
@@ -967,8 +962,8 @@ if __name__ == "__main__":
                         if build_pip_class.pythonInstalled() and build_pip_class.installed(["pyinstaller"]):
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Pyinstaller Rebuild for {target_arch}..")
-                            pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa, "signexe"], cwd=current_path_location)
+                            pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
+                            rebuild_status = subprocess.run([pa], cwd=cur_path)
                             os.remove(pa)
                             if rebuild_status.returncode == 0: printSuccessMessage("Pyinstaller Rebuild Success!")
                             else:
@@ -983,8 +978,8 @@ if __name__ == "__main__":
                         if build_pip_class.pythonInstalled() and build_pip_class.installed(["pyinstaller"]):
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Nuitka Rebuild for {target_arch}..")
-                            pa = convertPythonExecutablesInFileToPaths(os.path.join(current_path_location, "Apps", "Scripts", "Nuitka", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa, "signexe"], cwd=current_path_location)
+                            pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Nuitka", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
+                            rebuild_status = subprocess.run([pa], cwd=cur_path)
                             os.remove(pa)
                             if rebuild_status.returncode == 0: printSuccessMessage("Nuitka Rebuild success!")
                             else:
@@ -993,34 +988,34 @@ if __name__ == "__main__":
                     build(pip_class.getArchitecture())
                     if full_rebuild_mode == True and pip_class.getArchitecture() == "arm": build("x64"); build("x86")
                     elif full_rebuild_mode == True and pip_class.getArchitecture() == "x64": build("x86")
-                if os.path.exists(f"{current_path_location}/Apps/OrangeBloxWindows.zip"):
+                if os.path.exists(f"{cur_path}/Apps/OrangeBloxWindows.zip"):
                     # Unzip Installation ZIP
                     printMainMessage("Unzipping Installation ZIP File..")
-                    try: zip_extract = pip_class.unzipFile(f'{current_path_location}/Apps/OrangeBloxWindows.zip', f'{current_path_location}/Apps/OrangeBloxWindows/', ["x86"] if pip_class.getIf32BitWindows() else ["x64", "x86"])
+                    try: zip_extract = pip_class.unzipFile(f'{cur_path}/Apps/OrangeBloxWindows.zip', f'{cur_path}/Apps/OrangeBloxWindows/', ["x86"] if pip_class.getIf32BitWindows() else ["x64", "x86"])
                     except Exception as e: printErrorMessage(f"Something went wrong while trying to unzip Windows apps file: {str(e)}")
                     time.sleep(1)
                 else: printYellowMessage("Something went wrong finding OrangeBloxWindows.zip. It will require a OrangeBloxWindows folder in order for installation to finish.")
-                if os.path.exists(f"{current_path_location}/Apps/OrangeBloxWindows/"):
+                if os.path.exists(f"{cur_path}/Apps/OrangeBloxWindows/"):
                     # Delete Other Operating System Files
                     deleted_other_os = False
                     if not (disable_remove_other_operating_systems == True or main_config.get("EFlagDisableDeleteOtherOSApps") == True):
-                        if os.path.exists(os.path.join(current_path_location, "/Apps/OrangeBloxMac.zip")):
-                            os.remove(os.path.join(current_path_location, "/Apps/OrangeBloxMac.zip"))
+                        if os.path.exists(os.path.join(cur_path, "/Apps/OrangeBloxMac.zip")):
+                            os.remove(os.path.join(cur_path, "/Apps/OrangeBloxMac.zip"))
                             deleted_other_os = True
-                        if os.path.exists(os.path.join(current_path_location, "/Apps/OrangeBloxMacIntel.zip")):
-                            os.remove(os.path.join(current_path_location, "/Apps/OrangeBloxMacIntel.zip"))
+                        if os.path.exists(os.path.join(cur_path, "/Apps/OrangeBloxMacIntel.zip")):
+                            os.remove(os.path.join(cur_path, "/Apps/OrangeBloxMacIntel.zip"))
                             deleted_other_os = True
                         if deleted_other_os == True: printMainMessage("To help save space, the script has automatically deleted files made for other operating systems!")
 
                     # Convert All Mod Modes to Mods
-                    if os.path.exists(os.path.join(current_path_location, "/ModModes/")):
+                    if os.path.exists(os.path.join(cur_path, "/ModModes/")):
                         printMainMessage("Converting Mod Modes to Mods..")
-                        for i in os.listdir(os.path.join(current_path_location, "/ModModes/")):
-                            mod_mode_path = os.path.join(os.path.join(current_path_location, "/ModModes/"), i)
+                        for i in os.listdir(os.path.join(cur_path, "/ModModes/")):
+                            mod_mode_path = os.path.join(os.path.join(cur_path, "/ModModes/"), i)
                             if os.path.isdir(mod_mode_path):
-                                if not os.path.exists(os.path.join(current_path_location, f"/Mods/{i}/")): makedirs(os.path.join(current_path_location, f"/Mods/{i}/"))
-                                pip_class.copyTreeWithMetadata(mod_mode_path, f"{current_path_location}/Mods/{i}/")
-                        shutil.rmtree(os.path.join(current_path_location, "/ModModes/"))
+                                if not os.path.exists(os.path.join(cur_path, f"/Mods/{i}/")): makedirs(os.path.join(cur_path, f"/Mods/{i}/"))
+                                pip_class.copyTreeWithMetadata(mod_mode_path, f"{cur_path}/Mods/{i}/")
+                        shutil.rmtree(os.path.join(cur_path, "/ModModes/"))
                     if os.path.exists(os.path.join(stored_main_app[main_os][0], "ModModes")):
                         printMainMessage("Converting Mod Modes to Mods..")
                         for i in os.listdir(os.path.join(stored_main_app[main_os][0], "ModModes")):
@@ -1046,43 +1041,30 @@ if __name__ == "__main__":
                     printMainMessage("Installing EXE File..")
                     try:
                         if pip_class.getIf32BitWindows() or use_x86_windows == True:
-                            shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                            shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                            shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
-                            pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                            shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
+                            pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                         else:
-                            if pip_class.getIfArmWindows() and os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe")):
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "arm64", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "arm64", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
-                                pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "arm64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
-                            elif os.path.exists(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe")):
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "x64", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "x64", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
-                                pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                            if pip_class.getIfArmWindows() and os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe")):
+                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "OrangeBlox.exe"), stored_main_app[main_os][1])
+                                pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "arm64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                            elif os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe")):
+                                shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "OrangeBlox.exe"), stored_main_app[main_os][1])
+                                pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x64", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                             else:
                                 printErrorMessage("There was an issue trying to find the x64 version of the Windows app. Would you like to install the 32-bit version? [32-bit Python is not needed.]")
                                 a = input("> ")
                                 if not (a.lower() == "n"):
-                                    shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
-                                    shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "x86", "PlayRoblox.exe"), os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"))
-                                    shutil.copy(os.path.join(current_path_location, "Apps", "OrangeBloxWindows",  "x86", "RunStudio.exe"), os.path.join(stored_main_app[main_os][2], "RunStudio.exe"))
-                                    pip_class.copyTreeWithMetadata(os.path.join(current_path_location, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
+                                    shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), stored_main_app[main_os][1])
+                                    pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(stored_main_app[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
                                 else: sys.exit(0)
                     except Exception as e: printErrorMessage(f"There was an issue installing the EXE file: {str(e)}")
 
                     # Reduce Download Safety Measures
                     # This can prevent messages from Microsoft Smartscreen
-                    if disable_download_for_app == True:
-                        printMainMessage("Reducing Download Safety Measures..")
-                        unblock_1 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[main_os][1]}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_1.returncode == 0): printErrorMessage(f"Unable to unblock main bootstrap app: {unblock_1.returncode}")
-                        unblock_2 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_2.returncode == 0): printErrorMessage(f"Unable to unblock Play Roblox app: {unblock_2.returncode}")
-                        unblock_3 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{os.path.join(stored_main_app[main_os][2], "RunStudio.exe")}"'], shell=True, stdout=subprocess.DEVNULL)
-                        if not (unblock_3.returncode == 0): printErrorMessage(f"Unable to unblock Run Studio app: {unblock_3.returncode}")
-
+                    printMainMessage("Reducing Download Safety Measures..")
+                    unblock_1 = subprocess.run(["powershell", "-Command", f'Unblock-File -Path "{stored_main_app[main_os][1]}"'], shell=True, stdout=subprocess.DEVNULL)
+                    if not (unblock_1.returncode == 0): printErrorMessage(f"Unable to unblock main bootstrap app: {unblock_1.returncode}")
+                    
                     # Setup URL Schemes
                     if instant_install == False:
                         if not (disabled_url_scheme_installation == True):
@@ -1106,7 +1088,7 @@ if __name__ == "__main__":
                                     file_type, _ = win32api.RegQueryValueEx(key, "")
                                     win32api.RegCloseKey(key)
                                     return file_type
-                                except FileNotFoundError: return None
+                                except Exception: return None
                             def set_file_type_reg(extension, exe_path, file_type):
                                 try:
                                     extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1153,7 +1135,7 @@ if __name__ == "__main__":
                                     file_type, _ = win32api.RegQueryValueEx(key, "")
                                     win32api.RegCloseKey(key)
                                     return file_type
-                                except FileNotFoundError: return None
+                                except Exception: return None
                             def set_file_type_reg(extension, exe_path, file_type):
                                 try:
                                     extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1183,22 +1165,23 @@ if __name__ == "__main__":
                     if not (disabled_shortcuts_installation == True or main_config.get("EFlagDisableShortcutsInstall") == True):
                         printMainMessage("Setting up shortcuts..")
                         try:
-                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                 shell = win32client.Dispatch('WScript.Shell')
                                 if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                 shortcut = shell.CreateShortcut(shortcut_path)
                                 shortcut.TargetPath = target_path
+                                if arguments: shortcut.Arguments = arguments
                                 if working_directory: shortcut.WorkingDirectory = working_directory
                                 if icon_path: shortcut.IconLocation = icon_path
                                 shortcut.Save()
                             create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                             create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "PlayRoblox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'))
-                            create_shortcut(os.path.join(stored_main_app[main_os][2], "RunStudio.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
+                            create_shortcut(stored_main_app[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(stored_main_app[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
                         except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
                     # Copy App Resources
@@ -1208,12 +1191,12 @@ if __name__ == "__main__":
                         if os.path.exists(stored_main_app[main_os][0]):
                             printMainMessage("Removing Old Scripts..")
                             for i in os.listdir(stored_main_app[main_os][0]):
-                                if i.endswith(".py") and not os.path.exists(os.path.join(current_path_location, i)): os.remove(os.path.join(stored_main_app[main_os][0], i))
+                                if i.endswith(".py") and not os.path.exists(os.path.join(cur_path, i)): os.remove(os.path.join(stored_main_app[main_os][0], i))
 
                         if update_mode == False:
                             # Export ./ to {app_path}/
                             printMainMessage("Copying Main Resources..")
-                            pip_class.copyTreeWithMetadata(current_path_location, stored_main_app[main_os][0], dirs_exist_ok=True, ignore=ignore_files_func)
+                            pip_class.copyTreeWithMetadata(cur_path, stored_main_app[main_os][0], dirs_exist_ok=True, ignore=ignore_files_func)
 
                         # Handle Existing Configuration Files
                         printMainMessage("Configurating App Data..")
@@ -1222,7 +1205,7 @@ if __name__ == "__main__":
                         if disabled_shortcuts_installation == True: main_config["EFlagDisableShortcutsInstall"] = True
                         elif disabled_shortcuts_installation == False: main_config["EFlagDisableShortcutsInstall"] = False
 
-                        if use_installation_syncing == True and not ("/Local/OrangeBlox/" in current_path_location): main_config["EFlagOrangeBloxSyncDir"] = current_path_location
+                        if use_installation_syncing == True and not ("/Local/OrangeBlox/" in cur_path): main_config["EFlagOrangeBloxSyncDir"] = cur_path
                         main_config["EFlagAvailableInstalledDirectories"] = stored_main_app
                         data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
                         with open(os.path.join(f"{stored_main_app[main_os][0]}", "Configuration.json"), "wb") as f: f.write(data_in_string)
@@ -1290,9 +1273,9 @@ if __name__ == "__main__":
                             app_key = r"Software\EfazRobloxBootstrap"
                             uninstall_key = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\EfazRobloxBootstrap"
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, app_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{app_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{app_key}" not found.')
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, uninstall_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
                             try:
                                 def remove_path(pat):
                                     if os.path.exists(pat): os.remove(pat)
@@ -1307,7 +1290,7 @@ if __name__ == "__main__":
                         end_build_time = datetime.datetime.now().timestamp()
                         if overwrited == True: printSuccessMessage(f"Successfully updated OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         else: printSuccessMessage(f"Successfully installed OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
-                        shutil.rmtree(f"{current_path_location}/Apps/OrangeBloxWindows/")
+                        shutil.rmtree(f"{cur_path}/Apps/OrangeBloxWindows/")
                     else: printErrorMessage("Something went wrong trying to find the installation folder.")
                 else: printErrorMessage("Something went wrong trying to find the installation folder.")
             else: printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
@@ -1396,14 +1379,10 @@ if __name__ == "__main__":
                                     printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
                                     printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                                     printSuccessMessage(f"✅ Download Location: {download_location}")
-                                elif download_location == "https://obxbeta.efaz.dev/beta.zip":
+                                elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                                     printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                                     printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                                     printSuccessMessage(f"⚠️ Download Location: {download_location}")
-                                elif download_location == "https://obxbeta.efaz.dev/canary.zip":
-                                    printYellowMessage("🔨 This version is a canary version of OrangeBlox and may cause issues with your installation.")
-                                    printYellowMessage("🔨 For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
-                                    printSuccessMessage(f"🔨 Download Location: {download_location}")
                                 elif not (main_config.get("EFlagRobloxBootstrapUpdatesAuthorizationKey", "") == ""):
                                     printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
                                     printYellowMessage("🔨 For information about this update, contact your administrator!")
@@ -1415,29 +1394,29 @@ if __name__ == "__main__":
                                 printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
                                 if isYes(input("> ")) == True:
                                     printMainMessage("Downloading latest version..")
-                                    download_update = requests.download(download_location, os.path.join(current_path_location, 'Update.zip'))
+                                    download_update = requests.download(download_location, os.path.join(cur_path, 'Update.zip'))
                                     if download_update.returncode == 0:
                                         printMainMessage("Download Success! Extracting ZIP now!")
-                                        makedirs(f"{current_path_location}/Update/")
-                                        zip_extract = pip_class.unzipFile(os.path.join(current_path_location, "Update.zip"), f"{current_path_location}/Update/", ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                                        makedirs(f"{cur_path}/Update/")
+                                        zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), f"{cur_path}/Update/", ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
                                         if zip_extract.returncode == 0:
                                             printMainMessage("Extracted successfully! Installing Files!")
-                                            for file in os.listdir(f"{current_path_location}/Update/"):
-                                                src_path = os.path.join(f"{current_path_location}/Update/", file)
-                                                dest_path = os.path.join(current_path_location, file)
+                                            for file in os.listdir(f"{cur_path}/Update/"):
+                                                src_path = os.path.join(f"{cur_path}/Update/", file)
+                                                dest_path = os.path.join(cur_path, file)
                                                 if os.path.isdir(src_path): pip_class.copyTreeWithMetadata(src_path, dest_path, dirs_exist_ok=True)
                                                 else:
                                                     if not file.endswith(".json"): shutil.copy2(src_path, dest_path)
                                             printMainMessage("Cleaning up files..")
                                             os.remove("Update.zip")
-                                            shutil.rmtree(f"{current_path_location}/Update/")
+                                            shutil.rmtree(f"{cur_path}/Update/")
                                             printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting installer..")
                                             subprocess.run(args=[sys.executable] + sys.argv)
                                             sys.exit(0)
                                         else:
                                             printMainMessage("Cleaning up files..")
                                             os.remove("Update.zip")
-                                            shutil.rmtree(f"{current_path_location}/Update/")
+                                            shutil.rmtree(f"{cur_path}/Update/")
                                             printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
                                             if isYes(input("> ")) == False: sys.exit(0)
                                     else:
@@ -1453,10 +1432,10 @@ if __name__ == "__main__":
                     printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
                     a = input("> ")
                     if isYes(a) == False: disabled_shortcuts_installation = True
+                printMainMessage("Install Information!")
                 printMainMessage("In order to allow running for the first time, we're gonna reduce download securities for the app bundle. [This won't affect other apps or downloaded files]")
-                printMainMessage("This will not bypass scans by your anti-virus software. It will only allow running by the operating system. (y/n)")
+                printMainMessage("This will not bypass scans by your anti-virus software. It will only allow running by the operating system.")
                 a = input("> ")
-                if isYes(a) == False: disable_download_for_app = False
                 printMainMessage("Would you like to allow syncing configurations and mods from this folder to the app? (Only 1 installation folder can be used) (y/n)")
                 a = input("> ")
                 if isYes(a) == False: use_installation_syncing = False
@@ -1607,7 +1586,7 @@ if __name__ == "__main__":
                                         file_type, _ = win32api.RegQueryValueEx(key, "")
                                         win32api.RegCloseKey(key)
                                         return file_type
-                                    except FileNotFoundError: return None
+                                    except Exception: return None
                                 def set_file_type_reg(extension, exe_path, file_type):
                                     try:
                                         extension = extension if extension.startswith('.') else f'.{extension}'
@@ -1645,11 +1624,12 @@ if __name__ == "__main__":
                             try:
                                 def remove_path(pat):
                                     if os.path.exists(pat):  os.remove(pat)
-                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None):
+                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
                                     shell = win32client.Dispatch('WScript.Shell')
                                     if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
                                     shortcut = shell.CreateShortcut(shortcut_path)
                                     shortcut.TargetPath = target_path
+                                    if arguments: shortcut.Arguments = arguments
                                     if working_directory: shortcut.WorkingDirectory = working_directory
                                     if icon_path: shortcut.IconLocation = icon_path
                                     shortcut.Save()
@@ -1674,9 +1654,9 @@ if __name__ == "__main__":
                             app_key = r"Software\OrangeBlox"
                             uninstall_key = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, app_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{app_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{app_key}" not found.')
                             try: win32api.RegDeleteKey(win32con.HKEY_CURRENT_USER, uninstall_key)
-                            except FileNotFoundError: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
+                            except Exception: printErrorMessage(f'Registry key "{uninstall_key}" not found.')
 
                             # Remove App
                             if os.path.exists(stored_main_app[main_os][0]):
@@ -1698,7 +1678,7 @@ if __name__ == "__main__":
                     res = input("> ")
                     if isYes(res) == True:
                         repair_mode = True
-                        if not os.path.exists(f"{current_path_location}/Apps/"):
+                        if not os.path.exists(f"{cur_path}/Apps/"):
                             printErrorMessage("Please use an installation folder to install a new version from before continuing to repair!")
                             input("> ")
                             sys.exit(0)
@@ -1712,8 +1692,8 @@ if __name__ == "__main__":
                                 printErrorMessage("Please close OrangeBlox.exe first before continuing to repair!")
                                 input("> ")
                                 sys.exit(0)
-                        app_location = f"{current_path_location}/"
-                        repair_path = f"{current_path_location}/RepairData/"
+                        app_location = f"{cur_path}/"
+                        repair_path = f"{cur_path}/RepairData/"
                         if os.path.exists(repair_path):
                             printYellowMessage("Repair Data already exists!")
                             shutil.rmtree(repair_path, ignore_errors=True)
@@ -1816,8 +1796,8 @@ if __name__ == "__main__":
                                 printErrorMessage("Please close OrangeBlox.exe first before continuing to repair!")
                                 input("> ")
                                 sys.exit(0)
-                        app_location = f"{current_path_location}/"
-                        backup_path = f"{current_path_location}/Backup/"
+                        app_location = f"{cur_path}/"
+                        backup_path = f"{cur_path}/Backup/"
                         if os.path.exists(backup_path):
                             printYellowMessage("Backup Folder already exists!")
                             shutil.rmtree(backup_path, ignore_errors=True)
@@ -1864,15 +1844,15 @@ if __name__ == "__main__":
                         file_dir = ""
                         for i in os.listdir(backup_path): 
                             file_dir = file_dir + f' "{i}"'
-                        if main_os == "Darwin": subprocess.run(["/usr/bin/zip", "-r", "-y", "../Backup.obx"+file_dir], cwd=backup_path)
+                        if main_os == "Darwin": subprocess.run(["/usr/bin/zip", "-r", "-y", os.path.join(cur_path, "Backup.zip")+file_dir], cwd=backup_path)
                         elif main_os == "Windows": 
-                            s = subprocess.run(f'powershell Compress-Archive -Path * -Update -DestinationPath ../Backup.zip', cwd=backup_path, shell=True)
-                            if s.returncode == 0: os.rename(os.path.join(current_path_location, "Backup.zip"), os.path.join(current_path_location, 'Backup.obx'))
+                            s = subprocess.run(f'powershell Compress-Archive -Path * -Update -DestinationPath "{os.path.join(cur_path, "Backup.zip")}"', cwd=backup_path, shell=True)
+                            if s.returncode == 0: os.rename(os.path.join(cur_path, "Backup.zip"), os.path.join(cur_path, 'Backup.obx'))
                         printMainMessage("Cleaning up..")
                         shutil.rmtree(backup_path, ignore_errors=True)
                         printSuccessMessage(f"Successfully backed up OrangeBlox data!")
                         printSuccessMessage(f"Application Path: {app_location}")
-                        printSuccessMessage(f"File Path: {os.path.join(current_path_location, 'Backup.obx')}")
+                        printSuccessMessage(f"File Path: {os.path.join(cur_path, 'Backup.obx')}")
                         input("> ")
                 if uninstall_mode == True: requestUninstall()
                 elif repair_argv_mode == True: requestRepair()

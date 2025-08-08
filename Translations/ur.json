@@ -828,7 +828,7 @@
  "PyObjc App Failed! Error: (*)": "پیوبج سی ایپ ناکام ہوگئی! خرابی: (*)",
  "PyObjc app finished launching! Terminal ID: (*)": "پیوب جے سی ایپ نے لانچ کرنا ختم کیا! ٹرمینل id: (*)",
  "Pyinstaller Rebuild Success!": "پائن اسٹالر نے کامیابی کو دوبارہ تعمیر کیا!",
- "Pyinstaller Rebuild failed! Status code: (*)": "Pyinstaller دوبارہ تعمیر ناکام! اسٹیٹس کوڈ: (*)",
+ "Pyinstaller Rebuild failed! Status code: (*)": "pyinstaller دوبارہ تعمیر ناکام! اسٹیٹس کوڈ: (*)",
  "Pyinstaller is required to be installed for this to work.": "اس کے کام کرنے کے لئے پائن اسٹالر کو انسٹال کرنے کی ضرورت ہے۔",
  "Python (*) has been successfully installed! Would you like to restart Python? (y/n)": "ازگر (*)کامیابی کے ساتھ انسٹال ہوچکا ہے! کیا آپ ازگر کو دوبارہ شروع کرنا چاہیں گے؟ (y/n)",
  "Python (*) is now available for download! Install the update by opening the main menu, checking for Python updates and then install!": "ازگر (*)اب ڈاؤن لوڈ کے لئے دستیاب ہے! مین مینو کو کھول کر ، ازگر کی تازہ کاریوں کی جانچ پڑتال کرکے اپ ڈیٹ انسٹال کریں اور پھر انسٹال کریں!",
@@ -939,7 +939,7 @@
  "Roblox(*) window was closed! Closing Bootstrap App..": "روبلوکس (*)ونڈو بند تھی! بوٹسٹریپ ایپ کو بند کرنا..",
  "RobloxFastFlagsInstaller is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "RobloxFastFlagsInstaller صرف ونڈوز 10.0.17763 (اکتوبر 2018) یا اس سے زیادہ کے لئے معاون ہے۔ براہ کرم جاری رکھنے کے لئے اپنے آپریٹنگ سسٹم کو اپ ڈیٹ کریں!",
  "RobloxFastFlagsInstaller is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "روبلوکس فاسٹ فلاگسنسٹالر صرف میک او ایس 10.13 (ہائی سیرا) یا اس سے زیادہ کے لئے تعاون یافتہ ہے۔ براہ کرم جاری رکھنے کے لئے اپنے آپریٹنگ سسٹم کو اپ ڈیٹ کریں!",
- "RobloxFastFlagsInstaller is only supported for macOS and Windows.": "RobloxFastFlagsInstaller صرف MACOS اور ونڈوز کے لئے معاون ہے۔",
+ "RobloxFastFlagsInstaller is only supported for macOS and Windows.": "RobloxFastFlagsInstaller صرف macOS اور ونڈوز کے لئے معاون ہے۔",
  "Round Ending": "گول اختتام",
  "Round Starting": "گول شروع کرنا",
  "Run Fast Flag Installer": "فاسٹ پرچم انسٹالر چلائیں",
@@ -1601,7 +1601,7 @@
  "[1] = Generate New Mods": "[1] = نئے موڈ تیار کریں",
  "[1] = Import JSON": "[1] = درآمد JSON",
  "[1] = New Configuration": "[1] = نئی ترتیب",
- "[1] = Pyinstaller": "[1] = Pyinstaller",
+ "[1] = Pyinstaller": "[1] = pyinstaller",
  "[1] = Return to Main Menu": "[1] = مین مینو پر واپس جائیں",
  "[1] = Return to Settings": "[1] = ترتیبات پر واپس جائیں",
  "[1] = Roblox Player": "[1] = روبلوکس پلیئر",
@@ -1678,7 +1678,7 @@
  "Is Roblox crashing instantly..? Well, ending script here.": "کیا روبلوکس فوری طور پر کریش ہو رہا ہے..؟ ٹھیک ہے ، یہاں اسکرپٹ ختم کرنا۔",
  "Is Studio crashing instantly..? Well, ending script here.": "کیا اسٹوڈیو فوری طور پر کریش ہو رہا ہے..؟ ٹھیک ہے ، یہاں اسکرپٹ ختم کرنا۔",
  "Nuitka x86 Rebuild Success!": "Nuitka x86 کامیابی کی تعمیر نو!",
- "Pyinstaller x86 Rebuild Success!": "Pyinstaller x86 کامیابی کی تعمیر نو!",
+ "Pyinstaller x86 Rebuild Success!": "pyinstaller x86 کامیابی کی تعمیر نو!",
  "Removing Roblox Studio App from System..": "سسٹم سے روبلوکس اسٹوڈیو ایپ کو ہٹانا..",
  "Roblox Studio Failed Login!": "Roblox اسٹوڈیو ناکام لاگ ان!",
  "Roblox Studio closing task has been canceled!": "روبلوکس اسٹوڈیو بند کرنے کا کام منسوخ کردیا گیا ہے!",
@@ -1786,7 +1786,7 @@
  "(*) [BUNDLE] Unable to fetch Roblox manifest file! (*)": "(*) [BUNDLE] روبلوکس مینی فیسٹ فائل لانے سے قاصر! (*)",
  "(*) [BUNDLE] Unable to fetch bootstrapper settings. (*)": "(*) [BUNDLE] بوٹسٹریپر کی ترتیبات کو بازیافت کرنے سے قاصر ہے۔ (*)",
  "(*) [FFLAGS] Roblox couldn't be found! (*)": "(*) [FFLAGS] روبلوکس نہیں مل سکا! (*)",
- "(*) [FFLAGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [FFLAGS] RobloxFastFlagsInstaller صرف MACOS اور ونڈوز کے لئے معاون ہے۔ (*)",
+ "(*) [FFLAGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [FFLAGS] RobloxFastFlagsInstaller صرف macOS اور ونڈوز کے لئے معاون ہے۔ (*)",
  "(*) [GLOBALSETTINGS] RobloxFastFlagsInstaller is only supported for macOS and Windows. (*)": "(*) [GLOBALSETTINGS] روبلوکس فاسٹ فلاگسنسٹالر صرف میک او ایس اور ونڈوز کے لئے معاون ہے۔ (*)",
  "(*) [GLOBALSETTINGS] Unable to find file. (*)": "(*) [GLOBALSETTINGS] فائل تلاش کرنے سے قاصر ہے۔ (*)",
  "(*) [INSTALL] Failed to download Roblox Studio. (*)": "(*) [INSTALL] روبلوکس اسٹوڈیو ڈاؤن لوڈ کرنے میں ناکام۔ (*)",
@@ -2016,5 +2016,34 @@
  "Downloading from: (*)": "ڈاؤن لوڈ سے: (*)",
  "Published Game": "شائع شدہ کھیل",
  "Would you like to enable deleting localized Studio fonts? (y/n)": "کیا آپ لوکلائزڈ اسٹوڈیو فونٹس کو حذف کرنا چاہیں گے؟ (y/n)",
- "Would you like to enable limiting Localized Studio Documentations to English (United States)? (Select your Roblox language to English (US) for this) (y/n)": "کیا آپ مقامی اسٹوڈیو دستاویزات کو انگریزی (ریاستہائے متحدہ) تک محدود رکھنا چاہیں گے؟ (اس کے لئے اپنی روبلوکس زبان انگریزی (ہم) میں منتخب کریں) (y/n)"
+ "Would you like to enable limiting Localized Studio Documentations to English (United States)? (Select your Roblox language to English (US) for this) (y/n)": "کیا آپ مقامی اسٹوڈیو دستاویزات کو انگریزی (ریاستہائے متحدہ) تک محدود رکھنا چاہیں گے؟ (اس کے لئے اپنی روبلوکس زبان انگریزی (ہم) میں منتخب کریں) (y/n)",
+ "[Connection Handler]: Unable to connect to Discord (1)! Error: (*)": "[کنکشن ہینڈلر]: ڈسکارڈ (1) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
+ "[Connection Handler]: Unable to connect to Discord (2)! Error: (*)": "[کنکشن ہینڈلر]: ڈسکارڈ (2) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
+ "8. macOS App was built using (*)pyinstaller 📦(*) and (*)clang 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "8. میکوس ایپ (*)پائن اسٹالر 📦(*)اور (*)کلینگ 📦(*)کا استعمال کرتے ہوئے تعمیر کی گئی تھی۔ آپ مندرجہ ذیل کمانڈ کا استعمال کرکے دوبارہ بنا سکتے ہیں اور تعینات کرسکتے ہیں! مزید معلومات کے لئے Readme.md استعمال کریں۔",
+ "Join Server! 🚀": "سرور میں شامل ہوں! 🚀",
+ "Made by (*)": "(*)کے ذریعہ بنایا گیا",
+ "Open Game Page 🌐": "اوپن گیم پیج 🌐",
+ "Open Logged User Page 🌐": "لاگ ان صارف کا صفحہ کھولیں 🌐",
+ "Opened Studio as (*) (@(*))!": "(*)(@(*)) کے طور پر کھلا اسٹوڈیو!",
+ "Opened as Local File!": "مقامی فائل کے طور پر کھولا!",
+ "Playing @(*) as (*)!": "کھیلنا @(*)بطور (*)!",
+ "Roblox": "روبلوکس",
+ "Roblox - Playing (*)": "روبلوکس - کھیل (*)",
+ "Roblox - Playing @(*) [ID: (*)] as (*)!": "روبلوکس - کھیلنا @(*) [Id: (*)] as (*)!",
+ "Roblox - Playing @(*) [ID: (*)]!": "روبلوکس - کھیلنا @(*) [Id: (*)]!",
+ "Roblox Studio": "روبلوکس اسٹوڈیو",
+ "Roblox Studio - Opened (*)": "روبلوکس اسٹوڈیو - کھلا (*)",
+ "Roblox Studio - Opened @(*) [ID: (*)] as (*)!": "روبلوکس اسٹوڈیو - کھلا @(*) [Id: (*)] بطور (*)!",
+ "Roblox Studio - Opened @(*) [ID: (*)]!": "روبلوکس اسٹوڈیو - کھلا @(*) [Id: (*)]!",
+ "Fetching Friends! This may take a moment.": "دوستوں کو بازیافت کرنا! اس میں ایک لمحہ لگ سکتا ہے۔",
+ "There was an error on getting friends user info! Error: (*)": "دوستوں کے صارف کی معلومات حاصل کرنے میں ایک غلطی تھی! خرابی: (*)",
+ "There was an error on getting friends! Error: (*)": "دوست حاصل کرنے میں ایک غلطی تھی! خرابی: (*)",
+ "Betas could contain bugs that could break your Roblox installation!": "بیٹا میں کیڑے شامل ہوسکتے ہیں جو آپ کی روبلوکس کی تنصیب کو توڑ سکتے ہیں!",
+ "Would you like to enable OrangeBlox Beta? (y/n)": "کیا آپ اورنج بلوکس بیٹا کو قابل بنانا چاہیں گے؟ (y/n)",
+ "Install was finished and installed!": "انسٹال ختم اور انسٹال ہوا!",
+ "Install was not finished and an error might have occurred!": "انسٹال ختم نہیں ہوا تھا اور ہوسکتا ہے کہ کوئی غلطی واقع ہو۔",
+ "--- Unknown file ---": "--- نامعلوم فائل ---",
+ "Install Information!": "معلومات انسٹال کریں!",
+ "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "یہ آپ کے اینٹی وائرس سافٹ ویئر کے ذریعہ اسکین کو نظرانداز نہیں کرے گا۔ یہ صرف آپریٹنگ سسٹم کے ذریعہ چلانے کی اجازت دے گا۔",
+ "Unable to read OrangeBlox file due to the file handler not added.": "فائل ہینڈلر کو شامل نہ کرنے کی وجہ سے اورنج بلوکس فائل کو پڑھنے سے قاصر ہے۔"
 }

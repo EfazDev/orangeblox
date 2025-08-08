@@ -108,7 +108,7 @@ def get(url: str, attempts: int = 3, cached: bool = False, timeout: Optional[tup
     for _ in range(attempts):
         try:
             Logger.info(f"GET request: {url}")
-            response: Response = requests.get(url, timeout=timeout or TIMEOUT)
+            response: Response = requests.get(url, timeout=timeout if timeout else TIMEOUT)
             response.raise_for_status()
             _cache[url] = response
             return response

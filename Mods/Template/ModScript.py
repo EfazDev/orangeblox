@@ -11,37 +11,18 @@ debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
     
 # Printing Functions
-def printMainMessage(mes): # White System Console Text
-    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
-        print(f"\033[38;5;255m[MOD SCRIPT]: {mes}\033[0m")
-    else:
-        OrangeAPI.printMainMessage(mes)
-def printErrorMessage(mes): # Error Colored Console Text
-    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
-        print(f"\033[38;5;196m[MOD SCRIPT]: {mes}\033[0m")
-    else:
-        OrangeAPI.printErrorMessage(mes)
-def printSuccessMessage(mes): # Success Colored Console Text
-    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
-        print(f"\033[38;5;82m[MOD SCRIPT]: {mes}\033[0m")
-    else:
-        OrangeAPI.printSuccessMessage(mes)
-def printWarnMessage(mes): # Orange Colored Console Text
-    print(f"\033[38;5;202m{mes}\033[0m")
-def printYellowMessage(mes): # Yellow Colored Console Text
-    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
-        print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
-    else:
-        OrangeAPI.printWarnMessage(mes)
-def printDebugMessage(mes): # Debug Console Text
-    if apiVersion and type(apiVersion.get("api_version")) is dict and apiVersion.get("api_version").get("version", "1.0.0") < "1.3.6":
-        if debugMode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {mes}\033[0m")
-    else:
-        OrangeAPI.printDebugMessage(mes)
+def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
+def printErrorMessage(mes): OrangeAPI.printErrorMessage(mes) # Error Colored Console Text
+def printSuccessMessage(mes): OrangeAPI.printSuccessMessage(mes) # Success Colored Console Text
+def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
+def printWarnMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
+def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
+def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
 
 # Main Handler
 def onRobloxAppStart(data):
-    template_count = OrangeAPI.getConfiguration("template_count") or 0
+    template_count = OrangeAPI.getConfiguration("template_count")
+    if not template_count: template_count = 0
     template_count += 1
     OrangeAPI.setConfiguration("template_count", template_count)
     printWarnMessage("--- Template ---")

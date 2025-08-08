@@ -386,18 +386,18 @@ class request:
     def get_curl(self):
         pos_which = self._shutil.which("curl")
         if self._os.path.exists(pos_which): return pos_which
-        elif self._main_os == "Windows" and self._os.path.exists(self._os.path.join(current_path_location, "curl")): return self._os.path.join(current_path_location, "curl", "curl.exe")
-        elif self._os.path.exists(self._os.path.join(current_path_location, "curl")): return self._os.path.join(current_path_location, "curl", "curl")
+        elif self._main_os == "Windows" and self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl.exe")
+        elif self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl")
         else: 
-            current_path_location = self._os.path.dirname(self._os.path.abspath(__file__))
+            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
             if self._main_os == "Darwin": return None
             elif self._main_os == "Windows":
                 pip_class = pip()
-                if self._platform.architecture()[0] == "32bit": self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win32-mingw.zip", self._os.path.join(current_path_location, "curl_download.zip"))
-                else: self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win64-mingw.zip", self._os.path.join(current_path_location, "curl_download.zip"))
-                if self._os.path.exists(self._os.path.join(current_path_location, "curl_download.zip")):
-                    unzip_res = pip_class.unzipFile(self._os.path.join(current_path_location, "curl_download.zip"), self._os.path.join(current_path_location, "curl"), ["curl.exe"])
-                    if unzip_res.returncode == 0: return self._os.path.join(current_path_location, "curl", "curl.exe")
+                if self._platform.architecture()[0] == "32bit": self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win32-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
+                else: self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win64-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
+                if self._os.path.exists(self._os.path.join(cur_path, "curl_download.zip")):
+                    unzip_res = pip_class.unzipFile(self._os.path.join(cur_path, "curl_download.zip"), self._os.path.join(cur_path, "curl"), ["curl.exe"])
+                    if unzip_res.returncode == 0: return self._os.path.join(cur_path, "curl", "curl.exe")
                     else: return None 
                 else: return None 
             else: return None
@@ -586,7 +586,6 @@ class pip:
         import re
         import platform
         import importlib
-        import importlib.metadata
         import subprocess
         import glob
         import stat
@@ -602,7 +601,6 @@ class pip:
         self._re = re
         self._platform = platform
         self._importlib = importlib
-        self._importlib_metadata = importlib.metadata
         self._subprocess = subprocess
         self._glob = glob
         self._stat = stat
@@ -718,7 +716,7 @@ class pip:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
-                current_path_location = self._os.path.dirname(self._os.path.abspath(__file__))
+                cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
                 if repository_mode == True:
                     url_paths = []
                     url_paths_2 = []
@@ -727,7 +725,7 @@ class pip:
                             path_parts = self._urllib_parse.urlparse(i).path.strip('/').split('/')
                             url_paths.append(path_parts[-1])
                             url_paths_2.append(path_parts[-2])
-                    down_path = self._os.path.join(current_path_location, '-'.join(url_paths) + "_download")
+                    down_path = self._os.path.join(cur_path, '-'.join(url_paths) + "_download")
                     if self._os.path.isdir(down_path): self._shutil.rmtree(down_path, ignore_errors=True)
                     self._os.makedirs(down_path, mode=511)
                     co = 0
@@ -739,7 +737,7 @@ class pip:
                         co += 1
                     return {"success": True, "path": down_path, "package_files": downed_paths}
                 else:
-                    down_path = self._os.path.join(current_path_location, '-'.join(generated_list) + "_download")
+                    down_path = self._os.path.join(cur_path, '-'.join(generated_list) + "_download")
                     if self._os.path.isdir(down_path): self._shutil.rmtree(down_path, ignore_errors=True)
                     self._os.makedirs(down_path, mode=511)
                     self.ensure()
@@ -754,7 +752,7 @@ class pip:
     def update(self):
         self.ensure()
         try:
-            a = self._subprocess.call([self.executable, "-m", "pip", "install", "--upgrade", "pip"], stdout=(not self.debug) and self._subprocess.DEVNULL or None, stderr=(not self.debug) and self._subprocess.DEVNULL or None)
+            a = self._subprocess.call([self.executable, "-m", "pip", "install", "--upgrade", "pip"], stdout=self._subprocess.DEVNULL if (not self.debug) else None, stderr=self._subprocess.DEVNULL if (not self.debug) else None)
             if a == 0: return {"success": True, "message": "Successfully installed latest version of pip!"}
             else: return {"success": False, "message": f"Command has failed!"}
         except Exception as e: return {"success": False, "message": str(e)}
@@ -919,7 +917,7 @@ class pip:
             s = self._subprocess.run(f'"{self.executable}" ./install_local_python_certs.py', shell=True, stdout=self._subprocess.DEVNULL, stderr=self._subprocess.DEVNULL)
             self._os.remove("./install_local_python_certs.py")
             if not (s.returncode == 0) and self.debug == True: print(f"Unable to install local python certificates!")
-    def getIf32BitWindows(self):  return self._main_os == "Windows" and self.getArchitecture() == "x86"
+    def getIf32BitWindows(self): return self._main_os == "Windows" and self.getArchitecture() == "x86"
     def getIfArmWindows(self): return self._main_os == "Windows" and self.getArchitecture() == "arm"
     def getIfRunningWindowsAdmin(self):
         if self._main_os == "Windows":
@@ -1268,9 +1266,9 @@ class Translator:
     def load_new_language(self, lang="en", include_ansi=False):
         self.language = lang
         if lang and not (lang == "en"):
-            current_path_location = self._os.path.dirname(self._os.path.abspath(__file__))
+            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
             if self._os.path.exists(lang): path = lang
-            else: path = self._os.path.join(current_path_location, "Translations", f"{lang}.json")
+            else: path = self._os.path.join(cur_path, "Translations", f"{lang}.json")
             with open(path, "r", encoding="utf-8") as f: self.translation_json = self._json.load(f)
             self.translation_json.update({
                 "- (*)": "- (*)",
@@ -1565,9 +1563,8 @@ class TimerBar:
         if hasattr(sys.stdout, "change_last_message"): print("\033{progressend}")
 class InstantRequestJSONResponse:
     ok = True
-    data = None
-    def __init__(self, data): self.data = data
-    def json(self): return self.data
+    json = None
+    def __init__(self, data: dict=None, ok: bool=True): self.json = data; self.ok = ok
 class BuiltinEditor:
     def __init__(self, builtins_mod):
         import os

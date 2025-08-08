@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.6"}
+    current_version = {"version": "2.2.7"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
@@ -95,12 +95,8 @@ if __name__ == "__main__":
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
-        "EFlagDisableCreatingTkinterApp": "EFlagDisableCreatingGUIApp",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
-        "EFlagNumberOfTkinterAppsAllowed": "EFlagNumberOfGUIAppsAllowed",
-        "EFlagDisableCreatingGUIApp": "bool",
         "EFlagEnableGUIOptionMenus": "bool",
-        "EFlagNumberOfGUIAppsAllowed": "int",
         "EFlagAllowFullDebugMode": "bool",
         "EFlagRobloxClientChannel": "str",
         "EFlagDisableRobloxUpdateChecks": "bool",
@@ -206,8 +202,18 @@ if __name__ == "__main__":
         else: app_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "MacOS")
     else:
         if main_os == "Windows": app_path = os.path.dirname(sys.argv[0]); macos_path = os.path.dirname(sys.argv[0])
-        else: current_path_location = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(current_path_location).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(current_path_location).split(os.sep)[:-3]), "MacOS")
+        else: cur_path = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "MacOS")
     
+    def getIfCertainPlayer():
+        if main_os == "Windows":
+            if os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")): 
+                with open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "studio"
+            elif os.path.exists(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt")): 
+                with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
+            else: return None, None
+        else: return None, None
+    certain_player, certain_type = getIfCertainPlayer()
+    if certain_player: app_path = certain_player
     if main_os == "Darwin":
         def loadConfiguration():
             global main_config
@@ -283,11 +289,11 @@ if __name__ == "__main__":
             except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
         elif main_os == "Windows":
             try:
-                try: from plyer.platforms.win.notification import WindowsNotification
+                try: from plyer.platforms.win.notification import instance
                 except Exception as e:
                     pip_class.install(["plyer"])
-                    WindowsNotification = pip_class.importModule("plyer.platforms.win.notification").WindowsNotification
-                WindowsNotification().notify(
+                    instance = pip_class.importModule("plyer.platforms.win.notification").instance
+                instance().notify(
                     title=title,
                     message=message,
                     app_name="OrangeBlox",
@@ -508,11 +514,7 @@ if __name__ == "__main__":
                         displayNotification(ts("Uh oh!"), ts("Your copy of OrangeBlox was unable to be validated and might be tampered with!"))
                         printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
                         for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
-                        if main_config.get("EFlagDisableCreatingGUIApp") == True: 
-                            printErrorMessage(f"Please download a new copy from GitHub or disable hash security by manually editting your configuration file!")
-                            ended = True
-                            sys.exit(0)
-                        else: printErrorMessage(f"Requested validation failed window from pyobjc.")
+                        printErrorMessage(f"Requested validation failed window from pyobjc.")
                 except Exception as e:
                     ended = True
                     printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
@@ -981,7 +983,7 @@ if __name__ == "__main__":
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
                                 add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
                                 add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
-                                if (main_config.get("EFlagNumberOfGUIAppsAllowed", 1)) > 0 and os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
+                                if os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
                                 view_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("View", None, "")
@@ -1429,31 +1431,22 @@ if __name__ == "__main__":
                         except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                     except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                 except Exception as e: printErrorMessage(str(e))
-            if not (main_config.get("EFlagDisableCreatingGUIApp") == True):
-                threading.Thread(target=notificationLoop, daemon=False).start()
-                threading.Thread(target=terminalAwaitLoop, daemon=True).start()
-                if (main_config.get("EFlagNumberOfGUIAppsAllowed", 1)) > 0:
-                    threading.Thread(target=startBootstrap, daemon=False).start()
-                    app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
-                    if app_count < main_config.get("EFlagNumberOfGUIAppsAllowed", 1): 
-                        with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-                        createObjcAppReplication()
-                        try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
-                        except Exception: printMainMessage("Unable to remove GUI app holder")
-                    else:
-                        while ended == False and os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): time.sleep(0.5)
-                        if ended == False: 
-                            with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-                            createObjcAppReplication()
-                            try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
-                            except Exception: printMainMessage("Unable to remove GUI app holder")
-                else:
-                    threading.Thread(target=startBootstrap, daemon=False).start()
-                    createObjcAppReplication()
+            threading.Thread(target=notificationLoop, daemon=False).start()
+            threading.Thread(target=terminalAwaitLoop, daemon=True).start()
+            threading.Thread(target=startBootstrap, daemon=False).start()
+            app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
+            if app_count < 1: 
+                with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                createObjcAppReplication()
+                try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                except Exception: printMainMessage("Unable to remove GUI app holder")
             else:
-                threading.Thread(target=terminalAwaitLoop, daemon=True).start()
-                threading.Thread(target=notificationLoop, daemon=False).start()
-                startBootstrap()
+                while ended == False and os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): time.sleep(0.5)
+                if ended == False: 
+                    with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                    createObjcAppReplication()
+                    try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                    except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
             sys.exit(0)
@@ -1482,13 +1475,26 @@ if __name__ == "__main__":
                 threading.Thread(target=cool, daemon=True).start()
 
             if len(args) > 1:
-                filtered_args = args[1]
-                if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
-                    printMainMessage(f"Creating URL Exchange file..")
+                if certain_player: 
+                    filtered_args = f"obx-launch-{certain_type} " + " ".join(args)
                     if os.path.exists(app_path):
                         with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                     else:
                         with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                else:
+                    filtered_args = args[1]
+                    if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
+                        printMainMessage(f"Creating URL Exchange file..")
+                        if os.path.exists(app_path):
+                            with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                        else:
+                            with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+            elif certain_player:
+                filtered_args = f"obx-launch-{certain_type}"
+                if os.path.exists(app_path):
+                    with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                else:
+                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
             if pip_class.getIfRunningWindowsAdmin():
                 printErrorMessage("Please run OrangeBlox under user permissions instead of running administrator!")
