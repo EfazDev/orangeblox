@@ -732,8 +732,8 @@ class pip:
                     downed_paths = []
                     for url_path_1 in url_paths:
                         url_path_2 = url_paths_2[co]
-                        self.requests.download(f"https://github.com/{url_path_2}/{url_path_1}/archive/refs/heads/main.zip", self._os.path.join(down_path, f"{url_path_1}.zip"))
-                        downed_paths.append(self._os.path.join(down_path, f"{url_path_1}.zip"))
+                        s = self.requests.download(f"https://github.com/{url_path_2}/{url_path_1}/archive/refs/heads/main.zip", self._os.path.join(down_path, f"{url_path_1}.zip"))
+                        if s.ok: downed_paths.append(self._os.path.join(down_path, f"{url_path_1}.zip"))
                         co += 1
                     return {"success": True, "path": down_path, "package_files": downed_paths}
                 else:
@@ -766,7 +766,7 @@ class pip:
                 with self._tempfile.NamedTemporaryFile(suffix=".py", delete=False) as temp_file: pypi_download_path = temp_file.name
                 if self.pythonSupported(3,9,0): download_res = self.requests.download("https://bootstrap.pypa.io/get-pip.py", pypi_download_path)      
                 else: current_python_version = self.getCurrentPythonVersion(); download_res = self.requests.download(f"https://bootstrap.pypa.io/pip/{current_python_version.split('.')[0]}.{current_python_version.split('.')[1]}/get-pip.py", pypi_download_path)
-                if download_res.returncode == 0:
+                if download_res.ok:
                     self.printDebugMessage(f"Successfully downloaded pip! Installing to Python..")
                     install_to_py = self._subprocess.run([self.executable, pypi_download_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL)
                     if install_to_py.returncode == 0:
@@ -893,7 +893,7 @@ class pip:
             url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos11.pkg"
             with self._tempfile.NamedTemporaryFile(suffix=".pkg", delete=False) as temp_file: pkg_file_path = temp_file.name
             result = self.requests.download(url, pkg_file_path)            
-            if result.returncode == 0:
+            if result.ok:
                 self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
                 while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
                 self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
@@ -906,7 +906,7 @@ class pip:
             else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}.exe"
             with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
             result = self.requests.download(url, exe_file_path)
-            if result.returncode == 0:
+            if result.ok:
                 self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
                 self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
             else:

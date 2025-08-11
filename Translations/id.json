@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "Tidak dapat membaca file OrangeBlox karena penangan file yang tidak ditambahkan..",
  "Made by (*)(*)": "Dibuat oleh (*)(*)",
  "Warning! This may take way too long time due to Roblox ratelimits.": "Peringatan! Ini mungkin memakan waktu terlalu lama karena Roblox Ratelimits..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "Peringatan! Ini bisa dipalsukan karena pembatasan teman mengingat pengguna lain!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Peringatan! Ini bisa dipalsukan karena pembatasan teman mengingat pengguna lain!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Mengunduh file ZIP gagal. Apakah Anda ingin melanjutkan tanpa memperbarui? (y/t)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Mengekstraksi file ZIP gagal. Apakah Anda ingin melanjutkan tanpa memperbarui? (y/t)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Tidak dapat mengunduh penginstal Roblox (*)karena kesalahan. Kode: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "Tidak dapat mengunduh penginstal Roblox (*)karena kesalahan HTTP. Kode: (*)",
+ "Unable to install Roblox due to a download error.": "Tidak dapat menginstal Roblox karena kesalahan pengunduhan.."
 }

@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "由於未添加文件處理程序,無法讀取橙色文件..",
  "Made by (*)(*)": "由(*)(*)製作",
  "Warning! This may take way too long time due to Roblox ratelimits.": "警告!由於Roblox Ratelimits,這可能會花費太長時間..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "警告!鑑於其他用戶,這可能會由於朋友的限製而偽造!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "警告!鑑於其他用戶,這可能會由於朋友的限製而偽造!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "下載zip文件失敗.您想繼續不更新嗎? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "提取zip文件失敗.您想繼續不更新嗎? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "由於錯誤,無法下載Roblox(*)安裝程序.代碼: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "由於HTTP錯誤,無法下載Roblox(*)安裝程序.代碼: (*)",
+ "Unable to install Roblox due to a download error.": "由於下載錯誤,無法安裝Roblox.."
 }

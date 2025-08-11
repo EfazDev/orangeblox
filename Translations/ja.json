@@ -2049,5 +2049,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "ファイルハンドラーが追加されていないため,OrangeBloxファイルを読み取ることができません..",
  "Made by (*)(*)": "製造(*)(*)",
  "Warning! This may take way too long time due to Roblox ratelimits.": "警告!これには,Roblox Ratelimitsのために長すぎる時間がかかる場合があります..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "警告!これは,他のユーザーの観点から友人の制限のために偽造される可能性があります!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "警告!これは,他のユーザーの観点から友人の制限のために偽造される可能性があります!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Zipファイルのダウンロードに失敗しました.更新せずに続行しませんか? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Zipファイルの抽出に失敗しました.更新せずに続行しませんか? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "エラーのため,Roblox(*)インストーラーをダウンロードできません.コード:(*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTPエラーのため,Roblox(*)インストーラーをダウンロードできません.コード:(*)",
+ "Unable to install Roblox due to a download error.": "ダウンロードエラーのためにRobloxをインストールできません.."
 }

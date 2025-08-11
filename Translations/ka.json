@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "Ვერ წაიკითხეთ OrangeBlox ფაილი იმის გამო, რომ ფაილის გამტარებელი არ დაემატა..",
  "Made by (*)(*)": "Დამზადებულია (*)(*)",
  "Warning! This may take way too long time due to Roblox ratelimits.": "Გაფრთხილება! ამას შეიძლება ძალიან დიდი დრო დასჭირდეს Roblox Ratelimits- ის გამო..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "Გაფრთხილება! ეს შეიძლება გაყალბდეს მეგობრის შეზღუდვების გამო, სხვა მომხმარებლების გათვალისწინებით!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Გაფრთხილება! ეს შეიძლება გაყალბდეს მეგობრის შეზღუდვების გამო, სხვა მომხმარებლების გათვალისწინებით!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Zip ფაილის ჩამოტვირთვა ვერ მოხერხდა. გსურთ განაგრძოთ განახლების გარეშე? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Zip ფაილის მოპოვება ვერ მოხერხდა. გსურთ განაგრძოთ განახლების გარეშე? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Შეცდომის გამო Roblox (*)ინსტალერის ჩამოტვირთვა შეუძლებელია. კოდი: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTP შეცდომის გამო Roblox (*)ინსტალერის ჩამოტვირთვა შეუძლებელია. კოდი: (*)",
+ "Unable to install Roblox due to a download error.": "Ჩამოტვირთვის შეცდომის გამო Roblox- ის დაყენება შეუძლებელია.."
 }

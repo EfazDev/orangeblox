@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8c
+# v2.2.8d
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.8c"}
+    current_version = {"version": "2.2.8d"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1396,7 +1396,7 @@ if __name__ == "__main__":
                                 if isYes(input("> ")) == True:
                                     printMainMessage("Downloading latest version..")
                                     download_update = requests.download(download_location, os.path.join(cur_path, 'Update.zip'))
-                                    if download_update.returncode == 0:
+                                    if download_update.ok:
                                         printMainMessage("Download Success! Extracting ZIP now!")
                                         makedirs(f"{cur_path}/Update/")
                                         zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), f"{cur_path}/Update/", ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
@@ -1418,10 +1418,10 @@ if __name__ == "__main__":
                                             printMainMessage("Cleaning up files..")
                                             os.remove("Update.zip")
                                             shutil.rmtree(f"{cur_path}/Update/")
-                                            printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                            printErrorMessage("Extracting ZIP File failed. Would you like to continue without updating? (y/n)")
                                             if isYes(input("> ")) == False: sys.exit(0)
                                     else:
-                                        printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                        printErrorMessage("Downloading ZIP File failed. Would you like to continue without updating? (y/n)")
                                         if isYes(input("> ")) == False: sys.exit(0)
                             elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"): printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
                             else: printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")

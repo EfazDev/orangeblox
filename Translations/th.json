@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "ไม่สามารถอ่านไฟล์ OrangeBlox ได้เนื่องจากไม่เพิ่มตัวจัดการไฟล์",
  "Made by (*)(*)": "ทำโดย (*)(*)",
  "Warning! This may take way too long time due to Roblox ratelimits.": "คำเตือน! สิ่งนี้อาจใช้เวลานานเกินไปเนื่องจาก Roblox Ratelimits",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "คำเตือน! สิ่งนี้อาจเป็นเท็จเนื่องจากข้อ จำกัด ของเพื่อนในมุมมองของผู้ใช้รายอื่น!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "คำเตือน! สิ่งนี้อาจเป็นเท็จเนื่องจากข้อ จำกัด ของเพื่อนในมุมมองของผู้ใช้รายอื่น!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "การดาวน์โหลดไฟล์ ZIP ล้มเหลว คุณต้องการดำเนินการต่อโดยไม่อัปเดตหรือไม่? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "การแยกไฟล์ ZIP ล้มเหลว คุณต้องการดำเนินการต่อโดยไม่อัปเดตหรือไม่? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "ไม่สามารถดาวน์โหลดตัวติดตั้ง Roblox (*)เนื่องจากข้อผิดพลาด รหัส: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "ไม่สามารถดาวน์โหลดตัวติดตั้ง Roblox (*)เนื่องจากข้อผิดพลาด HTTP รหัส: (*)",
+ "Unable to install Roblox due to a download error.": "ไม่สามารถติดตั้ง Roblox ได้เนื่องจากข้อผิดพลาดในการดาวน์โหลด"
 }

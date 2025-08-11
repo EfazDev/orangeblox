@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "Dosya işleyicisi eklenmemesi nedeniyle OrangeBlox dosyasını okuyamıyor..",
  "Made by (*)(*)": "(*)(*)Tarafından yapılmıştır",
  "Warning! This may take way too long time due to Roblox ratelimits.": "Uyarı! Roblox ratelimits nedeniyle bu çok uzun zaman alabilir..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "Uyarı! Bu, diğer kullanıcılar açısından arkadaş kısıtlamaları nedeniyle tahrif edilebilir!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Uyarı! Bu, diğer kullanıcılar açısından arkadaş kısıtlamaları nedeniyle tahrif edilebilir!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Zip dosyasını indirmek başarısız oldu. Güncellemeden devam etmek ister misiniz? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Zip dosyasının çıkarılması başarısız oldu. Güncellemeden devam etmek ister misiniz? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Bir hata nedeniyle Roblox (*)yükleyicisini indiremiyor. Kod: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTP hatası nedeniyle Roblox (*)yükleyicisini indiremiyor. Kod: (*)",
+ "Unable to install Roblox due to a download error.": "İndirme hatası nedeniyle Roblox yüklenemiyor.."
 }

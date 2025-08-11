@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "فائل ہینڈلر کو شامل نہ کرنے کی وجہ سے اورنج بلوکس فائل کو پڑھنے سے قاصر ہے۔",
  "Made by (*)(*)": "(*)(*)کے ذریعہ بنایا گیا",
  "Warning! This may take way too long time due to Roblox ratelimits.": "انتباہ! روبلوکس روٹیلیمٹس کی وجہ سے اس میں بہت زیادہ وقت لگ سکتا ہے۔",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "انتباہ! دوسرے صارفین کے پیش نظر دوستی کی پابندیوں کی وجہ سے اس کو غلط قرار دیا جاسکتا ہے!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "انتباہ! دوسرے صارفین کے پیش نظر دوستی کی پابندیوں کی وجہ سے اس کو غلط قرار دیا جاسکتا ہے!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "زپ فائل ڈاؤن لوڈ کرنا ناکام ہوگیا۔ کیا آپ اپ ڈیٹ کیے بغیر جاری رکھنا چاہیں گے؟ (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "زپ فائل نکالنا ناکام ہوگیا۔ کیا آپ اپ ڈیٹ کیے بغیر جاری رکھنا چاہیں گے؟ (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "غلطی کی وجہ سے روبلوکس (*)انسٹالر ڈاؤن لوڈ کرنے سے قاصر ہے۔ کوڈ: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTP غلطی کی وجہ سے Roblox (*)انسٹالر ڈاؤن لوڈ کرنے سے قاصر ہے۔ کوڈ: (*)",
+ "Unable to install Roblox due to a download error.": "ڈاؤن لوڈ کی خرابی کی وجہ سے روبلوکس کو انسٹال کرنے سے قاصر ہے۔"
 }

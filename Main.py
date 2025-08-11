@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8c
+# v2.2.8d
 # 
 
 # Python Modules
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.8c"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.8d"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -1041,7 +1041,7 @@ if __name__ == "__main__":
                         printMainMessage("Downloading Latest Version of OrangeBlox..")
                         late_v = latest_vers.get("latest_version")
                         download_update = requests.download(download_location, os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
-                        if download_update.returncode == 0:
+                        if download_update.ok:
                             printMainMessage("Download Success! Extracting ZIP now!")
                             dow_tar = os.path.join(user_folder, f'OrangeBloxInstaller')
                             zip_extract = pip_class.unzipFile(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), dow_tar, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
@@ -3396,7 +3396,7 @@ if __name__ == "__main__":
                         printDebugMessage(f"Download location: {download_location} => {os.path.join(cur_path, 'Update.zip')}")
                         try:
                             download_update = requests.download(download_location, os.path.join(cur_path, 'Update.zip'))
-                            if download_update.returncode == 0:
+                            if download_update.ok:
                                 printMainMessage("Download Success! Extracting ZIP now!")
                                 zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), os.path.join(cur_path, 'Update'), ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
                                 if zip_extract.returncode == 0:

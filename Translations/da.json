@@ -2048,5 +2048,10 @@
  "Unable to read OrangeBlox file due to the file handler not added.": "Kan ikke læse OrangeBlox -fil på grund af filhandleren ikke tilføjet..",
  "Made by (*)(*)": "Lavet af (*)(*)",
  "Warning! This may take way too long time due to Roblox ratelimits.": "Advarsel! Dette kan tage alt for lang tid på grund af Roblox Ratelimits..",
- "Warning! This could be falsified due to friend restrictions in view of other users!": "Advarsel! Dette kan forfalskes på grund af venbegrænsninger i betragtning af andre brugere!"
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Advarsel! Dette kan forfalskes på grund af venbegrænsninger i betragtning af andre brugere!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Download af ZIP -fil mislykkedes. Vil du fortsætte uden at opdatere? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Ekstraktion af ZIP -fil mislykkedes. Vil du fortsætte uden at opdatere? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Kan ikke downloade Roblox (*)installationsprogram på grund af en fejl. Kode: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "Kan ikke downloade Roblox (*)installationsprogram på grund af en HTTP -fejl. Kode: (*)",
+ "Unable to install Roblox due to a download error.": "Kan ikke installere Roblox på grund af en downloadfejl.."
 }
