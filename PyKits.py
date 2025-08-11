@@ -92,16 +92,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "GET"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.get(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -124,16 +124,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "POST", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "POST"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.post(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -156,16 +156,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PATCH", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "PATCH"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.patch(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -188,16 +188,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PUT", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "PUT"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"):
                     req = self.put(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -220,16 +220,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "DELETE", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "DELETE"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.delete(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -252,16 +252,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "HEAD", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "HEAD"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.head(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -284,16 +284,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", method, "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = method.upper()
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.custom(new_response.headers.get("location"), method, data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -691,7 +691,7 @@ class pip:
                 return installed_checked
         else:
             sub = self._subprocess.run([self.executable, "-m", "pip", "list"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
-            line_splits = sub.stdout.decode().splitlines()[2:]
+            line_splits = sub.stdout.decode().replace("\r", "").splitlines()[2:]
             installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
             installed_checked = {}
             all_installed = True
@@ -822,7 +822,7 @@ class pip:
         else:
             a = self._subprocess.run([self.executable, "-V"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
             final = a.stdout.decode()
-            if a.returncode == 0: return final.replace("Python ", "").replace("\n", "")
+            if a.returncode == 0: return final.replace("Python ", "").replace("\n", "").replace("\r", "")
             else: return None
     def getIfPythonVersionIsBeta(self, version=""):
         if version == "": cur_vers = self.getCurrentPythonVersion()
@@ -946,7 +946,7 @@ class pip:
                 try:
                     s = self._subprocess.run([exe, "-c", "import platform; machine_var = platform.machine(); print('arm' if machine_var.lower() == 'arm64' else ('intel' if machine_var.lower() == 'x86_64' else 'x86'))"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
                     final = s.stdout.decode()
-                    return final.replace("\n", "")
+                    return final.replace("\n", "").replace("\r", "")
                 except: return ""
             elif self._main_os == "Windows":
                 with open(exe, "rb") as f:
@@ -1462,7 +1462,7 @@ class stdout:
                     try:  _, status = self._os.waitpid(pid, 0)
                     except ChildProcessError: status = 0
                 returncode = self._os.WEXITSTATUS(status)
-                return self.CompletedProcess(b''.join(output).decode(), returncode)
+                return self.CompletedProcess(b''.join(output).decode().replace("\r", ""), returncode)
         else:
             proc = self._subprocess.Popen(
                 args,
@@ -1498,7 +1498,7 @@ class stdout:
             except KeyboardInterrupt: proc.terminate()
             reader_thread.join()
             returncode = proc.wait()
-            return self.CompletedProcess(b''.join(output).decode(), returncode)
+            return self.CompletedProcess(b''.join(output).decode().replace("\r", ""), returncode)
     def flush(self):
         if self.buffer.rstrip():
             try: self.logger.log(self.log_level, self.buffer.rstrip()); 

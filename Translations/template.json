@@ -714,7 +714,7 @@
  "Log into the account you want to save as a shortcut before you continue.": "",
  "Login to the Roblox account you would like to use!": "",
  "Lost Connection from Studio Server!": "",
- "Made by (*)": "",
+ "Made by (*)(*)": "",
  "Made by @EfazDev": "",
  "Made by @EfazDev | PID: (*)": "",
  "Made by Efaz from efaz.dev!": "",
@@ -1258,7 +1258,6 @@
  "There was an error holding mutex W: (*)": "",
  "There was an error inside the (*) that has caused it to crash! Sorry!": "",
  "There was an error loading loop! Error: (*)(*)": "",
- "There was an error on getting friends user info! Error: (*)": "",
  "There was an error on getting friends! Error: (*)": "",
  "There was an error preparing Roblox: (*)(*)": "",
  "There was an error reading the latest version.": "",
@@ -1460,6 +1459,8 @@
  "Waited: (*)/15 seconds": "",
  "Waiting 5 seconds to check if Roblox needs a reinstall..": "",
  "Warning! The cookies before this may be brought back after setup.": "",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "",
  "Warning! This setting may cause issues and will take a moment for the handler to settle!": "",
  "We can't clear logs if Roblox is currently open! Please close it before trying again!": "",
  "We have detected a new version of OrangeBlox! Would you like to install it? (y/n)": "",
@@ -1938,5 +1939,7 @@
  "(*) [UNINSTALL] Removing Universe App.. (*)": "",
  "(*) [UNINSTALL] Removing app.. (*)": "",
  "(*) [UNINSTALL] Successfully uninstalled Roblox Studio! (*)": "",
- "(*) [UNINSTALL] Successfully uninstalled Roblox! (*)": ""
+ "(*) [UNINSTALL] Successfully uninstalled Roblox! (*)": "",
+ "Made by (*)": "",
+ "There was an error on getting friends user info! Error: (*)": ""
 }

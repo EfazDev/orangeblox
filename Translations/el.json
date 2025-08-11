@@ -2045,5 +2045,8 @@
  "--- Unknown file ---": "--- Άγνωστο αρχείο ---",
  "Install Information!": "Εγκαταστήστε τις πληροφορίες!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Αυτό δεν θα παρακάμψει τις σαρώσεις από το λογισμικό Anti-Virus. Θα επιτρέψει την εκτέλεση μόνο από το λειτουργικό σύστημα..",
- "Unable to read OrangeBlox file due to the file handler not added.": "Δεν είναι δυνατή η ανάγνωση του αρχείου OrangeBlox λόγω του χειριστή αρχείων που δεν προστέθηκε.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "Δεν είναι δυνατή η ανάγνωση του αρχείου OrangeBlox λόγω του χειριστή αρχείων που δεν προστέθηκε..",
+ "Made by (*)(*)": "Κατασκευασμένο από (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "Προειδοποίηση! Αυτό μπορεί να διαρκέσει πολύ χρόνο λόγω των Roblox Ratelimits..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Προειδοποίηση! Αυτό θα μπορούσε να παραποιηθεί λόγω περιορισμών φίλων ενόψει άλλων χρηστών!"
 }

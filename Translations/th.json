@@ -2045,5 +2045,8 @@
  "--- Unknown file ---": "--- ไฟล์ที่ไม่รู้จัก ---",
  "Install Information!": "ติดตั้งข้อมูล!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "สิ่งนี้จะไม่ข้ามการสแกนโดยซอฟต์แวร์ป้องกันไวรัสของคุณ มันจะอนุญาตให้ทำงานโดยระบบปฏิบัติการเท่านั้น",
- "Unable to read OrangeBlox file due to the file handler not added.": "ไม่สามารถอ่านไฟล์ OrangeBlox ได้เนื่องจากไม่เพิ่มตัวจัดการไฟล์"
+ "Unable to read OrangeBlox file due to the file handler not added.": "ไม่สามารถอ่านไฟล์ OrangeBlox ได้เนื่องจากไม่เพิ่มตัวจัดการไฟล์",
+ "Made by (*)(*)": "ทำโดย (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "คำเตือน! สิ่งนี้อาจใช้เวลานานเกินไปเนื่องจาก Roblox Ratelimits",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "คำเตือน! สิ่งนี้อาจเป็นเท็จเนื่องจากข้อ จำกัด ของเพื่อนในมุมมองของผู้ใช้รายอื่น!"
 }

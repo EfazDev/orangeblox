@@ -2045,5 +2045,8 @@
  "--- Unknown file ---": "--- Hindi kilalang file ---",
  "Install Information!": "I -install ang impormasyon!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Hindi ito maiiwasan ang mga pag-scan ng iyong anti-virus software. Papayagan lamang nito ang pagpapatakbo ng operating system..",
- "Unable to read OrangeBlox file due to the file handler not added.": "Hindi mabasa ang OrangeBlox file dahil sa hindi idinagdag ang file handler.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "Hindi mabasa ang OrangeBlox file dahil sa hindi idinagdag ang file handler..",
+ "Made by (*)(*)": "Ginawa ng (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "Babala! Ito ay maaaring tumagal ng masyadong mahabang oras dahil sa Roblox ratelimits..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Babala! Maaari itong mali dahil sa mga paghihigpit ng kaibigan dahil sa iba pang mga gumagamit!"
 }

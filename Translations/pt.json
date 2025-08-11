@@ -2045,5 +2045,8 @@
  "--- Unknown file ---": "--- Arquivo desconhecido ---",
  "Install Information!": "Instale as informações!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Isso não ignorará as varreduras pelo seu software antivírus. Ele permitirá apenas a EXEcução pelo sistema operacional..",
- "Unable to read OrangeBlox file due to the file handler not added.": "Incapaz de ler o arquivo OrangeBlox devido ao manipulador de arquivos não adicionado.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "Incapaz de ler o arquivo OrangeBlox devido ao manipulador de arquivos não adicionado..",
+ "Made by (*)(*)": "Feito por (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "Aviso! Isso pode levar muito tempo devido a ratelimits Roblox..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Aviso! Isso pode ser falsificado devido a restrições de amigos em vista de outros usuários!"
 }

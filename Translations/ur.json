@@ -2045,5 +2045,8 @@
  "--- Unknown file ---": "--- نامعلوم فائل ---",
  "Install Information!": "معلومات انسٹال کریں!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "یہ آپ کے اینٹی وائرس سافٹ ویئر کے ذریعہ اسکین کو نظرانداز نہیں کرے گا۔ یہ صرف آپریٹنگ سسٹم کے ذریعہ چلانے کی اجازت دے گا۔",
- "Unable to read OrangeBlox file due to the file handler not added.": "فائل ہینڈلر کو شامل نہ کرنے کی وجہ سے اورنج بلوکس فائل کو پڑھنے سے قاصر ہے۔"
+ "Unable to read OrangeBlox file due to the file handler not added.": "فائل ہینڈلر کو شامل نہ کرنے کی وجہ سے اورنج بلوکس فائل کو پڑھنے سے قاصر ہے۔",
+ "Made by (*)(*)": "(*)(*)کے ذریعہ بنایا گیا",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "انتباہ! روبلوکس روٹیلیمٹس کی وجہ سے اس میں بہت زیادہ وقت لگ سکتا ہے۔",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "انتباہ! دوسرے صارفین کے پیش نظر دوستی کی پابندیوں کی وجہ سے اس کو غلط قرار دیا جاسکتا ہے!"
 }
