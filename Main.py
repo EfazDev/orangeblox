@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8d
+# v2.2.8e
 # 
 
 # Python Modules
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.8d"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.8e"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -1022,6 +1022,7 @@ if __name__ == "__main__":
                         printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"✅ Download location: {download_location} => {possible_download_path}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                         printYellowMessage(f"⚠️ Download location: {download_location} => {possible_download_path}")
@@ -3377,6 +3378,7 @@ if __name__ == "__main__":
                         printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"✅ Download Location: {download_location}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                         printSuccessMessage(f"⚠️ Download Location: {download_location}")

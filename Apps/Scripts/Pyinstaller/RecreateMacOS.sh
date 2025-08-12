@@ -15,25 +15,18 @@ python3 ./Apps/Scripts/GenerateHash.py
 
 # Build Pyinstaller Package
 printMessage "Building Pyinstaller Package.."
-pyinstaller ./Apps/Scripts/Pyinstaller/OrangeBlox_macOS.spec --clean --distpath Apps --noconfirm
+pyinstaller ./Apps/Scripts/Pyinstaller/OrangeBlox_macOS.spec --clean --distpath Apps/Building --noconfirm
 
 # Sign Package
 printMessage "Signing Package.."
 codesig1() {
     while true; do
-    rm -rf ./Apps/OrangeBlox.app/Contents/_CodeSignature/
-    if [ "$1" != "sudo" ]; then
-        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
-        xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
-        xattr -cr "./Apps/OrangeBlox.app"
-        codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
-    else
-        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
-        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
-        sudo xattr -cr "./Apps/OrangeBlox.app"
-        sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
-    fi
-    STATUS=$?
+        rm -rf ./Apps/Building/OrangeBlox.app/Contents/_CodeSignature/
+        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Building/OrangeBlox.app"
+        xattr -dr com.apple.FinderInfo "./Apps/Building/OrangeBlox.app"
+        xattr -cr "./Apps/Building/OrangeBlox.app"
+        codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Building/OrangeBlox.app" --entitlements "./Apps/Storage/Entitlements.plist"
+        STATUS=$?
         if [ $STATUS -eq 0 ]; then
             break
         fi
@@ -43,7 +36,11 @@ codesig1 "$1"
 
 # Create OrangeBloxMac.zip
 printMessage "Creating OrangeBloxMac.zip.."
-zip -r -y ./Apps/OrangeBloxMac.zip "./Apps/OrangeBlox.app" "./Apps/OrangePlayRoblox.app" "./Apps/OrangeLoader.app" "./Apps/OrangeRunStudio.app"
+cd "./Apps/Building"
+zip -r -y ../OrangeBloxMac.zip "OrangeBlox.app"
+cd "../Storage"
+zip -r -y ../OrangeBloxMac.zip "OrangePlayRoblox.app" "OrangeLoader.app" "OrangeRunStudio.app"
+cd ../../
 
 # Remove Build and OrangeLoader folder
 printMessage "Partial Cleaning.."
@@ -51,7 +48,7 @@ rm -rf ./build/
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox/ ./__pycache__/
+rm -rf ./Apps/Building/OrangeBlox.app/ ./Apps/Storage/OrangeBlox/ ./__pycache__/
 
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"

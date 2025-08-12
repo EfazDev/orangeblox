@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8d
+# v2.2.8e
 # 
 
 # Modules
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.8d"}
+    current_version = {"version": "2.2.8e"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1381,6 +1381,7 @@ if __name__ == "__main__":
                                     printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                                     printSuccessMessage(f"✅ Download Location: {download_location}")
                                 elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                                    download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                                     printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                                     printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                                     printSuccessMessage(f"⚠️ Download Location: {download_location}")

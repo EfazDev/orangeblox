@@ -41,7 +41,7 @@ main_exe = EXE(
     console=True,
     upx=True,
     icon="../../../BootstrapImages/AppIcon.ico",
-    version="../Resources/Version.txt",
+    version="../../Storage/Version.txt",
     strip=True
 )
 combined_coll = COLLECT(

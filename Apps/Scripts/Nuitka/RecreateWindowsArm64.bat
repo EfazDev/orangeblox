@@ -23,71 +23,24 @@ python -m nuitka ^
     --product-version=2.2.8 ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
-    --output-dir="Apps" ^
+    --output-dir="Apps/Building" ^
     --windows-icon-from-ico=./BootstrapImages/AppIcon.ico ^
     --target="OrangeBlox" ^
     "./Apps/Scripts/OrangeBlox.py"
 
-powershell -c "Write-Host 'Rebuild OrangeBlox: Compiling OrangePlayRoblox with Nuitka using Python..' -ForegroundColor Green"
-rem Compile PlayRoblox (OrangePlayRoblox.py)
-python -m nuitka ^
-    --standalone ^
-    --windows-console-mode=force ^
-    --onefile ^
-    --assume-yes-for-downloads ^
-    --remove-output ^
-    --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
-    --include-data-files=PyKits.py=PyKits.py ^
-    --include-data-files=Version.json=Version.json ^
-    --msvc=latest ^
-    --company-name=EfazDev ^
-    --product-name="Play Roblox (OrangeBlox)" ^
-    --file-version=2.2.8 ^
-    --product-version=2.2.8 ^
-    --file-description="Play Roblox" ^
-    --copyright="Copyright (c) EfazDev" ^
-    --output-dir="Apps" ^
-    --windows-icon-from-ico=./BootstrapImages/AppIconPlayRoblox.ico ^
-    --target="OrangePlayRoblox" ^
-    "./Apps/Scripts/OrangePlayRoblox.py"
-
-powershell -c "Write-Host 'Rebuild OrangeBlox: Compiling OrangeRunStudio with Nuitka using Python..' -ForegroundColor Green"
-rem Compile RunStudio (OrangeRunStudio.py)
-python -m nuitka ^
-    --standalone ^
-    --windows-console-mode=force ^
-    --onefile ^
-    --assume-yes-for-downloads ^
-    --remove-output ^
-    --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
-    --include-data-files=PyKits.py=PyKits.py ^
-    --include-data-files=Version.json=Version.json ^
-    --msvc=latest ^
-    --output-dir="Apps" ^
-    --windows-icon-from-ico=./BootstrapImages/AppIconRunStudio.ico ^
-    --company-name=EfazDev ^
-    --product-name="Run Studio (OrangeBlox)" ^
-    --file-version=2.2.8 ^
-    --product-version=2.2.8 ^
-    --file-description="Run Studio" ^
-    --copyright="Copyright (c) EfazDev" ^
-    --target="OrangeRunStudio" ^
-    "./Apps/Scripts/OrangeRunStudio.py"
-
 rem Create OrangeBloxWindows Folder
+set 'arch=arm64'
 powershell -c "Write-Host 'Rebuild OrangeBlox: Creating OrangeBloxWindows.zip..' -ForegroundColor Green"
-mkdir OrangeBloxWindows
-mkdir OrangeBloxWindows\arm64
-if exist Apps\OrangeBlox.exe (
-    move /Y Apps\OrangeBlox.exe OrangeBloxWindows\arm64\OrangeBlox.exe
+mkdir Apps\Building\OrangeBloxWindows
+mkdir Apps\Building\OrangeBloxWindows\%arch%
+if exist Apps\Building\OrangeBlox.exe (
+    move /Y Apps\Building\OrangeBlox.exe Apps\Building\OrangeBloxWindows\%arch%\OrangeBlox.exe
 )
-if exist OrangeBloxWindows\arm64\OrangeBlox.exe (
-    signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "OrangeBloxWindows\arm64\OrangeBlox.exe"
+if exist Apps\Building\OrangeBloxWindows\%arch%\OrangeBlox.exe (
+    signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "Apps\Building\OrangeBloxWindows\%arch%\OrangeBlox.exe"
 )
-powershell Compress-Archive -Path OrangeBloxWindows\* -Update -DestinationPath Apps\OrangeBloxWindows.zip
-rmdir /S /Q OrangeBloxWindows
+powershell Compress-Archive -Path Apps\Building\OrangeBloxWindows\* -Update -DestinationPath Apps\OrangeBloxWindows.zip
+rmdir /S /Q Apps\Building\OrangeBloxWindows
 
 rem Cleaning Up
 powershell -c "Write-Host 'Rebuild OrangeBlox: Cleaning Up..' -ForegroundColor Green"
