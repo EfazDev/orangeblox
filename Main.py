@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8e
+# v2.2.8f
 # 
 
 # Python Modules
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.8e"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.8f"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -780,11 +780,6 @@ if __name__ == "__main__":
             printWarnMessage("--- Installing Roblox to Bootstrap ---")
             printMainMessage("Please wait while we install Roblox into OrangeBlox!")
             makedirs(os.path.join(versions_folder))
-            if main_os == "Windows":
-                makedirs(os.path.join(cur_path, "Downloads", "roblox-player"))
-                makedirs(os.path.join(cur_path, "Downloads", "roblox-studio"))
-                makedirs(os.path.join(cur_path, "LocalStorage"))
-                makedirs(os.path.join(cur_path, "OTAPatchBackups"))
             submit_status.start()
             res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"))
             submit_status.end()
@@ -1110,7 +1105,7 @@ if __name__ == "__main__":
             locks_detected = []
             for i in os.listdir(cur_path):
                 if i.endswith(f"_{user_folder_name}"): locks_detected.append(os.path.join(cur_path, i))
-                elif i.startswith("Terminal_"): locks_detected.append(os.path.join(cur_path, i))
+                elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(cur_path, i))
             return locks_detected
         def bootstrapImagesAvailableToClear():
             images_detected = []

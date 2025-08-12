@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8e
+# v2.2.8f
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.8e
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.8f
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.2.8e"}
+current_version = {"version": "2.2.8f"}
 requested_functions = {}
 cached_information = {}
 translator = None
