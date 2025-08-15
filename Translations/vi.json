@@ -2045,5 +2045,13 @@
  "--- Unknown file ---": "--- Tệp không xác định ---",
  "Install Information!": "Cài đặt thông tin!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Điều này sẽ không bỏ qua quét bởi phần mềm chống vi-rút của bạn. Nó sẽ chỉ cho phép chạy bởi hệ điều hành..",
- "Unable to read OrangeBlox file due to the file handler not added.": "Không thể đọc tệp OrangeBlox do trình xử lý tệp không được thêm vào.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "Không thể đọc tệp OrangeBlox do trình xử lý tệp không được thêm vào..",
+ "Made by (*)(*)": "Được thực hiện bởi (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "Cảnh báo! Điều này có thể mất quá lâu do Roblox RATELIMITS..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "Cảnh báo! Điều này có thể bị làm sai lệch do hạn chế bạn bè trong quan điểm của người dùng khác!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Tải xuống tệp ZIP không thành công. Bạn có muốn tiếp tục mà không cập nhật không? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Trích xuất tệp ZIP không thành công. Bạn có muốn tiếp tục mà không cập nhật không? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Không thể tải xuống Trình cài đặt Roblox (*)do lỗi. Mã số: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "Không thể tải xuống Trình cài đặt Roblox (*)do lỗi HTTP. Mã số: (*)",
+ "Unable to install Roblox due to a download error.": "Không thể cài đặt Roblox do lỗi tải xuống.."
 }

@@ -2045,5 +2045,13 @@
  "--- Unknown file ---": "--- 未知文件 ---",
  "Install Information!": "安装信息!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "这不会绕过您的反病毒软件扫描.它将仅允许操作系统运行..",
- "Unable to read OrangeBlox file due to the file handler not added.": "由于未添加文件处理程序,无法读取橙色文件.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "由于未添加文件处理程序,无法读取橙色文件..",
+ "Made by (*)(*)": "由(*)(*)制作",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "警告!由于Roblox Ratelimits,这可能会花费太长时间..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "警告!鉴于其他用户,这可能会由于朋友的限制而伪造!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "下载zip文件失败.您想继续不更新吗? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "提取zip文件失败.您想继续不更新吗? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "由于错误,无法下载Roblox(*)安装程序.代码: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "由于HTTP错误,无法下载Roblox(*)安装程序.代码: (*)",
+ "Unable to install Roblox due to a download error.": "由于下载错误,无法安装Roblox.."
 }

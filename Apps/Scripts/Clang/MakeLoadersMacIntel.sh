@@ -7,34 +7,34 @@ printMessage() {
 
 # Build Package
 printMessage "Building Clang Package for OrangeLoader.."
-clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm
-strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
+clang++ -framework Cocoa -std=c++17 -arch x86_64 -g0 -o "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" ./Apps/Scripts/Clang/OrangeLoader.mm
+strip -S "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangePlayRoblox.."
-cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"
-strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
+cp "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"
+strip -S "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 printMessage "Building Clang Package for OrangeRunStudio.."
-cp "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"
-strip -S "./Apps/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
+cp "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" "./Apps/Storage/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"
+strip -S "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader" 2>/dev/null \;
 
 # Sign Package
 printMessage "Signing Package.."
-rm -rf "./Apps/OrangeLoader.app/Contents/_CodeSignature/"
-rm -rf "./Apps/OrangePlayRoblox.app/Contents/_CodeSignature/"
-rm -rf "./Apps/OrangeRunStudio.app/Contents/_CodeSignature/"
+rm -rf "./Apps/Storage/OrangeLoader.app/Contents/_CodeSignature/"
+rm -rf "./Apps/Storage/OrangePlayRoblox.app/Contents/_CodeSignature/"
+rm -rf "./Apps/Storage/OrangeRunStudio.app/Contents/_CodeSignature/"
 codesig() {
     while true; do
         if [ "$1" != "sudo" ]; then
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeLoader.app"
-            xattr -dr com.apple.FinderInfo "./Apps/OrangeLoader.app"
-            xattr -cr "./Apps/OrangeLoader.app"
-            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeLoader.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Storage/OrangeLoader.app"
+            xattr -dr com.apple.FinderInfo "./Apps/Storage/Storage/OrangeLoader.app"
+            xattr -cr "./Apps/Storage/OrangeLoader.app"
+            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangeLoader.app" --entitlements "./Apps/Storage/Entitlements.plist"
         else
             sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeLoader.app"
             sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeLoader.app"
-            sudo xattr -cr "./Apps/OrangeLoader.app"
-            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeLoader.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            sudo xattr -cr "./Apps/Storage/OrangeLoader.app"
+            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangeLoader.app" --entitlements "./Apps/Storage/Entitlements.plist"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -43,15 +43,15 @@ codesig() {
     done
     while true; do
         if [ "$1" != "sudo" ]; then
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangePlayRoblox.app"
-            xattr -dr com.apple.FinderInfo "./Apps/OrangePlayRoblox.app"
-            xattr -cr "./Apps/OrangePlayRoblox.app"
-            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangePlayRoblox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Storage/OrangePlayRoblox.app"
+            xattr -dr com.apple.FinderInfo "./Apps/Storage/OrangePlayRoblox.app"
+            xattr -cr "./Apps/Storage/OrangePlayRoblox.app"
+            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangePlayRoblox.app" --entitlements "./Apps/Storage/Entitlements.plist"
         else
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangePlayRoblox.app"
-            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangePlayRoblox.app"
-            sudo xattr -cr "./Apps/OrangePlayRoblox.app"
-            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangePlayRoblox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Storage/OrangePlayRoblox.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/Storage/OrangePlayRoblox.app"
+            sudo xattr -cr "./Apps/Storage/OrangePlayRoblox.app"
+            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangePlayRoblox.app" --entitlements "./Apps/Storage/Entitlements.plist"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then
@@ -60,15 +60,15 @@ codesig() {
     done
     while true; do
         if [ "$1" != "sudo" ]; then
-            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeRunStudio.app"
-            xattr -dr com.apple.FinderInfo "./Apps/OrangeRunStudio.app"
-            xattr -cr "./Apps/OrangeRunStudio.app"
-            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeRunStudio.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Storage/OrangeRunStudio.app"
+            xattr -dr com.apple.FinderInfo "./Apps/Storage/OrangeRunStudio.app"
+            xattr -cr "./Apps/Storage/OrangeRunStudio.app"
+            codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangeRunStudio.app" --entitlements "./Apps/Storage/Entitlements.plist"
         else
-            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeRunStudio.app"
-            sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeRunStudio.app"
-            sudo xattr -cr "./Apps/OrangeRunStudio.app"
-            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeRunStudio.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
+            sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Storage/OrangeRunStudio.app"
+            sudo xattr -dr com.apple.FinderInfo "./Apps/Storage/OrangeRunStudio.app"
+            sudo xattr -cr "./Apps/Storage/OrangeRunStudio.app"
+            sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Storage/OrangeRunStudio.app" --entitlements "./Apps/Storage/Entitlements.plist"
         fi
         STATUS=$?
         if [ $STATUS -eq 0 ]; then

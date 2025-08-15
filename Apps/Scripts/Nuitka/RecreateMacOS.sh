@@ -20,7 +20,7 @@ python3 -m nuitka \
     --macos-create-app-bundle \
     --include-data-files=PyKits.py=PyKits.py \
     --include-data-files=Version.json=Version.json \
-    --output-dir="./Apps" \
+    --output-dir="./Apps/Building" \
     --include-package-data=objc,Cocoa,Quartz \
     --nofollow-import-to=cryptography,OpenSSL,urllib3,requests,plyer \
     --macos-app-icon=./BootstrapImages/AppIcon.icns \
@@ -29,41 +29,25 @@ python3 -m nuitka \
     --lto=yes \
     --remove-output \
     --target="OrangeBlox" "./Apps/Scripts/OrangeBlox.py"
-mv ./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox ./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox
-cp ./Apps/Scripts/Nuitka/Info.plist ./Apps/OrangeBlox.app/Contents/Info.plist
-
-# Add Tkinter Data (Deprecated)
-# printMessage "Adding Tk-inter Data.."
-# ditto -xk './Apps/Scripts/Nuitka/macos_tkinter_data.zip' './Apps/Scripts/Nuitka/macos_tkinter_data'
-# cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tcl_data ./Apps/OrangeBlox.app/Contents/Resources/_tcl_data
-# cp -R ./Apps/Scripts/Nuitka/macos_tkinter_data/_tk_data ./Apps/OrangeBlox.app/Contents/Resources/_tk_data
-# rm -rf './Apps/Scripts/Nuitka/macos_tkinter_data'
+mv ./Apps/Building/OrangeBlox.app/Contents/MacOS/OrangeBlox ./Apps/Building/OrangeBlox.app/Contents/MacOS/OrangeBlox
+cp ./Apps/Scripts/Nuitka/Info.plist ./Apps/Building/OrangeBlox.app/Contents/Info.plist
 
 # Strip Package
 printMessage "Stripping macOS Package.."
-strip -S "./Apps/OrangeBlox.app/Contents/MacOS/OrangeBlox" 2>/dev/null \;
-# strip -S "./Apps/OrangeBlox.app/Contents/MacOS/Tcl" 2>/dev/null \;
-# strip -S "./Apps/OrangeBlox.app/Contents/MacOS/Tk" 2>/dev/null \;
-strip -S "./Apps/OrangeBlox.app/Contents/MacOS/Python" 2>/dev/null \;
-find "./Apps/OrangeBlox.app" -type f \( -name "*.so" -o -name "*.dylib" \) -exec strip -S {} 2>/dev/null \;
+strip -S "./Apps/Building/OrangeBlox.app/Contents/MacOS/OrangeBlox" 2>/dev/null \;
+strip -S "./Apps/Building/OrangeBlox.app/Contents/MacOS/Python" 2>/dev/null \;
+find "./Apps/Building/OrangeBlox.app" -type f \( -name "*.so" -o -name "*.dylib" \) -exec strip -S {} 2>/dev/null \;
 
 # Sign Package
 printMessage "Signing Package.."
 codesig1() {
     while true; do
-    rm -rf ./Apps/OrangeBlox.app/Contents/_CodeSignature/
-    if [ "$1" != "sudo" ]; then
-        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
-        xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
-        xattr -cr "./Apps/OrangeBlox.app"
-        codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
-    else
-        sudo xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/OrangeBlox.app"
-        sudo xattr -dr com.apple.FinderInfo "./Apps/OrangeBlox.app"
-        sudo xattr -cr "./Apps/OrangeBlox.app"
-        sudo codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/OrangeBlox.app" --entitlements "./Apps/Scripts/Resources/Entitlements.plist"
-    fi
-    STATUS=$?
+        rm -rf ./Apps/Building/OrangeBlox.app/Contents/_CodeSignature/
+        xattr -dr com.apple.metadata:_kMDItemUserTags "./Apps/Building/OrangeBlox.app"
+        xattr -dr com.apple.FinderInfo "./Apps/Building/OrangeBlox.app"
+        xattr -cr "./Apps/Building/OrangeBlox.app"
+        codesign -s ${1:-'-'} --force --all-architectures --timestamp --deep "./Apps/Building/OrangeBlox.app" --entitlements "./Apps/Storage/Entitlements.plist"
+        STATUS=$?
         if [ $STATUS -eq 0 ]; then
             break
         fi
@@ -73,7 +57,11 @@ codesig1 "$1"
 
 # Create OrangeBloxMac.zip
 printMessage "Creating OrangeBloxMac.zip.."
-zip -r -y ./Apps/OrangeBloxMac.zip "./Apps/OrangeBlox.app" "./Apps/OrangePlayRoblox.app" "./Apps/OrangeLoader.app" "./Apps/OrangeRunStudio.app"
+cd "./Apps/Building"
+zip -r -y ../OrangeBloxMac.zip "OrangeBlox.app"
+cd "../Storage"
+zip -r -y ../OrangeBloxMac.zip "OrangePlayRoblox.app" "OrangeLoader.app" "OrangeRunStudio.app"
+cd ../../
 
 # Remove Build and OrangeLoader folder
 printMessage "Partial Cleaning.."
@@ -81,7 +69,7 @@ rm -rf ./build/
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/OrangeBlox.app/ ./Apps/OrangeBlox.build/ ./Apps/OrangeBlox.dist/ ./__pycache__/ ./Apps/OrangeBlox/
+rm -rf ./Apps/Building/OrangeBlox.app/ ./Apps/Building/OrangeBlox.build/ ./Apps/Building/OrangeBlox.dist/ ./__pycache__/ ./Apps/Building/OrangeBlox/
 
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"

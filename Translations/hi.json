@@ -2045,5 +2045,13 @@
  "--- Unknown file ---": "--- अज्ञात फ़ाइल ---",
  "Install Information!": "जानकारी स्थापित करें!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "यह आपके एंटी-वायरस सॉफ्टवेयर द्वारा स्कैन को बायपास नहीं करेगा। यह केवल ऑपरेटिंग सिस्टम द्वारा चलने की अनुमति देगा।",
- "Unable to read OrangeBlox file due to the file handler not added.": "फाइल हैंडलर के कारण ऑरेंजब्लॉक्स फ़ाइल को पढ़ने में असमर्थ नहीं जोड़ा गया।"
+ "Unable to read OrangeBlox file due to the file handler not added.": "फाइल हैंडलर के कारण ऑरेंजब्लॉक्स फ़ाइल को पढ़ने में असमर्थ नहीं जोड़ा गया।",
+ "Made by (*)(*)": "द्वारा बनाया गया (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "चेतावनी! Roblox Ratelimits के कारण यह बहुत लंबा समय लग सकता है।",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "चेतावनी! अन्य उपयोगकर्ताओं के मद्देनजर मित्र प्रतिबंधों के कारण यह गलत हो सकता है!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "ज़िप फ़ाइल डाउनलोड करना विफल रहा। क्या आप अपडेट किए बिना जारी रखना चाहेंगे? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "ज़िप फ़ाइल निकालने में विफल रहा। क्या आप अपडेट किए बिना जारी रखना चाहेंगे? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "एक त्रुटि के कारण Roblox (*)इंस्टॉलर डाउनलोड करने में असमर्थ। कोड: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTP त्रुटि के कारण Roblox (*)इंस्टॉलर डाउनलोड करने में असमर्थ। कोड: (*)",
+ "Unable to install Roblox due to a download error.": "डाउनलोड त्रुटि के कारण Roblox स्थापित करने में असमर्थ।"
 }

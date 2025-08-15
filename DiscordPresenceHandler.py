@@ -49,6 +49,7 @@ class Presence(pypresence.Presence):
     stop_event = None
     debug_mode = False
     current_loop_id = None
+    default_presence = None
 
     def __init__(self, *args, **kwargs): super(Presence, self).__init__(*args, **kwargs)
     def get_if_discord_opened(self):
@@ -149,7 +150,7 @@ class Presence(pypresence.Presence):
     def clear(self, *args, **kwargs):
         if self.connected == True:
             if self.discord_session_connected == True: super(Presence, self).clear(*args, **kwargs)
-            self.current_presence = None
+            self.current_presence = self.default_presence
             self.current_loop_id = None
             return {"success": True, "code": 0}
         else: return {"success": False, "code": 1}

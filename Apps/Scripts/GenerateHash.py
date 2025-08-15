@@ -1,4 +1,5 @@
 import hashlib
+import subprocess
 import platform
 import json
 import os
@@ -23,8 +24,8 @@ def generateFileHash(file_path):
 
 # Load Version.json
 version_json = {
-    "version": "2.2.7",
-    "latest_version": "2.2.7",
+    "version": "2.2.8",
+    "latest_version": "2.2.8",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }
@@ -41,6 +42,11 @@ generated_hash2 = generateFileHash(f"./Apps/Scripts/OrangeBlox.py")
 generated_hash_json["OrangeBlox.py"] = generated_hash2
 previous_hashes = version_json["hashes"]
 version_json["hashes"] = generated_hash_json
+if "https://github.com/EfazDev/orangeblox/" in version_json["download_location"]:
+    if "beta" in (subprocess.run("git branch --show-current", shell=True, text=True, capture_output=True).stdout):
+        version_json["download_location"] = "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip"
+    else:
+        version_json["download_location"] = "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 
 # Save Files
 with open("Version.json", "w", encoding="utf-8") as f: json.dump(version_json, f, indent=4)

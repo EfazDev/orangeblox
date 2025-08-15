@@ -2046,5 +2046,13 @@
  "--- Unknown file ---": "--- 알 수없는 파일 ---",
  "Install Information!": "정보를 설치하십시오!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "이것은 안티 바이러스 소프트웨어로 스캔을 우회하지 않습니다. 운영 체제에서만 운영 할 수 있습니다..",
- "Unable to read OrangeBlox file due to the file handler not added.": "파일 핸들러가 추가되지 않아 OrangeBlox 파일을 읽을 수 없습니다.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "파일 핸들러가 추가되지 않아 OrangeBlox 파일을 읽을 수 없습니다..",
+ "Made by (*)(*)": "(*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "경고! Roblox Ratelimits로 인해 너무 오래 걸릴 수 있습니다..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "경고! 다른 사용자를 고려할 때 친구 제한으로 인해 위조 될 수 있습니다!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Zip 파일 다운로드에 실패했습니다. 업데이트없이 계속 하시겠습니까? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Zip 파일 추출에 실패했습니다. 업데이트없이 계속 하시겠습니까? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "오류로 인해 Roblox (*)설치 프로그램을 다운로드 할 수 없습니다. 코드: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "HTTP 오류로 인해 Roblox (*)설치 프로그램을 다운로드 할 수 없습니다. 코드: (*)",
+ "Unable to install Roblox due to a download error.": "다운로드 오류로 인해 Roblox를 설치할 수 없습니다.."
 }

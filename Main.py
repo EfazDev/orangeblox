@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7
+# v2.2.8
 # 
 
 # Python Modules
@@ -18,7 +18,6 @@ import threading
 import traceback
 import logging
 import hashlib
-import asyncio
 import builtins
 import ctypes
 import typing
@@ -51,7 +50,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.7"}
+    current_version: typing.Dict[str, str] = {"version": "2.2.8"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
@@ -169,7 +168,8 @@ if __name__ == "__main__":
         "EFlagOverwriteUnneededStudioFonts": "bool",
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
-        "EFlagEnableEndingRobloxCrashHandler": "bool"
+        "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
         "en": "English",
@@ -780,11 +780,6 @@ if __name__ == "__main__":
             printWarnMessage("--- Installing Roblox to Bootstrap ---")
             printMainMessage("Please wait while we install Roblox into OrangeBlox!")
             makedirs(os.path.join(versions_folder))
-            if main_os == "Windows":
-                makedirs(os.path.join(cur_path, "Downloads", "roblox-player"))
-                makedirs(os.path.join(cur_path, "Downloads", "roblox-studio"))
-                makedirs(os.path.join(cur_path, "LocalStorage"))
-                makedirs(os.path.join(cur_path, "OTAPatchBackups"))
             submit_status.start()
             res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"))
             submit_status.end()
@@ -1022,6 +1017,7 @@ if __name__ == "__main__":
                         printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"✅ Download location: {download_location} => {possible_download_path}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                         printYellowMessage(f"⚠️ Download location: {download_location} => {possible_download_path}")
@@ -1041,7 +1037,7 @@ if __name__ == "__main__":
                         printMainMessage("Downloading Latest Version of OrangeBlox..")
                         late_v = latest_vers.get("latest_version")
                         download_update = requests.download(download_location, os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
-                        if download_update.returncode == 0:
+                        if download_update.ok:
                             printMainMessage("Download Success! Extracting ZIP now!")
                             dow_tar = os.path.join(user_folder, f'OrangeBloxInstaller')
                             zip_extract = pip_class.unzipFile(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), dow_tar, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
@@ -1109,7 +1105,7 @@ if __name__ == "__main__":
             locks_detected = []
             for i in os.listdir(cur_path):
                 if i.endswith(f"_{user_folder_name}"): locks_detected.append(os.path.join(cur_path, i))
-                elif i.startswith("Terminal_"): locks_detected.append(os.path.join(cur_path, i))
+                elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(cur_path, i))
             return locks_detected
         def bootstrapImagesAvailableToClear():
             images_detected = []
@@ -1689,6 +1685,7 @@ if __name__ == "__main__":
                         printDebugMessage("User selected: None")
 
                 printMainMessage("Would you like to enable Roblox Unfriend Checks? (y/n)")
+                printYellowMessage("Warning! This may take way too long time due to Roblox ratelimits.")
                 d = handleBasicSetting("EFlagRobloxUnfriendCheckEnabled", False)
                 if d: return d
 
@@ -2412,6 +2409,7 @@ if __name__ == "__main__":
     def continueToUnfriendedFriends(): # View Unfriended Friends
         printWarnMessage(f"--- Unfriended Friends ---")
         unfriended_friends = []
+        blank_user_ids = 0
         friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
         try:
             printMainMessage("Fetching Friends! This may take a moment.")
@@ -2420,18 +2418,15 @@ if __name__ == "__main__":
             query = {"limit": "50", "findFriendsType": "0"}
             while reached_end == False:
                 try:
-                    friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
+                    if main_config.get("EFlagUseEfazDevAPI") == True: 
+                        if query.get("limit"): query.pop("limit")
+                        if query.get("findFriendsType"): query.pop("findFriendsType")
+                        friend_list_req = requests.get(f"https://api.efaz.dev/api/roblox/user-friends-find/{friend_check_id}/50" + requests.format_params(query), timeout=5)
+                        if friend_list_req and friend_list_req.json: friend_list_req.json = friend_list_req.json.get("response")
+                    else: friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
                     friend_req_json = friend_list_req.json
+                    printDebugMessage(f"Called ({friend_list_req.url}): {friend_list_req.json}")
                     if friend_list_req.ok and friend_req_json.get("PageItems"):
-                        reached_end2 = False
-                        while reached_end2 == False:
-                            try:
-                                user_ids = []
-                                for i in friend_list_json["data"]: user_ids.append(i.get("id"))
-                                user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
-                                if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
-                                time.sleep(1)
-                            except Exception as e: pass
                         friend_list_json["data"] += friend_req_json.get("PageItems")
                         if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
                         else: reached_end = True
@@ -2447,6 +2442,31 @@ if __name__ == "__main__":
                     for e in friend_list_json.get("data"):
                         if e["id"] == i["id"]: found_friend = True; break
                     if found_friend == False: unfriended_friends.append(i)
+                    else: blank_user_ids += 1
+                reached_end2 = False
+                while reached_end2 == False:
+                    try:
+                        user_ids = []
+                        for i in unfriended_friends: 
+                            if not (i.get("id") == -1): user_ids.append(i.get("id"))
+                        if len(user_ids) > 150:
+                            chunked = []
+                            for e in range(0, len(user_ids), 150): chunked.append(user_ids[e:e + 150])
+                            unfriended_friends = []
+                            for e in chunked:
+                                reached_end3 = False
+                                while reached_end3 == False:
+                                    user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": e, "excludeBannedUsers": False}, timeout=5)
+                                    if user_info_req.ok: unfriended_friends += user_info_req.json.get("data"); reached_end3 = True
+                                    printDebugMessage(f"Called ({user_info_req.url}): {user_info_req.json}")
+                                    time.sleep(1)
+                            reached_end2 = True
+                        else:
+                            user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
+                            if user_info_req.ok: unfriended_friends = user_info_req.json.get("data"); reached_end2 = True
+                            printDebugMessage(f"Called ({user_info_req.url}): {user_info_req.json}")
+                            time.sleep(1)
+                    except Exception as e: pass
                 last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
             else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
             with open(os.path.join(cur_path, "CachedFriendsList.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
@@ -2455,6 +2475,7 @@ if __name__ == "__main__":
             unfriended_friends = []
         if len(unfriended_friends) > 0:
             printMainMessage("The following friends have unfriended you from your friends list ;(")
+            if blank_user_ids > 0: printYellowMessage("Warning! This could be falsified due to friend restrictions in view of other users!")
             c = 0
             for i in unfriended_friends:
                 c += 1
@@ -3352,6 +3373,7 @@ if __name__ == "__main__":
                         printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"✅ Download Location: {download_location}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                         printSuccessMessage(f"⚠️ Download Location: {download_location}")
@@ -3371,7 +3393,7 @@ if __name__ == "__main__":
                         printDebugMessage(f"Download location: {download_location} => {os.path.join(cur_path, 'Update.zip')}")
                         try:
                             download_update = requests.download(download_location, os.path.join(cur_path, 'Update.zip'))
-                            if download_update.returncode == 0:
+                            if download_update.ok:
                                 printMainMessage("Download Success! Extracting ZIP now!")
                                 zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), os.path.join(cur_path, 'Update'), ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
                                 if zip_extract.returncode == 0:
@@ -5460,9 +5482,20 @@ if __name__ == "__main__":
 
         # Extra Functions
         def unfriendCheckLoop():
+            alleged_path = os.path.join(cur_path, f"UnfriendCheckLoopLock_{user_folder_name}")
+            if os.path.exists(alleged_path):
+                with open(alleged_path, "r") as f: pid_str = f.read()
+                if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                    while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
+                    return unfriendCheckLoop()
+                else:
+                    with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
+            else: 
+                with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
             printDebugMessage("Starting Unfriend Detector Loop..")
             while True:
                 unfriended_friends = []
+                blank_user_ids = 0
                 friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
                 try:
                     reached_end = False
@@ -5470,20 +5503,16 @@ if __name__ == "__main__":
                     query = {"limit": "50", "findFriendsType": "0"}
                     while reached_end == False:
                         try:
-                            friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
+                            if main_config.get("EFlagUseEfazDevAPI") == True: 
+                                if query.get("limit"): query.pop("limit")
+                                if query.get("findFriendsType"): query.pop("findFriendsType")
+                                friend_list_req = requests.get(f"https://api.efaz.dev/api/roblox/user-friends-find/{friend_check_id}/50" + requests.format_params(query), timeout=5)
+                                if friend_list_req and friend_list_req.json: friend_list_req.json = friend_list_req.json.get("response")
+                            else: friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5)
                             friend_req_json = friend_list_req.json
                             if friend_list_req.ok and friend_req_json.get("PageItems"):
-                                reached_end2 = False
-                                while reached_end2 == False:
-                                    try:
-                                        user_ids = []
-                                        for i in friend_list_json["data"]: user_ids.append(i.get("id"))
-                                        user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
-                                        if user_info_req.ok: friend_list_json["data"] = user_info_req.json.get("data"); reached_end2 = True
-                                        time.sleep(5)
-                                    except Exception as e: printDebugMessage(f"There was an error on getting friends user info! Error: {str(e)}")
                                 friend_list_json["data"] += friend_req_json.get("PageItems")
-                                if friend_req_json.get("NextCursor"):  query["cursor"] = friend_req_json.get("NextCursor")
+                                if friend_req_json.get("NextCursor"): query["cursor"] = friend_req_json.get("NextCursor")
                                 else: reached_end = True
                         except Exception as e: printDebugMessage(f"There was an error on getting friends! Error: {str(e)}")
                         time.sleep(5)
@@ -5497,6 +5526,29 @@ if __name__ == "__main__":
                                 for e in friend_list_json.get("data"):
                                     if e["id"] == i["id"]: found_friend = True; break
                                 if found_friend == False: unfriended_friends.append(i)
+                            reached_end2 = False
+                            while reached_end2 == False:
+                                try:
+                                    user_ids = []
+                                    for i in unfriended_friends: 
+                                        if not (i.get("id") == -1): user_ids.append(i.get("id"))
+                                        else: blank_user_ids += 1
+                                    if len(user_ids) > 150:
+                                        chunked = []
+                                        for e in range(0, len(user_ids), 150): chunked.append(user_ids[e:e + 150])
+                                        unfriended_friends = []
+                                        for e in chunked:
+                                            reached_end3 = False
+                                            while reached_end3 == False:
+                                                user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": e, "excludeBannedUsers": False}, timeout=5)
+                                                if user_info_req.ok: unfriended_friends += user_info_req.json.get("data"); reached_end3 = True
+                                                time.sleep(1)
+                                        reached_end2 = True
+                                    else:
+                                        user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5)
+                                        if user_info_req.ok: unfriended_friends = user_info_req.json.get("data"); reached_end2 = True
+                                        time.sleep(1)
+                                except Exception as e: pass
                             last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
                         else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
                         with open(os.path.join(cur_path, "CachedFriendsList.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
@@ -5587,7 +5639,10 @@ if __name__ == "__main__":
                     if generated_location: current_place_info["server_location"] = generated_location
                     if current_place_info.get('place_identifier') and current_place_info.get('place_identifier').isnumeric():
                         current_place_info["placeId"] = int(current_place_info.get('place_identifier'))
-                        generated_universe_id_res = requests.get(f"https://apis.roblox.com/universes/v1/places/{current_place_info.get('place_identifier')}/universe", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                        if main_config.get("EFlagUseEfazDevAPI") == True: 
+                            generated_universe_id_res = requests.get(f"https://api.efaz.dev/api/roblox/universeId/{current_place_info.get('place_identifier')}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                            if generated_universe_id_res and generated_universe_id_res.json: generated_universe_id_res.json = generated_universe_id_res.json.get("response")
+                        else: generated_universe_id_res = requests.get(f"https://apis.roblox.com/universes/v1/places/{current_place_info.get('place_identifier')}/universe", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                         if generated_universe_id_res.ok:
                             generated_universe_id_json = generated_universe_id_res.json
                             if generated_universe_id_json and not (generated_universe_id_json.get("universeId") == None):
@@ -5625,9 +5680,17 @@ if __name__ == "__main__":
                                 }
                             ]})
                         else:
-                            generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
-                            generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
-                            generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                            if main_config.get("EFlagUseEfazDevAPI") == True: 
+                                generated_thumbnail_api_res = requests.get(f"https://api.efaz.dev/api/roblox/game-thumbnail/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_place_api_res = requests.get(f"https://api.efaz.dev/api/roblox/places-in-universe/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_universe_api_res = requests.get(f"https://api.efaz.dev/api/roblox/game-info/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                if generated_thumbnail_api_res and generated_thumbnail_api_res.json: generated_thumbnail_api_res.json = generated_thumbnail_api_res.json.get("response")
+                                if generated_place_api_res and generated_place_api_res.json: generated_place_api_res.json = generated_place_api_res.json.get("response")
+                                if generated_universe_api_res and generated_universe_api_res.json: generated_universe_api_res.json = generated_universe_api_res.json.get("response")
+                            else: 
+                                generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                         if generated_thumbnail_api_res.ok and generated_place_api_res.ok and generated_universe_api_res.ok:
                             generated_thumbnail_api_json = generated_thumbnail_api_res.json
                             generated_place_api_json = generated_place_api_res.json
@@ -5698,7 +5761,7 @@ if __name__ == "__main__":
                                                     playing_game_name = place_info['name']
                                                     if place_info['creator']['name'] == "Local File" and place_info['creator']['id'] == 0: creator_name = ts(f"Opened as Local File!")
                                                     else:
-                                                        creator_name = ts(f"Made by {place_info['creator']['name']}").replace("✅", "")
+                                                        creator_name = ts(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}").replace("✅", "")
                                                         if place_info.get("creator").get("hasVerifiedBadge") == True: creator_name = f"{creator_name} ✅!"
                                                         else: creator_name = f"{creator_name}!"
                                                     if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
@@ -5787,7 +5850,7 @@ if __name__ == "__main__":
                                                 buttons = [
                                                     generateEmbedField(ts("Is Local File"), f"False"),
                                                     generateEmbedField(ts("Connected Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
-                                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+distributorType:Global+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
                                                 ]
                                             generated_body = generateDiscordPayload(title, color, buttons + [
                                                 generateEmbedField(ts("Started"), f"<t:{int(start_time)}:R>"),
@@ -5815,7 +5878,7 @@ if __name__ == "__main__":
                     universeId = current_place_info and current_place_info.get('universeId')
                     if placeId and universeId:
                         connected_roblox_instance.endInstance()
-                        url = f"roblox-studio:1+distributorType:Global+launchmode:edit+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
+                        url = f"roblox-studio:1+launchmode:edit+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
                         if main_os == "Darwin": subprocess.run(["/usr/bin/open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                         else: subprocess.run(f"start {url}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
             def onClosingGame(info):
@@ -5864,7 +5927,7 @@ if __name__ == "__main__":
                                 buttons = [
                                     generateEmbedField(ts("Is Local File"), f"False"),
                                     generateEmbedField(ts("Disconnected Game"), f"[{place_info['name']}](https://www.roblox.com/games/{synced_place_info.get('placeId')})"),
-                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+distributorType:Global+launchmode:edit+task:EditPlace+placeId:{synced_place_info.get('placeId')}+universeId:{synced_place_info.get('universeId')})")
+                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{synced_place_info.get('placeId')}+universeId:{synced_place_info.get('universeId')})")
                                 ]
 
                             generated_body = generateDiscordPayload(title, color, buttons + [
@@ -5911,7 +5974,7 @@ if __name__ == "__main__":
                             buttons = [
                                 generateEmbedField(ts("Is Local File"), f"False"),
                                 generateEmbedField(ts("Published Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
-                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+distributorType:Global+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
                             ]
 
                         generated_body = generateDiscordPayload(title, color, buttons + [
@@ -5975,7 +6038,10 @@ if __name__ == "__main__":
                     if current_place_info:
                         current_place_info["server_location"] = generated_location
 
-                        generated_universe_id_res = requests.get(f"https://apis.roblox.com/universes/v1/places/{current_place_info.get('placeId')}/universe", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                        if main_config.get("EFlagUseEfazDevAPI") == True: 
+                            generated_universe_id_res = requests.get(f"https://api.efaz.dev/api/roblox/universeId/{current_place_info.get('placeId')}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                            if generated_universe_id_res and generated_universe_id_res.json: generated_universe_id_res.json = generated_universe_id_res.json.get("response")
+                        else: generated_universe_id_res = requests.get(f"https://apis.roblox.com/universes/v1/places/{current_place_info.get('placeId')}/universe", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                         if generated_universe_id_res.ok:
                             generated_universe_id_json = generated_universe_id_res.json
                             if generated_universe_id_json and not (generated_universe_id_json.get("universeId") == None):
@@ -5984,9 +6050,17 @@ if __name__ == "__main__":
                         else: current_place_info = None
                         if current_place_info:
                             universeId = current_place_info.get('universeId')
-                            generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
-                            generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
-                            generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                            if main_config.get("EFlagUseEfazDevAPI") == True: 
+                                generated_thumbnail_api_res = requests.get(f"https://api.efaz.dev/api/roblox/game-thumbnail/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_place_api_res = requests.get(f"https://api.efaz.dev/api/roblox/places-in-universe/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_universe_api_res = requests.get(f"https://api.efaz.dev/api/roblox/game-info/{universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                if generated_thumbnail_api_res and generated_thumbnail_api_res.json: generated_thumbnail_api_res.json = generated_thumbnail_api_res.json.get("response")
+                                if generated_place_api_res and generated_place_api_res.json: generated_place_api_res.json = generated_place_api_res.json.get("response")
+                                if generated_universe_api_res and generated_universe_api_res.json: generated_universe_api_res.json = generated_universe_api_res.json.get("response")
+                            else: 
+                                generated_thumbnail_api_res = requests.get(f"https://thumbnails.roblox.com/v1/games/icons?universeIds={universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_place_api_res = requests.get(f"https://develop.roblox.com/v1/universes/{universeId}/places?isUniverseCreation=false&limit=50&sortOrder=Asc", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                generated_universe_api_res = requests.get(f"https://games.roblox.com/v1/games?universeIds={universeId}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                             if generated_thumbnail_api_res.ok and generated_place_api_res.ok and generated_universe_api_res.ok:
                                 generated_thumbnail_api_json = generated_thumbnail_api_res.json
                                 generated_place_api_json = generated_place_api_res.json
@@ -6057,7 +6131,7 @@ if __name__ == "__main__":
                                                         if (not rpc) or (not rpc.connected) or (not rpc.current_loop_id == loop_key): break
                                                         if rpc_info == None: rpc_info = {}
                                                         playing_game_name = place_info['name']
-                                                        creator_name = ts(f"Made by {place_info['creator']['name']}")
+                                                        creator_name = ts(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}")
                                                         creator_name = creator_name.replace("✅", "")
                                                         if place_info.get("creator").get("hasVerifiedBadge") == True: creator_name = f"{creator_name} ✅!"
                                                         else: creator_name = f"{creator_name}!"

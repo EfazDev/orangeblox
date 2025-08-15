@@ -2045,5 +2045,13 @@
  "--- Unknown file ---": "--- Невідомий файл ---",
  "Install Information!": "Встановіть інформацію!",
  "This will not bypass scans by your anti-virus software. It will only allow running by the operating system.": "Це не буде обхідним скануванням вашого антивірусного програмного забезпечення. Він дозволить працювати лише операційною системою..",
- "Unable to read OrangeBlox file due to the file handler not added.": "Неможливо прочитати файл OrangeBlox через обробник файлів не додано.."
+ "Unable to read OrangeBlox file due to the file handler not added.": "Неможливо прочитати файл OrangeBlox через обробник файлів не додано..",
+ "Made by (*)(*)": "Зроблено (*)(*)",
+ "Warning! This may take way too long time due to Roblox ratelimits.": "УВАГА! Це може зайняти занадто багато часу через Roblox RateLimits..",
+ "Warning! This could be falsified due to friend restrictions in view of other users!": "УВАГА! Це може бути підроблене через обмеження друзів з огляду на інших користувачів!",
+ "Downloading ZIP File failed. Would you like to continue without updating? (y/n)": "Завантаження поштового файлу не вдалося. Ви хотіли б продовжувати без оновлення? (y/n)",
+ "Extracting ZIP File failed. Would you like to continue without updating? (y/n)": "Вилучення ZIP -файлу не вдалося. Ви хотіли б продовжувати без оновлення? (y/n)",
+ "Unable to download Roblox (*) installer due to an error. Code: (*)": "Неможливо завантажити інсталятор Roblox (*)через помилку. Код: (*)",
+ "Unable to download Roblox (*) installer due to an http error. Code: (*)": "Неможливо завантажити інсталятор Roblox (*)через помилку HTTP. Код: (*)",
+ "Unable to install Roblox due to a download error.": "Неможливо встановити Roblox через помилку завантаження.."
 }

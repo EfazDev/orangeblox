@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../BootstrapImages/AppIcon.icns"
-current_version = {"version": "2.2.7"}
+current_version = {"version": "2.2.8"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -73,7 +73,7 @@ main_collect = COLLECT(
     upx=True,
     upx_exclude=[],
     name="OrangeBlox",
-    distpath='Apps',
+    distpath='Apps/Building',
 )
 main_app = BUNDLE(
     main_collect,
@@ -81,6 +81,6 @@ main_app = BUNDLE(
     icon=icon_file,
     bundle_identifier=main_plist["CFBundleIdentifier"],
     info_plist=main_plist,
-    distpath="Apps",
+    distpath="Apps/Building",
     codesign_identity=None
 )

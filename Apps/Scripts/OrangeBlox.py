@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.7"}
+    current_version = {"version": "2.2.8"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
@@ -145,7 +145,8 @@ if __name__ == "__main__":
         "EFlagOverwriteUnneededStudioFonts": "bool",
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
-        "EFlagEnableEndingRobloxCrashHandler": "bool"
+        "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
 

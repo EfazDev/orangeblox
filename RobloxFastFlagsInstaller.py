@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.2.9
+# v2.3.1
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.2.9"
+script_version = "2.3.1"
 def getLocalAppData():
     import platform
     import os
@@ -138,7 +138,7 @@ if sys.version_info >= (3, 8, 0):
         "onNewStudioLaunching",
         "onStudioInstallerLaunched"
     ]
-else: robloxInstanceTotalLiteralEventNames = typing.AnyStr
+else: robloxInstanceTotalLiteralEventNames = typing.Union[str, bytes]
 # Typing Literals
 
 def ts(mes):
@@ -238,16 +238,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "GET"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.get(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -270,16 +270,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "POST", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "POST"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.post(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -302,16 +302,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PATCH", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "PATCH"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.patch(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -334,16 +334,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PUT", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "PUT"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"):
                     req = self.put(new_response.headers.get("location"), data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -366,16 +366,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "DELETE", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "DELETE"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.delete(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -398,16 +398,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "HEAD", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = "HEAD"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.head(new_response.headers.get("location"), headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -430,16 +430,16 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", method, "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8"))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                try: new_response.json = self._json.loads(curl_res.stdout.decode("utf-8"))
-                except Exception: pass
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8")
+                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
                 new_response.method = method.upper()
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
                 new_response.redirected_urls = [url]
+                try: new_response.json = self._json.loads(new_response.text)
+                except Exception as e: pass
                 if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
                     req = self.custom(new_response.headers.get("location"), method, data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count)
                     req.redirected = True
@@ -837,7 +837,7 @@ class pip:
                 return installed_checked
         else:
             sub = self._subprocess.run([self.executable, "-m", "pip", "list"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
-            line_splits = sub.stdout.decode().splitlines()[2:]
+            line_splits = sub.stdout.decode().replace("\r", "").splitlines()[2:]
             installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
             installed_checked = {}
             all_installed = True
@@ -878,8 +878,8 @@ class pip:
                     downed_paths = []
                     for url_path_1 in url_paths:
                         url_path_2 = url_paths_2[co]
-                        self.requests.download(f"https://github.com/{url_path_2}/{url_path_1}/archive/refs/heads/main.zip", self._os.path.join(down_path, f"{url_path_1}.zip"))
-                        downed_paths.append(self._os.path.join(down_path, f"{url_path_1}.zip"))
+                        s = self.requests.download(f"https://github.com/{url_path_2}/{url_path_1}/archive/refs/heads/main.zip", self._os.path.join(down_path, f"{url_path_1}.zip"))
+                        if s.ok: downed_paths.append(self._os.path.join(down_path, f"{url_path_1}.zip"))
                         co += 1
                     return {"success": True, "path": down_path, "package_files": downed_paths}
                 else:
@@ -912,7 +912,7 @@ class pip:
                 with self._tempfile.NamedTemporaryFile(suffix=".py", delete=False) as temp_file: pypi_download_path = temp_file.name
                 if self.pythonSupported(3,9,0): download_res = self.requests.download("https://bootstrap.pypa.io/get-pip.py", pypi_download_path)      
                 else: current_python_version = self.getCurrentPythonVersion(); download_res = self.requests.download(f"https://bootstrap.pypa.io/pip/{current_python_version.split('.')[0]}.{current_python_version.split('.')[1]}/get-pip.py", pypi_download_path)
-                if download_res.returncode == 0:
+                if download_res.ok:
                     self.printDebugMessage(f"Successfully downloaded pip! Installing to Python..")
                     install_to_py = self._subprocess.run([self.executable, pypi_download_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL)
                     if install_to_py.returncode == 0:
@@ -968,7 +968,7 @@ class pip:
         else:
             a = self._subprocess.run([self.executable, "-V"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
             final = a.stdout.decode()
-            if a.returncode == 0: return final.replace("Python ", "").replace("\n", "")
+            if a.returncode == 0: return final.replace("Python ", "").replace("\n", "").replace("\r", "")
             else: return None
     def getIfPythonVersionIsBeta(self, version=""):
         if version == "": cur_vers = self.getCurrentPythonVersion()
@@ -1039,7 +1039,7 @@ class pip:
             url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos11.pkg"
             with self._tempfile.NamedTemporaryFile(suffix=".pkg", delete=False) as temp_file: pkg_file_path = temp_file.name
             result = self.requests.download(url, pkg_file_path)            
-            if result.returncode == 0:
+            if result.ok:
                 self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
                 while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
                 self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
@@ -1052,7 +1052,7 @@ class pip:
             else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}.exe"
             with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
             result = self.requests.download(url, exe_file_path)
-            if result.returncode == 0:
+            if result.ok:
                 self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
                 self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
             else:
@@ -1092,7 +1092,7 @@ class pip:
                 try:
                     s = self._subprocess.run([exe, "-c", "import platform; machine_var = platform.machine(); print('arm' if machine_var.lower() == 'arm64' else ('intel' if machine_var.lower() == 'x86_64' else 'x86'))"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
                     final = s.stdout.decode()
-                    return final.replace("\n", "")
+                    return final.replace("\n", "").replace("\r", "")
                 except: return ""
             elif self._main_os == "Windows":
                 with open(exe, "rb") as f:
@@ -3349,9 +3349,9 @@ class Handler:
                             while True:
                                 if test_instance.ended_process == True: break
                                 elif len(test_instance.getWindowsOpened()) > 0:
-                                    time.sleep(3)
+                                    time.sleep(5)
                                     if len(test_instance.getWindowsOpened()) > 0: break
-                                elif start_time+10 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
+                                elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
                                 else: time.sleep(0.5)
                             test_instance.requestThreadClosing()
                             if self.getIfRobloxIsOpen(studio=studio) == True:
@@ -3407,9 +3407,9 @@ class Handler:
                                 while True:
                                     if test_instance.ended_process == True: break
                                     elif len(test_instance.getWindowsOpened()) > 0:
-                                        time.sleep(3)
+                                        time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+10 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
+                                    elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
                                     else: time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxIsOpen(studio=studio) == True:
@@ -3424,9 +3424,9 @@ class Handler:
                                 while True:
                                     if test_instance.ended_process == True: break
                                     elif len(test_instance.getWindowsOpened()) > 0:
-                                        time.sleep(3)
+                                        time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+10 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
+                                    elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
                                     else: time.sleep(0.5)
                                 test_instance.requestThreadClosing()
                                 if self.getIfRobloxIsOpen(studio=studio) == True:
@@ -3449,11 +3449,14 @@ class Handler:
                         if debug == True: printDebugMessage(f"Downloading Roblox {client_label} DMG from Roblox's servers..")
                         cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-Roblox{"Studio" if studio == True else ""}.zip'
                         if debug == True: printDebugMessage(f"Downloading from: {cur_vers_down_link}")
-                        requests.download(cur_vers_down_link, os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
-                        zip_extract = pip_class.unzipFile(os.path.join(cur_path, f"Roblox{client_label}Install.zip"), filePath, ["Contents"])
-                        if zip_extract.returncode == 0: os.remove(os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
+                        down_req = requests.download(cur_vers_down_link, os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
+                        if down_req.ok:
+                            zip_extract = pip_class.unzipFile(os.path.join(cur_path, f"Roblox{client_label}Install.zip"), filePath, ["Contents"])
+                            if zip_extract.returncode == 0: os.remove(os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
+                            else:
+                                if debug == True: printDebugMessage(f"Unable to unzip Roblox {client_label} installer due to an error.")
                         else:
-                            if debug == True: printDebugMessage(f"Unable to unzip Roblox {client_label} installer due to an error.")
+                            if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an error. Code: {down_req.status_code}")
                     else:
                         if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error.")
                 elif self.__main_os__ == "Windows":
@@ -3462,9 +3465,12 @@ class Handler:
                         if debug == True: printDebugMessage(f"Downloading Roblox EXE from Roblox's servers..")
                         cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-Roblox{client_label}Installer.exe'
                         if debug == True: printDebugMessage(f"Downloading from: {cur_vers_down_link}")
-                        requests.download(cur_vers_down_link, filePath)
-                        if debug == True: printDebugMessage(f"Successfully downloaded installer!")
-                        return filePath
+                        down_req = requests.download(cur_vers_down_link, filePath)
+                        if down_req.ok:
+                            if debug == True: printDebugMessage(f"Successfully downloaded installer!")
+                            return filePath
+                        else:
+                            if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error. Code: {down_req.status_code}")
                     else:
                         if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error.")
                 else: self.unsupportedFunction()
@@ -3721,7 +3727,7 @@ class Handler:
             xml_root = ET.Element("roblox", {
                 "xmlns:xmime": "http://www.w3.org/2005/05/xmlmime",
                 "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-                "xsi:noNamespaceSchemaLocation": "http://www.roblox.com/roblox.xsd",
+                "xsi:noNamespaceSchemaLocation": "https://www.roblox.com/roblox.xsd",
                 "version": "4"
             })
             xml_item = ET.SubElement(xml_root, "Item", {"class": "UserGameSettings", "referent": referent})
@@ -3958,12 +3964,12 @@ class Handler:
                                 if installPath.endswith("/"): installPathA = installPath[:-1]
                                 elif installPath.endswith("\\"): installPathA = installPath[:-1]
                                 else: installPathA = installPath
-                                alleged_path = os.path.join(installPathA, f"RFFIInstall{client_label}BundleLock")
+                                alleged_path = os.path.join(installPathA, f"RFFIInstall{client_label}BundleLock_{os.path.basename(pip_class.getUserFolder())}")
                                 if os.path.exists(alleged_path):
                                     with open(alleged_path, "r", encoding="utf-8") as f: pid_str = f.read()
                                     if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
                                         if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
-                                        while os.path.exists(alleged_path): time.sleep(0.05)
+                                        while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
                                         if os.path.exists(installPath):
                                             if debug == True: printDebugMessage(f"Install was finished and installed!")
                                             if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
@@ -4012,8 +4018,14 @@ class Handler:
                                             if not i == "":
                                                 if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round((per_step/(len(marked_install_files)))*100, 2))
                                                 if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
-                                                requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
-                                                downloaded_zip_files.append(i)
+                                                down_req = requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
+                                                if down_req.ok: downloaded_zip_files.append(i)
+                                                else:
+                                                    printErrorMessage(f"Unable to install Roblox due to a download error.")
+                                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
+                                                    if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Unable to install Roblox due to a download error.", 80)
+                                                    if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
+                                                    return {"success": False}
                                         if verify == True:
                                             per_step = 0
                                             verified = True
@@ -4084,7 +4096,7 @@ class Handler:
                                                         else: printErrorMessage(f"WebView2 has failed to be installed! Code: {web2_res.returncode}")
                                                     except Exception as e: printErrorMessage(f"WebView2 has failed to be installed! Exception: {str(e)}")
                                         with open(os.path.join(installPath, "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
-                                        with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>')
+                                        with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>https://www.roblox.com</BaseUrl></Settings>')
                                         if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
                                         if debug == True: printDebugMessage(f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
@@ -4114,20 +4126,24 @@ class Handler:
                                 if installPath.endswith("/"): installPathA = installPath[:-1]
                                 elif installPath.endswith("\\"): installPathA = installPath[:-1]
                                 else: installPathA = installPath
-                                alleged_path = os.path.join(installPathA, f"RFFIInstall{'Studio' if studio == True else 'Player'}BundleLock")
+                                alleged_path = os.path.join(installPathA, f"RFFIInstall{'Studio' if studio == True else 'Player'}BundleLock_{os.path.basename(pip_class.getUserFolder())}")
                                 if os.path.exists(alleged_path):
-                                    if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
-                                    while os.path.exists(alleged_path): time.sleep(0.05)
-                                    if os.path.exists(installPath):
-                                        if debug == True: printDebugMessage(f"Install was finished and installed!")
-                                        if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
-                                        return {"success": True}
+                                    with open(alleged_path, "r", encoding="utf-8") as f: pid_str = f.read()
+                                    if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                                        if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
+                                        while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
+                                        if os.path.exists(installPath):
+                                            if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                            if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
+                                            return {"success": True}
+                                        else:
+                                            if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                            if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
+                                            return {"success": False}
                                     else:
-                                        if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
-                                        if submit_status: submit_status.submit("\033ERR[BUNDLE] Install was not finished!", 100)
-                                        return {"success": False}
+                                        with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                                 else:
-                                    with open(alleged_path, "w") as f: f.write(f"Installing Roblox right now!")
+                                    with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                             roblox_player_down = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-{zip_name}'
                             if submit_status: submit_status.submit(f"[BUNDLE] Downloading Roblox App!", 0)
                             if debug == True: printDebugMessage(f"Downloading {client_label} from Roblox's server: {roblox_player_down}")
@@ -4135,8 +4151,8 @@ class Handler:
                                 class download_stat:
                                     def submit(self, info):
                                         if submit_status: submit_status.submit(f"[BUNDLE] Downloading Roblox App!", int((info.percent/10)*3))
-                                requests.download(roblox_player_down, os.path.join(installPath, zip_name), submit_status=download_stat())
-                                if os.path.exists(os.path.join(installPath, zip_name)):
+                                down_req = requests.download(roblox_player_down, os.path.join(installPath, zip_name), submit_status=download_stat())
+                                if down_req.ok and os.path.exists(os.path.join(installPath, zip_name)):
                                     if os.path.exists(os.path.join(installPath, f"Roblox{client_label}")) or os.path.exists(appPath):
                                         if debug == True: printDebugMessage(f"Cleaning before install..")
                                         if os.path.exists(os.path.join(installPath, f"Roblox{client_label}")): shutil.rmtree(os.path.join(installPath, f"Roblox{client_label}"), ignore_errors=True)
@@ -4165,6 +4181,7 @@ class Handler:
                                     if debug == True: printDebugMessage(f"Unable to download the Roblox {client_label}.")
                                     if submit_status: submit_status.submit(f"\033ERR[BUNDLE] Failed to download Roblox {client_label}.", 100)
                                     if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
+                                    if os.path.exists(os.path.join(installPath, zip_name)): os.remove(os.path.join(installPath, zip_name))
                                     if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                     return {"success": False}
                             except Exception as e:

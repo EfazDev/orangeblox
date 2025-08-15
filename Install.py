@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.7
+# v2.2.8
 # 
 
 # Modules
@@ -76,13 +76,35 @@ if __name__ == "__main__":
         "README.md",
         ".gitignore",
         "RepairData", 
+        ".DS_Store",
         "__pycache__", 
         "InstallPython.sh", 
         "InstallPython.bat",
         "Configuration.json", 
         "RobloxFastFlagLogFilesAttached.json"
     ]
-    current_version = {"version": "2.2.7"}
+    remove_found_files = [
+        "dist", 
+        ".git",
+        "build",
+        "CNAME", 
+        ".github",
+        "LICENSE", 
+        "README.md",
+        ".gitignore",
+        ".DS_Store",
+        "__pycache__", 
+        "PlayRoblox.exe",
+        "RunStudio.exe",
+        "Downloads",
+        "LocalStorage",
+        "OTAPatchBackups",
+        "RobloxPlayerInstaller.exe",
+        "RobloxStudioInstaller.exe",
+        "InstallPython.sh", 
+        "InstallPython.bat",
+    ]
+    current_version = {"version": "2.2.8"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -217,7 +239,8 @@ if __name__ == "__main__":
         "EFlagOverwriteUnneededStudioFonts": "bool",
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
-        "EFlagEnableEndingRobloxCrashHandler": "bool"
+        "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()
 
@@ -859,9 +882,13 @@ if __name__ == "__main__":
                         # Removing Python Scripts
                         if os.path.exists(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
                             printMainMessage("Removing Old Scripts..")
-                            for i in os.listdir(f"{stored_main_app[main_os][1]}/Contents/Resources/"):
+                            resources_fold = f"{stored_main_app[main_os][1]}/Contents/Resources/"
+                            for i in os.listdir(resources_fold):
                                 if i.endswith(".py") and not os.path.exists(os.path.join(cur_path, i)): os.remove(f"{stored_main_app[main_os][1]}/Contents/Resources/{i}")
-
+                            for i in remove_found_files:
+                                if os.path.exists(os.path.join(resources_fold, i)):
+                                    if os.path.isdir(os.path.join(resources_fold, i)): shutil.rmtree(os.path.join(resources_fold, i), ignore_errors=True)
+                                    elif os.path.isfile(os.path.join(resources_fold, i)): os.remove(os.path.join(resources_fold, i))
                         if update_mode == False:
                             # Export ./ to /Contents/Resources/
                             printMainMessage("Copying Main Resources..")
@@ -1192,7 +1219,10 @@ if __name__ == "__main__":
                             printMainMessage("Removing Old Scripts..")
                             for i in os.listdir(stored_main_app[main_os][0]):
                                 if i.endswith(".py") and not os.path.exists(os.path.join(cur_path, i)): os.remove(os.path.join(stored_main_app[main_os][0], i))
-
+                            for i in remove_found_files:
+                                if os.path.exists(os.path.join(stored_main_app[main_os][0], i)):
+                                    if os.path.isdir(os.path.join(stored_main_app[main_os][0], i)): shutil.rmtree(os.path.join(stored_main_app[main_os][0], i), ignore_errors=True)
+                                    elif os.path.isfile(os.path.join(stored_main_app[main_os][0], i)): os.remove(os.path.join(stored_main_app[main_os][0], i))
                         if update_mode == False:
                             # Export ./ to {app_path}/
                             printMainMessage("Copying Main Resources..")
@@ -1290,7 +1320,7 @@ if __name__ == "__main__":
                         end_build_time = datetime.datetime.now().timestamp()
                         if overwrited == True: printSuccessMessage(f"Successfully updated OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
                         else: printSuccessMessage(f"Successfully installed OrangeBlox in {round(end_build_time-started_build_time, 3)}s!")
-                        shutil.rmtree(f"{cur_path}/Apps/OrangeBloxWindows/")
+                        shutil.rmtree(f"{cur_path}/Apps/OrangeBloxWindows/", ignore_errors=True)
                     else: printErrorMessage("Something went wrong trying to find the installation folder.")
                 else: printErrorMessage("Something went wrong trying to find the installation folder.")
             else: printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
@@ -1380,6 +1410,7 @@ if __name__ == "__main__":
                                     printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                                     printSuccessMessage(f"✅ Download Location: {download_location}")
                                 elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                                    download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                                     printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
                                     printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
                                     printSuccessMessage(f"⚠️ Download Location: {download_location}")
@@ -1395,7 +1426,7 @@ if __name__ == "__main__":
                                 if isYes(input("> ")) == True:
                                     printMainMessage("Downloading latest version..")
                                     download_update = requests.download(download_location, os.path.join(cur_path, 'Update.zip'))
-                                    if download_update.returncode == 0:
+                                    if download_update.ok:
                                         printMainMessage("Download Success! Extracting ZIP now!")
                                         makedirs(f"{cur_path}/Update/")
                                         zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), f"{cur_path}/Update/", ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
@@ -1417,10 +1448,10 @@ if __name__ == "__main__":
                                             printMainMessage("Cleaning up files..")
                                             os.remove("Update.zip")
                                             shutil.rmtree(f"{cur_path}/Update/")
-                                            printErrorMessage("Extracting ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                            printErrorMessage("Extracting ZIP File failed. Would you like to continue without updating? (y/n)")
                                             if isYes(input("> ")) == False: sys.exit(0)
                                     else:
-                                        printErrorMessage("Downloading ZIP File failed. Would you like to continue to Roblox without updating? (y/n)")
+                                        printErrorMessage("Downloading ZIP File failed. Would you like to continue without updating? (y/n)")
                                         if isYes(input("> ")) == False: sys.exit(0)
                             elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"): printSuccessMessage("The bootstrap is a beta version! No updates are needed!")
                             else: printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
