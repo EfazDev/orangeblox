@@ -138,7 +138,7 @@ if sys.version_info >= (3, 8, 0):
         "onNewStudioLaunching",
         "onStudioInstallerLaunched"
     ]
-else: robloxInstanceTotalLiteralEventNames = typing.AnyStr
+else: robloxInstanceTotalLiteralEventNames = typing.Union[str, bytes]
 # Typing Literals
 
 def ts(mes):
