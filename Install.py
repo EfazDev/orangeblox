@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.2.8
+# v2.2.9
 # 
 
 # Modules
@@ -104,7 +104,7 @@ if __name__ == "__main__":
         "InstallPython.sh", 
         "InstallPython.bat",
     ]
-    current_version = {"version": "2.2.8"}
+    current_version = {"version": "2.2.9"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
