@@ -67,13 +67,13 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `030b843ece4b2a8e042871cca769065d` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `849fee6fe64bbed60961e0e3c6088648` |
-| Installer (Install.py) | `d33411a3fc2e404d14c1cbee0069a6ba` |
-| Bootstrap API (OrangeAPI.py) | `a376d6a2742b02426baaf60c16cfb773` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `383e42f1743a7efa734c9bd7c4b31544` |
-| Bootstrap Loader (OrangeBlox.py) | `4e1edba4feb0fadd43db09bdab21f743` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `3bfb67de55e4374fc941c501473c0182` |
+| Main Bootstrap (Main.py) | `f60dac613605eda112460c9a488da0ce` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `d37217d9c16102cf4c95c3cbd23ade1f` |
+| Installer (Install.py) | `c35e9bda39c4852d877af9ae9bf24379` |
+| Bootstrap API (OrangeAPI.py) | `9fbef98409e3f4475e2753d86364f53b` |
+| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `799b5c6766e9a1c84004a4b113656b82` |
+| Bootstrap Loader (OrangeBlox.py) | `f199a9df1dc5b3f72d66f7bc5c671c68` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `1f3260a851f105b47ac1be939ac04fef` |
 | PyKits API (PyKits.py) | `01d0b260824bfbc7d1da22da74d32733` |
 
 ## Credits

@@ -2046,7 +2046,7 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onApplyingFeature", data=generated_data, isLine=False)
                 elif "[FLog::ClientRunInfo] The channel is " in line:
                     def generate_arg():
-                        pattern = re.compile(r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)')
+                        pattern = re.compile(r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>[^\s]+)')
                         match = pattern.search(line)
                         if not match: return None
                         data = match.groupdict()
@@ -2276,7 +2276,7 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onGameAudioDeviceAvailable", data=generated_data, isLine=False)
                 elif "[FLog::ClientRunInfo] The channel is " in line:
                     def generate_arg():
-                        pattern = re.compile(r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>\w+)')
+                        pattern = re.compile(r'(?P<timestamp>[^\s]+),(?P<unknown_value>[^\s]+),(?P<unknown_hex>[^\s]+),(?P<unknown_number>[^\s]+) \[FLog::ClientRunInfo\] The channel is (?P<channel>[^\s]+)')
                         match = pattern.search(line)
                         if not match: return None
                         data = match.groupdict()
