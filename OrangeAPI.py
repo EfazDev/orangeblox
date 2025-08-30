@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.2.9
+# v2.3.0a
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.2.9
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0a
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -20,14 +20,13 @@ import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 
 import os
 import time
-import hashlib
 import platform
 import typing
 import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.2.9"}
+current_version = {"version": "2.3.0a"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -65,7 +64,7 @@ class Request:
     def __init__(self, bootstrap_api, requested_function: str, args: dict={}):
         global requested_functions
         if type(bootstrap_api) is OrangeAPI:
-            generated_function_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
+            generated_function_id = os.urandom(3).hex()
             if type(requested_function) is str:
                 self.requested = requested_function
                 if type(args) is dict: self.args = args

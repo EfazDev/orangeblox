@@ -15,10 +15,10 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.9"}
+    current_version = {"version": "2.3.0"}
     main_os = platform.system()
     args = sys.argv
-    generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
+    generated_app_id = os.urandom(3).hex()
     pip_class = PyKits.pip(find=True)
     app_path = ""
     macos_path = ""
@@ -146,6 +146,8 @@ if __name__ == "__main__":
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
         "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagEnablePythonVirtualEnvironments": "bool",
+        "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
@@ -334,6 +336,7 @@ if __name__ == "__main__":
         else:
             if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython(path=True)
+        pip_class.executable = pythonExecutable
         if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0): 
             pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython(path=True)
@@ -343,8 +346,20 @@ if __name__ == "__main__":
                 input("> ")
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
-
-        execute_command = f"unset HISTFILE && clear && cd {app_path}/ && {pythonExecutable} Main.py && exit"
+        sour_path = ""
+        venv_path = ""
+        if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
+            printMainMessage("Checking Virtual Environments..")
+            venv_path = os.path.join(app_path, "VirtualEnvironments")
+            if not os.path.exists(venv_path): os.makedirs(venv_path)
+            venv_path = os.path.join(venv_path, user_folder_name)
+            venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
+            if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = f"VirtualEnvironments/{user_folder_name}/bin/activate"
+                else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
+            else: printSuccessMessage("Found Virtual Environment!"); sour_path = f"VirtualEnvironments/{user_folder_name}/bin/activate"
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else f'VirtualEnvironments/{user_folder_name}/bin/python3'} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -500,6 +515,11 @@ if __name__ == "__main__":
                         if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
                     if not (validated == False) or main_config.get("EFlagDisableSecureHashSecurity") == True:
                         validated = True
+                        if main_config.get("EFlagBuildPythonCacheOnStart") == True:
+                            printMainMessage("Building Python Cache..")
+                            build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            if build_cache_process.returncode == 0: printSuccessMessage("Successfully built Python cache!")
+                            else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
                         result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
@@ -1515,6 +1535,21 @@ if __name__ == "__main__":
                     printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
                     input("> ")
                     sys.exit(0)
+
+            sour_path = ""
+            if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
+                printMainMessage("Checking Virtual Environments..")
+                user_folder_name = os.path.basename(PyKits.pip().getUserFolder())
+                venv_path = os.path.join(app_path, "VirtualEnvironments")
+                if not os.path.exists(venv_path): os.makedirs(venv_path)
+                venv_path = os.path.join(venv_path, user_folder_name)
+                venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
+                if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if generate_venv_process.returncode == 0: 
+                        printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                    else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}")
+                else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
             printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
             try:
@@ -1558,6 +1593,12 @@ if __name__ == "__main__":
                         validated = True
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
+                        if not (sour_path == ""): os.system(f"\"{sour_path}\"")
+                        if main_config.get("EFlagBuildPythonCacheOnStart") == True:
+                            printMainMessage("Building Python Cache..")
+                            build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            if build_cache_process.returncode == 0: printSuccessMessage("Successfully built Python cache!")
+                            else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
                         result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")

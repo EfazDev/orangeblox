@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.9
+# v2.3.0a
 # 
 
 # Python Modules
@@ -26,7 +26,8 @@ import zlib
 import re
 
 import PyKits; PyKits.BuiltinEditor(builtins)
-import RobloxFastFlagsInstaller as RFFI
+try: import RobloxFastFlagsInstaller as RFFI
+except: PyKits.pip().restartScript("Main.py", sys.argv)
 from urllib.parse import unquote, urlparse
 
 if __name__ == "__main__":
@@ -50,9 +51,10 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.9"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0a"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
+    macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
     flag_types: typing.Dict[str, str] = {
         "EFlagRobloxStudioFlags": "dict",
@@ -169,6 +171,8 @@ if __name__ == "__main__":
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
         "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagEnablePythonVirtualEnvironments": "bool",
+        "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -432,7 +436,7 @@ if __name__ == "__main__":
                 else: mod_info["mod_script"] = False
                 generated_manifest[i] = mod_info
         return generated_manifest
-    def getSettings():
+    def getSettings(updating: bool=False):
         global main_config
         if main_os == "Darwin":
             if os.path.exists(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist")): os.remove(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist"))
@@ -447,7 +451,7 @@ if __name__ == "__main__":
             try: obfuscated_json = json.loads(obfuscated_json)
             except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
             main_config = obfuscated_json
-        if main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
+        if updating == False and main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
             try:
                 req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "main"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
                 if req.ok: 
@@ -504,7 +508,7 @@ if __name__ == "__main__":
             macos_preference_expected = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
             if os.path.exists(macos_preference_expected): app_configuration = plist_class.readPListFile(macos_preference_expected)
             else: app_configuration = {}
-            app_configuration["InstalledAppPath"] = os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/")
+            app_configuration["InstalledAppPath"] = os.path.realpath(os.path.join(macos_app_path, "../") + "/")
             app_configuration["Configuration"] = main_config
             plist_class.writePListFile(macos_preference_expected, app_configuration, binary=True)
         else:
@@ -524,7 +528,7 @@ if __name__ == "__main__":
             return True
     def generateCodesignCommand(pa, iden, entitlements: str=None): return [["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", pa], ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", pa], ["/usr/bin/xattr", "-cr", pa], ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"] + (["--entitlements", entitlements] if entitlements else []) + ["-s", iden, pa]]
     def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
-    def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "../MacOS/OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
+    def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(macos_app_path, "Contents", "MacOS", "OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
     def generateFileKey(id: str): return os.path.join(cur_path, f"{id}_{user_folder_name}")
     def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False): 
         main_ui_options = {}
@@ -725,7 +729,7 @@ if __name__ == "__main__":
         pip_class.restartScript("Main.py", sys.argv)
         printSuccessMessage("Successfully installed modules!")
 
-    # Python Modules (Pypi Installed)
+    # Python Modules (PyPi Installed)
     try:
         import psutil
         from DiscordPresenceHandler import Presence
@@ -792,8 +796,8 @@ if __name__ == "__main__":
                 shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerInstaller.exe"))
                 with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
             elif main_os == "Darwin":
-                if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
-                    pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
+                if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
+                    pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
                     with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
@@ -983,7 +987,7 @@ if __name__ == "__main__":
             return ts("FFlag Settings was not saved!")
         printWarnMessage("--------------------")
         RFFI.main()
-        getSettings()
+        getSettings(updating=True)
         saveSettings()
     def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         global main_config
@@ -1000,7 +1004,7 @@ if __name__ == "__main__":
         def download_option():
             if pip_class.getIfConnectedToInternet():
                 printDebugMessage("Setting Installed App Path to Local User..") 
-                if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/"))
+                if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(macos_app_path, "../") + "/"))
                 elif main_os == "Windows": setInstalledAppPath(cur_path)
                 printDebugMessage("Sending Request to Bootstrap Version Servers..") 
                 version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
@@ -2137,6 +2141,14 @@ if __name__ == "__main__":
                     elif isNo(d) == True:
                         main_config["EFlagDisableBootstrapCooldown"] = False
                         printDebugMessage("User selected: False")
+
+                printMainMessage("Would you like to use Python Virtual Environments for OrangeBlox? (y/n)")
+                d = handleBasicSetting("EFlagEnablePythonVirtualEnvironments", False)
+                if d: return d
+
+                printMainMessage("Would you like to build Python cache on app start? (y/n)")
+                d = handleBasicSetting("EFlagBuildPythonCacheOnStart", False)
+                if d: return d
                     
                 if main_os == "Windows":
                     printMainMessage("Would you like to make shortcuts for OrangeBlox? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
@@ -2394,13 +2406,13 @@ if __name__ == "__main__":
         printMainMessage(" • \033[38;5;226mPhilip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)\033[0m")
         printMainMessage(" • \033[38;5;129mMark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)\033[0m")
         printMainMessage(" • \033[38;5;214mKivy (plyer) 🧰 (https://github.com/kivy/plyer)\033[0m")
-        printMainMessage(" • \033[38;5;30mPython Software Foundation (requests) 🌐 (https://github.com/psf/requests)\033[0m")
         printMainMessage(" • \033[38;5;97mGiampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)\033[0m")
+        printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
         printMainMessage("6. The logo of OrangeBlox was made thanks of \033[38;5;226m@CabledRblx 🦆\033[0m. Thanks :)")
         printMainMessage("7. Server Locations was made thanks to \033[38;5;39mipinfo.io 🌐\033[0m as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
             printMainMessage(f'8. macOS App was built using \033[38;5;39mpyinstaller 📦\033[0m and \033[38;5;226mclang 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
-            printMainMessage(f"Command: {sys.executable} Install.py -r -rn -rc")
+            printMainMessage(f"Command: {sys.executable} Install.py -r -rp -rc")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
             printMainMessage(f'8. Windows App was built using \033[38;5;39mpyinstaller 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
@@ -2733,9 +2745,9 @@ if __name__ == "__main__":
                                                 create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "BootstrapImages", "AppIconRunStudio.ico"))     
                                                 printSuccessMessage("Generated Shortcut App!")
                                             elif main_os == "Darwin":
-                                                if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
+                                                if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
                                                     if not (os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app")) and not os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app", "Contents", "Resources", "AlternativeLink"))):
-                                                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), dirs_exist_ok=True)
+                                                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), dirs_exist_ok=True)
                                                         with open(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app", "Contents", "Resources", "AlternativeLink"), "w", encoding="utf-8") as f: f.write(f"orangeblox://shortcuts/{key}")
                                                         for i in generateCodesignCommand(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                                                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -3351,7 +3363,7 @@ if __name__ == "__main__":
     def continueToUpdates(): # Check for Updates
         printWarnMessage("--- Checking for Bootstrap Updates ---")
         printDebugMessage("Setting Installed App Path to Local User..") 
-        if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/"))
+        if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(macos_app_path, "../") + "/"))
         elif main_os == "Windows": setInstalledAppPath(os.path.realpath(cur_path))
         printDebugMessage("Sending Request to Bootstrap Version Servers..") 
         version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
@@ -3840,7 +3852,7 @@ if __name__ == "__main__":
                                     latest_vers = latest_vers_res.json
                                     if current_version.get("version"):
                                         if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                                            versio_name = ts(f'\033[38;5;{unic}mNew Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}]\033[0m')
+                                            versio_name = ts(f'\033[38;5;{unic}mNew Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update} ]\033[0m')
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                                                 with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
@@ -3867,7 +3879,7 @@ if __name__ == "__main__":
                         else: emoji_to_define_update = "❌"; unic = "196"
                         generated_ui_options.append({
                             "index": 9, 
-                            "message": ts(f"\033[38;5;{unic}mCheck for Updates [{emoji_to_define_update}]\033[0m"), 
+                            "message": ts(f"\033[38;5;{unic}mCheck for Updates [{emoji_to_define_update} ]\033[0m"), 
                             "func": continueToUpdates, 
                             "go_to_rbx": True, 
                             "end_mes": ts("Finished checking for updates!"),
@@ -4226,16 +4238,16 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioInstaller.exe"))
                     with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
-                    if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
+                    if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
+                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
+                        shutil.copy(os.path.join(macos_app_path, "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
                         with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
                         for i in generateCodesignCommand(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                             else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Run Studio.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(cur_path, "../", "../", "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
+                    if os.path.exists(os.path.join(macos_app_path, "../", "Run Studio.app")):
+                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
+                        shutil.copy(os.path.join(macos_app_path, "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
                         with open(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
                         for i in generateCodesignCommand(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -4680,7 +4692,7 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join(cur_path, "OrangeBlox.exe" if run_studio == True else "OrangeBlox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe" if run_studio == True else "RobloxPlayerInstaller.exe"))
                     with open(os.path.join(content_folder_paths[main_os], "RobloxStudioBetaPlayRobloxRestart.txt" if run_studio == True else "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
-                    backspacing = os.path.join(cur_path, "../", "../", "../")
+                    backspacing = os.path.join(macos_app_path, "../")
                     if os.path.exists(os.path.join(backspacing, "Play Roblox.app")):
                         pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
                         shutil.copy(os.path.join(backspacing, "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))

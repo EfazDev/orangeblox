@@ -578,7 +578,7 @@ class pip:
     ignore_same = False
     requests: request = None
     
-    # Pip Functionalities
+    # Pip / PyPi Functionalities
     def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, arch: str=None):
         import sys
         import os
@@ -586,11 +586,11 @@ class pip:
         import re
         import platform
         import importlib
+        import importlib.metadata
         import subprocess
         import glob
         import stat
         import shutil
-        import hashlib
         import urllib.parse
         import time
         import mmap
@@ -601,11 +601,11 @@ class pip:
         self._re = re
         self._platform = platform
         self._importlib = importlib
+        self._importlib_metadata = importlib.metadata
         self._subprocess = subprocess
         self._glob = glob
         self._stat = stat
         self._shutil = shutil
-        self._hashlib = hashlib
         self._urllib_parse = urllib.parse
         self._time = time
         self._mmap = mmap
@@ -646,13 +646,14 @@ class pip:
         self.ensure()
         res = {}
         generated_list = []
+        if self.getIfVirtualEnvironment(): user = False
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
                 a = self._subprocess.call([self.executable, "-m", "pip", "install"] + (["--upgrade"] if upgrade == True else []) + (["--user"] if user == True else []) + generated_list, stdout=(not self.debug) and self._subprocess.DEVNULL or None, stderr=(not self.debug) and self._subprocess.DEVNULL or None)
                 if a == 0: return {"success": True, "message": "Successfully installed modules!"}
-                else: return {"success": False, "message": f"Command has failed!"}
+                else: return {"success": False, "message": f"Command has failed! Code: {a}"}
             except Exception as e: return {"success": False, "message": str(e)}
         return res
     def uninstall(self, packages: typing.List[str]):
@@ -671,8 +672,8 @@ class pip:
         self.ensure()
         if self.isSameRunningPythonExecutable() and not len(packages) == 0:
             def che(a):
-                try: self._importlib.metadata.version(a); return True
-                except self._importlib.metadata.PackageNotFoundError: return False
+                try: self._importlib_metadata.version(a); return True
+                except self._importlib_metadata.PackageNotFoundError: return False
             if len(packages) == 1: return che(packages[0].lower())
             else:
                 installed_checked = {}
@@ -777,8 +778,6 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    
-    # Pypi Packages
     def getGitHubRepository(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
@@ -957,6 +956,9 @@ class pip:
                 arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
                 return arch_map.get(machine, "")
             else: return machine_var
+    def getIfVirtualEnvironment(self):
+        alleged_path = self._os.path.dirname(self.executable)
+        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
         ma_os = self._main_os
         if ma_os == "Darwin":
@@ -1089,8 +1091,8 @@ class pip:
             if main_os == "Darwin": self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
             elif main_os == "Windows": self._subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=self._subprocess.DEVNULL)
             else: self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
-    def importModule(self, module_name: str, install_module_if_not_found: bool=False):
-        self._importlib.invalidate_caches()
+    def importModule(self, module_name: str, install_module_if_not_found: bool=False, loop_until_import: bool=False):
+        self.uncacheLoadedModules()
         try: 
             s = self._importlib.import_module(module_name)
             if type(s) is None: raise ModuleNotFoundError("")
@@ -1098,12 +1100,24 @@ class pip:
         except ModuleNotFoundError:
             try:
                 if install_module_if_not_found == True and self.isSameRunningPythonExecutable(): self.install([module_name])
-                self._importlib.invalidate_caches()
+                self.uncacheLoadedModules()
                 s = self._importlib.import_module(module_name)
                 if type(s) is None: raise ModuleNotFoundError("")
                 else: return s
-            except Exception: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+            except Exception: 
+                if loop_until_import == False: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+                self._time.sleep(1)
+                return self.importModule(module_name=module_name, install_module_if_not_found=install_module_if_not_found, loop_until_import=loop_until_import)
         except Exception as e: raise ImportError(f'Unable to import module "{module_name}" in Python {self.getCurrentPythonVersion()} environment. Exception: {str(e)}')
+    def uncacheLoadedModules(self):
+        if getattr(self._sys, "frozen", False): pass
+        else:
+            import site
+            self._site = site
+            site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
+            for path in site_packages_paths:
+                if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
+        self._importlib.invalidate_caches()
     def unzipFile(self, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True, moving_file_func: typing.Callable=None):
         class result():
             returncode = 0
@@ -1111,7 +1125,7 @@ class pip:
         if not self._os.path.exists(output): self._os.makedirs(output, mode=511)
         previous_output = output
         if output.endswith("/"): output = output[:-1]
-        if len(look_for) > 0: output = output + f"_Full_{str(self._hashlib.sha256(self._os.urandom(6)).hexdigest()[:6])}"; self._os.makedirs(output, mode=511)
+        if len(look_for) > 0: output = output + f"_Full_{self._os.urandom(3).hex()}"; self._os.makedirs(output, mode=511)
         if self._main_os == "Windows": zip_extract = self._subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", path] + export_out + ["-C", output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         else: zip_extract = self._subprocess.run(["/usr/bin/ditto", "-xk", path, output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         if len(look_for) > 0:
@@ -1584,4 +1598,5 @@ class BuiltinEditor:
         _original_input = builtins_mod.input
         builtins_mod.open = holding_open
         builtins_mod.input = holding_input
-if __name__ == "__main__": print("PyKits is a module and not a runable instance!")
+class PyKitsIsAModule(Exception): pass
+if __name__ == "__main__": raise PyKitsIsAModule("PyKits is a module and not a runable instance!")

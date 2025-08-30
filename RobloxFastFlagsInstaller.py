@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.3.1
+# v2.3.5
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.3.1"
+script_version = "2.3.5"
 def getLocalAppData():
     import platform
     import os
@@ -724,7 +724,7 @@ class pip:
     ignore_same = False
     requests: request = None
     
-    # Pip Functionalities
+    # Pip / PyPi Functionalities
     def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, arch: str=None):
         import sys
         import os
@@ -732,11 +732,11 @@ class pip:
         import re
         import platform
         import importlib
+        import importlib.metadata
         import subprocess
         import glob
         import stat
         import shutil
-        import hashlib
         import urllib.parse
         import time
         import mmap
@@ -747,11 +747,11 @@ class pip:
         self._re = re
         self._platform = platform
         self._importlib = importlib
+        self._importlib_metadata = importlib.metadata
         self._subprocess = subprocess
         self._glob = glob
         self._stat = stat
         self._shutil = shutil
-        self._hashlib = hashlib
         self._urllib_parse = urllib.parse
         self._time = time
         self._mmap = mmap
@@ -792,13 +792,14 @@ class pip:
         self.ensure()
         res = {}
         generated_list = []
+        if self.getIfVirtualEnvironment(): user = False
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
                 a = self._subprocess.call([self.executable, "-m", "pip", "install"] + (["--upgrade"] if upgrade == True else []) + (["--user"] if user == True else []) + generated_list, stdout=(not self.debug) and self._subprocess.DEVNULL or None, stderr=(not self.debug) and self._subprocess.DEVNULL or None)
                 if a == 0: return {"success": True, "message": "Successfully installed modules!"}
-                else: return {"success": False, "message": f"Command has failed!"}
+                else: return {"success": False, "message": f"Command has failed! Code: {a}"}
             except Exception as e: return {"success": False, "message": str(e)}
         return res
     def uninstall(self, packages: typing.List[str]):
@@ -817,8 +818,8 @@ class pip:
         self.ensure()
         if self.isSameRunningPythonExecutable() and not len(packages) == 0:
             def che(a):
-                try: self._importlib.metadata.version(a); return True
-                except self._importlib.metadata.PackageNotFoundError: return False
+                try: self._importlib_metadata.version(a); return True
+                except self._importlib_metadata.PackageNotFoundError: return False
             if len(packages) == 1: return che(packages[0].lower())
             else:
                 installed_checked = {}
@@ -923,8 +924,6 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    
-    # Pypi Packages
     def getGitHubRepository(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
@@ -1103,6 +1102,9 @@ class pip:
                 arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
                 return arch_map.get(machine, "")
             else: return machine_var
+    def getIfVirtualEnvironment(self):
+        alleged_path = self._os.path.dirname(self.executable)
+        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
         ma_os = self._main_os
         if ma_os == "Darwin":
@@ -1235,8 +1237,8 @@ class pip:
             if main_os == "Darwin": self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
             elif main_os == "Windows": self._subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=self._subprocess.DEVNULL)
             else: self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
-    def importModule(self, module_name: str, install_module_if_not_found: bool=False):
-        self._importlib.invalidate_caches()
+    def importModule(self, module_name: str, install_module_if_not_found: bool=False, loop_until_import: bool=False):
+        self.uncacheLoadedModules()
         try: 
             s = self._importlib.import_module(module_name)
             if type(s) is None: raise ModuleNotFoundError("")
@@ -1244,12 +1246,24 @@ class pip:
         except ModuleNotFoundError:
             try:
                 if install_module_if_not_found == True and self.isSameRunningPythonExecutable(): self.install([module_name])
-                self._importlib.invalidate_caches()
+                self.uncacheLoadedModules()
                 s = self._importlib.import_module(module_name)
                 if type(s) is None: raise ModuleNotFoundError("")
                 else: return s
-            except Exception: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+            except Exception: 
+                if loop_until_import == False: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+                self._time.sleep(1)
+                return self.importModule(module_name=module_name, install_module_if_not_found=install_module_if_not_found, loop_until_import=loop_until_import)
         except Exception as e: raise ImportError(f'Unable to import module "{module_name}" in Python {self.getCurrentPythonVersion()} environment. Exception: {str(e)}')
+    def uncacheLoadedModules(self):
+        if getattr(self._sys, "frozen", False): pass
+        else:
+            import site
+            self._site = site
+            site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
+            for path in site_packages_paths:
+                if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
+        self._importlib.invalidate_caches()
     def unzipFile(self, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True, moving_file_func: typing.Callable=None):
         class result():
             returncode = 0
@@ -1257,7 +1271,7 @@ class pip:
         if not self._os.path.exists(output): self._os.makedirs(output, mode=511)
         previous_output = output
         if output.endswith("/"): output = output[:-1]
-        if len(look_for) > 0: output = output + f"_Full_{str(self._hashlib.sha256(self._os.urandom(6)).hexdigest()[:6])}"; self._os.makedirs(output, mode=511)
+        if len(look_for) > 0: output = output + f"_Full_{self._os.urandom(3).hex()}"; self._os.makedirs(output, mode=511)
         if self._main_os == "Windows": zip_extract = self._subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", path] + export_out + ["-C", output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         else: zip_extract = self._subprocess.run(["/usr/bin/ditto", "-xk", path, output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         if len(look_for) > 0:
@@ -1697,7 +1711,7 @@ class Handler:
         class ReconnectWatchdog(): code=2; data=None
         class NormalResponse(): code=3; data=None
     class InvalidRobloxHandlerException(Exception):
-        def __init__(self): super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Main class!")
+        def __init__(self): super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Handler class!")
     class RobloxInstance():
         __events__ = []
         pid = ""
@@ -4790,6 +4804,176 @@ def main():
         return
     elif isNo(installDisableHighLight) == True: generated_json["DFFlagRenderHighlightManagerPrepare"] = "false"
 
+    # Disable VC Beta Badge
+    printWarnMessage("--- Disable VC Beta Badge ---")
+    printMainMessage("Would you like to disable the VC beta badge on the client? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installVCBadge = input("> ")
+    if isYes(installVCBadge) == True: 
+        generated_json["FFlagVoiceBetaBadge"] = "false"
+        generated_json["FFlagTopBarUseNewBadge"] = "false"
+        generated_json["FFlagEnableBetaBadgeLearnMore"] = "false"
+        generated_json["FFlagBetaBadgeLearnMoreLinkFormview"] = "false"
+        generated_json["FFlagControlBetaBadgeWithGuac"] = "false"
+    elif isRequestClose(installVCBadge) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installVCBadge) == True: 
+        generated_json["FFlagVoiceBetaBadge"] = "true"
+        generated_json["FFlagTopBarUseNewBadge"] = "true"
+        generated_json["FFlagEnableBetaBadgeLearnMore"] = "true"
+        generated_json["FFlagBetaBadgeLearnMoreLinkFormview"] = "true"
+        generated_json["FFlagControlBetaBadgeWithGuac"] = "true"
+
+    # Fix Stutter Animations
+    printWarnMessage("--- Stutter Animations Fix ---")
+    printMainMessage("Would you like to disable the VC beta badge on the client? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installStutterAnimation = input("> ")
+    if isYes(installStutterAnimation) == True:  generated_json["DFIntTimestepArbiterThresholdCFLThou"] = "300"
+    elif isRequestClose(installStutterAnimation) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installStutterAnimation) == True: generated_json["DFIntTimestepArbiterThresholdCFLThou"] = None
+
+    # Fix Stutter Animations
+    printWarnMessage("--- Disable Wi-Fi Disconnect ---")
+    printMainMessage("Would you like to disable disconnecting from servers when wifi is changed on the client? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installWifiConnect = input("> ")
+    if isYes(installWifiConnect) == True:  generated_json["DFFlagDebugDisableTimeoutDisconnect"] = "true"
+    elif isRequestClose(installWifiConnect) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installWifiConnect) == True: generated_json["DFFlagDebugDisableTimeoutDisconnect"] = "false"
+
+    # Rename Connections to Friends
+    printWarnMessage("--- Rename Connections to Friends ---")
+    printMainMessage("Would you like to enable renaming Connections back to Friends on the client? (y/n)")
+    installConnectionsRename = input("> ")
+    if isYes(installConnectionsRename) == True: 
+        generated_json.update({
+            "FFlagLuaAppRenameFriendsToConnectionsEdp": "false",
+            "FFlagRenameFriendsToConnections": "false",
+            "FFlagRenameFriendsToConnectionsAppChat2": "false",
+            "FFlagRenameFriendsToConnectionsCoreUI": "false",
+            "FFlagRenameFriendsToConnectionsFriendsMenu": "false",
+            "FFlagRenameFriendsToConnectionsFriendsPage": "false",
+            "FFlagRenameFriendsToConnectionsPartyLobby": "false",
+            "FFlagRenameFriendsToConnectionsProfile": "false",
+            "FFlagRenameFriendsToConnectionsWebviewHeading": "false"
+        })
+    elif isRequestClose(installConnectionsRename) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installConnectionsRename) == True: 
+        generated_json.update({
+            "FFlagLuaAppRenameFriendsToConnectionsEdp": "true",
+            "FFlagRenameFriendsToConnections": "true",
+            "FFlagRenameFriendsToConnectionsAppChat2": "true",
+            "FFlagRenameFriendsToConnectionsCoreUI": "true",
+            "FFlagRenameFriendsToConnectionsFriendsMenu": "true",
+            "FFlagRenameFriendsToConnectionsFriendsPage": "true",
+            "FFlagRenameFriendsToConnectionsPartyLobby": "true",
+            "FFlagRenameFriendsToConnectionsProfile": "true",
+            "FFlagRenameFriendsToConnectionsWebviewHeading": "true"
+        })
+
+    # Reduce FPS #1
+    printWarnMessage("--- Reduce FPS #1 ---")
+    printMainMessage("Would you like to enable reducing FPS using pack 1? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installReduceFPS1 = input("> ")
+    if isYes(installReduceFPS1) == True:  
+        generated_json["FFlagDebugDisableTelemetryEphemeralCounter"] = "true"
+        generated_json["FFlagDebugDisableTelemetryEphemeralStat"] = "true"
+        generated_json["FFlagDebugDisableTelemetryEventIngest"] = "true"
+        generated_json["FFlagDebugDisableTelemetryPoint"] = "true"
+        generated_json["FFlagDebugDisableTelemetryV2Counter"] = "true"
+        generated_json["FFlagDebugDisableTelemetryV2Event"] = "true"
+        generated_json["FFlagDebugDisableTelemetryV2Stat"] = "true"
+    elif isRequestClose(installReduceFPS1) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installReduceFPS1) == True:
+        generated_json["FFlagDebugDisableTelemetryEphemeralCounter"] = "false"
+        generated_json["FFlagDebugDisableTelemetryEphemeralStat"] = "false"
+        generated_json["FFlagDebugDisableTelemetryEventIngest"] = "false"
+        generated_json["FFlagDebugDisableTelemetryPoint"] = "false"
+        generated_json["FFlagDebugDisableTelemetryV2Counter"] = "false"
+        generated_json["FFlagDebugDisableTelemetryV2Event"] = "false"
+        generated_json["FFlagDebugDisableTelemetryV2Stat"] = "false"
+
+    # Reduce FPS #2
+    printWarnMessage("--- Reduce FPS #2 ---")
+    printMainMessage("Would you like to enable reducing FPS using pack 2 (comfort mode)? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installReduceFPS2 = input("> ")
+    if isYes(installReduceFPS2) == True:  
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistance"] = 250
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL12"] = 500
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL23"] = 750
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL34"] = 1000
+        generated_json["DFIntTextureQualityOverride"] = 1
+        generated_json["FFlagDisablePostFx"] = "true"
+    elif isRequestClose(installReduceFPS2) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installReduceFPS2) == True:
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistance"] = None
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL12"] = None
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL23"] = None
+        generated_json["DFIntCSGLevelOfDetailSwitchingDistanceL34"] = None
+        generated_json["DFIntTextureQualityOverride"] = None
+        generated_json["FFlagDisablePostFx"] = None
+
+    # Reduce Ping
+    printWarnMessage("--- Reduce Ping ---")
+    printMainMessage("Would you like to enable reducing ping flags? (y/n)")
+    print("\033[38;5;34mThis FFlag was from the Dantez GitHub! (https://github.com/Dantezz025/Roblox-Fast-Flags)\033[0m")
+    installReducePing = input("> ")
+    if isYes(installReducePing) == True:  
+        generated_json.update({
+            "DFIntConnectionMTUSize": 900,
+            "FIntRakNetResendBufferArrayLength": "128",
+            "FFlagOptimizeNetwork": "True",
+            "FFlagOptimizeNetworkRouting": "True",
+            "FFlagOptimizeNetworkTransport": "True",
+            "FFlagOptimizeServerTickRate": "True",
+            "DFIntServerPhysicsUpdateRate": "60",
+            "DFIntServerTickRate": "60",
+            "DFIntRakNetResendRttMultiple": "1",
+            "DFIntRaknetBandwidthPingSendEveryXSeconds": "1",
+            "DFIntOptimizePingThreshold": "50",
+            "DFIntPlayerNetworkUpdateQueueSize": "20",
+            "DFIntPlayerNetworkUpdateRate": "60",
+            "DFIntNetworkPrediction": "120",
+            "DFIntNetworkLatencyTolerance": "1",
+            "DFIntMinimalNetworkPrediction": "0.1"
+        })
+    elif isRequestClose(installReducePing) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installReducePing) == True:
+        generated_json.update({
+            "DFIntConnectionMTUSize": None,
+            "FIntRakNetResendBufferArrayLength": None,
+            "FFlagOptimizeNetwork": None,
+            "FFlagOptimizeNetworkRouting": None,
+            "FFlagOptimizeNetworkTransport": None,
+            "FFlagOptimizeServerTickRate": None,
+            "DFIntServerPhysicsUpdateRate": None,
+            "DFIntServerTickRate": None,
+            "DFIntRakNetResendRttMultiple": None,
+            "DFIntRaknetBandwidthPingSendEveryXSeconds": None,
+            "DFIntOptimizePingThreshold": None,
+            "DFIntPlayerNetworkUpdateQueueSize": None,
+            "DFIntPlayerNetworkUpdateRate": None,
+            "DFIntNetworkPrediction": None,
+            "DFIntNetworkLatencyTolerance": None,
+            "DFIntMinimalNetworkPrediction": None
+        })
+
     # Limit Videos Playing
     printWarnMessage("--- Limit Videos Playing ---")
     printMainMessage("Would you like to set a number of Videos that can be played in-game on the client? (y/n)")
@@ -4806,6 +4990,22 @@ def main():
         printMainMessage("Ending installation..")
         return
     elif isNo(installLimitVideos) == True: generated_json["DFIntVideoMaxNumberOfVideosPlaying"] = None
+
+    # Limit Animations Playing
+    printWarnMessage("--- Limit Animations Playing ---")
+    printMainMessage("Would you like to set a number of Animations that can be played in-game on the client? (y/n)")
+    installLimitAnimations = input("> ")
+    if isYes(installLimitAnimations) == True:
+        printMainMessage("Input the number of animations you would like to limit:")
+        installLimitAnimationsNum = input("> ")
+        if installLimitAnimationsNum.isnumeric(): generated_json["DFIntMaxActiveAnimationTracks"] = str(int(installLimitAnimationsNum))
+        else:
+            printYellowMessage("Disabled limit due to invalid prompt.")
+            generated_json["DFIntMaxActiveAnimationTracks"] = None
+    elif isRequestClose(installLimitAnimations) == True:
+        printMainMessage("Ending installation..")
+        return
+    elif isNo(installLimitAnimations) == True: generated_json["DFIntMaxActiveAnimationTracks"] = None
 
     # Disable Foundation Mode
     printWarnMessage("--- Disable Foundation Mode ---")

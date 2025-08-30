@@ -13,14 +13,14 @@ python -m nuitka ^
     --assume-yes-for-downloads ^
     --remove-output ^
     --enable-plugin=pylint-warnings ^
-    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy ^
+    --nofollow-import-to=unittest,test,distutils,setuptools,tkinter,urllib3,requests,numpy,site ^
     --include-data-files=PyKits.py=PyKits.py ^
     --include-data-files=Version.json=Version.json ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name=OrangeBlox ^
-    --file-version=2.2.9 ^
-    --product-version=2.2.9 ^
+    --file-version=2.3.0 ^
+    --product-version=2.3.0 ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps/Building" ^

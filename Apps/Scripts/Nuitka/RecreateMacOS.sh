@@ -22,7 +22,7 @@ python3 -m nuitka \
     --include-data-files=Version.json=Version.json \
     --output-dir="./Apps/Building" \
     --include-package-data=objc,Cocoa,Quartz \
-    --nofollow-import-to=cryptography,OpenSSL,urllib3,requests,plyer \
+    --nofollow-import-to=cryptography,OpenSSL,urllib3,requests,plyer,site \
     --macos-app-icon=./BootstrapImages/AppIcon.icns \
     --disable-plugin=tk-inter \
     --clang \
