@@ -2085,5 +2085,16 @@
  "Building Python Cache..": "파이썬 캐시 제작..",
  "Would you like to build Python cache on app start? (y/n)": "앱 시작에서 파이썬 캐시를 빌드 하시겠습니까? (y/n)",
  "Successfully built Python cache!": "Python Cache를 성공적으로 구축했습니다!",
- "Unable to build python cache. Return code: (*)": "파이썬 캐시를 빌드 할 수 없습니다. 반환 코드: (*)"
+ "Unable to build python cache. Return code: (*)": "파이썬 캐시를 빌드 할 수 없습니다. 반환 코드: (*)",
+ "For macOS users, admin permission is needed in order to install.": "macOS 사용자의 경우 설치하려면 관리자 권한이 필요합니다..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "안녕하세요! Roblox Fast Flags 설치 프로그램을 사용하려면 계속하려면 Python 3.11 이상을 설치해야합니다..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits는 일반적으로 3.11.0 미만의 버전 용으로 만들어지지 않습니다..",
+ "Python may take a moment to install! Please wait!": "파이썬은 잠시 시간이 걸릴 수 있습니다! 기다리세요!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags 설치 프로그램은 Windows 10.0.17763 (2018 년 10 월) 이상에서만 지원됩니다. 계속하려면 운영 체제를 업데이트하십시오!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags 설치 프로그램은 macOS 10.13 (High Sierra) 이상에서만 지원됩니다. 계속하려면 운영 체제를 업데이트하십시오!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags 설치 프로그램은 macOS 및 Windows에만 지원됩니다..",
+ "Silently installing Python packages..": "조용히 파이썬 패키지 설치..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "파이썬 패키지를 자동으로 설치합니다. 관리 권한이 요청 될 수 있습니다..",
+ "Successfully installed Python package: (*)": "성공적으로 설치된 Python 패키지: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Python 업데이트를위한 프롬프트 대신 슬픈 파이썬 설치를 활성화 하시겠습니까? (y/n)"
 }

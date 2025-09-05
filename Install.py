@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0a
+# v2.3.0b
 # 
 
 # Modules
@@ -117,7 +117,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0a"}
+    current_version = {"version": "2.3.0b"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -255,6 +255,7 @@ if __name__ == "__main__":
         "EFlagEnableEndingRobloxCrashHandler": "bool",
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
+        "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()

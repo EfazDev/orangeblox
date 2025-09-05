@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "عمارت ازگر کیشے..",
  "Would you like to build Python cache on app start? (y/n)": "کیا آپ ایپ اسٹارٹ پر ازگر کیچ بنانا چاہیں گے؟ (y/n)",
  "Successfully built Python cache!": "کامیابی کے ساتھ ازگر کیشے بنائے گئے!",
- "Unable to build python cache. Return code: (*)": "ازگر کیشے بنانے سے قاصر ہے۔ واپسی کا کوڈ: (*)"
+ "Unable to build python cache. Return code: (*)": "ازگر کیشے بنانے سے قاصر ہے۔ واپسی کا کوڈ: (*)",
+ "For macOS users, admin permission is needed in order to install.": "میک او ایس صارفین کے لئے ، انسٹال کرنے کے لئے ایڈمن اجازت کی ضرورت ہے۔",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "ہیلو! روبلوکس فاسٹ فلیگس انسٹالر کو استعمال کرنے کے ل you ، آپ کو جاری رکھنے کے لئے ازگر 3.11 یا اس سے زیادہ انسٹال کرنے کی ضرورت ہوگی۔",
+ "PyKits is not normally made for versions less than 3.11.0.": "پائکیٹس عام طور پر 3.11.0 سے کم ورژن کے لئے نہیں بنایا جاتا ہے۔",
+ "Python may take a moment to install! Please wait!": "ازگر کو انسٹال کرنے میں ایک لمحہ لگ سکتا ہے! براہ کرم انتظار کریں!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "روبلوکس فاسٹ فلیگس انسٹالر صرف ونڈوز 10.0.17763 (اکتوبر 2018) یا اس سے زیادہ کے لئے تعاون یافتہ ہے۔ براہ کرم جاری رکھنے کے لئے اپنے آپریٹنگ سسٹم کو اپ ڈیٹ کریں!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "روبلوکس فاسٹ فلیگس انسٹالر صرف میک او ایس 10.13 (ہائی سیرا) یا اس سے زیادہ کے لئے تعاون یافتہ ہے۔ براہ کرم جاری رکھنے کے لئے اپنے آپریٹنگ سسٹم کو اپ ڈیٹ کریں!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "روبلوکس فاسٹ فلیگس انسٹالر صرف میکوس اور ونڈوز کے لئے معاون ہے۔",
+ "Silently installing Python packages..": "خاموشی سے ازگر پیکیجز انسٹال کرنا..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "خاموشی سے ازگر کے پیکیجوں کو انسٹال کرنا.. ایڈمن اجازتوں کی درخواست کی جاسکتی ہے۔",
+ "Successfully installed Python package: (*)": "کامیابی کے ساتھ انسٹال ہوا پیکیج: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "کیا آپ ازگر کی تازہ کاریوں کے اشارے کے بجائے سلائینٹ ازگر انسٹال کو فعال کرنا چاہیں گے؟ (y/n)"
 }

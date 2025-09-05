@@ -2085,5 +2085,16 @@
  "Building Python Cache..": "Pythonキャッシュの構築..",
  "Would you like to build Python cache on app start? (y/n)": "アプリのスタートでPythonキャッシュを作成しますか? (y/n)",
  "Successfully built Python cache!": "Pythonキャッシュの構築に成功しました!",
- "Unable to build python cache. Return code: (*)": "Pythonキャッシュを構築できません.返品コード:(*)"
+ "Unable to build python cache. Return code: (*)": "Pythonキャッシュを構築できません.返品コード:(*)",
+ "For macOS users, admin permission is needed in order to install.": "macOSユーザーの場合,インストールするには管理者の許可が必要です..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "こんにちは! Roblox Fast Flagsインストーラーを使用するには,継続するためにPython 3.11以降をインストールする必要があります..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykitsは通常,3.11.0未満のバージョン用に作成されていません..",
+ "Python may take a moment to install! Please wait!": "Pythonはインストールに少し時間がかかる場合があります!お待ちください!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flagsインストーラーは,Windows 10.0.17763(2018年10月)以上でのみサポートされています.継続するためにオペレーティングシステムを更新してください!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flagsインストーラーは,macOS 10.13(High Sierra)以上でのみサポートされています.継続するためにオペレーティングシステムを更新してください!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flagsインストーラーは,macOSとWindowsのみがサポートされています..",
+ "Silently installing Python packages..": "静かにPythonパッケージをインストールします..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "静かにPythonパッケージをインストールします.管理権を要求する場合があります..",
+ "Successfully installed Python package: (*)": "正常にインストールされたPythonパッケージ:(*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Pythonの更新のプロンプトの代わりに,Slient Pythonインストールを有効にしますか? (y/n)"
 }

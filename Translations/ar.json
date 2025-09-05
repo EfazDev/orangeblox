@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "بناء ذاكرة التخزين المؤقت بيثون..",
  "Would you like to build Python cache on app start? (y/n)": "هل ترغب في بناء ذاكرة التخزين المؤقت Python على App Start؟ (y/n)",
  "Successfully built Python cache!": "بنيت بنجاح بيثون ذاكرة التخزين المؤقت!",
- "Unable to build python cache. Return code: (*)": "غير قادر على بناء ذاكرة التخزين المؤقت Python. رمز الإرجاع: (*)"
+ "Unable to build python cache. Return code: (*)": "غير قادر على بناء ذاكرة التخزين المؤقت Python. رمز الإرجاع: (*)",
+ "For macOS users, admin permission is needed in order to install.": "بالنسبة لمستخدمي macOS ، هناك حاجة إلى إذن المسؤول من أجل التثبيت..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "مرحبًا! من أجل استخدام تثبيت Roblox Fast Flags ، ستحتاج إلى تثبيت Python 3.11 أو أعلى من أجل المتابعة..",
+ "PyKits is not normally made for versions less than 3.11.0.": "لا يتم تصنيع Pykits عادةً للإصدارات أقل من 3.11.0..",
+ "Python may take a moment to install! Please wait!": "قد يستغرق بيثون لحظة للتثبيت! انتظر من فضلك!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags Installer مدعوم فقط لنظام التشغيل Windows 10.0.17763 (أكتوبر 2018) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags Installer مدعوم فقط لـ macOS 10.13 (High Sierra) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك من أجل المتابعة!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags Installer مدعوم فقط لنظام التشغيل macOS و Windows..",
+ "Silently installing Python packages..": "تثبيت حزم بيثون بصمت..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "تثبيت صمت حزم بيثون.. قد يتم طلب أذونات المسؤول..",
+ "Successfully installed Python package: (*)": "حزمة بيثون التي نجحت في تثبيت: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "هل ترغب في تمكين تثبيت Python Slient بدلاً من موجه لتحديثات Python؟ (y/n)"
 }

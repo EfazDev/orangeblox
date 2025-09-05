@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "পাইথন ক্যাশে বিল্ডিং..",
  "Would you like to build Python cache on app start? (y/n)": "আপনি কি অ্যাপ স্টার্টে পাইথন ক্যাশে তৈরি করতে চান? (y/n)",
  "Successfully built Python cache!": "সফলভাবে নির্মিত পাইথন ক্যাশে!",
- "Unable to build python cache. Return code: (*)": "পাইথন ক্যাশে তৈরি করতে অক্ষম। রিটার্ন কোড: (*)"
+ "Unable to build python cache. Return code: (*)": "পাইথন ক্যাশে তৈরি করতে অক্ষম। রিটার্ন কোড: (*)",
+ "For macOS users, admin permission is needed in order to install.": "ম্যাকোস ব্যবহারকারীদের জন্য, ইনস্টল করার জন্য অ্যাডমিনের অনুমতি প্রয়োজন।",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "হ্যালো! রোব্লক্স ফাস্ট ফ্ল্যাগ ইনস্টলার ব্যবহার করার জন্য, চালিয়ে যাওয়ার জন্য আপনাকে পাইথন 3.11 বা তার বেশি ইনস্টল করতে হবে।",
+ "PyKits is not normally made for versions less than 3.11.0.": "পাইকিটগুলি সাধারণত 3.11.0 এর চেয়ে কম সংস্করণগুলির জন্য তৈরি হয় না।",
+ "Python may take a moment to install! Please wait!": "পাইথন ইনস্টল করতে কিছুটা সময় নিতে পারে! দয়া করে অপেক্ষা করুন!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "রোব্লক্স ফাস্ট ফ্ল্যাগস ইনস্টলারটি কেবল উইন্ডোজ 10.0.17763 (অক্টোবর 2018) বা তার বেশি জন্য সমর্থিত। চালিয়ে যাওয়ার জন্য দয়া করে আপনার অপারেটিং সিস্টেমটি আপডেট করুন!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "রোব্লক্স ফাস্ট ফ্ল্যাগস ইনস্টলারটি কেবল ম্যাকোস 10.13 (উচ্চ সিয়েরা) বা উচ্চতর জন্য সমর্থিত। চালিয়ে যাওয়ার জন্য দয়া করে আপনার অপারেটিং সিস্টেমটি আপডেট করুন!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "রোব্লক্স ফাস্ট ফ্ল্যাগস ইনস্টলারটি কেবল ম্যাকোস এবং উইন্ডোজের জন্য সমর্থিত।",
+ "Silently installing Python packages..": "নিঃশব্দে পাইথন প্যাকেজগুলি ইনস্টল করা..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "নিঃশব্দে পাইথন প্যাকেজগুলি ইনস্টল করা.. অ্যাডমিন অনুমতিগুলির জন্য অনুরোধ করা যেতে পারে।",
+ "Successfully installed Python package: (*)": "সাফল্যের সাথে ইনস্টল করা পাইথন প্যাকেজ: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "আপনি কি পাইথন আপডেটের জন্য প্রম্পটের পরিবর্তে স্লিয়েন্ট পাইথন ইনস্টলগুলি সক্ষম করতে চান? (y/n)"
 }

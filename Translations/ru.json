@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Строительство кеша питона..",
  "Would you like to build Python cache on app start? (y/n)": "Хотели бы вы создать кеш Python в начале приложения? (y/n)",
  "Successfully built Python cache!": "Успешно построил Python Cache!",
- "Unable to build python cache. Return code: (*)": "Невозможно построить кеш Python. Код возврата: (*)"
+ "Unable to build python cache. Return code: (*)": "Невозможно построить кеш Python. Код возврата: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Для пользователей macOS необходимо разрешение администратора для установки..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Привет! Чтобы использовать установщик Roblox Fast Flags, вам нужно установить Python 3.11 или выше, чтобы продолжить..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Пикиты обычно не создаются для версий менее 3,11,0..",
+ "Python may take a moment to install! Please wait!": "Python может потребоваться минутку для установки! Пожалуйста, подождите!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Установщик Roblox Fast Flags поддерживается только для Windows 10.0.17763 (октябрь 2018 г.) или выше. Пожалуйста, обновите свою операционную систему, чтобы продолжить!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Установщик Fast Flags Roblox поддерживается только для macOS 10.13 (высокая Sierra) или выше. Пожалуйста, обновите свою операционную систему, чтобы продолжить!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Установщик Roblox Fast Flags поддерживается только для macOS и Windows..",
+ "Silently installing Python packages..": "Молча установка пакетов Python..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Молча установка пакетов Python. Можно запрашивать разрешения администратора..",
+ "Successfully installed Python package: (*)": "Успешно установил пакет Python: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Хотели бы вы включить установки Slient Python вместо подсказки для обновлений Python? (y/n)"
 }

@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Bauen von Python -Cache..",
  "Would you like to build Python cache on app start? (y/n)": "Möchten Sie Python -Cache für App Start erstellen? (y/n)",
  "Successfully built Python cache!": "Erfolgreich gebautes Python -Cache!",
- "Unable to build python cache. Return code: (*)": "Python -Cache kann nicht bauen. Rückgabecode: (*)"
+ "Unable to build python cache. Return code: (*)": "Python -Cache kann nicht bauen. Rückgabecode: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Für macOS -Benutzer ist die Administratorberechtigung erforderlich, um zu installieren..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Hallo! Um das Installationsprogramm für Roblox Fast Flags zu verwenden, müssen Sie Python 3.11 oder höher installieren, um fortzufahren..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits wird normalerweise nicht für Versionen von weniger als 3.11.0 hergestellt..",
+ "Python may take a moment to install! Please wait!": "Python kann sich einen Moment Zeit nehmen, um zu installieren! Bitte warten!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Der Installationsprogramm für Roblox Fast Flags wird nur für Windows 10.0.17763 (Oktober 2018) oder höher unterstützt. Bitte aktualisieren Sie Ihr Betriebssystem, um fortzufahren!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Der Installationsprogramm für Roblox Fast Flags wird nur für macOS 10.13 (High Sierra) oder höher unterstützt. Bitte aktualisieren Sie Ihr Betriebssystem, um fortzufahren!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags Installer wird nur für macOS und Windows unterstützt..",
+ "Silently installing Python packages..": "Stillschweigend Installation von Python -Paketen..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Die stillschweigend Installation von Python -Paketen. Admin -Berechtigungen können angefordert werden..",
+ "Successfully installed Python package: (*)": "Erfolgreich installiertes Python -Paket: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Möchten Sie Slient Python -Installation anstelle einer Aufforderung für Python -Updates aktivieren? (y/n)"
 }

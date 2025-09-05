@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Bina Python önbelleği..",
  "Would you like to build Python cache on app start? (y/n)": "App Start'ta Python Cache oluşturmak ister misiniz? (y/n)",
  "Successfully built Python cache!": "Başarılı bir şekilde inşa edilmiş Python önbellek!",
- "Unable to build python cache. Return code: (*)": "Python önbellek yapılamıyor. Dönüş kodu: (*)"
+ "Unable to build python cache. Return code: (*)": "Python önbellek yapılamıyor. Dönüş kodu: (*)",
+ "For macOS users, admin permission is needed in order to install.": "macOS kullanıcıları için yüklemek için yönetici iznine ihtiyaç vardır..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Merhaba! Roblox Fast Flags yükleyicisini kullanmak için devam etmek için Python 3.11 veya daha yüksek yüklemeniz gerekir..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits normalde 3.11.0'dan küçük sürümler için yapılmamıştır..",
+ "Python may take a moment to install! Please wait!": "Python'un yüklenmesi biraz zaman alabilir! Lütfen bekleyin!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags yükleyicisi yalnızca Windows 10.0.17763 (Ekim 2018) veya daha yüksek için desteklenir. Devam etmek için lütfen işletim sisteminizi güncelleyin!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags yükleyicisi yalnızca macOS 10.13 (Yüksek Sierra) veya daha yüksek için desteklenir. Devam etmek için lütfen işletim sisteminizi güncelleyin!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags yükleyicisi yalnızca macOS ve Windows için desteklenir..",
+ "Silently installing Python packages..": "Python paketlerini sessizce yükleme..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Python paketlerinin sessizce takılması.. Yönetici izinleri istenebilir..",
+ "Successfully installed Python package: (*)": "Başarılı bir şekilde kurulmuş Python Paketi: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Python güncellemeleri istemi yerine dilim python yüklemelerini etkinleştirmek ister misiniz? (y/n)"
 }

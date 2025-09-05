@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Pagbuo ng Python Cache..",
  "Would you like to build Python cache on app start? (y/n)": "Nais mo bang bumuo ng python cache sa pagsisimula ng app? (y/n)",
  "Successfully built Python cache!": "Matagumpay na itinayo ang Python Cache!",
- "Unable to build python cache. Return code: (*)": "Hindi mabuo ang Python Cache. Return Code: (*)"
+ "Unable to build python cache. Return code: (*)": "Hindi mabuo ang Python Cache. Return Code: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Para sa mga gumagamit ng macOS, kinakailangan ang pahintulot ng admin upang mai -install..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Kamusta! Upang magamit ang Roblox Fast Flags Installer, kakailanganin mong mag -install ng Python 3.11 o mas mataas upang magpatuloy..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Ang Pykits ay hindi karaniwang ginawa para sa mga bersyon na mas mababa sa 3.11.0..",
+ "Python may take a moment to install! Please wait!": "Maaaring maglaan ng ilang sandali si Python upang mai -install! Mangyaring maghintay!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Ang Roblox Fast Flags Installer ay suportado lamang para sa Windows 10.0.17763 (Oktubre 2018) o mas mataas. Mangyaring i -update ang iyong operating system upang magpatuloy!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Ang Roblox Fast Flags Installer ay sinusuportahan lamang para sa macOS 10.13 (mataas na Sierra) o mas mataas. Mangyaring i -update ang iyong operating system upang magpatuloy!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Ang Roblox Fast Flags Installer ay sinusuportahan lamang para sa macOS at Windows..",
+ "Silently installing Python packages..": "Tahimik na pag -install ng mga pakete ng python..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Tahimik na pag -install ng mga pakete ng python.. maaaring hiniling ang mga pahintulot ng admin..",
+ "Successfully installed Python package: (*)": "Matagumpay na na -install ang Python Package: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Nais mo bang paganahin ang Slient Python na pag -install sa halip na isang prompt para sa mga pag -update ng python? (y/n)"
 }

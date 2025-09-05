@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0a
+# v2.3.0b
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0a"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0b"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
@@ -173,6 +173,7 @@ if __name__ == "__main__":
         "EFlagEnableEndingRobloxCrashHandler": "bool",
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
+        "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -2109,6 +2110,12 @@ if __name__ == "__main__":
                 d = handleBasicSetting("EFlagDisablePythonUpdateChecks", False)
                 if d: return d
 
+                if main_config.get("EFlagDisablePythonUpdateChecks", False) == False:
+                    printMainMessage("Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)")
+                    if main_os == "Darwin": printYellowMessage("For macOS users, admin permission is needed in order to install.")
+                    d = handleBasicSetting("EFlagEnableSlientPythonInstalls", False)
+                    if d: return d
+
                 printMainMessage("Would you like to enable OrangeBlox Beta? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagBootstrapUpdateServer")=="https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json")}')
                 printYellowMessage("Betas could contain bugs that could break your Roblox installation!")
@@ -2504,8 +2511,13 @@ if __name__ == "__main__":
             printMainMessage(f"\033[38;5;{226 if is_python_beta else 82}m[v{current_python_version} => v{latest_python_version}]\033[0m")
             co = input("> ")
             if isYes(co) == True:
-                printMainMessage("Python Installer should launch after a moment. Follow the prompts to install!")
-                pip_class.pythonInstall(latest_python_version, is_python_beta)
+                if main_config.get("EFlagEnableSlientPythonInstalls") == True:
+                    printMainMessage("Python may take a moment to install! Please wait!")
+                    if main_os == "Darwin": printYellowMessage("For macOS users, admin permission is needed in order to install.")
+                    pip_class.pythonInstall(latest_python_version, is_python_beta, silent=True)
+                else:
+                    printMainMessage("Python Installer should launch after a moment. Follow the prompts to install!")
+                    pip_class.pythonInstall(latest_python_version, is_python_beta)
                 printMainMessage("Validating Python Installation..")
                 latest_pip_class = PyKits.pip()
                 latest_pip_class.ignore_same = True

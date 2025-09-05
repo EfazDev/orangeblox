@@ -148,6 +148,7 @@ if __name__ == "__main__":
         "EFlagEnableEndingRobloxCrashHandler": "bool",
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
+        "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}

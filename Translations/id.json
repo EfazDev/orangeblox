@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Membangun Cache Python..",
  "Would you like to build Python cache on app start? (y/n)": "Apakah Anda ingin membangun cache Python di aplikasi mulai? (y/t)",
  "Successfully built Python cache!": "Cache Python yang berhasil dibangun!",
- "Unable to build python cache. Return code: (*)": "Tidak dapat membangun cache python. Kode pengembalian: (*)"
+ "Unable to build python cache. Return code: (*)": "Tidak dapat membangun cache python. Kode pengembalian: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Untuk pengguna macOS, izin admin diperlukan untuk menginstal..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Halo! Untuk menggunakan penginstal bendera cepat Roblox, Anda harus menginstal Python 3.11 atau lebih tinggi untuk melanjutkan..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykit biasanya tidak dibuat untuk versi kurang dari 3,11.0..",
+ "Python may take a moment to install! Please wait!": "Python mungkin membutuhkan waktu sejenak untuk menginstal! Harap tunggu!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Penginstal Fast Flags Roblox hanya didukung untuk Windows 10.0.17763 (Oktober 2018) atau lebih tinggi. Harap perbarui sistem operasi Anda untuk melanjutkan!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Pemasang Fast Flags Roblox hanya didukung untuk macOS 10.13 (High Sierra) atau lebih tinggi. Harap perbarui sistem operasi Anda untuk melanjutkan!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Penginstal Fast Flags Roblox hanya didukung untuk macOS dan Windows..",
+ "Silently installing Python packages..": "Diam -diam Memasang Paket Python..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Memasang paket Python secara diam -diam.. Izin admin dapat diminta..",
+ "Successfully installed Python package: (*)": "Paket Python yang berhasil diinstal: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Apakah Anda ingin mengaktifkan pemasangan python slient, bukan prompt untuk pembaruan python? (y/t)"
 }

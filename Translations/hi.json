@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "भवन पायथन कैश..",
  "Would you like to build Python cache on app start? (y/n)": "क्या आप ऐप स्टार्ट पर पायथन कैश बनाना चाहेंगे? (y/n)",
  "Successfully built Python cache!": "सफलतापूर्वक निर्मित पायथन कैश!",
- "Unable to build python cache. Return code: (*)": "पायथन कैश बनाने में असमर्थ। वापसी कोड: (*)"
+ "Unable to build python cache. Return code: (*)": "पायथन कैश बनाने में असमर्थ। वापसी कोड: (*)",
+ "For macOS users, admin permission is needed in order to install.": "macOS उपयोगकर्ताओं के लिए, स्थापित करने के लिए व्यवस्थापक अनुमति की आवश्यकता है।",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "नमस्ते! Roblox Fast Flags इंस्टॉलर का उपयोग करने के लिए, आपको जारी रखने के लिए Python 3.11 या उच्चतर स्थापित करना होगा।",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits आमतौर पर 3.11.0 से कम संस्करणों के लिए नहीं बनाया जाता है।",
+ "Python may take a moment to install! Please wait!": "पायथन को स्थापित करने में एक पल लग सकता है! कृपया प्रतीक्षा करें!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags इंस्टॉलर केवल विंडोज 10.0.17763 (अक्टूबर 2018) या उच्चतर के लिए समर्थित है। जारी रखने के लिए कृपया अपने ऑपरेटिंग सिस्टम को अपडेट करें!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags इंस्टॉलर केवल macOS 10.13 (उच्च सिएरा) या उच्चतर के लिए समर्थित है। जारी रखने के लिए कृपया अपने ऑपरेटिंग सिस्टम को अपडेट करें!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags इंस्टॉलर केवल macOS और Windows के लिए समर्थित है।",
+ "Silently installing Python packages..": "चुपचाप पायथन पैकेज स्थापित करना..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "चुपचाप पायथन पैकेज स्थापित करना.. व्यवस्थापक अनुमतियों का अनुरोध किया जा सकता है।",
+ "Successfully installed Python package: (*)": "सफलतापूर्वक स्थापित पायथन पैकेज: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "क्या आप पायथन अपडेट के लिए एक प्रॉम्प्ट के बजाय स्लिएंट पायथन इंस्टॉल को सक्षम करना चाहेंगे? (y/n)"
 }

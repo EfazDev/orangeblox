@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Xây dựng bộ đệm Python..",
  "Would you like to build Python cache on app start? (y/n)": "Bạn có muốn xây dựng bộ đệm Python khi bắt đầu ứng dụng không? (y/n)",
  "Successfully built Python cache!": "Được xây dựng thành công bộ đệm Python!",
- "Unable to build python cache. Return code: (*)": "Không thể xây dựng bộ đệm Python. Mã trở lại: (*)"
+ "Unable to build python cache. Return code: (*)": "Không thể xây dựng bộ đệm Python. Mã trở lại: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Đối với người dùng macOS, cần có quyền quản trị để cài đặt..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Xin chào! Để sử dụng Trình cài đặt Fast Flags của Roblox, bạn sẽ cần cài đặt Python 3.11 trở lên để tiếp tục..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits thường không được làm cho các phiên bản nhỏ hơn 3.11.0..",
+ "Python may take a moment to install! Please wait!": "Python có thể mất một chút thời gian để cài đặt! Vui lòng chờ!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Trình cài đặt Fast Flags Roblox chỉ được hỗ trợ cho Windows 10.0.17763 (tháng 10 năm 2018) hoặc cao hơn. Vui lòng cập nhật hệ điều hành của bạn để tiếp tục!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Trình cài đặt cờ nhanh Roblox chỉ được hỗ trợ cho macOS 10.13 (High Sierra) hoặc cao hơn. Vui lòng cập nhật hệ điều hành của bạn để tiếp tục!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Trình cài đặt Fast Flags Roblox chỉ được hỗ trợ cho macOS và Windows..",
+ "Silently installing Python packages..": "Âm thầm cài đặt các gói Python..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Âm thầm cài đặt các gói Python.. có thể yêu cầu quyền của quản trị viên..",
+ "Successfully installed Python package: (*)": "Gói Python đã cài đặt thành công: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Bạn có muốn bật cài đặt Python SLient thay vì nhắc nhở cập nhật Python không? (y/n)"
 }

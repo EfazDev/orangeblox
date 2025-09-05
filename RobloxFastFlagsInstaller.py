@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.3.5
+# v2.3.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.3.5"
+script_version = "2.3.6"
 def getLocalAppData():
     import platform
     import os
@@ -924,7 +924,7 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    def getGitHubRepository(self, packages: typing.List[str]):
+    def github(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
             if type(i) is str: generated_list.append(i)
@@ -1002,11 +1002,14 @@ class pip:
     def pythonSupported(self, major: int=3, minor: int=13, patch: int=2):
         cur_version = self.getCurrentPythonVersion()
         if not cur_version: return False
-        match = self._re.match(r"(\d+)\.(\d+)\.(\w+)", cur_version)
+        return self.pythonSupportedStatic(cur_version, major, minor, patch)
+    def pythonSupportedStatic(self, version: str, major: int=3, minor: int=13, patch: int=2):
+        if not version: return False
+        match = self._re.match(r"(\d+)\.(\d+)\.(\w+)", version)
         if match:
-            cur_version = match.groups() 
+            version = match.groups() 
             def to_int(val): return int(self._re.sub(r'\D', '', val))
-            return tuple(map(to_int, cur_version)) >= (major, minor, patch)
+            return tuple(map(to_int, version)) >= (major, minor, patch)
         else: return False
     def osSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)):
         if self._main_os == "Windows":
@@ -1021,10 +1024,17 @@ class pip:
             while len(macos_version) < 3: min_version += (0,)
             return version_tuple >= macos_version
         else: return False
-    def pythonInstall(self, version: str="", beta: bool=False):
+    def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False):
         ma_os = self._main_os
         ma_arch = self._platform.architecture()
         ma_processor = self._platform.machine()
+        macos_version_numbers = {
+            "3.10.0a3": "11.0",
+            "3.9.1rc1": "11.0"
+        }
+        if not self.pythonSupportedStatic(version, 3, 9, 2):
+            if not self.pythonSupportedStatic(version, 3, 9, 2) and self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.9"
+            elif self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.6"
         if self.getIfConnectedToInternet() == False:
             self.printDebugMessage("Failed to download Python installer.")
             return
@@ -1035,16 +1045,22 @@ class pip:
         version_url_folder = version
         if beta == True: version_url_folder = self._re.match(r'^\d+\.\d+\.\d+', version).group()
         if ma_os == "Darwin":
-            url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos11.pkg"
+            url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos{macos_version_numbers.get(version, '11')}.pkg"
             with self._tempfile.NamedTemporaryFile(suffix=".pkg", delete=False) as temp_file: pkg_file_path = temp_file.name
             result = self.requests.download(url, pkg_file_path)            
             if result.ok:
-                self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
-                self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
+                if silent == True: 
+                    self.printDebugMessage(f"Silently installing Python packages.. Admin permissions may be requested.")
+                    self._subprocess.run(["osascript", "-e", f"do shell script \"installer -pkg '{pkg_file_path}' -target /\" with administrator privileges"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Successfully installed Python package: {pkg_file_path}")
+                else:
+                    self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
+                    self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
             else:
                 self.printDebugMessage("Failed to download Python installer.")
         elif ma_os == "Windows":
+            if version < "3.11.0": self.printDebugMessage("PyKits is not normally made for versions less than 3.11.0.")
             if ma_arch[0] == "64bit":
                 if ma_processor.lower() == "arm64": url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-arm64.exe"
                 else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-amd64.exe"
@@ -1052,8 +1068,13 @@ class pip:
             with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
             result = self.requests.download(url, exe_file_path)
             if result.ok:
-                self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
+                if silent == True:
+                    self.printDebugMessage(f"Silently installing Python packages..")
+                    self._subprocess.run([exe_file_path, "/quiet"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Successfully installed Python package: {exe_file_path}")
+                else:
+                    self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
             else:
                 self.printDebugMessage("Failed to download Python installer.")
     def installLocalPythonCertificates(self):
@@ -3420,7 +3441,7 @@ class Handler:
                                 test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0:
+                                    elif len(test_instance.getWindowsOpened()) > 0 and studio == False:
                                         time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
                                     elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
@@ -3437,7 +3458,7 @@ class Handler:
                                 test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0:
+                                    elif len(test_instance.getWindowsOpened()) > 0 and studio == False:
                                         time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
                                     elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
@@ -3623,7 +3644,7 @@ class Handler:
                             printMainMessage("Would you like to open Roblox? (y/n)")
                             if input("> ").lower() == "y": self.openRoblox()
                 else: printErrorMessage("Roblox couldn't be found.")
-            else: printErrorMessage("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
+            else: printErrorMessage("Roblox Fast Flags Installer is only supported for macOS and Windows.")
         else:
             if askForPerms == True:
                 if submit_status: submit_status.submit("[FFLAGS] Asking for permissions..", 0)
@@ -3696,7 +3717,7 @@ class Handler:
                     if submit_status: submit_status.submit("\033ERR[FFLAGS] Roblox couldn't be found!", 100)
             else:
                 self.unsupportedFunction()
-                if submit_status: submit_status.submit("\033ERR[FFLAGS] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
+                if submit_status: submit_status.submit("\033ERR[FFLAGS] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
     def installGlobalBasicSettings(self, globalsettings: dict, studio: bool=False, askForPerms: bool=False, endRobloxInstances: bool=True, flat: bool=False, debug: bool=False):
         if askForPerms == True:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Asking for permissions..", 0)
@@ -3710,7 +3731,7 @@ class Handler:
         elif self.__main_os__ == "Windows": roblox_app_location = windows_dir
         else:
             self.unsupportedFunction()
-            if submit_status: submit_status.submit("\033ERR[GLOBALSETTINGS] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 0)
+            if submit_status: submit_status.submit("\033ERR[GLOBALSETTINGS] Roblox Fast Flags Installer is only supported for macOS and Windows.", 0)
             return  
         if endRobloxInstances == True:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Ending Roblox Windows..", 10)
@@ -3951,7 +3972,7 @@ class Handler:
                     return {"success": False}
         else:
             self.unsupportedFunction()
-            if submit_status: submit_status.submit("\033ERR[INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
+            if submit_status: submit_status.submit("\033ERR[INSTALL] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
             return {"success": False}
     def installRobloxBundle(self, studio: bool=False, installPath: str="", appPath: str="", channel: str="LIVE", debug: bool=False, verify: bool=True, lock: bool=True):
         if self.__main_os__ == "Darwin" or self.__main_os__ == "Windows":
@@ -4218,7 +4239,7 @@ class Handler:
                 return {"success": False}
         else:
             self.unsupportedFunction()
-            if submit_status: submit_status.submit("\033ERR[BUNDLE] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
+            if submit_status: submit_status.submit("\033ERR[BUNDLE] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
             return {"success": False}
     def uninstallRoblox(self, studio: bool=False, clearUserData: bool=True, debug: bool=False):
         if self.getIfRobloxIsOpen(studio=studio):
@@ -4288,7 +4309,7 @@ class Handler:
             except Exception as e: printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
         else:
             self.unsupportedFunction()
-            if submit_status: submit_status.submit("\033ERR[INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
+            if submit_status: submit_status.submit("\033ERR[INSTALL] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
     def reinstallRoblox(self, studio: bool=False, debug: bool=False, clearUserData: bool=True, disableRobloxAutoOpen: bool=False, copyRobloxInstallerPath: str="", downloadInstaller: bool=False):
         if self.__main_os__ == "Darwin" or self.__main_os__ == "Windows":
             client_label = "Studio" if studio == True else "Player"
@@ -4307,7 +4328,7 @@ class Handler:
             return s
         else:
             self.unsupportedFunction()
-            if submit_status: submit_status.submit("\033ERR[INSTALL] RobloxFastFlagsInstaller is only supported for macOS and Windows.", 100)
+            if submit_status: submit_status.submit("\033ERR[INSTALL] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
             return {"success": False}
     def endRobloxStudio(self, *args, **kwargs): """This function has been deprecated for ```Handler.endRoblox(studio=True)```"""; return self.endRoblox(studio=True, *args, **kwargs)
     def getIfRobloxStudioIsOpen(self, *args, **kwargs): """This function has been deprecated for ```Handler.getIfRobloxIsOpen(studio=True)```"""; return self.getIfRobloxIsOpen(studio=True, *args, **kwargs)
@@ -4323,7 +4344,7 @@ class Handler:
     def installRobloxStudioBundle(self, *args, **kwargs): """This function has been deprecated for ```Handler.installRobloxBundle(studio=True)```"""; return self.installRobloxBundle(studio=True, *args, **kwargs)
     def uninstallRobloxStudio(self, *args, **kwargs): """This function has been deprecated for ```Handler.uninstallRoblox(studio=True)```"""; return self.uninstallRoblox(studio=True, *args, **kwargs)
     def reinstallRobloxStudio(self, *args, **kwargs): """This function has been deprecated for ```Handler.reinstallRoblox(studio=True)```"""; return self.reinstallRoblox(studio=True, *args, **kwargs)
-    def unsupportedFunction(self): printLog("RobloxFastFlagsInstaller is only supported for macOS and Windows.")
+    def unsupportedFunction(self): printLog("Roblox Fast Flags Installer is only supported for macOS and Windows.")
 Main = Handler
 def main():
     handler = Handler()
@@ -4354,8 +4375,8 @@ def main():
             input("> ")
             return
         if not pip_class.osSupported(windows_build=17763, macos_version=(10,13,0)):
-            if main_os == "Windows": printErrorMessage("RobloxFastFlagsInstaller is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
-            elif main_os == "Darwin": printErrorMessage("RobloxFastFlagsInstaller is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+            if main_os == "Windows": printErrorMessage("Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
+            elif main_os == "Darwin": printErrorMessage("Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
             input("> ")
             return
         printMainMessage(f"Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
@@ -4367,7 +4388,7 @@ def main():
             else:
                 latest_python = pip_class.getLatestPythonVersion()
                 printWarnMessage("--- Python Update Required ---")
-                printMainMessage("Hello! In order to use OrangeBlox, you'll need to install Python 3.11 or higher in order to continue. ")
+                printMainMessage("Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ")
                 printMainMessage(f"If you wish, you may install Python {latest_python} by typing \"y\" and continue.")
                 printMainMessage("Otherwise, you may close the app by just continuing without typing.")
                 if isYes(input("> ")) == True:

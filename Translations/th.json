@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "การสร้างแคช Python..",
  "Would you like to build Python cache on app start? (y/n)": "คุณต้องการสร้างแคช Python บนแอปเริ่มต้นหรือไม่? (y/n)",
  "Successfully built Python cache!": "สร้างแคช Python สำเร็จ!",
- "Unable to build python cache. Return code: (*)": "ไม่สามารถสร้างแคช Python ได้ รหัสส่งคืน: (*)"
+ "Unable to build python cache. Return code: (*)": "ไม่สามารถสร้างแคช Python ได้ รหัสส่งคืน: (*)",
+ "For macOS users, admin permission is needed in order to install.": "สำหรับผู้ใช้ macOS จำเป็นต้องได้รับอนุญาตจากผู้ดูแลระบบเพื่อติดตั้ง",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "สวัสดี! ในการใช้ตัวติดตั้ง Roblox Fast Flags คุณจะต้องติดตั้ง Python 3.11 หรือสูงกว่าเพื่อดำเนินการต่อ",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits ไม่ได้ทำสำหรับรุ่นที่น้อยกว่า 3.11.0",
+ "Python may take a moment to install! Please wait!": "Python อาจใช้เวลาสักครู่ในการติดตั้ง! โปรดรอ!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "ตัวติดตั้ง Roblox Fast Flags รองรับ Windows 10.0.17763 เท่านั้น (ตุลาคม 2018) หรือสูงกว่า โปรดอัปเดตระบบปฏิบัติการของคุณเพื่อดำเนินการต่อ!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags ติดตั้งได้รับการสนับสนุนเฉพาะสำหรับ macOS 10.13 (สูง Sierra) หรือสูงกว่า โปรดอัปเดตระบบปฏิบัติการของคุณเพื่อดำเนินการต่อ!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "ตัวติดตั้ง Fast Flag ของ Roblox ได้รับการสนับสนุนเฉพาะสำหรับ macOS และ Windows เท่านั้น",
+ "Silently installing Python packages..": "การติดตั้งแพ็คเกจ Python อย่างเงียบ ๆ..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "การติดตั้งแพ็คเกจ Python อย่างเงียบ ๆ.. อาจมีการร้องขอการอนุญาตผู้ดูแลระบบ",
+ "Successfully installed Python package: (*)": "ติดตั้งแพ็คเกจ Python สำเร็จ: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "คุณต้องการเปิดใช้งานการติดตั้ง slient python แทนพรอมต์สำหรับการอัปเดต Python หรือไม่? (y/n)"
 }

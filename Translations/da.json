@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Bygning af Python -cache..",
  "Would you like to build Python cache on app start? (y/n)": "Vil du bygge Python Cache på app -start? (y/n)",
  "Successfully built Python cache!": "Med succes bygget Python Cache!",
- "Unable to build python cache. Return code: (*)": "Kan ikke bygge Python -cache. Returkode: (*)"
+ "Unable to build python cache. Return code: (*)": "Kan ikke bygge Python -cache. Returkode: (*)",
+ "For macOS users, admin permission is needed in order to install.": "For macOS -brugere er administrationstilladelse nødvendig for at installere..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Hej! For at bruge Roblox Fast Flags -installationsprogram skal du installere Python 3.11 eller højere for at fortsætte..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits er normalt ikke lavet til versioner mindre end 3,11,0..",
+ "Python may take a moment to install! Please wait!": "Python kan tage et øjeblik at installere! Vent venligst!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags Installer understøttes kun til Windows 10.0.17763 (oktober 2018) eller højere. Opdater dit operativsystem for at fortsætte!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags -installationsprogram understøttes kun til macOS 10.13 (høj Sierra) eller højere. Opdater dit operativsystem for at fortsætte!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox Fast Flags -installationsprogram understøttes kun til macOS og Windows..",
+ "Silently installing Python packages..": "Installation af Python -pakker..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Stille installation af python -pakker.. Admin -tilladelser kan anModes om..",
+ "Successfully installed Python package: (*)": "Med succes installeret Python -pakke: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Vil du aktivere Slient Python -installationer i stedet for en prompt til Python -opdateringer? (y/n)"
 }

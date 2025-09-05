@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "建築Python Cache..",
  "Would you like to build Python cache on app start? (y/n)": "您想在應用程序啟動時構建Python Cache嗎? (y/n)",
  "Successfully built Python cache!": "成功構建了Python Cache!",
- "Unable to build python cache. Return code: (*)": "無法構建Python緩存.返回代碼:(*)"
+ "Unable to build python cache. Return code: (*)": "無法構建Python緩存.返回代碼:(*)",
+ "For macOS users, admin permission is needed in order to install.": "對於macOS用戶,為了安裝需要管理權..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "你好!為了使用Roblox Fast Flags安裝程序,您需要安裝Python 3.11或更高版本才能繼續..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Pykits通常不是針對小於3.11.0的版本製作的..",
+ "Python may take a moment to install! Please wait!": "Python可能需要花一點時間安裝!請稍等!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags安裝程序僅支持Windows 10.0.17763(2018年10月)或更高版本.請更新您的操作系統以繼續!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Roblox Fast Flags安裝程序僅支持macOS 10.13或更高的macOS.請更新您的操作系統以繼續!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Roblox快速標誌安裝程序僅支持macOS和Windows..",
+ "Silently installing Python packages..": "默默安裝Python軟件包..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "默默安裝Python軟件包.可以要求管理權限..",
+ "Successfully installed Python package: (*)": "成功安裝了Python軟件包:(*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "您想啟用Slient Python安裝而不是提示Python更新嗎? (y/n)"
 }

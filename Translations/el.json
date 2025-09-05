@@ -2084,5 +2084,16 @@
  "Building Python Cache..": "Κτίριο Python Cache..",
  "Would you like to build Python cache on app start? (y/n)": "Θα θέλατε να δημιουργήσετε την προσωρινή μνήμη Python στο App Start; (y/n)",
  "Successfully built Python cache!": "Κατασκεύασε με επιτυχία την προσωρινή μνήμη Python!",
- "Unable to build python cache. Return code: (*)": "Δεν είναι δυνατή η κατασκευή της προσωρινής μνήμης Python. Κωδικός επιστροφής: (*)"
+ "Unable to build python cache. Return code: (*)": "Δεν είναι δυνατή η κατασκευή της προσωρινής μνήμης Python. Κωδικός επιστροφής: (*)",
+ "For macOS users, admin permission is needed in order to install.": "Για τους χρήστες macOS, απαιτείται άδεια διαχειριστή για την εγκατάσταση..",
+ "Hello! In order to use Roblox Fast Flags Installer, you'll need to install Python 3.11 or higher in order to continue. ": "Γειά σου! Προκειμένου να χρησιμοποιήσετε το πρόγραμμα εγκατάστασης Roblox Fast Flags, θα πρέπει να εγκαταστήσετε το Python 3.11 ή υψηλότερο για να συνεχίσετε..",
+ "PyKits is not normally made for versions less than 3.11.0.": "Το Pykits δεν γίνεται κανονικά για εκδόσεις μικρότερες από 3,11,0..",
+ "Python may take a moment to install! Please wait!": "Η Python μπορεί να πάρει μια στιγμή για να εγκαταστήσει! Περιμένετε!",
+ "Roblox Fast Flags Installer is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!": "Ο εγκαταστάτης Roblox Fast Flags υποστηρίζεται μόνο για τα Windows 10.0.17763 (Οκτώβριος 2018) ή υψηλότερος. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
+ "Roblox Fast Flags Installer is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!": "Ο εγκαταστάτης Roblox Fast Flags υποστηρίζεται μόνο για macOS 10.13 (High Sierra) ή υψηλότερη. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
+ "Roblox Fast Flags Installer is only supported for macOS and Windows.": "Ο εγκαταστάτης Roblox Fast Flags υποστηρίζεται μόνο για macOS και Windows..",
+ "Silently installing Python packages..": "Εγκατάσταση σιωπηλά πακέτα Python..",
+ "Silently installing Python packages.. Admin permissions may be requested.": "Εγκαθιστώντας σιωπηλά πακέτα Python.. Μπορούν να ζητηθούν δικαιώματα διαχειριστή..",
+ "Successfully installed Python package: (*)": "Εγκαταστάθηκε με επιτυχία το πακέτο Python: (*)",
+ "Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)": "Θα θέλατε να ενεργοποιήσετε την εγκατάσταση του Slient Python αντί για προτροπή για τις ενημερώσεις της Python; (y/n)"
 }
