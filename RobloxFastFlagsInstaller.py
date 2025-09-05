@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.3.6
+# v2.3.7
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.3.6"
+script_version = "2.3.7"
 def getLocalAppData():
     import platform
     import os
@@ -1774,7 +1774,7 @@ class Handler:
             while True:
                 time.sleep(1)
                 if not self.pid: self.ended_process = True; break
-                if (self.main_handler.getIfRobloxIsOpen(pid=self.pid) == False) or self.end_tracking == True or (self.ended_process == True): self.ended_process = True; break
+                if (self.main_handler.getIfRobloxIsOpen(studio=self.is_studio, pid=self.pid) == False) or self.end_tracking == True or (self.ended_process == True): self.ended_process = True; break
         def setRobloxEventCallback(self, eventName: robloxInstanceTotalLiteralEventNames, eventCallback: typing.Callable[[typing.Any], None]):
             if callable(eventCallback):
                 if eventName in self.getAvailableEventNames():
@@ -2915,7 +2915,7 @@ class Handler:
             if pip_class.pythonSupported(3, 11, 0): threading.Thread(target=start_asyncio_loop, daemon=True).start()
         else: self.optimal_download_location = "setup.rbxcdn.com"
     def endRoblox(self, studio: bool=False, pid: str=""):
-        if self.getIfRobloxIsOpen(studio=studio):
+        if self.getIfRobloxIsOpen(studio=studio, pid=pid):
             if pid == "":
                 if studio == True:
                     if self.__main_os__ == "Darwin": subprocess.run(["/usr/bin/killall", "-9", "RobloxStudio"], stdout=subprocess.DEVNULL)
