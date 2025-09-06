@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0c
+# v2.3.0d
 # 
 
 # Python Modules
@@ -21,10 +21,12 @@ import hashlib
 import builtins
 import ctypes
 import typing
+import types
 import time
 import zlib
 import re
 
+import OrangeAPI
 import PyKits; PyKits.BuiltinEditor(builtins)
 try: import RobloxFastFlagsInstaller as RFFI
 except: PyKits.pip().restartScript("Main.py", sys.argv)
@@ -51,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0c"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0d"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
@@ -5014,6 +5016,7 @@ if __name__ == "__main__":
         # Mod Scripts
         mod_script_modules: dict[str, importlib.machinery.ModuleSpec] = {}
         generated_api_instances = {}
+        generated_secret_keys = {}
         orangeapi_modules = {}
         mod_script_jsons = {}
         mods_manifest = generateModsManifest()
@@ -5061,9 +5064,12 @@ if __name__ == "__main__":
                                                 script_path = os.path.join(cur_path, "Mods", sel_mod, "ModScript.py")
                                                 api_handled_requests = {}
                                                 try:
+                                                    # Create API Copy
+                                                    new_orange = OrangeAPI
+                                                    generated_secret_keys[sel_mod] = os.urandom(3).hex()
+
                                                     # Prepare API Instance
-                                                    import OrangeAPI as new_orange
-                                                    new_orange.requested_functions =  {}
+                                                    new_orange.requested_functions = {}
                                                     new_orange.cached_information = {}
                                                     new_orange.debug_mode = (main_config.get("EFlagEnableDebugMode")==True)
                                                     new_orange.studio_mode = run_studio==True
@@ -5076,10 +5082,15 @@ if __name__ == "__main__":
 
                                                     hosting_names = ["OrangeAPI", "EfazRobloxBootstrapAPI"]
                                                     if main_config.get("EFlagDisableEfazRobloxBootstrapAPIReplication"): hosting_names = ["OrangeAPI"]
-                                                    for na in hosting_names: generated_api_instances[f"{sel_mod}"] = new_orange.OrangeAPI()
+                                                    for na in hosting_names: generated_api_instances[f"{sel_mod}"] = new_orange.OrangeAPI(new_orange.OrangeAPIDetails(sel_mod, generated_secret_keys[sel_mod]))
                                                     
                                                     # Load Mod Script
                                                     with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
+                                                    if "import OrangeAPI" in mod_script_contents: 
+                                                        mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
+                                                        with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
+                                                        main_config["EFlagSelectedModScripts"][sel_mod]["hash"] = generateFileHash(script_path)
+                                                        saveSettings()
                                                     if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents or "from EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                                                     if "from OrangeAPI import OrangeAPI;" in mod_script_contents or " = OrangeAPI()" in mod_script_contents: mod_script_contents = mod_script_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                                                     if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
@@ -5090,7 +5101,7 @@ if __name__ == "__main__":
                                                     if "import Main" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
                                                     if "import builtins" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import builtins", "import OrangeAPI")
                                                     with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
-                                                    spec = importlib.util.spec_from_file_location("ModScript", script_path)
+                                                    spec = importlib.util.spec_from_file_location(f"ModScript_{sel_mod}", script_path)
                                                     mod_script_modules[sel_mod] = importlib.util.module_from_spec(spec)
                                                     for na in hosting_names: setattr(mod_script_modules[sel_mod], na, generated_api_instances[f"{sel_mod}"])
                                                     
@@ -5298,7 +5309,7 @@ if __name__ == "__main__":
                                                                                             output = output.replace("../", "").replace("..\\", "")
                                                                                             output = os.path.join(cur_path, "Mods", selected_scri_a, output)
                                                                                             if path.startswith(os.path.join(cur_path, "Mods", selected_scri_a)) and output.startswith(os.path.join(cur_path, "Mods", selected_mod_scriptt)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
-                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[new_orange.OrangeAPI.DiscordWebhookField]=[], image="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"):
+                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"):
                                                                                             if main_config.get("EFlagUseDiscordWebhook") == True:
                                                                                                 for i in fields: 
                                                                                                     if not (type(i) is generated_api_instances[selected_scri_a].DiscordWebhookField): return False
@@ -5378,33 +5389,43 @@ if __name__ == "__main__":
                                                                                         func_list.update(undefined_func)
                                                                                         
                                                                                         if not (api_handled_requests.get(i) == True):
-                                                                                            if v and func_list.get(v.requested):
-                                                                                                if v and v.fulfilled == False:
-                                                                                                    try:
-                                                                                                        if undefined_func.get(v.requested):
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        else:
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(str(selected_mod_scriptt), *(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(str(selected_mod_scriptt), **(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        if v:
-                                                                                                            if not type(val) is None: v.value = val
-                                                                                                            v.success = True
-                                                                                                            v.code = 0
-                                                                                                    except Exception as e:
-                                                                                                        if v:
-                                                                                                            v.success = False
-                                                                                                            v.code = 1
-                                                                                                    if v: v.fulfilled = True
-                                                                                                    orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                                    api_handled_requests[i] = True
+                                                                                            splited_id = i.split("|")
+                                                                                            if splited_id[1] == generated_secret_keys[splited_id[0]]:
+                                                                                                if v and func_list.get(v.requested):
+                                                                                                    if v and v.fulfilled == False:
+                                                                                                        try:
+                                                                                                            if undefined_func.get(v.requested):
+                                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
+                                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
+                                                                                                                else: val = func_list.get(v.requested)()
+                                                                                                            else:
+                                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(splited_id[0], *(v.args))
+                                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(splited_id[0], **(v.args))
+                                                                                                                else: val = func_list.get(v.requested)()
+                                                                                                            if v:
+                                                                                                                if not type(val) is None: v.value = val
+                                                                                                                v.success = True
+                                                                                                                v.code = 0
+                                                                                                        except Exception as e:
+                                                                                                            if v:
+                                                                                                                v.success = False
+                                                                                                                v.code = 1
+                                                                                                        if v: v.fulfilled = True
+                                                                                                        orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
+                                                                                                        api_handled_requests[i] = True
+                                                                                                else:
+                                                                                                    if v:
+                                                                                                        v.value = None
+                                                                                                        v.success = False
+                                                                                                        v.code = 3
+                                                                                                        v.fulfilled = True
+                                                                                                        orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
+                                                                                                        api_handled_requests[i] = True
                                                                                             else:
                                                                                                 if v:
                                                                                                     v.value = None
                                                                                                     v.success = False
-                                                                                                    v.code = 3
+                                                                                                    v.code = 7
                                                                                                     v.fulfilled = True
                                                                                                     orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
                                                                                                     api_handled_requests[i] = True
@@ -5471,9 +5492,9 @@ if __name__ == "__main__":
 
                                                     # Launch API
                                                     if main_config.get("EFlagDisableEfazRobloxBootstrapAPIReplication"): hosting_names = ["OrangeAPI"]
-                                                    for na in hosting_names: threading.Thread(target=checkGeneratedInstances, daemon=True, args=[str(sel_mod), str(na)]).start()
-                                                    threading.Thread(target=setPythonAPIs, daemon=True, args=[str(sel_mod), list(approved_items_list)]).start()
-                                                    threading.Thread(target=handleRequests, daemon=True, args=[str(sel_mod), list(approved_items_list)]).start()
+                                                    for na in hosting_names: threading.Thread(target=checkGeneratedInstances, daemon=True, args=[sel_mod, str(na)]).start()
+                                                    threading.Thread(target=setPythonAPIs, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
+                                                    threading.Thread(target=handleRequests, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
                                                     printDebugMessage(f"Launched OrangeAPI v{orangeapi_modules[sel_mod].current_version['version']}!")
                                                     
                                                     # Launch Script
@@ -5488,7 +5509,7 @@ if __name__ == "__main__":
                                                 resb = continueToModsManager(reverify_mod_script=sel_mod)
                                                 if resb == 5: return
                                                 else: s(sel_mod)
-                                        s(sel_mo)
+                                        s(str(sel_mo))
                                     else:
                                         if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"This mod script is not supported. Please update to OrangeBlox v{mod_manifest['mod_script_supports']}")
                                         elif mod_manifest["mod_script_supports_operating_system"] == False:

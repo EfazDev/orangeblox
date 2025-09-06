@@ -3441,7 +3441,7 @@ class Handler:
                                 test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0 and studio == False:
+                                    elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
                                     elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
@@ -3458,7 +3458,7 @@ class Handler:
                                 test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
                                 while True:
                                     if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0 and studio == False:
+                                    elif len(test_instance.getWindowsOpened()) > 0:
                                         time.sleep(5)
                                         if len(test_instance.getWindowsOpened()) > 0: break
                                     elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
