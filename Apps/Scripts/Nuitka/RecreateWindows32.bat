@@ -19,12 +19,12 @@ python -m nuitka ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name=OrangeBlox ^
-    --file-version=2.3.0 ^
-    --product-version=2.3.0 ^
+    --file-version=2.3.0e ^
+    --product-version=2.3.0e ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps/Building" ^
-    --windows-icon-from-ico=./BootstrapImages/AppIcon.ico ^
+    --windows-icon-from-ico=./Images/AppIcon.ico ^
     --target="OrangeBlox" ^
     "./Apps/Scripts/OrangeBlox.py"
 

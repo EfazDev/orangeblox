@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0d
+# v2.3.0e
 # 
 
 # Modules
@@ -75,6 +75,7 @@ if __name__ == "__main__":
         ".github",
         "LICENSE", 
         "README.md",
+        "Version.json",
         ".gitignore",
         "RepairData", 
         ".DS_Store",
@@ -99,8 +100,10 @@ if __name__ == "__main__":
         "PlayRoblox.exe",
         "RunStudio.exe",
         "Downloads",
+        "BootstrapImages",
         "LocalStorage",
         "OTAPatchBackups",
+        "CachedFriendsList.json",
         "RobloxPlayerInstaller.exe",
         "RobloxStudioInstaller.exe",
         "InstallPython.sh", 
@@ -117,7 +120,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0d"}
+    current_version = {"version": "2.3.0e"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -192,6 +195,7 @@ if __name__ == "__main__":
         "EFlagDiscordWebhookRobloxCrash": "bool",
         "EFlagDiscordWebhookBloxstrapRPC": "bool",
         "EFlagDiscordWebhookGamePublished": "bool",
+        "EFlagDiscordWebhookGameSaved": "bool",
         "EFlagDiscordWebhookShowPidInFooter": "bool",
         "EFlagForceReconnectOnStudioLost": "bool",
         "EFlagShowRunningAccountNameInTitle": "bool",
@@ -201,6 +205,7 @@ if __name__ == "__main__":
         "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
+        "EFlagDisablePythonModuleUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
         "EFlagEnableGUIOptionMenus": "bool",
@@ -913,8 +918,8 @@ if __name__ == "__main__":
                             if os.path.exists(os.path.join(resources_fold, i)):
                                 if os.path.isdir(os.path.join(resources_fold, i)): shutil.rmtree(os.path.join(resources_fold, i), ignore_errors=True)
                                 elif os.path.isfile(os.path.join(resources_fold, i)): os.remove(os.path.join(resources_fold, i))
-                        for i in os.listdir(os.path.join(resources_fold, "BootstrapImages")):
-                            if not i in bootstrap_images_needed and os.path.isfile(os.path.join(resources_fold, "BootstrapImages", i)): os.remove(os.path.join(resources_fold, "BootstrapImages", i))
+                        for i in os.listdir(os.path.join(resources_fold, "Images")):
+                            if not i in bootstrap_images_needed and os.path.isfile(os.path.join(resources_fold, "Images", i)): os.remove(os.path.join(resources_fold, "Images", i))
                             
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “OrangeBlox.app” is free of malware that may harm your Mac or compromise your privacy.
@@ -943,7 +948,7 @@ if __name__ == "__main__":
 
                         # Handle Avatar Maps
                         map_folder_contained = []
-                        avatar_editor_path = os.path.join(resources_fold, "AvatarEditorMaps")
+                        avatar_editor_path = os.path.join(resources_fold, "Mods", "AvatarEditorMaps")
                         for ava_map in os.listdir(avatar_editor_path):
                             if os.path.isdir(os.path.join(avatar_editor_path, ava_map)): map_folder_contained.append(ava_map)
                         if len(map_folder_contained) > 0:
@@ -954,7 +959,7 @@ if __name__ == "__main__":
 
                         # Handle Death Sounds
                         death_sound_folder_contained = []
-                        death_sound_path = os.path.join(resources_fold, "DeathSounds")
+                        death_sound_path = os.path.join(resources_fold, "Mods", "DeathSounds")
                         if os.path.exists(death_sound_path):
                             for death_sound in os.listdir(death_sound_path):
                                 if os.path.isfile(os.path.join(death_sound_path, death_sound)): death_sound_folder_contained.append(death_sound)
@@ -967,6 +972,25 @@ if __name__ == "__main__":
                                     makedirs(os.path.join(death_sound_path, "..", "PlayerSounds", possible_name))
                                     shutil.copy(os.path.join(death_sound_path, death_sound), os.path.join(death_sound_path, "..", "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
                                 shutil.rmtree(death_sound_path, ignore_errors=True)
+
+                        # Reorganize Older Versions to v2.3.0+
+                        mods_path = os.path.join(resources_fold, "Mods")
+                        if os.path.exists(mods_path) and os.path.exists(os.path.join(resources_fold, "AvatarEditorMaps")) and os.path.exists(os.path.join(resources_fold, "Cursors")) and os.path.exists(os.path.join(resources_fold, "Mods")):
+                            printMainMessage("Organizing Mod Folders..")
+                            if os.path.exists(os.path.join(mods_path, "AvatarEditorMaps", "Old.rbxl")): shutil.rmtree(os.path.join(mods_path, "AvatarEditorMaps"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "Cursors", "2006")): shutil.rmtree(os.path.join(mods_path, "Cursors"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "Mods", "KlikoModTool")): shutil.rmtree(os.path.join(mods_path, "Mods"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "PlayerSounds", "Current")): shutil.rmtree(os.path.join(mods_path, "PlayerSounds"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "RobloxBrand", "OrangeBlox")): shutil.rmtree(os.path.join(mods_path, "RobloxBrand"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "RobloxStudioBrand", "OrangeBlox")): shutil.rmtree(os.path.join(mods_path, "RobloxStudioBrand"), ignore_errors=True)
+                            shutil.move(mods_path, os.path.join(resources_fold, "Mods2"))
+                            makedirs(mods_path)
+                            if os.path.exists(os.path.join(resources_fold, "Mods2")): shutil.move(os.path.join(resources_fold, "Mods2"), os.path.join(mods_path, "Mods"))
+                            if os.path.exists(os.path.join(resources_fold, "AvatarEditorMaps")): shutil.move(os.path.join(resources_fold, "AvatarEditorMaps"), os.path.join(mods_path, "AvatarEditorMaps"))
+                            if os.path.exists(os.path.join(resources_fold, "Cursors")): shutil.move(os.path.join(resources_fold, "Cursors"), os.path.join(mods_path, "Cursors"))
+                            if os.path.exists(os.path.join(resources_fold, "PlayerSounds")): shutil.move(os.path.join(resources_fold, "PlayerSounds"), os.path.join(mods_path, "PlayerSounds"))
+                            if os.path.exists(os.path.join(resources_fold, "RobloxBrand")): shutil.move(os.path.join(resources_fold, "RobloxBrand"), os.path.join(mods_path, "RobloxBrand"))
+                            if os.path.exists(os.path.join(resources_fold, "RobloxStudioBrand")): shutil.move(os.path.join(resources_fold, "RobloxStudioBrand"), os.path.join(mods_path, "RobloxStudioBrand"))
 
                         # Finalize Branding
                         if os.path.exists(os.path.join(sma["OverallInstall"], "EfazRobloxBootstrap.app", "Contents", "Resources")):
@@ -1224,12 +1248,12 @@ if __name__ == "__main__":
                                 shortcut.Save()
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "BootstrapImages", "AppIconRunStudio.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
                         except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
                     # Copy App Resources
@@ -1251,8 +1275,8 @@ if __name__ == "__main__":
                             if os.path.exists(os.path.join(sma[main_os][0], i)):
                                 if os.path.isdir(os.path.join(sma[main_os][0], i)): shutil.rmtree(os.path.join(sma[main_os][0], i), ignore_errors=True)
                                 elif os.path.isfile(os.path.join(sma[main_os][0], i)): os.remove(os.path.join(sma[main_os][0], i))
-                        for i in os.listdir(os.path.join(sma[main_os][0], "BootstrapImages")):
-                            if not i in bootstrap_images_needed and os.path.isfile(os.path.join(sma[main_os][0], "BootstrapImages", i)): os.remove(os.path.join(sma[main_os][0], "BootstrapImages", i))
+                        for i in os.listdir(os.path.join(sma[main_os][0], "Images")):
+                            if not i in bootstrap_images_needed and os.path.isfile(os.path.join(sma[main_os][0], "Images", i)): os.remove(os.path.join(sma[main_os][0], "Images", i))
                             
                         # Handle Existing Configuration Files
                         printMainMessage("Configurating App Data..")
@@ -1269,7 +1293,7 @@ if __name__ == "__main__":
 
                         # Handle Avatar Maps
                         map_folder_contained = []
-                        avatar_editor_path = os.path.join(sma[main_os][0], "AvatarEditorMaps")
+                        avatar_editor_path = os.path.join(sma[main_os][0], "Mods", "AvatarEditorMaps")
                         for ava_map in os.listdir(avatar_editor_path):
                             if os.path.isdir(os.path.join(avatar_editor_path, ava_map)): map_folder_contained.append(ava_map)
                         if len(map_folder_contained) > 0:
@@ -1280,7 +1304,7 @@ if __name__ == "__main__":
 
                         # Handle Death Sounds
                         death_sound_folder_contained = []
-                        death_sound_path = os.path.join(sma[main_os][0], "DeathSounds")
+                        death_sound_path = os.path.join(sma[main_os][0], "Mods", "DeathSounds")
                         if os.path.exists(death_sound_path):
                             for death_sound in os.listdir(death_sound_path):
                                 if os.path.isfile(os.path.join(death_sound_path, death_sound)): death_sound_folder_contained.append(death_sound)
@@ -1293,6 +1317,25 @@ if __name__ == "__main__":
                                     makedirs(os.path.join(death_sound_path, "..", "PlayerSounds", possible_name))
                                     shutil.copy(os.path.join(death_sound_path, death_sound), os.path.join(death_sound_path, "..", "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
                                 shutil.rmtree(death_sound_path, ignore_errors=True)
+
+                        # Reorganize Older Versions to v2.3.0+
+                        mods_path = os.path.join(sma[main_os][0], "Mods")
+                        if os.path.exists(mods_path) and os.path.exists(os.path.join(sma[main_os][0], "AvatarEditorMaps")) and os.path.exists(os.path.join(sma[main_os][0], "Cursors")) and os.path.exists(os.path.join(sma[main_os][0], "Mods")):
+                            printMainMessage("Organizing Mod Folders..")
+                            if os.path.exists(os.path.join(mods_path, "AvatarEditorMaps", "Old.rbxl")): shutil.rmtree(os.path.join(mods_path, "AvatarEditorMaps"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "Cursors", "2006")): shutil.rmtree(os.path.join(mods_path, "Cursors"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "Mods", "KlikoModTool")): shutil.rmtree(os.path.join(mods_path, "Mods"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "PlayerSounds", "Current")): shutil.rmtree(os.path.join(mods_path, "PlayerSounds"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "RobloxBrand", "OrangeBlox")): shutil.rmtree(os.path.join(mods_path, "RobloxBrand"), ignore_errors=True)
+                            if os.path.exists(os.path.join(mods_path, "RobloxStudioBrand", "OrangeBlox")): shutil.rmtree(os.path.join(mods_path, "RobloxStudioBrand"), ignore_errors=True)
+                            shutil.move(mods_path, os.path.join(sma[main_os][0], "Mods2"))
+                            makedirs(mods_path)
+                            if os.path.exists(os.path.join(sma[main_os][0], "Mods2")): shutil.move(os.path.join(sma[main_os][0], "Mods2"), os.path.join(mods_path, "Mods"))
+                            if os.path.exists(os.path.join(sma[main_os][0], "AvatarEditorMaps")): shutil.move(os.path.join(sma[main_os][0], "AvatarEditorMaps"), os.path.join(mods_path, "AvatarEditorMaps"))
+                            if os.path.exists(os.path.join(sma[main_os][0], "Cursors")): shutil.move(os.path.join(sma[main_os][0], "Cursors"), os.path.join(mods_path, "Cursors"))
+                            if os.path.exists(os.path.join(sma[main_os][0], "PlayerSounds")): shutil.move(os.path.join(sma[main_os][0], "PlayerSounds"), os.path.join(mods_path, "PlayerSounds"))
+                            if os.path.exists(os.path.join(sma[main_os][0], "RobloxBrand")): shutil.move(os.path.join(sma[main_os][0], "RobloxBrand"), os.path.join(mods_path, "RobloxBrand"))
+                            if os.path.exists(os.path.join(sma[main_os][0], "RobloxStudioBrand")): shutil.move(os.path.join(sma[main_os][0], "RobloxStudioBrand"), os.path.join(mods_path, "RobloxStudioBrand"))
 
                         # Remove Apps Folder in Installed Folder
                         if os.path.exists(os.path.join(sma[main_os][0], "Apps")):
@@ -1313,7 +1356,7 @@ if __name__ == "__main__":
                         win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(sma[main_os][0], 'Install.py')}")
                         win32api.RegSetValueEx(key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                         win32api.RegSetValueEx(key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
-                        win32api.RegSetValueEx(key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(sma[main_os][0], "BootstrapImages", "AppIcon.ico"))
+                        win32api.RegSetValueEx(key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(sma[main_os][0], "Images", "AppIcon.ico"))
                         win32api.RegSetValueEx(key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
@@ -1769,17 +1812,17 @@ if __name__ == "__main__":
                         data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
                         with open(os.path.join(repair_path, "Configuration.json"), "wb") as f: f.write(data_in_string)
                         printMainMessage("Copying AvatarEditorMaps..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(repair_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "AvatarEditorMaps"), os.path.join(repair_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Cursors..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Cursors"), os.path.join(repair_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "Cursors"), os.path.join(repair_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying PlayerSounds..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "PlayerSounds"), os.path.join(repair_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "PlayerSounds"), os.path.join(repair_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Mods..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods"), os.path.join(repair_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "Mods"), os.path.join(repair_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxBrand..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxBrand"), os.path.join(repair_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "RobloxBrand"), os.path.join(repair_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxStudioBrand..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxStudioBrand"), os.path.join(repair_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "RobloxStudioBrand"), os.path.join(repair_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Creating Metadata..")
                         ver = current_version["version"]
                         if os.path.exists(os.path.join(app_location, "Version.json")):
@@ -1813,17 +1856,17 @@ if __name__ == "__main__":
                                 saveSettings(main_config, directory=os.path.join(app_location, "Configuration.json"))
                                 shutil.copy(os.path.join(repair_path, "Configuration.json"), os.path.join(app_location, "Configuration.json"))
                                 printMainMessage("Copying AvatarEditorMaps..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "AvatarEditorMaps"), os.path.join(app_location, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "AvatarEditorMaps"), os.path.join(app_location, "Mods", "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying Cursors..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "Cursors"), os.path.join(app_location, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "Cursors"), os.path.join(app_location, "Mods", "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying PlayerSounds..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "PlayerSounds"), os.path.join(app_location, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "PlayerSounds"), os.path.join(app_location, "Mods", "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying Mods..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "Mods"), os.path.join(app_location, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "Mods"), os.path.join(app_location, "Mods", "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying RobloxBrand..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "RobloxBrand"), os.path.join(app_location, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "RobloxBrand"), os.path.join(app_location, "Mods", "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying RobloxStudioBrand..")
-                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "RobloxStudioBrand"), os.path.join(app_location, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(repair_path, "RobloxStudioBrand"), os.path.join(app_location, "Mods", "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Finished transferring! Deleting repair data..")
                                 if os.path.exists(repair_path): shutil.rmtree(repair_path, ignore_errors=True)
                                 printSuccessMessage("Successfully repaired OrangeBlox!")
@@ -1873,17 +1916,17 @@ if __name__ == "__main__":
                         data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
                         with open(os.path.join(backup_path, "Configuration.json"), "wb") as f: f.write(data_in_string)
                         printMainMessage("Copying AvatarEditorMaps..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "AvatarEditorMaps"), os.path.join(backup_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "AvatarEditorMaps"), os.path.join(backup_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Cursors..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Cursors"), os.path.join(backup_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "Cursors"), os.path.join(backup_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying PlayerSounds..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "PlayerSounds"), os.path.join(backup_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "PlayerSounds"), os.path.join(backup_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying Mods..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods"), os.path.join(backup_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "Mods"), os.path.join(backup_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxBrand..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxBrand"), os.path.join(backup_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "RobloxBrand"), os.path.join(backup_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Copying RobloxStudioBrand..")
-                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "RobloxStudioBrand"), os.path.join(backup_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        pip_class.copyTreeWithMetadata(os.path.join(app_location, "Mods", "RobloxStudioBrand"), os.path.join(backup_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                         printMainMessage("Creating Metadata..")
                         ver = current_version["version"]
                         if os.path.exists(os.path.join(app_location, "Version.json")):

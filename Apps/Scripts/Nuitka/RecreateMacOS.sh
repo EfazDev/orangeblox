@@ -23,7 +23,7 @@ python3 -m nuitka \
     --output-dir="./Apps/Building" \
     --include-package-data=objc,Cocoa,Quartz \
     --nofollow-import-to=cryptography,OpenSSL,urllib3,requests,plyer,site \
-    --macos-app-icon=./BootstrapImages/AppIcon.icns \
+    --macos-app-icon=./Images/AppIcon.icns \
     --disable-plugin=tk-inter \
     --clang \
     --lto=yes \

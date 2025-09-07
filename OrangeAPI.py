@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0d
+# v2.3.0e
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0d
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0e
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -26,7 +26,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.3.0d", "bootstrap_version": "2.3.0d"}
+current_version = {"version": "2.3.0e", "bootstrap_version": "2.3.0e"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -594,7 +594,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "reprepareRoblox").generateResponse()
-    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png") -> Response | None: # Permission: sendDiscordWebhookMessage
+    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/Images/DiscordIcon.png") -> Response | None: # Permission: sendDiscordWebhookMessage
         """
         Send a Discord Webhook message to the user's Discord webhook!
 

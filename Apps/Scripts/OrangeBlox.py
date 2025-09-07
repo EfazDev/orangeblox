@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.0"}
+    current_version = {"version": "2.3.0e"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -85,6 +85,7 @@ if __name__ == "__main__":
         "EFlagDiscordWebhookRobloxCrash": "bool",
         "EFlagDiscordWebhookBloxstrapRPC": "bool",
         "EFlagDiscordWebhookGamePublished": "bool",
+        "EFlagDiscordWebhookGameSaved": "bool",
         "EFlagDiscordWebhookShowPidInFooter": "bool",
         "EFlagForceReconnectOnStudioLost": "bool",
         "EFlagShowRunningAccountNameInTitle": "bool",
@@ -94,6 +95,7 @@ if __name__ == "__main__":
         "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
+        "EFlagDisablePythonModuleUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
         "EFlagEnableGUIOptionMenus": "bool",
@@ -301,7 +303,7 @@ if __name__ == "__main__":
                     title=title,
                     message=message,
                     app_name="OrangeBlox",
-                    app_icon=os.path.join(app_path, "BootstrapImages", "AppIcon.ico"),
+                    app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
                     toast=True
                 )
             except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
@@ -384,7 +386,7 @@ if __name__ == "__main__":
                 end if
             end repeat
             if existing_profile is false then
-                open POSIX file "{os.path.join(app_path, "BootstrapImages", f"OrangeBlox.terminal")}"
+                open POSIX file "{os.path.join(app_path, "Images", f"OrangeBlox.terminal")}"
             end if
             set py_window to do script "{execute_command}"
             set current settings of py_window to settings set "OrangeBlox"
@@ -634,10 +636,10 @@ if __name__ == "__main__":
                                     ]
                                     content_view.addConstraints_(constraints)
 
-                                    app_icon_url = f"{app_path}/BootstrapImages/AppIcon64.png"
+                                    app_icon_url = f"{app_path}/Images/AppIcon64.png"
                                     if main_config.get("EFlagUseFollowingAppIconPath"): app_icon_url = main_config.get("EFlagUseFollowingAppIconPath")
                                     if os.path.exists(app_icon_url): self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(app_icon_url)
-                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(f"{app_path}/BootstrapImages/AppIcon.icns")
+                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(f"{app_path}/Images/AppIcon.icns")
                                     self.icon_view = AppKit.NSImageView.alloc().init()
                                     self.icon_view.setImage_(self.app_icon)
                                     self.icon_view.setImageScaling_(AppKit.NSImageScaleProportionallyUpOrDown)

@@ -584,6 +584,7 @@ class pip:
         import os
         import tempfile
         import re
+        import json
         import platform
         import importlib
         import importlib.metadata
@@ -608,6 +609,7 @@ class pip:
         self._shutil = shutil
         self._urllib_parse = urllib.parse
         self._time = time
+        self._json = json
         self._mmap = mmap
 
         self._main_os = platform.system()
@@ -778,13 +780,21 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    def github(self, packages: typing.List[str]):
+    def updates(self, packages: typing.List[str]=[]):
+        sub = self._subprocess.run([self.executable, "-m", "pip", "list", "--outdated", "--format=json"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
+        json_str = sub.stdout.decode().replace("\r", "")
+        try:
+            tried = self._json.loads(json_str)
+            if packages and len(packages) > 0: return {"success": True, "packages": [i for i in tried if i["name"] in packages]}
+            return {"success": True, "packages": tried}
+        except: return {"success": False, "packages": []}
+    def info(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
-                links = {}
+                information = {}
                 for i in generated_list:
                     urll = f"https://pypi.org/pypi/{i}/json"
                     if self.getIfConnectedToInternet() == False: return {"success": False}
@@ -792,11 +802,27 @@ class pip:
                     if response.ok:
                         data = response.json
                         info = data["info"]
-                        url = info.get("project_urls", {}).get("Source") or info.get("home_page")
-                        if url: links[i] = url
-                return {"success": True, "repositories": links}
-            except Exception as e:
-                return {"success": False}
+                        information[i] = info
+                return {"success": True, "data": information}
+            except Exception as e: return {"success": False}
+        return {"success": False}
+    def github(self, packages: typing.List[str]):
+        generated_list = []
+        for i in packages:
+            if type(i) is str: generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                informed = self.info(generated_list)
+                if informed["success"] == True:
+                    informed = informed["data"]
+                    links = {}
+                    for i in generated_list:
+                        if informed.get(i):
+                            info = informed[i]
+                            url = info.get("project_urls", {}).get("Source") or info.get("home_page")
+                            if url: links[i] = url
+                    return {"success": True, "repositories": links}
+            except Exception as e: return {"success": False}
         return {"success": False}
     
     # Python Management

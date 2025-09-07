@@ -41,7 +41,7 @@ main_exe = EXE(
     bootloader_ignore_signals=False,
     console=True,
     upx=True,
-    icon="../../../BootstrapImages/AppIcon.ico",
+    icon="../../../Images/AppIcon.ico",
     version="../../Storage/Version.txt",
     strip=True
 )

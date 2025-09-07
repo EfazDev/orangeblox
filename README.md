@@ -1,4 +1,4 @@
-<h1 align="center"><img align="center" src="https://obx.efaz.dev/BootstrapImages/Banner.png" height="105" width="378"></h1>
+<h1 align="center"><img align="center" src="https://obx.efaz.dev/Images/Banner.png" height="105" width="378"></h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
@@ -9,7 +9,7 @@
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://obx.efaz.dev/BootstrapImages/Collage.png" alt="OrangeBlox Collage"><br>
+    <img align="center" src="https://obx.efaz.dev/Images/Collage.png" alt="OrangeBlox Collage"><br>
 </p>
 
 > [!IMPORTANT]
@@ -67,14 +67,14 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `e10dddc1ec08473bcb857fcc21901c47` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `368e5b49ff2668072e192a732639cbe9` |
-| Installer (Install.py) | `0be6d0cf3d62a6b64c3e4f0e9c50d506` |
-| Bootstrap API (OrangeAPI.py) | `ddf3156ec9d20eabc8c9efab5946f71d` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `6cc6d6617125a528417065802bc3bd30` |
-| Bootstrap Loader (OrangeBlox.py) | `d70aa16cf3d74c32844430e66458a2e0` |
+| Main Bootstrap (Main.py) | `4e064be2cf592afe50b20997f10fddc1` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `e1269c3a51d16edd1aa99f413be7a344` |
+| Installer (Install.py) | `cbf6054d36b170bcb83ce9bf0949e48d` |
+| Bootstrap API (OrangeAPI.py) | `f09e76161094cf59eef6b4169ca23869` |
+| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `e2452f8f00232999bad7ece13d165bd5` |
+| Bootstrap Loader (OrangeBlox.py) | `23d8dc937a71bbec9db864445783f714` |
 | Discord Presence Handler (DiscordPresenceHandler.py) | `1f3260a851f105b47ac1be939ac04fef` |
-| PyKits API (PyKits.py) | `ca7875324867380d374c3d235ac6e310` |
+| PyKits API (PyKits.py) | `c6923461ba4af93a4306bbeb4771cc90` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
