@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0e
+# v2.3.0f
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0e"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0f"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -436,6 +436,19 @@ if __name__ == "__main__":
                             if va.get("detection") and va.get("detection") in mod_script_text and not (pe in mod_info["permissions"]): mod_info["permissions"].append(pe)
                         if ("EfazRobloxBootstrapAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
                         elif ("OrangeAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
+                        if "import OrangeAPI" in mod_script_text: 
+                            for i in mod_script_text.splitlines():
+                                if i.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
+                        if "EfazRobloxBootstrapAPI()" in mod_script_text or "import EfazRobloxBootstrapAPI" in mod_script_text or "from EfazRobloxBootstrapAPI" in mod_script_text: mod_script_text = mod_script_text.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
+                        if "from OrangeAPI import OrangeAPI;" in mod_script_text or " = OrangeAPI()" in mod_script_text: mod_script_text = mod_script_text.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
+                        if "import RobloxFastFlagsInstaller" in mod_script_text: mod_script_text = mod_script_text.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
+                        if "import PipHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import PipHandler", "import OrangeAPI")
+                        if "import PyKits" in mod_script_text: mod_script_text = mod_script_text.replace("import PyKits", "import OrangeAPI")
+                        if "import Install" in mod_script_text: mod_script_text = mod_script_text.replace("import Install", "import OrangeAPI")
+                        if "import DiscordPresenceHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import DiscordPresenceHandler", "import OrangeAPI")
+                        if "import Main" in mod_script_text: mod_script_text = mod_script_text.replace("import Main", "import OrangeAPI")
+                        if "import builtins" in mod_script_text: mod_script_text = mod_script_text.replace("import builtins", "import OrangeAPI")
+                        with open(mod_script_path, "w", encoding="utf-8") as f: f.write(mod_script_text)
                         mod_info["mod_script_path"] = mod_script_path
                         mod_info["mod_script_hash"] = generateFileHash(mod_script_path)
                 else: mod_info["mod_script"] = False
@@ -5135,7 +5148,7 @@ if __name__ == "__main__":
                                                 for i in mod_manifest["python_modules"]:
                                                     if not f"pip_{i}" in approved_items_list: approved_through_scan = False
                                             mod_script_detail = main_config.get('EFlagSelectedModScripts').get(sel_mo)
-                                            if not (mod_manifest["mod_script_hash"] == mod_script_detail.get("hash", "") or (mod_script_detail.get("original_hash") and mod_script_detail.get("original_hash") == mod_manifest["mod_script_hash"])): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {mod_manifest['mod_script_hash']} => {main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')}")
+                                            if not (mod_manifest["mod_script_hash"] == mod_script_detail.get("hash", "")): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {mod_manifest['mod_script_hash']} => {main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')}")
                                             if approved_through_scan == True:
                                                 if mod_manifest.get("python_modules"):
                                                     printDebugMessage("Validating Installation of Mod Script Modules..")
@@ -5167,11 +5180,8 @@ if __name__ == "__main__":
                                                     # Load Mod Script
                                                     with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
                                                     if "import OrangeAPI" in mod_script_contents: 
-                                                        if not (main_config["EFlagSelectedModScripts"][sel_mod].get("original_hash")): main_config["EFlagSelectedModScripts"][sel_mod]["original_hash"] = generateFileHash(script_path)
-                                                        mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
-                                                        with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
-                                                        main_config["EFlagSelectedModScripts"][sel_mod]["hash"] = generateFileHash(script_path)
-                                                        saveSettings()
+                                                        for i in mod_script_contents.splitlines():
+                                                            if i.startswith("import OrangeAPI"): mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
                                                     if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents or "from EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                                                     if "from OrangeAPI import OrangeAPI;" in mod_script_contents or " = OrangeAPI()" in mod_script_contents: mod_script_contents = mod_script_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                                                     if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
@@ -5691,11 +5701,11 @@ if __name__ == "__main__":
         def setRuntimeIconLoop():
             while True:
                 if run_studio == True: 
-                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", "Original")
                 else:
-                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxBrand", "Original")
                 if connected_roblox_instance:
                     windows = connected_roblox_instance.getWindowsOpened()
                     if windows:
