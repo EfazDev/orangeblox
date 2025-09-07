@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "¿Le gustaría deshabilitar las comprobaciones de actualización del módulo Python? (y/n)",
  "Would you like to install the updates to them now?": "¿Le gustaría instalarles las actualizaciones ahora?",
  "No updates for Python Modules were available!": "¡No hay actualizaciones para los módulos de Python disponibles!",
- "Python Module updating was canceled!": "¡Se canceló la actualización del módulo de Python!"
+ "Python Module updating was canceled!": "¡Se canceló la actualización del módulo de Python!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Para obtener información sobre esta actualización, use este enlace: https://github.com/EfazDev/oranglox/releases"
 }

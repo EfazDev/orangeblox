@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "您想禁用Python模塊更新檢查嗎? (y/n)",
  "Would you like to install the updates to them now?": "您想立即將更新安裝到它們嗎?",
  "No updates for Python Modules were available!": "沒有有關Python模塊的更新!",
- "Python Module updating was canceled!": "Python模塊更新被取消!"
+ "Python Module updating was canceled!": "Python模塊更新被取消!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️有關此更新的信息,請使用此鏈接:https://github.com/EfazDev/orangeblox/releases"
 }

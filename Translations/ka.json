@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Გსურთ გამორთოთ პითონის მოდულის განახლების შემოწმება? (y/n)",
  "Would you like to install the updates to them now?": "Გსურთ ახლა დააინსტალიროთ განახლებები?",
  "No updates for Python Modules were available!": "Პითონის მოდულების განახლებები არ იყო ხელმისაწვდომი!",
- "Python Module updating was canceled!": "Python მოდულის განახლება გაუქმდა!"
+ "Python Module updating was canceled!": "Python მოდულის განახლება გაუქმდა!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ ამ განახლების შესახებ ინფორმაციისთვის გამოიყენეთ ეს ბმული: https://github.com/EfazDev/orangeblox/releases"
 }

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0f
+# v2.3.0g
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0f"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0g"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -437,8 +437,8 @@ if __name__ == "__main__":
                         if ("EfazRobloxBootstrapAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
                         elif ("OrangeAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
                         if "import OrangeAPI" in mod_script_text: 
-                            for i in mod_script_text.splitlines():
-                                if i.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
+                            for mod_line in mod_script_text.splitlines():
+                                if mod_line.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
                         if "EfazRobloxBootstrapAPI()" in mod_script_text or "import EfazRobloxBootstrapAPI" in mod_script_text or "from EfazRobloxBootstrapAPI" in mod_script_text: mod_script_text = mod_script_text.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                         if "from OrangeAPI import OrangeAPI;" in mod_script_text or " = OrangeAPI()" in mod_script_text: mod_script_text = mod_script_text.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                         if "import RobloxFastFlagsInstaller" in mod_script_text: mod_script_text = mod_script_text.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
@@ -1041,7 +1041,7 @@ if __name__ == "__main__":
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
-                        printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
+                        printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printYellowMessage(f"⚠️ Download location: {download_location} => {possible_download_path}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
                         printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
@@ -3457,7 +3457,7 @@ if __name__ == "__main__":
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
-                        printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
+                        printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"⚠️ Download Location: {download_location}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
                         printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
@@ -3488,7 +3488,7 @@ if __name__ == "__main__":
                                                 try: pip_class.copyTreeWithMetadata(src_path, dest_path, dirs_exist_ok=True)
                                                 except Exception as e: printDebugMessage(f"Update Error for directory ({src_path}): \n{trace()}")
                                             else:
-                                                if not file.endswith(".json"):
+                                                if (not file.endswith(".json")) or file == "Version.json":
                                                     try: shutil.copy2(src_path, dest_path)
                                                     except Exception as e: printDebugMessage(f"Update Error for file ({src_path}): \n{trace()}")
                                         if main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir")):
@@ -3500,7 +3500,7 @@ if __name__ == "__main__":
                                                     try: pip_class.copyTreeWithMetadata(src_path, dest_path, dirs_exist_ok=True)
                                                     except Exception as e: printDebugMessage(f"Update Error for directory ({src_path}): \n{trace()}")
                                                 else:
-                                                    if not file.endswith(".json"):
+                                                    if (not file.endswith(".json")) or file == "Version.json":
                                                         try: shutil.copy2(src_path, dest_path)
                                                         except Exception as e: printDebugMessage(f"Update Error for file ({src_path}): \n{trace()}")
                                         if os.path.exists(generateFileKey("OrangeBloxUpdate")): os.remove(generateFileKey("OrangeBloxUpdate"))

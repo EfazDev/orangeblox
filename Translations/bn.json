@@ -2117,5 +2117,6 @@
  "(*) python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)পাইথন মডিউলগুলি এখন আপডেট হওয়ার জন্য উপলব্ধ! প্রধান মেনু খোলার মাধ্যমে আপডেটটি ইনস্টল করুন, পাইথন মডিউল আপডেটগুলি পরীক্ষা করে এবং তারপরে ইনস্টল করুন!",
  "Python Module Updates Available!": "পাইথন মডিউল আপডেট উপলব্ধ!",
  "No updates for Python Modules were available!": "পাইথন মডিউলগুলির জন্য কোনও আপডেট পাওয়া যায়নি!",
- "Python Module updating was canceled!": "পাইথন মডিউল আপডেট করা বাতিল করা হয়েছিল!"
+ "Python Module updating was canceled!": "পাইথন মডিউল আপডেট করা বাতিল করা হয়েছিল!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "এই আপডেট সম্পর্কে তথ্যের জন্য, এই লিঙ্কটি ব্যবহার করুন: https://github.com/EfazDev/orangeblox/releases"
 }

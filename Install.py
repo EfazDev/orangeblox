@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0f
+# v2.3.0g
 # 
 
 # Modules
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0f"}
+    current_version = {"version": "2.3.0g"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1393,13 +1393,13 @@ if __name__ == "__main__":
                 else: printErrorMessage("Something went wrong trying to find the installation folder.")
             else: printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
         else: printErrorMessage("There was an issue while finding the Apps folder for installation.")
+    if overwrited == True: printWarnMessage("--- Updater ---")
+    else: printWarnMessage("--- Installer ---")
     if silent_mode == True:
         instant_install = True
         try: install()
         except Exception as e: printErrorMessage(f"Something went wrong during installation: {str(e)}")
     else:
-        if overwrited == True: printWarnMessage("--- Updater ---")
-        else: printWarnMessage("--- Installer ---")
         if instant_install == True:
             try: install()
             except Exception as e: printErrorMessage(f"Something went wrong during installation: {str(e)}")
@@ -1480,7 +1480,7 @@ if __name__ == "__main__":
                                 elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                                     download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                                     printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
-                                    printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
+                                    printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                                     printSuccessMessage(f"⚠️ Download Location: {download_location}")
                                 elif not (main_config.get("EFlagRobloxBootstrapUpdatesAuthorizationKey", "") == ""):
                                     printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")

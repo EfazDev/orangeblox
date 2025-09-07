@@ -2118,5 +2118,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Pythonモジュールの更新チェックを無効にしますか? (y/n)",
  "Would you like to install the updates to them now?": "今すぐ更新をインストールしますか?",
  "No updates for Python Modules were available!": "Pythonモジュールの更新は利用できませんでした!",
- "Python Module updating was canceled!": "Pythonモジュールの更新がキャンセルされました!"
+ "Python Module updating was canceled!": "Pythonモジュールの更新がキャンセルされました!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "この更新情報については,このリンクを使用してください:https://github.com/EfazDev/orangeblox/releases"
 }

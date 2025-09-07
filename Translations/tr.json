@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Python Modülü güncelleme kontrollerini devre dışı bırakmak ister misiniz? (y/n)",
  "Would you like to install the updates to them now?": "Güncellemeleri şimdi yüklemek ister misiniz?",
  "No updates for Python Modules were available!": "Python Modülleri için güncelleme yoktu!",
- "Python Module updating was canceled!": "Python Modülü güncelleme IPtal edildi!"
+ "Python Module updating was canceled!": "Python Modülü güncelleme IPtal edildi!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "bu Güncelleme hakkında bilgi için bu bağlantıyı kullanın: https://github.com/EfazDev/orangeblox/Releases"
 }

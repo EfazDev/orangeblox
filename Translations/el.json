@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Θέλετε να απενεργοποιήσετε τους ελέγχους ενημέρωσης της μονάδας Python; (y/n)",
  "Would you like to install the updates to them now?": "Θέλετε να εγκαταστήσετε τις ενημερώσεις σε αυτές τώρα;",
  "No updates for Python Modules were available!": "Δεν υπήρχαν ενημερώσεις για μονάδες Python!",
- "Python Module updating was canceled!": "Η ενημέρωση της μονάδας Python ακυρώθηκε!"
+ "Python Module updating was canceled!": "Η ενημέρωση της μονάδας Python ακυρώθηκε!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Για πληροφορίες σχετικά με αυτήν την ενημέρωση, χρησιμοποιήστε αυτόν τον σύνδεσμο: https://github.com/EfazDev/orangeblox/releases"
 }

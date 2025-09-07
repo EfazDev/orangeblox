@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Bạn có muốn tắt kiểm tra cập nhật mô -đun Python không? (y/n)",
  "Would you like to install the updates to them now?": "Bạn có muốn cài đặt các bản cập nhật cho họ bây giờ không?",
  "No updates for Python Modules were available!": "Không có cập nhật cho các mô -đun Python đã có sẵn!",
- "Python Module updating was canceled!": "Cập nhật mô -đun Python đã bị hủy!"
+ "Python Module updating was canceled!": "Cập nhật mô -đun Python đã bị hủy!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "để biết thông tin về bản cập nhật này, hãy sử dụng liên kết này: https://github.com/EfazDev/orangeblox/releases"
 }

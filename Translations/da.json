@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Vil du deaktivere Python -Modulopdateringskontrol? (y/n)",
  "Would you like to install the updates to them now?": "Vil du installere opdateringerne til dem nu?",
  "No updates for Python Modules were available!": "Ingen opdateringer til Python -Moduler var tilgængelige!",
- "Python Module updating was canceled!": "Python -Modulopdatering blev annulleret!"
+ "Python Module updating was canceled!": "Python -Modulopdatering blev annulleret!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ For information om denne opdatering skal du bruge dette link: https://github.com/EfazDev/orangeblox/releases"
 }

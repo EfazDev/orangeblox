@@ -2117,5 +2117,6 @@
  "(*) python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)وحدات Python متاحة الآن لتحديثها! قم بتثبيت التحديث عن طريق فتح القائمة الرئيسية ، والتحقق من تحديثات وحدة Python ثم تثبيت!",
  "Python Module Updates Available!": "تحديثات وحدة بيثون المتاحة!",
  "No updates for Python Modules were available!": "لم تكن هناك تحديثات لوحدات بيثون متاحة!",
- "Python Module updating was canceled!": "تم إلغاء تحديث وحدة بيثون!"
+ "Python Module updating was canceled!": "تم إلغاء تحديث وحدة بيثون!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط: https://github.com/EfazDev/orangeblox/releases"
 }

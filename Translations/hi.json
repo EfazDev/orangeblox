@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "क्या आप पायथन मॉड्यूल अपडेट चेक को अक्षम करना चाहेंगे? (y/n)",
  "Would you like to install the updates to them now?": "क्या आप अब उन पर अपडेट इंस्टॉल करना चाहेंगे?",
  "No updates for Python Modules were available!": "पायथन मॉड्यूल के लिए कोई अपडेट उपलब्ध नहीं था!",
- "Python Module updating was canceled!": "पायथन मॉड्यूल अद्यतन रद्द कर दिया गया था!"
+ "Python Module updating was canceled!": "पायथन मॉड्यूल अद्यतन रद्द कर दिया गया था!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ इस अपडेट के बारे में जानकारी के लिए, इस लिंक का उपयोग करें: https://github.com/EfazDev/orangeblox/releases"
 }

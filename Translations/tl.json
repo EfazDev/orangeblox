@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "Nais mo bang huwag paganahin ang mga tseke ng pag -update ng Module ng python? (y/n)",
  "Would you like to install the updates to them now?": "Nais mo bang i -install ang mga update sa kanila ngayon?",
  "No updates for Python Modules were available!": "Walang magagamit na mga pag -update para sa mga Module ng Python!",
- "Python Module updating was canceled!": "Ang pag -update ng Module ng Python ay nakansela!"
+ "Python Module updating was canceled!": "Ang pag -update ng Module ng Python ay nakansela!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Para sa impormasyon tungkol sa pag -update na ito, gamitin ang link na ito: https://github.com/EfazDev/orangeblox/releases"
 }

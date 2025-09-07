@@ -2117,5 +2117,6 @@
  "Would you like to disable Python Module Update Checks? (y/n)": "کیا آپ ازگر ماڈیول اپ ڈیٹ چیک کو غیر فعال کرنا چاہیں گے؟ (y/n)",
  "Would you like to install the updates to them now?": "کیا آپ اب ان کے لئے اپ ڈیٹ انسٹال کرنا چاہیں گے؟",
  "No updates for Python Modules were available!": "ازگر ماڈیولز کے لئے کوئی تازہ کاری دستیاب نہیں تھی!",
- "Python Module updating was canceled!": "ازگر ماڈیول کی تازہ کاری منسوخ کردی گئی تھی!"
+ "Python Module updating was canceled!": "ازگر ماڈیول کی تازہ کاری منسوخ کردی گئی تھی!",
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "the اس اپ ڈیٹ کے بارے میں معلومات کے ل this ، اس لنک کا استعمال کریں: https://github.com/EfazDev/orangeblox/relases"
 }
