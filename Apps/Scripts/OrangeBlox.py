@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.0g"}
+    current_version = {"version": "2.3.0h"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -332,8 +332,11 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
-        user_folder_name = os.path.basename(os.path.expanduser("~"))
+        user_folder = pip_class.getUserFolder()
+        user_folder_name = os.path.basename(pip_class.getUserFolder())
+        orangeblox_library = os.path.join(user_folder, "Library", "OrangeBlox")
 
+        if not os.path.exists(orangeblox_library): os.makedirs(orangeblox_library)
         printMainMessage("Finding Python Executable..")
         if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
         else:
@@ -353,16 +356,14 @@ if __name__ == "__main__":
         venv_path = ""
         if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
             printMainMessage("Checking Virtual Environments..")
-            venv_path = os.path.join(app_path, "VirtualEnvironments")
-            if not os.path.exists(venv_path): os.makedirs(venv_path)
-            venv_path = os.path.join(venv_path, user_folder_name)
+            venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = f"VirtualEnvironments/{user_folder_name}/bin/activate"
+                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
-            else: printSuccessMessage("Found Virtual Environment!"); sour_path = f"VirtualEnvironments/{user_folder_name}/bin/activate"
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else f'VirtualEnvironments/{user_folder_name}/bin/python3'} Main.py && exit"
+            else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -410,7 +411,7 @@ if __name__ == "__main__":
                 end if
             end try
             activate
-            do shell script "echo " & terminal_id & " > " & quoted form of "{app_path}/Terminal_{generated_app_id}"
+            do shell script "echo " & terminal_id & " > " & quoted form of "{orangeblox_library}/Terminal_{generated_app_id}"
             activate
             
             repeat
@@ -469,15 +470,15 @@ if __name__ == "__main__":
                 printMainMessage("Starting Terminal ID Loop..")
                 while ended == False:
                     try:
-                        if os.path.exists(f"{app_path}/Terminal_{generated_app_id}"):
-                            with open(f"{app_path}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
+                        if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"):
+                            with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
                                 try:
                                     cont = f.read().replace(" ", "").replace("\n", "")
                                     if cont.isnumeric() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                         activateTerminalWindow()
                                 except Exception as e: printDebugMessage(str(e))
-                            if os.path.exists(f"{app_path}/Terminal_{generated_app_id}"): os.remove(f"{app_path}/Terminal_{generated_app_id}")
+                            if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"): os.remove(f"{orangeblox_library}/Terminal_{generated_app_id}")
                     except Exception as e: printErrorMessage(f"There was an issue getting Terminal ID: \n{trace()}")
                     time.sleep(0.05)
             def activateTerminalWindow(event=""): 
@@ -1007,7 +1008,7 @@ if __name__ == "__main__":
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
                                 add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
                                 add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
-                                if os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
+                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
                                 view_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("View", None, "")
@@ -1210,7 +1211,7 @@ if __name__ == "__main__":
                             def force_load_logs(self): self.threadingloop_("oranges")
                             def validateMenuItem_(self, menuItem): return True
                             def unlock_app_lock(self):
-                                if os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                             def instant_debug_window(self): self.button_click_count = 9; self.on_window_activate("oranges")
                             def show_about_menu(self):
                                 try:
@@ -1460,16 +1461,16 @@ if __name__ == "__main__":
             threading.Thread(target=startBootstrap, daemon=False).start()
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
             if app_count < 1: 
-                with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                 createObjcAppReplication()
-                try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                 except Exception: printMainMessage("Unable to remove GUI app holder")
             else:
-                while ended == False and os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): time.sleep(0.5)
+                while ended == False and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): time.sleep(0.5)
                 if ended == False: 
-                    with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                    with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                     createObjcAppReplication()
-                    try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                    try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                     except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0g
+# v2.3.0h
 # 
 
 # Python Modules
@@ -52,12 +52,13 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0g"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0h"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
     macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
+    orangeblox_library: str = os.path.join(user_folder, "Library", "OrangeBlox")
     flag_types: typing.Dict[str, str] = {
         "EFlagRobloxStudioFlags": "dict",
         "EFlagRobloxPlayerFlags": "dict",
@@ -547,7 +548,11 @@ if __name__ == "__main__":
     def generateCodesignCommand(pa, iden, entitlements: str=None): return [["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", pa], ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", pa], ["/usr/bin/xattr", "-cr", pa], ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"] + (["--entitlements", entitlements] if entitlements else []) + ["-s", iden, pa]]
     def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
     def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(macos_app_path, "Contents", "MacOS", "OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
-    def generateFileKey(id: str): return os.path.join(cur_path, f"{id}_{user_folder_name}")
+    def generateFileKey(id: str, ext: str=""): 
+        if main_os == "Darwin":
+            makedirs(orangeblox_library)
+            return os.path.join(orangeblox_library, f"{id}{ext}")
+        return os.path.join(cur_path, f"{id}_{user_folder_name}{ext}")
     def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False): 
         main_ui_options = {}
         options = sorted(options, key=lambda x: x["index"])
@@ -689,6 +694,12 @@ if __name__ == "__main__":
         if main_config and main_config.get("EFlagEnableDebugMode") == True: pip_class.debug = True
         if waitForInternet() == True: printWarnMessage("-----------")
         versions_folder = os.path.join(cur_path, "Versions")
+        if main_os == "Darwin": 
+            makedirs(orangeblox_library)
+            versions_folder = os.path.join(orangeblox_library, "Versions")
+            if not os.path.exists(os.path.join(orangeblox_library, "Mods")): shutil.copytree(os.path.join(cur_path, "Mods"), os.path.join(orangeblox_library, "Mods"))
+            makedirs(versions_folder)
+            mods_folder = os.path.join(orangeblox_library, "Mods")
         if not (main_os == "Windows" or main_os == "Darwin"):
             printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
             input("> ")
@@ -791,7 +802,6 @@ if __name__ == "__main__":
         RFFI.windows_versions_dir = versions_folder
         RFFI.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         RFFI.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
-        if not os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')) and main_os == "Darwin": versions_folder = os.path.join(cur_path, "Versions", user_folder_name)
         RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
         RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
         RFFI.macOS_installedPath = os.path.join(versions_folder)
@@ -1122,12 +1132,17 @@ if __name__ == "__main__":
             cache_detected = []
             for dirpath, dirnames, filenames in os.walk(cur_path):
                 if "__pycache__" in dirnames: cache_detected.append(os.path.join(dirpath, "__pycache__"))
+            if main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "VirtualEnvironments")): cache_detected.append(os.path.join(cur_path, "VirtualEnvironments"))
             return cache_detected
         def appLocksAvailableToClear():
             locks_detected = []
             for i in os.listdir(cur_path):
                 if i.endswith(f"_{user_folder_name}"): locks_detected.append(os.path.join(cur_path, i))
                 elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(cur_path, i))
+            if main_os == "Darwin" and os.path.exists(orangeblox_library):
+                for i in os.listdir(orangeblox_library):
+                    if not "." in i and os.path.isfile(os.path.join(orangeblox_library, i)): locks_detected.append(os.path.join(orangeblox_library, i))
+                    elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(orangeblox_library, i))
             return locks_detected
         def bootstrapImagesAvailableToClear():
             images_detected = []
@@ -1141,12 +1156,10 @@ if __name__ == "__main__":
                 elif i == "GothamFont": unneeded_detected.append(os.path.join(mods_folder, "Mods", i))
             return unneeded_detected
         def robloxFilesAvailableToClear():
-            vers_fold = os.path.join(cur_path, "Versions")
             files = []
-            for i in os.listdir(vers_fold):
-                if i.endswith(".zip"): files.append(os.path.join(vers_fold, i))
-                elif main_os == "Darwin" and os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')) and os.path.isdir(os.path.join(vers_fold, i)) and os.path.exists(os.path.join(pip_class.getUserFolder(), "..", i)): files.append(os.path.join(vers_fold, i))
-                elif main_os == "Darwin" and (not os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))) and os.path.isdir(os.path.join(vers_fold, i)) and not os.path.exists(os.path.join(pip_class.getUserFolder(), "..", i)): files.append(os.path.join(vers_fold, i))
+            for i in os.listdir(versions_folder):
+                if i.endswith(".zip"): files.append(os.path.join(versions_folder, i))
+            if main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "Versions")): files.append(os.path.join(cur_path, "Versions"))
             return files
         def getTotalClearableSize(): return getRobloxLogFolderSize(static=True) + getFolderSize(orangeblox_log_path, formatWithAbbreviation=False) + getFileSize(installer_paths, formatWithAbbreviation=False) + getFileSize(pythonCacheAvailableToClear(), formatWithAbbreviation=False) + getFileSize(bootstrapImagesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(unneededModsAvailableToClear(), formatWithAbbreviation=False) + getFileSize(robloxFilesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(appLocksAvailableToClear(), formatWithAbbreviation=False)
         def continueToClearLogs(clearAll=False): # Clear All Roblox Logs
@@ -1754,30 +1767,6 @@ if __name__ == "__main__":
                     elif isNo(d) == True:
                         main_config["EFlagEnableSkipModificationMode"] = False
                         printDebugMessage("User selected: False")
-
-                    if pip_class.getIfLoggedInIsMacOSAdmin():
-                        printMainMessage("Would you like to disable Roblox Overlap Prevention? (y/n)")
-                        printYellowMessage("It allows the prevention of overlapping Roblox apps throughout all users of this computer.")
-                        printYellowMessage("It is suggested that you keep Roblox Overlap Prevention enabled in order to prevent issues.")
-                        printMainMessage(f"Current Setting: {os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))}")
-                        d = input("> ")
-                        if isYes(d) == True:
-                            with open(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'), "w", encoding="utf-8") as f: f.write(f"Enabled by user: {user_folder_name}")
-                            printDebugMessage("User selected: True")
-                            saveSettings()
-                            printMainMessage("Please restart OrangeBlox in order to continue with this setup!")
-                            input("> ")
-                            sys.exit(0)
-                        elif isRequestClose(d) == True:
-                            printMainMessage("Closing settings..")
-                            return ts("Settings was closed.")
-                        elif isNo(d) == True:
-                            if os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')): os.remove(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))
-                            printDebugMessage("User selected: False")
-                            saveSettings()
-                            printMainMessage("Please restart OrangeBlox in order to continue with this setup!")
-                            input("> ")
-                            sys.exit(0)
 
                 printMainMessage("Would you like to disable Roblox Reinstall checks? (y/n)")
                 printMainMessage("This may ignore when a Roblox reinstall is needed due to signing.")
@@ -2485,8 +2474,8 @@ if __name__ == "__main__":
                 time.sleep(1)
             
             last_pinged_friend_list = {}
-            if os.path.exists(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json")):
-                with open(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+            if os.path.exists(os.path.join(generateFileKey("CachedFriendsList", ext=".json"))):
+                with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
             if last_pinged_friend_list.get(str(friend_check_id)):
                 for i in last_pinged_friend_list.get(str(friend_check_id)):
                     found_friend = False
@@ -2520,7 +2509,7 @@ if __name__ == "__main__":
                     except Exception as e: pass
                 last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
             else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-            with open(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
+            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
         except Exception as e:
             printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
             unfriended_friends = []
@@ -3379,8 +3368,8 @@ if __name__ == "__main__":
                         printSuccessMessage("Successfully synced all mods from installation folder!")
                     elif opt["index"] == 1000000:
                         printMainMessage("Opening Mods Folder..")
-                        if main_os == "Darwin": re = subprocess.run(["/usr/bin/open", os.path.join(mods_folder, 'Mods')])
-                        else: re = subprocess.run(f"start {os.path.join(mods_folder, 'Mods')}", shell=True)
+                        if main_os == "Darwin": re = subprocess.run(["/usr/bin/open", os.path.join(mods_folder)])
+                        else: re = subprocess.run(f"start {os.path.join(mods_folder)}", shell=True)
                         if re.returncode == 0: printSuccessMessage("Successfully opened Mods folder!")
                         else: printErrorMessage("Unable to open Mods folder!")
                     elif opt["index"] == 1000001:
@@ -5618,7 +5607,7 @@ if __name__ == "__main__":
 
         # Extra Functions
         def unfriendCheckLoop():
-            alleged_path = os.path.join(cur_path, f"UnfriendCheckLoopLock_{user_folder_name}")
+            alleged_path = generateFileKey("UnfriendCheckLoopLock")
             if os.path.exists(alleged_path):
                 with open(alleged_path, "r") as f: pid_str = f.read()
                 if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
@@ -5654,8 +5643,8 @@ if __name__ == "__main__":
                         time.sleep(5)
                     if friend_list_req.ok:
                         last_pinged_friend_list = {}
-                        if os.path.exists(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json")):
-                            with open(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+                        if os.path.exists(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json"))):
+                            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
                         if last_pinged_friend_list.get(str(friend_check_id)):
                             for i in last_pinged_friend_list.get(str(friend_check_id)):
                                 found_friend = False
@@ -5687,7 +5676,7 @@ if __name__ == "__main__":
                                 except Exception as e: pass
                             last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
                         else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-                        with open(os.path.join(cur_path, f"CachedFriendsList_{user_folder_name}.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
+                        with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
                 except Exception as e:
                     printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
                     unfriended_friends = []

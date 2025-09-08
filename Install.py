@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0g
+# v2.3.0h
 # 
 
 # Modules
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0g"}
+    current_version = {"version": "2.3.0h"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -684,21 +684,14 @@ if __name__ == "__main__":
     RFFI.orangeblox_mode = True
     if expected_app_path and (main_os == "Darwin" and os.path.exists(os.path.join(expected_app_paths[main_os][1], "Contents", "Resources", "Versions")) or os.path.exists(os.path.join(expected_app_paths[main_os][0], "Versions"))):
         versions_folder = os.path.join(expected_app_paths[main_os][0], "Versions")
-        if main_os == "Darwin": versions_folder = os.path.join(expected_app_paths[main_os][1], "Contents", "Resources", "Versions")
+        if main_os == "Darwin": versions_folder = os.path.join(pip_class.getUserFolder(), "Library", "OrangeBlox", "Versions")
         main_config = getSettings(directory=os.path.join(expected_app_paths[main_os][0], "Configuration.json"))
         RFFI.windows_versions_dir = versions_folder
         RFFI.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         RFFI.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
-        if not os.path.exists(os.path.join(versions_folder, 'DisableRobloxOverlapping')) and main_os == "Darwin":
-            user_folder_name = os.path.basename(os.path.expanduser("~"))
-            versions_folder = os.path.join(versions_folder, user_folder_name)
-            RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
-            RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
-            RFFI.macOS_installedPath = os.path.join(versions_folder)
-        else:
-            RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
-            RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
-            RFFI.macOS_installedPath = os.path.join(versions_folder)
+        RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
+        RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
+        RFFI.macOS_installedPath = os.path.join(versions_folder)
         installed_roblox_version = handler.getCurrentClientVersion()
         if installed_roblox_version["success"] == True:
             installed_roblox_studio_version = handler.getCurrentClientVersion(studio=True)
