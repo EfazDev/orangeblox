@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Souhaitez-vous leur installer les mises à jour maintenant?",
  "No updates for Python Modules were available!": "Aucune mise à jour pour les Modules Python n'était disponible!",
  "Python Module updating was canceled!": "La mise à jour du Module Python a été annulée!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Pour plus d'informations sur cette mise à jour, utilisez ce lien: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Pour plus d'informations sur cette mise à jour, utilisez ce lien: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "Installation de certificats..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Certificats de signature de code EfazDev installés avec succès!",
+ "Unable to install certificates!": "Impossible d'installer des certificats!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Souhaitez-vous installer le certificat de sécurité d'Efaz (EfazDev ECC Security CA)? (Cela peut valider la sécurité) (y/n)",
+ "This is apart of code-signing and may affect security.": "Ceci est en dehors de la signature du code et peut affecter la sécurité..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Souhaitez-vous installer la dernière version d'EfazDev ECC Security CA?"
 }

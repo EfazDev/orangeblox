@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Хотите установить обновления для них сейчас?",
  "No updates for Python Modules were available!": "Никаких обновлений для модулей Python не было доступно!",
  "Python Module updating was canceled!": "Обновление модуля Python было отменено!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ Для получения информации об этом обновлении используйте эту ссылку: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ Для получения информации об этом обновлении используйте эту ссылку: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "Установка сертификатов..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Успешно установил сертификаты подписания кода EfazDev!",
+ "Unable to install certificates!": "Невозможно установить сертификаты!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Хотите установить сертификат CA Security CA EFAZ (EfazDev ECC Security CA)? (Это может подтвердить безопасность) (y/n)",
+ "This is apart of code-signing and may affect security.": "Это отдельно от подписания кода и может повлиять на безопасность..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Вы бы позволили установить последнюю версию EfazDev ECC Security CA?"
 }

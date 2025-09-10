@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Გსურთ ახლა დააინსტალიროთ განახლებები?",
  "No updates for Python Modules were available!": "Პითონის მოდულების განახლებები არ იყო ხელმისაწვდომი!",
  "Python Module updating was canceled!": "Python მოდულის განახლება გაუქმდა!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ ამ განახლების შესახებ ინფორმაციისთვის გამოიყენეთ ეს ბმული: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ ამ განახლების შესახებ ინფორმაციისთვის გამოიყენეთ ეს ბმული: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "Სერთიფიკატების დაყენება..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Წარმატებით დააინსტალირეთ EfazDev კოდის ხელმოწერის სერთიფიკატები!",
+ "Unable to install certificates!": "Შეუძლებელია სერთიფიკატების დაყენება!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Გსურთ დააინსტალიროთ EFAZ- ის უსაფრთხოების CA სერთიფიკატი (EfazDev ECC Security CA)? (ამან შეიძლება დაადასტუროს უსაფრთხოება) (y/n)",
+ "This is apart of code-signing and may affect security.": "Ეს არის კოდების ხელმოწერის გარდა და შეიძლება გავლენა მოახდინოს უსაფრთხოებაზე..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Თქვენ ჩართავთ EfazDev ECC Security CA- ის უახლესი ვერსიის დაყენებას?"
 }

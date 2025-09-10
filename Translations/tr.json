@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Güncellemeleri şimdi yüklemek ister misiniz?",
  "No updates for Python Modules were available!": "Python Modülleri için güncelleme yoktu!",
  "Python Module updating was canceled!": "Python Modülü güncelleme IPtal edildi!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "bu Güncelleme hakkında bilgi için bu bağlantıyı kullanın: https://github.com/EfazDev/orangeblox/Releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "bu Güncelleme hakkında bilgi için bu bağlantıyı kullanın: https://github.com/EfazDev/orangeblox/Releases",
+ "Installing Certificates..": "Sertifikalar yükleme..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Başarılı bir şekilde yüklü EfazDev Kod İmzalama Sertifikaları!",
+ "Unable to install certificates!": "Sertifikalar yüklenemiyor!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "EFAZ'ın Güvenlik CA sertifikasını (EfazDev ECC Security CA) yüklemek ister misiniz? (Bu güvenliği doğrulayabilir) (y/n)",
+ "This is apart of code-signing and may affect security.": "Bu kod imzalamanın dışında ve güvenliği etkileyebilir..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "EfazDev ECC Security CA'nın en son sürümünü yüklemeyi etkinleştirir misiniz?"
 }

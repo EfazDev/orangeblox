@@ -2118,5 +2118,11 @@
  "Python Module Updates Available!": "تحديثات وحدة بيثون المتاحة!",
  "No updates for Python Modules were available!": "لم تكن هناك تحديثات لوحدات بيثون متاحة!",
  "Python Module updating was canceled!": "تم إلغاء تحديث وحدة بيثون!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "تثبيت الشهادات..",
+ "Successfully installed EfazDev Code-signing Certificates!": "تم تثبيت شهادات توقيع رمز EfazDev بنجاح!",
+ "Unable to install certificates!": "غير قادر على تثبيت الشهادات!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "هل ترغب في تثبيت شهادة CA الخاصة بـ EFAZ (EfazDev ECC Security CA)؟ (هذا قد يتحقق من صحة الأمان) (y/n)",
+ "This is apart of code-signing and may affect security.": "هذا بصرف النظر عن توقيع الكود وقد يؤثر على الأمن..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "هل يمكنك تمكين تثبيت أحدث إصدار من EfazDev ECC Security CA؟"
 }

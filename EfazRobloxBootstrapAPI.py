@@ -25,7 +25,7 @@ OrangeAPI: import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 from typing import Union
 
 # Variables
-current_version = {"version": "2.3.0h"}
+current_version = {"version": "2.3.0i"}
 requested_functions = {}
 cached_information = {}
 debug_mode = False

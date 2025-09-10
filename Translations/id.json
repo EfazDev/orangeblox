@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Apakah Anda ingin menginstal pembaruan kepada mereka sekarang?",
  "No updates for Python Modules were available!": "Tidak ada pembaruan untuk Modul Python yang tersedia!",
  "Python Module updating was canceled!": "Pembaruan Modul Python dibatalkan!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Untuk informasi tentang pembaruan ini, gunakan tautan ini: https://github.com/EfazDev/oraneblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Untuk informasi tentang pembaruan ini, gunakan tautan ini: https://github.com/EfazDev/oraneblox/releases",
+ "Installing Certificates..": "Menginstal sertifikat..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Sertifikat penandatanganan kode EfazDev yang berhasil diinstal!",
+ "Unable to install certificates!": "Tidak dapat menginstal sertifikat!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Apakah Anda ingin menginstal CA Security CA (EfazDev ECC Security CA)? (Ini dapat memvalidasi keamanan) (Y/T)",
+ "This is apart of code-signing and may affect security.": "Ini terpisah dari penandatanganan kode dan dapat memengaruhi keamanan..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Apakah Anda akan mengaktifkan menginstal versi terbaru EfazDev ECC Security CA?"
 }

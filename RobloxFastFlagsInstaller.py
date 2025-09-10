@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.3.8
+# v2.3.9
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -29,7 +29,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.3.8"
+script_version = "2.3.9"
 def getLocalAppData():
     import platform
     import os
@@ -731,6 +731,7 @@ class pip:
         import os
         import tempfile
         import re
+        import json
         import platform
         import importlib
         import importlib.metadata
@@ -755,6 +756,7 @@ class pip:
         self._shutil = shutil
         self._urllib_parse = urllib.parse
         self._time = time
+        self._json = json
         self._mmap = mmap
 
         self._main_os = platform.system()
@@ -925,13 +927,21 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    def github(self, packages: typing.List[str]):
+    def updates(self, packages: typing.List[str]=[]):
+        sub = self._subprocess.run([self.executable, "-m", "pip", "list", "--outdated", "--format=json"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
+        json_str = sub.stdout.decode().replace("\r", "")
+        try:
+            tried = self._json.loads(json_str)
+            if packages and len(packages) > 0: return {"success": True, "packages": [i for i in tried if i["name"] in packages]}
+            return {"success": True, "packages": tried}
+        except: return {"success": False, "packages": []}
+    def info(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
-                links = {}
+                information = {}
                 for i in generated_list:
                     urll = f"https://pypi.org/pypi/{i}/json"
                     if self.getIfConnectedToInternet() == False: return {"success": False}
@@ -939,11 +949,27 @@ class pip:
                     if response.ok:
                         data = response.json
                         info = data["info"]
-                        url = info.get("project_urls", {}).get("Source") or info.get("home_page")
-                        if url: links[i] = url
-                return {"success": True, "repositories": links}
-            except Exception as e:
-                return {"success": False}
+                        information[i] = info
+                return {"success": True, "data": information}
+            except Exception as e: return {"success": False}
+        return {"success": False}
+    def github(self, packages: typing.List[str]):
+        generated_list = []
+        for i in packages:
+            if type(i) is str: generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                informed = self.info(generated_list)
+                if informed["success"] == True:
+                    informed = informed["data"]
+                    links = {}
+                    for i in generated_list:
+                        if informed.get(i):
+                            info = informed[i]
+                            url = info.get("project_urls", {}).get("Source") or info.get("home_page")
+                            if url: links[i] = url
+                    return {"success": True, "repositories": links}
+            except Exception as e: return {"success": False}
         return {"success": False}
     
     # Python Management
@@ -1898,7 +1924,7 @@ class Handler:
                 if "[FLog::Output] LoadClientSettingsFromLocal" in line: self.submitEvent(eventName="onLoadedFFlags", data=line, isLine=True)
                 elif "[FLog::Output] ! Joining game" in line:
                     def generate_arg():
-                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+\.\d+\.\d+\.\d+)"
+                        pattern = r"'([a-f0-9-]+)' place (\d+) at (\d+)"
                         match = re.search(pattern, line)
                         if match:
                             jobId = match.group(1)
@@ -1994,11 +2020,12 @@ class Handler:
                     
                     generated_data = generate_arg()
                     if generated_data:
-                        self.submitEvent(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
-                        self.submitEvent(eventName="onGameJoined", data={
-                            "ip": generated_data["connected_address"],
-                            "port": generated_data["connected_port"]
-                        }, isLine=False)
+                        if not (generated_data["connected_address"] == "127.0.0.1"):
+                            self.submitEvent(eventName="onGameUDMUXLoaded", data=generated_data, isLine=False)
+                            self.submitEvent(eventName="onGameJoined", data={
+                                "ip": generated_data["connected_address"],
+                                "port": generated_data["connected_port"]
+                            }, isLine=False)
                 elif "[FLog::Output] About to exit the application, doing cleanup." in line:
                     if self.roblox_starter_launched == False:
                         self.submitEvent(eventName="onRobloxExit", data=line)

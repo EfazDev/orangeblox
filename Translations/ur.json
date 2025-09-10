@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "کیا آپ اب ان کے لئے اپ ڈیٹ انسٹال کرنا چاہیں گے؟",
  "No updates for Python Modules were available!": "ازگر ماڈیولز کے لئے کوئی تازہ کاری دستیاب نہیں تھی!",
  "Python Module updating was canceled!": "ازگر ماڈیول کی تازہ کاری منسوخ کردی گئی تھی!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "the اس اپ ڈیٹ کے بارے میں معلومات کے ل this ، اس لنک کا استعمال کریں: https://github.com/EfazDev/orangeblox/relases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "the اس اپ ڈیٹ کے بارے میں معلومات کے ل this ، اس لنک کا استعمال کریں: https://github.com/EfazDev/orangeblox/relases",
+ "Installing Certificates..": "سرٹیفکیٹ انسٹال کرنا..",
+ "Successfully installed EfazDev Code-signing Certificates!": "کامیابی کے ساتھ EfazDev کوڈ پر دستخط کرنے والے سرٹیفکیٹ نصب ہیں!",
+ "Unable to install certificates!": "سرٹیفکیٹ انسٹال کرنے سے قاصر!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "کیا آپ EFAZ کا سیکیورٹی CA سرٹیفکیٹ (EfazDev ECC سیکیورٹی CA) انسٹال کرنا چاہیں گے؟ (یہ سیکیورٹی کی توثیق کرسکتا ہے) (y/n)",
+ "This is apart of code-signing and may affect security.": "یہ کوڈ پر دستخط کرنے کے علاوہ ہے اور سیکیورٹی کو متاثر کرسکتا ہے۔",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "کیا آپ افازیڈ ای سی سی سیکیورٹی سی اے کا تازہ ترین ورژن انسٹال کرنے کے قابل بنائیں گے؟"
 }

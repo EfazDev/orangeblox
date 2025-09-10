@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Θέλετε να εγκαταστήσετε τις ενημερώσεις σε αυτές τώρα;",
  "No updates for Python Modules were available!": "Δεν υπήρχαν ενημερώσεις για μονάδες Python!",
  "Python Module updating was canceled!": "Η ενημέρωση της μονάδας Python ακυρώθηκε!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Για πληροφορίες σχετικά με αυτήν την ενημέρωση, χρησιμοποιήστε αυτόν τον σύνδεσμο: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️ Για πληροφορίες σχετικά με αυτήν την ενημέρωση, χρησιμοποιήστε αυτόν τον σύνδεσμο: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "Εγκατάσταση πιστοποιητικών..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Εγκατεστημένα με επιτυχία τα πιστοποιητικά υπογραφής κώδικα EfazDev!",
+ "Unable to install certificates!": "Δεν είναι δυνατή η εγκατάσταση πιστοποιητικών!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Θα θέλατε να εγκαταστήσετε το πιστοποιητικό ασφαλείας CA της EFAZ (EfazDev ECC Security CA); (Αυτό μπορεί να επικυρώσει την ασφάλεια) (y/n)",
+ "This is apart of code-signing and may affect security.": "Αυτό είναι εκτός από την υπογραφή κώδικα και μπορεί να επηρεάσει την ασφάλεια..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Θα ενεργοποιούσατε την εγκατάσταση της τελευταίας έκδοσης της EfazDev ECC Security CA;"
 }

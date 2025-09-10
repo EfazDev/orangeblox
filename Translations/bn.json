@@ -2118,5 +2118,11 @@
  "Python Module Updates Available!": "পাইথন মডিউল আপডেট উপলব্ধ!",
  "No updates for Python Modules were available!": "পাইথন মডিউলগুলির জন্য কোনও আপডেট পাওয়া যায়নি!",
  "Python Module updating was canceled!": "পাইথন মডিউল আপডেট করা বাতিল করা হয়েছিল!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "এই আপডেট সম্পর্কে তথ্যের জন্য, এই লিঙ্কটি ব্যবহার করুন: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "এই আপডেট সম্পর্কে তথ্যের জন্য, এই লিঙ্কটি ব্যবহার করুন: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "শংসাপত্র ইনস্টল করা..",
+ "Successfully installed EfazDev Code-signing Certificates!": "সফলভাবে ইফাজদেব কোড-স্বাক্ষরকারী শংসাপত্রগুলি ইনস্টল করা হয়েছে!",
+ "Unable to install certificates!": "শংসাপত্র ইনস্টল করতে অক্ষম!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "আপনি কি ইএফএজেডের সুরক্ষা সিএ শংসাপত্র (ইফাজদেব ইসিসি সুরক্ষা সিএ) ইনস্টল করতে চান? (এটি সুরক্ষা যাচাই করতে পারে) (ওয়াই/এন)",
+ "This is apart of code-signing and may affect security.": "এটি কোড-স্বাক্ষর থেকে পৃথক এবং সুরক্ষাকে প্রভাবিত করতে পারে।",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "আপনি কি ইফাজদেব ইসিসি সুরক্ষা সিএর সর্বশেষ সংস্করণ ইনস্টল করতে সক্ষম করবেন?"
 }

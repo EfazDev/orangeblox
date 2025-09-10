@@ -2119,5 +2119,11 @@
  "Would you like to install the updates to them now?": "今すぐ更新をインストールしますか?",
  "No updates for Python Modules were available!": "Pythonモジュールの更新は利用できませんでした!",
  "Python Module updating was canceled!": "Pythonモジュールの更新がキャンセルされました!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "この更新情報については,このリンクを使用してください:https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "この更新情報については,このリンクを使用してください:https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "証明書のインストール..",
+ "Successfully installed EfazDev Code-signing Certificates!": "EfazDev Code-SINGINE証明書を正常にインストールしました!",
+ "Unable to install certificates!": "証明書をインストールできません!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "EFAZのセキュリティCA証明書(EfazDev ECC Security CA)をインストールしますか? (これはセキュリティを検証するかもしれません)(y/n)",
+ "This is apart of code-signing and may affect security.": "これはコード署名の一部であり,セキュリティに影響を与える可能性があります..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "EfazDev ECC Security CAの最新バージョンをインストールできますか?"
 }

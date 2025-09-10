@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "您想立即將更新安裝到它們嗎?",
  "No updates for Python Modules were available!": "沒有有關Python模塊的更新!",
  "Python Module updating was canceled!": "Python模塊更新被取消!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️有關此更新的信息,請使用此鏈接:https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠️有關此更新的信息,請使用此鏈接:https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "安裝證書..",
+ "Successfully installed EfazDev Code-signing Certificates!": "成功安裝了EfazDev代碼簽名證書!",
+ "Unable to install certificates!": "無法安裝證書!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "您想安裝EFAZ的安全CA證書(EfazDev ECC安全性CA)嗎? (這可能會驗證安全)(y/n)",
+ "This is apart of code-signing and may affect security.": "這是代碼簽名的一部分,可能會影響安全性..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "您會啟用安裝最新版本的EfazDev ECC安全性CA嗎?"
 }

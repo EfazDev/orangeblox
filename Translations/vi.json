@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "Bạn có muốn cài đặt các bản cập nhật cho họ bây giờ không?",
  "No updates for Python Modules were available!": "Không có cập nhật cho các mô -đun Python đã có sẵn!",
  "Python Module updating was canceled!": "Cập nhật mô -đun Python đã bị hủy!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "để biết thông tin về bản cập nhật này, hãy sử dụng liên kết này: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "để biết thông tin về bản cập nhật này, hãy sử dụng liên kết này: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "Cài đặt chứng chỉ..",
+ "Successfully installed EfazDev Code-signing Certificates!": "Đã cài đặt thành công các chứng chỉ ký mã EfazDev!",
+ "Unable to install certificates!": "Không thể cài đặt chứng chỉ!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "Bạn có muốn cài đặt chứng chỉ CA bảo mật của EFAZ (EfazDev ECC Security CA) không? (Điều này có thể xác nhận bảo mật) (y/n)",
+ "This is apart of code-signing and may affect security.": "Điều này là ngoài ký hiệu mã và có thể ảnh hưởng đến bảo mật..",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "Bạn có cho phép cài đặt phiên bản mới nhất của EfazDev ECC Security CA không?"
 }

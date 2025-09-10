@@ -19,8 +19,8 @@ python -m nuitka ^
     --msvc=latest ^
     --company-name=EfazDev ^
     --product-name=OrangeBlox ^
-    --file-version=2.3.0h ^
-    --product-version=2.3.0h ^
+    --file-version=2.3.0i ^
+    --product-version=2.3.0i ^
     --file-description="OrangeBlox" ^
     --copyright="Copyright (c) EfazDev" ^
     --output-dir="Apps/Building" ^

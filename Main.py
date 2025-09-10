@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0h
+# v2.3.0i
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0h"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0i"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -69,6 +69,7 @@ if __name__ == "__main__":
         "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+        "EFlagInstallEfazDevECCCertificates": "bool",
         "EFlagDisableDeleteOtherOSApps": "bool",
         "EFlagAvailableInstalledDirectories": "dict",
         "EFlagDisableURLSchemeInstall": "bool",
@@ -440,6 +441,7 @@ if __name__ == "__main__":
                         if "import OrangeAPI" in mod_script_text: 
                             for mod_line in mod_script_text.splitlines():
                                 if mod_line.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
+                                elif mod_line.startswith("from OrangeAPI"): mod_script_text = mod_script_text.replace("from OrangeAPI", "#from OrangeAPI")
                         if "EfazRobloxBootstrapAPI()" in mod_script_text or "import EfazRobloxBootstrapAPI" in mod_script_text or "from EfazRobloxBootstrapAPI" in mod_script_text: mod_script_text = mod_script_text.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                         if "from OrangeAPI import OrangeAPI;" in mod_script_text or " = OrangeAPI()" in mod_script_text: mod_script_text = mod_script_text.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                         if "import RobloxFastFlagsInstaller" in mod_script_text: mod_script_text = mod_script_text.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
@@ -1646,9 +1648,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config[fflag] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config[fflag] = False
                     printDebugMessage("User selected: False")
@@ -1670,9 +1670,7 @@ if __name__ == "__main__":
                     printYellowMessage("2. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
                     printYellowMessage("3. After Roblox versions 0.677+, Roblox has issued a new patch on multi-instancing that closes Roblox after a certain unknown time.")
                     printYellowMessage("4. Multi-Instances may be deflicted depending if one of your accounts are assigned to a different Roblox version.")
-                elif isRequestClose(c) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(c) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(c) == True:
                     main_config["EFlagEnableDuplicationOfClients"] = False
                     printDebugMessage("User selected: False")
@@ -1697,9 +1695,7 @@ if __name__ == "__main__":
                     printMainMessage("Input the start arguments to use when running Roblox!")
                     main_config["EFlagRobloxPlayerArguments"] = input("> ")
                     printDebugMessage(f'User selected: {main_config.get("EFlagRobloxPlayerArguments")}')
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagRobloxPlayerArguments"] = None
                     printDebugMessage("User selected: None")
@@ -1712,9 +1708,7 @@ if __name__ == "__main__":
                         printMainMessage("Input the start arguments to use when running Roblox Studio!")
                         main_config["EFlagRobloxStudioArguments"] = input("> ")
                         printDebugMessage(f'User selected: {main_config.get("EFlagRobloxStudioArguments")}')
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagRobloxStudioArguments"] = None
                         printDebugMessage("User selected: None")
@@ -1746,9 +1740,7 @@ if __name__ == "__main__":
                         if isYes(d) == True:
                             main_config["EFlagRobloxUnfriendCheckUserID"] = req_int()
                             printDebugMessage("User selected: True")
-                        elif isRequestClose(d) == True:
-                            printMainMessage("Closing settings..")
-                            return ts("Settings was closed.")
+                        elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     else: main_config["EFlagRobloxUnfriendCheckUserID"] = req_int()
 
                 if main_os == "Darwin":
@@ -1761,9 +1753,7 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagEnableSkipModificationMode"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagEnableSkipModificationMode"] = False
                         printDebugMessage("User selected: False")
@@ -1785,9 +1775,7 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagLimitAPIDocsLocalization"] = "en-us"
                         printDebugMessage(f'User selected: {main_config.get("EFlagLimitAPIDocsLocalization")}')
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagLimitAPIDocsLocalization"] = None
                         printDebugMessage("User selected: None")
@@ -1916,9 +1904,7 @@ if __name__ == "__main__":
                         if d.startswith("https://discord.com/api/webhooks/"):
                             printDebugMessage("URL passed test.")
                             main_config["EFlagDiscordWebhookURL"] = d
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagUseDiscordWebhook"] = False
                         printDebugMessage("User selected: False")
@@ -2088,12 +2074,22 @@ if __name__ == "__main__":
                 elif a == "2":
                     main_config["EFlagRebuildPyinstallerAppFromSourceDuringUpdates"] = False
                     main_config["EFlagRebuildNuitkaAppFromSourceDuringUpdates"] = True
-                elif isRequestClose(a) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(a) == True:
                     main_config["EFlagRebuildPyinstallerAppFromSourceDuringUpdates"] = False
                     main_config["EFlagRebuildNuitkaAppFromSourceDuringUpdates"] = False
+                    printDebugMessage("User selected: False")
+
+                printMainMessage("Would you enable installing the latest version of EfazDev ECC Security CA?")
+                printMainMessage(f'Current Setting: {(main_config.get("EFlagInstallEfazDevECCCertificates")==True)}')
+                printYellowMessage("This is apart of code-signing and may affect security.")
+                a = input("> ")
+                if isYes(a) == True:
+                    main_config["EFlagInstallEfazDevECCCertificates"] = True
+                    printDebugMessage("User selected: True")
+                elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
+                elif isNo(a) == True:
+                    main_config["EFlagInstallEfazDevECCCertificates"] = False
                     printDebugMessage("User selected: False")
 
                 if main_os == "Darwin":
@@ -2104,9 +2100,7 @@ if __name__ == "__main__":
                     if isYes(a) == True:
                         main_config["EFlagRebuildClangAppFromSourceDuringUpdates"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(a) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(a) == True:
                         main_config["EFlagRebuildClangAppFromSourceDuringUpdates"] = False
                         printDebugMessage("User selected: False")
@@ -2144,9 +2138,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagBootstrapUpdateServer"] = "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json"
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagBootstrapUpdateServer"] = "https://obx.efaz.dev/Version.json"
                     printDebugMessage("User selected: False")
@@ -2163,9 +2155,7 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagDisableBootstrapCooldown"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagDisableBootstrapCooldown"] = False
                         printDebugMessage("User selected: False")
@@ -2197,9 +2187,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagEnableDebugMode"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagEnableDebugMode"] = False
                     printDebugMessage("User selected: False")
@@ -2246,9 +2234,7 @@ if __name__ == "__main__":
                                 printErrorMessage("Something went wrong. Please try again or use LIVE!")
                                 t()
                     t()
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagRobloxClientChannel"] = "LIVE"
                     main_config["EFlagDisableRobloxUpdateChecks"] = False
@@ -2287,9 +2273,7 @@ if __name__ == "__main__":
                                     printErrorMessage("Something went wrong. Please try again or use LIVE!")
                                     t()
                         t()
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagRobloxStudioClientChannel"] = "LIVE"
                         main_config["EFlagDisableRobloxUpdateChecks"] = False
@@ -2302,9 +2286,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagDisableSecureHashSecurity"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagDisableSecureHashSecurity"] = False
                     printDebugMessage("User selected: False")
@@ -2316,9 +2298,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagVerifyRobloxHashAfterInstall"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagVerifyRobloxHashAfterInstall"] = False
                     printDebugMessage("User selected: False")
@@ -2567,7 +2547,9 @@ if __name__ == "__main__":
                 if isYes(co) == True:
                     printMainMessage("Please wait while the modules are being updated!")
                     update_modules = pip_class.install(only_package_names, upgrade=True)
-                    if update_modules["success"] == True: printSuccessMessage("Successfully updated all Python modules!")
+                    if update_modules["success"] == True: 
+                        printSuccessMessage("Successfully updated all Python modules!")
+                        if os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
                     else: printErrorMessage("Unable to update all Python modules.")
                 else: return ts("Python Module updating was canceled!")
             elif os.path.exists(generateFileKey("PythonModuleUpdate")): 
@@ -3906,6 +3888,7 @@ if __name__ == "__main__":
                                         with open(generateFileKey("PythonModuleUpdate"), "r") as f: ss = f.read()
                                         if ss == dumped: return
                                     with open(generateFileKey("PythonModuleUpdate"), "w", encoding="utf-8") as f: f.write(dumped)
+                                    displayNotification(ts("Python Module Updates Available!"), ts(f'{len(updating_python_modules["packages"])} python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
                                 elif os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
                         threading.Thread(target=python_module_update_check, daemon=True).start()
                         if os.path.exists(generateFileKey("PythonModuleUpdate")):
@@ -3919,7 +3902,6 @@ if __name__ == "__main__":
                                     "end_mes": ts("Python Modules has been updated!"),
                                     "clear_console": True
                                 })
-                                displayNotification(ts("Python Module Updates Available!"), ts(f'{len(modules_updating)} python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
                             else: os.remove(generateFileKey("PythonModuleUpdate"))
                     if not (main_config.get("EFlagDisableBootstrapChecks") == True):
                         def bootstrap_update_check():
@@ -5171,6 +5153,7 @@ if __name__ == "__main__":
                                                     if "import OrangeAPI" in mod_script_contents: 
                                                         for i in mod_script_contents.splitlines():
                                                             if i.startswith("import OrangeAPI"): mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
+                                                            elif i.startswith("from OrangeAPI"): mod_script_contents = mod_script_contents.replace("from OrangeAPI", "#from OrangeAPI")
                                                     if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents or "from EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                                                     if "from OrangeAPI import OrangeAPI;" in mod_script_contents or " = OrangeAPI()" in mod_script_contents: mod_script_contents = mod_script_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                                                     if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")

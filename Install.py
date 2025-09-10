@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0h
+# v2.3.0i
 # 
 
 # Modules
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0h"}
+    current_version = {"version": "2.3.0i"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -133,6 +133,7 @@ if __name__ == "__main__":
     repair_argv_mode = False
     full_rebuild_mode = False
     rebuild_from_source = None
+    install_certificates = False
     use_sudo_for_codesign = False
     use_installation_syncing = True
     remove_unneeded_messages = True
@@ -150,6 +151,7 @@ if __name__ == "__main__":
         "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+        "EFlagInstallEfazDevECCCertificates": "bool",
         "EFlagDisableDeleteOtherOSApps": "bool",
         "EFlagAvailableInstalledDirectories": "dict",
         "EFlagDisableURLSchemeInstall": "bool",
@@ -718,6 +720,7 @@ if __name__ == "__main__":
         global disable_remove_other_operating_systems
         global disabled_shortcuts_installation
         global use_installation_syncing
+        global install_certificates
         global rebuild_target
         started_build_time = datetime.datetime.now().timestamp()
         if os.path.exists(os.path.join(cur_path, "Apps")):
@@ -880,6 +883,18 @@ if __name__ == "__main__":
                                 if not os.path.exists(f"{sma[main_os][1]}/Contents/Resources/Mods/{i}/"): makedirs(f"{sma[main_os][1]}/Contents/Resources/Mods/{i}/")
                                 pip_class.copyTreeWithMetadata(mod_mode_path, f"{sma[main_os][1]}/Contents/Resources/Mods/{i}/", dirs_exist_ok=True)
                         shutil.rmtree(f"{sma[main_os][1]}/Contents/Resources/ModModes/")
+
+                    # Install ECC Certificate
+                    if install_certificates == True or (main_config.get("EFlagInstallEfazDevECCCertificates") == True and update_mode == True):
+                        printMainMessage("Installing Certificates..")
+                        if main_os == "Darwin": 
+                            install_cert_proc = subprocess.run(["/usr/bin/security", "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
+                            else: printErrorMessage("Unable to install certificates!")
+                        elif main_os == "Windows":
+                            install_cert_proc = subprocess.run(["C:\\Windows\\System32\\certutil.exe", "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
+                            else: printErrorMessage("Unable to install certificates!")
                     
                     # Install to /Applications/
                     printMainMessage("Installing to Applications Folder..")
@@ -1088,6 +1103,18 @@ if __name__ == "__main__":
                                 if not os.path.exists(os.path.join(sma[main_os][0], "Mods", i)): makedirs(os.path.join(sma[main_os][0], "Mods", i))
                                 pip_class.copyTreeWithMetadata(mod_mode_path, os.path.join(sma[main_os][0], "Mods", i), dirs_exist_ok=True)
                         shutil.rmtree(os.path.join(sma[main_os][0], "ModModes"))
+
+                    # Install ECC Certificate
+                    if install_certificates == True or (main_config.get("EFlagInstallEfazDevECCCertificates") == True and update_mode == True):
+                        printMainMessage("Installing Certificates..")
+                        if main_os == "Darwin": 
+                            install_cert_proc = subprocess.run(["/usr/bin/security", "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
+                            else: printErrorMessage("Unable to install certificates!")
+                        elif main_os == "Windows":
+                            install_cert_proc = subprocess.run(["C:\\Windows\\System32\\certutil.exe", "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
+                            else: printErrorMessage("Unable to install certificates!")
 
                     # Copy Apps
                     printMainMessage("Creating paths..")
@@ -1594,6 +1621,11 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to delete other operating system versions? (This may save 30MB+ of space) (y/n)")
                 a = input("> ")
                 if isYes(a) == False: disable_remove_other_operating_systems = True
+
+                printMainMessage("Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)")
+                a = input("> ")
+                if isYes(a) == True: install_certificates = True
+
                 if remove_unneeded_messages == False: printMainMessage("Alright now, last question, select carefully!")
                 if overwrited == True: printMainMessage("Do you want to update OrangeBlox? (This will reupdate all files based on this Installation folder.) (y/n)")
                 else: printMainMessage("Do you want to install OrangeBlox into your system? (y/n)")
@@ -1603,8 +1635,7 @@ if __name__ == "__main__":
                     try: install()
                     except Exception as e: printErrorMessage(f"Something went wrong during installation: {str(e)}")
                     input("> ")
-                else:
-                    if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                elif remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
             else:
                 def requestUpdate():
                     global disable_remove_other_operating_systems

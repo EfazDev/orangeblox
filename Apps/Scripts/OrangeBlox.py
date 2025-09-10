@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.0h"}
+    current_version = {"version": "2.3.0i"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -41,6 +41,7 @@ if __name__ == "__main__":
         "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+        "EFlagInstallEfazDevECCCertificates": "bool",
         "EFlagDisableDeleteOtherOSApps": "bool",
         "EFlagAvailableInstalledDirectories": "dict",
         "EFlagDisableURLSchemeInstall": "bool",

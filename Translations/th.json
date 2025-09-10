@@ -2118,5 +2118,11 @@
  "Would you like to install the updates to them now?": "คุณต้องการติดตั้งการอัปเดตให้กับพวกเขาตอนนี้หรือไม่?",
  "No updates for Python Modules were available!": "ไม่มีการอัปเดตสำหรับโมดูล Python!",
  "Python Module updating was canceled!": "การอัปเดตโมดูล Python ถูกยกเลิก!",
- "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠สำหรับข้อมูลเกี่ยวกับการอัปเดตนี้ใช้ลิงค์นี้: https://github.com/EfazDev/orangeblox/releases"
+ "⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases": "⚠สำหรับข้อมูลเกี่ยวกับการอัปเดตนี้ใช้ลิงค์นี้: https://github.com/EfazDev/orangeblox/releases",
+ "Installing Certificates..": "การติดตั้งใบรับรอง..",
+ "Successfully installed EfazDev Code-signing Certificates!": "ติดตั้งใบรับรองการลงนามรหัส EfazDev สำเร็จแล้ว!",
+ "Unable to install certificates!": "ไม่สามารถติดตั้งใบรับรองได้!",
+ "Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)": "คุณต้องการติดตั้งใบรับรอง CA Security ของ EFAZ (EfazDev ECC Security CA) หรือไม่? (สิ่งนี้อาจตรวจสอบความปลอดภัย) (y/n)",
+ "This is apart of code-signing and may affect security.": "นี่คือนอกเหนือจากการเซ็นชื่อรหัสและอาจส่งผลกระทบต่อความปลอดภัย",
+ "Would you enable installing the latest version of EfazDev ECC Security CA?": "คุณจะเปิดใช้งานการติดตั้ง EfazDev ECC Security CA เวอร์ชันล่าสุดหรือไม่?"
 }
