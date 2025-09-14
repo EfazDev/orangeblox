@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0
+# v2.3.0k
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0k
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -26,7 +26,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.3.0", "bootstrap_version": "2.3.0"}
+current_version = {"version": "2.3.0k", "bootstrap_version": "2.3.0k"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -382,7 +382,7 @@ class OrangeAPI:
         
         Permission: enableMod | Level: 2 [Caution]
 
-        **This function is only available in OrangeAPI v2.3.0+**
+        **This function is only available in OrangeAPI v2.3.0k+**
 
         ```python
         response = OrangeAPI.enableMod("EfazDev Mod!") # -> Response
@@ -395,7 +395,7 @@ class OrangeAPI:
         
         Permission: disableMod | Level: 1 [Warning]
 
-        **This function is only available in OrangeAPI v2.3.0+**
+        **This function is only available in OrangeAPI v2.3.0k+**
 
         ```python
         response = OrangeAPI.disableMod("EfazDev Mod!") # -> Response
@@ -408,7 +408,7 @@ class OrangeAPI:
         
         Permission: getIfModIsEnabled | Level: 1 [Warning]
 
-        **This function is only available in OrangeAPI v2.3.0+**
+        **This function is only available in OrangeAPI v2.3.0k+**
 
         ```python
         response = OrangeAPI.getIfModIsEnabled("EfazDev Mod!") # -> True

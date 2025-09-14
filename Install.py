@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0
+# v2.3.0k
 # 
 
 # Modules
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0"}
+    current_version = {"version": "2.3.0k"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -980,7 +980,7 @@ if __name__ == "__main__":
                                     shutil.copy(os.path.join(death_sound_path, death_sound), os.path.join(death_sound_path, "..", "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
                                 shutil.rmtree(death_sound_path, ignore_errors=True)
 
-                        # Reorganize Older Versions to v2.3.0+
+                        # Reorganize Older Versions to v2.3.0k+
                         mods_path = os.path.join(resources_fold, "Mods")
                         if os.path.exists(mods_path) and os.path.exists(os.path.join(resources_fold, "AvatarEditorMaps")) and os.path.exists(os.path.join(resources_fold, "Cursors")) and os.path.exists(os.path.join(resources_fold, "Mods")):
                             printMainMessage("Organizing Mod Folders..")
@@ -1337,7 +1337,7 @@ if __name__ == "__main__":
                                     shutil.copy(os.path.join(death_sound_path, death_sound), os.path.join(death_sound_path, "..", "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
                                 shutil.rmtree(death_sound_path, ignore_errors=True)
 
-                        # Reorganize Older Versions to v2.3.0+
+                        # Reorganize Older Versions to v2.3.0k+
                         mods_path = os.path.join(sma[main_os][0], "Mods")
                         if os.path.exists(mods_path) and os.path.exists(os.path.join(sma[main_os][0], "AvatarEditorMaps")) and os.path.exists(os.path.join(sma[main_os][0], "Cursors")) and os.path.exists(os.path.join(sma[main_os][0], "Mods")):
                             printMainMessage("Organizing Mod Folders..")
