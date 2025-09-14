@@ -15,10 +15,10 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.2.9"}
+    current_version = {"version": "2.3.0"}
     main_os = platform.system()
     args = sys.argv
-    generated_app_id = str(hashlib.sha256(os.urandom(6)).hexdigest()[:6])
+    generated_app_id = os.urandom(3).hex()
     pip_class = PyKits.pip(find=True)
     app_path = ""
     macos_path = ""
@@ -41,6 +41,7 @@ if __name__ == "__main__":
         "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+        "EFlagInstallEfazDevECCCertificates": "bool",
         "EFlagDisableDeleteOtherOSApps": "bool",
         "EFlagAvailableInstalledDirectories": "dict",
         "EFlagDisableURLSchemeInstall": "bool",
@@ -85,6 +86,7 @@ if __name__ == "__main__":
         "EFlagDiscordWebhookRobloxCrash": "bool",
         "EFlagDiscordWebhookBloxstrapRPC": "bool",
         "EFlagDiscordWebhookGamePublished": "bool",
+        "EFlagDiscordWebhookGameSaved": "bool",
         "EFlagDiscordWebhookShowPidInFooter": "bool",
         "EFlagForceReconnectOnStudioLost": "bool",
         "EFlagShowRunningAccountNameInTitle": "bool",
@@ -94,6 +96,7 @@ if __name__ == "__main__":
         "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
+        "EFlagDisablePythonModuleUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
         "EFlagEnableGUIOptionMenus": "bool",
@@ -146,6 +149,9 @@ if __name__ == "__main__":
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
         "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagEnablePythonVirtualEnvironments": "bool",
+        "EFlagBuildPythonCacheOnStart": "bool",
+        "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
@@ -298,7 +304,7 @@ if __name__ == "__main__":
                     title=title,
                     message=message,
                     app_name="OrangeBlox",
-                    app_icon=os.path.join(app_path, "BootstrapImages", "AppIcon.ico"),
+                    app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
                     toast=True
                 )
             except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
@@ -327,13 +333,17 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
-        user_folder_name = os.path.basename(os.path.expanduser("~"))
+        user_folder = pip_class.getUserFolder()
+        user_folder_name = os.path.basename(pip_class.getUserFolder())
+        orangeblox_library = os.path.join(user_folder, "Library", "OrangeBlox")
 
+        if not os.path.exists(orangeblox_library): os.makedirs(orangeblox_library)
         printMainMessage("Finding Python Executable..")
         if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
         else:
             if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython(path=True)
+        pip_class.executable = pythonExecutable
         if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0): 
             pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython(path=True)
@@ -343,8 +353,18 @@ if __name__ == "__main__":
                 input("> ")
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
-
-        execute_command = f"unset HISTFILE && clear && cd {app_path}/ && {pythonExecutable} Main.py && exit"
+        sour_path = ""
+        venv_path = ""
+        if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
+            printMainMessage("Checking Virtual Environments..")
+            venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
+            venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
+            if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
+                else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
+            else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -368,7 +388,7 @@ if __name__ == "__main__":
                 end if
             end repeat
             if existing_profile is false then
-                open POSIX file "{os.path.join(app_path, "BootstrapImages", f"OrangeBlox.terminal")}"
+                open POSIX file "{os.path.join(app_path, "Images", f"OrangeBlox.terminal")}"
             end if
             set py_window to do script "{execute_command}"
             set current settings of py_window to settings set "OrangeBlox"
@@ -392,7 +412,7 @@ if __name__ == "__main__":
                 end if
             end try
             activate
-            do shell script "echo " & terminal_id & " > " & quoted form of "{app_path}/Terminal_{generated_app_id}"
+            do shell script "echo " & terminal_id & " > " & quoted form of "{orangeblox_library}/Terminal_{generated_app_id}"
             activate
             
             repeat
@@ -451,15 +471,15 @@ if __name__ == "__main__":
                 printMainMessage("Starting Terminal ID Loop..")
                 while ended == False:
                     try:
-                        if os.path.exists(f"{app_path}/Terminal_{generated_app_id}"):
-                            with open(f"{app_path}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
+                        if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"):
+                            with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
                                 try:
                                     cont = f.read().replace(" ", "").replace("\n", "")
                                     if cont.isnumeric() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                         activateTerminalWindow()
                                 except Exception as e: printDebugMessage(str(e))
-                            if os.path.exists(f"{app_path}/Terminal_{generated_app_id}"): os.remove(f"{app_path}/Terminal_{generated_app_id}")
+                            if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"): os.remove(f"{orangeblox_library}/Terminal_{generated_app_id}")
                     except Exception as e: printErrorMessage(f"There was an issue getting Terminal ID: \n{trace()}")
                     time.sleep(0.05)
             def activateTerminalWindow(event=""): 
@@ -500,6 +520,11 @@ if __name__ == "__main__":
                         if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
                     if not (validated == False) or main_config.get("EFlagDisableSecureHashSecurity") == True:
                         validated = True
+                        if main_config.get("EFlagBuildPythonCacheOnStart") == True:
+                            printMainMessage("Building Python Cache..")
+                            build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            if build_cache_process.returncode == 0: printSuccessMessage("Successfully built Python cache!")
+                            else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
                         result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
@@ -613,10 +638,10 @@ if __name__ == "__main__":
                                     ]
                                     content_view.addConstraints_(constraints)
 
-                                    app_icon_url = f"{app_path}/BootstrapImages/AppIcon64.png"
+                                    app_icon_url = f"{app_path}/Images/AppIcon64.png"
                                     if main_config.get("EFlagUseFollowingAppIconPath"): app_icon_url = main_config.get("EFlagUseFollowingAppIconPath")
                                     if os.path.exists(app_icon_url): self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(app_icon_url)
-                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(f"{app_path}/BootstrapImages/AppIcon.icns")
+                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(f"{app_path}/Images/AppIcon.icns")
                                     self.icon_view = AppKit.NSImageView.alloc().init()
                                     self.icon_view.setImage_(self.app_icon)
                                     self.icon_view.setImageScaling_(AppKit.NSImageScaleProportionallyUpOrDown)
@@ -984,7 +1009,7 @@ if __name__ == "__main__":
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
                                 add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
                                 add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
-                                if os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
+                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
                                 view_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("View", None, "")
@@ -1187,7 +1212,7 @@ if __name__ == "__main__":
                             def force_load_logs(self): self.threadingloop_("oranges")
                             def validateMenuItem_(self, menuItem): return True
                             def unlock_app_lock(self):
-                                if os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                             def instant_debug_window(self): self.button_click_count = 9; self.on_window_activate("oranges")
                             def show_about_menu(self):
                                 try:
@@ -1437,16 +1462,16 @@ if __name__ == "__main__":
             threading.Thread(target=startBootstrap, daemon=False).start()
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
             if app_count < 1: 
-                with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                 createObjcAppReplication()
-                try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                 except Exception: printMainMessage("Unable to remove GUI app holder")
             else:
-                while ended == False and os.path.exists(os.path.join(app_path, f"GUIAppLock_{user_folder_name}")): time.sleep(0.5)
+                while ended == False and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): time.sleep(0.5)
                 if ended == False: 
-                    with open(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                    with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                     createObjcAppReplication()
-                    try: os.remove(os.path.join(app_path, f"GUIAppLock_{user_folder_name}"))
+                    try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
                     except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
@@ -1515,6 +1540,21 @@ if __name__ == "__main__":
                     printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
                     input("> ")
                     sys.exit(0)
+
+            sour_path = ""
+            if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
+                printMainMessage("Checking Virtual Environments..")
+                user_folder_name = os.path.basename(PyKits.pip().getUserFolder())
+                venv_path = os.path.join(app_path, "VirtualEnvironments")
+                if not os.path.exists(venv_path): os.makedirs(venv_path)
+                venv_path = os.path.join(venv_path, user_folder_name)
+                venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
+                if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if generate_venv_process.returncode == 0: 
+                        printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                    else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}")
+                else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
             printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
             try:
@@ -1558,6 +1598,12 @@ if __name__ == "__main__":
                         validated = True
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
+                        if not (sour_path == ""): os.system(f"\"{sour_path}\"")
+                        if main_config.get("EFlagBuildPythonCacheOnStart") == True:
+                            printMainMessage("Building Python Cache..")
+                            build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            if build_cache_process.returncode == 0: printSuccessMessage("Successfully built Python cache!")
+                            else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
                         result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")

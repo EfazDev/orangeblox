@@ -7,8 +7,8 @@ try:
 except:
     print("Disabled Visual Studio Code Mode")
 
-icon_file = "../../../BootstrapImages/AppIcon.icns"
-current_version = {"version": "2.2.9"}
+icon_file = "../../../Images/AppIcon.icns"
+current_version = {"version": "2.3.0"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -41,7 +41,7 @@ main_analysis = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["cryptography", "OpenSSL", "urllib3", "requests", "plyer"],
+    excludes=["cryptography", "OpenSSL", "urllib3", "requests", "plyer", "site"],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

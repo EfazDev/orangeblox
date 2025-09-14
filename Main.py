@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.2.9
+# v2.3.0
 # 
 
 # Python Modules
@@ -25,8 +25,10 @@ import time
 import zlib
 import re
 
+import OrangeAPI
 import PyKits; PyKits.BuiltinEditor(builtins)
-import RobloxFastFlagsInstaller as RFFI
+try: import RobloxFastFlagsInstaller as RFFI
+except: PyKits.pip().restartScript("Main.py", sys.argv)
 from urllib.parse import unquote, urlparse
 
 if __name__ == "__main__":
@@ -35,6 +37,7 @@ if __name__ == "__main__":
     pip_class: PyKits.pip = PyKits.pip()
     requests: PyKits.request = PyKits.request()
     plist_class: PyKits.plist = PyKits.plist()
+    colors_class: PyKits.Colors = PyKits.Colors()
     submit_status: PyKits.ProgressBar = PyKits.ProgressBar()
     handler: RFFI.Handler = RFFI.Handler()
     cur_path: str = os.path.dirname(os.path.abspath(__file__))
@@ -50,10 +53,13 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.2.9"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
+    mods_folder: str = os.path.join(cur_path, "Mods")
+    macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
     user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
+    orangeblox_library: str = os.path.join(user_folder, "Library", "OrangeBlox")
     flag_types: typing.Dict[str, str] = {
         "EFlagRobloxStudioFlags": "dict",
         "EFlagRobloxPlayerFlags": "dict",
@@ -64,6 +70,7 @@ if __name__ == "__main__":
         "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
         "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+        "EFlagInstallEfazDevECCCertificates": "bool",
         "EFlagDisableDeleteOtherOSApps": "bool",
         "EFlagAvailableInstalledDirectories": "dict",
         "EFlagDisableURLSchemeInstall": "bool",
@@ -108,6 +115,7 @@ if __name__ == "__main__":
         "EFlagDiscordWebhookRobloxCrash": "bool",
         "EFlagDiscordWebhookBloxstrapRPC": "bool",
         "EFlagDiscordWebhookGamePublished": "bool",
+        "EFlagDiscordWebhookGameSaved": "bool",
         "EFlagDiscordWebhookShowPidInFooter": "bool",
         "EFlagForceReconnectOnStudioLost": "bool",
         "EFlagShowRunningAccountNameInTitle": "bool",
@@ -117,6 +125,7 @@ if __name__ == "__main__":
         "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
         "EFlagDisableBootstrapChecks": "bool",
         "EFlagDisablePythonUpdateChecks": "bool",
+        "EFlagDisablePythonModuleUpdateChecks": "bool",
         "EFlagDisableBootstrapCooldown": "bool",
         "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
         "EFlagEnableGUIOptionMenus": "bool",
@@ -169,6 +178,9 @@ if __name__ == "__main__":
         "EFlagEnableSeeMoreAwaiting": "bool",
         "EFlagEnableLoop429Requests": "bool",
         "EFlagEnableEndingRobloxCrashHandler": "bool",
+        "EFlagEnablePythonVirtualEnvironments": "bool",
+        "EFlagBuildPythonCacheOnStart": "bool",
+        "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -207,21 +219,21 @@ if __name__ == "__main__":
         _, tb_v, tb_b = sys.exc_info()
         tb_lines = traceback.extract_tb(tb_b)
         lines = []
-        lines.append("\033[95mTraceback (most recent call last):\033[0m")
+        lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
         for fn, ln, f, tx in tb_lines:
-            lines.append(f'  File \033[95m"{fn}"\033[0m, line \033[95m{ln}\033[0m, in \033[95m{f}\033[0m')
+            lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
             if tx: lines.append(f'    {tx}')
         exc_t = type(tb_v).__name__
         exc_m = str(tb_v)
-        lines.append(f'\033[95m\033[1m{exc_t}:\033[0m\033[0m \033[35m{exc_m}\033[0m')
+        lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
-    def printMainMessage(mes): print(f"\033[38;5;255m{ts(mes)}\033[0m")
-    def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m")
-    def printSuccessMessage(mes): print(f"\033[38;5;82m{ts(mes)}\033[0m")
-    def printWarnMessage(mes): print(f"\033[38;5;202m{ts(mes)}\033[0m")
-    def printYellowMessage(mes): print(f"\033[38;5;226m{ts(mes)}\033[0m")
+    def printMainMessage(mes): print(colors_class.wrap_message(ts(mes), 255))
+    def printErrorMessage(mes): print(colors_class.wrap_message(ts(mes), 196))
+    def printSuccessMessage(mes): print(colors_class.wrap_message(ts(mes), 82))
+    def printWarnMessage(mes): print(colors_class.wrap_message(ts(mes), 202))
+    def printYellowMessage(mes): print(colors_class.wrap_message(ts(mes), 226))
     def printDebugMessage(mes): 
-        if main_config.get("EFlagEnableDebugMode"): print(f"\033[38;5;226m[DEBUG]: {ts(mes)}\033[0m"); logging.debug(mes)
+        if main_config.get("EFlagEnableDebugMode"): print(colors_class.wrap_message(f"[DEBUG]: {ts(mes)}", 226)); logging.debug(mes)
 
     # Basic Functions
     def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
@@ -337,7 +349,7 @@ if __name__ == "__main__":
                         plyer.notification.notify(
                             title = title,
                             message = message,
-                            app_icon = "BootstrapImages/AppIcon.ico",
+                            app_icon = "Images/AppIcon.ico",
                             timeout = 30,
                         )
                     except Exception as e: printErrorMessage(f"There was an error sending a notification. Error: \n{trace()}")
@@ -359,14 +371,14 @@ if __name__ == "__main__":
         except Exception as e: return None
     def generateModsManifest():
         generated_manifest = {}
-        for i in os.listdir(os.path.join(cur_path, "Mods")):
-            mod_path = os.path.join(cur_path, "Mods", i)
+        for i in os.listdir(os.path.join(mods_folder, "Mods")):
+            mod_path = os.path.join(mods_folder, "Mods", i)
             if os.path.isfile(mod_path) and mod_path.endswith(".zip"):
-                dow_tar = os.path.join(cur_path, "Mods", i.split(".")[0])
+                dow_tar = os.path.join(mods_folder, "Mods", i.split(".")[0])
                 makedirs(dow_tar)
                 zip_extract = pip_class.unzipFile(mod_path, dow_tar, look_for=["Manifest.json", "ModScript.py", "content", "ExtraContent"], either=True, check=True)
                 if zip_extract.returncode == 0: os.remove(mod_path)
-        for i in os.listdir(os.path.join(cur_path, "Mods")):
+        for i in os.listdir(os.path.join(mods_folder, "Mods")):
             mod_info = {
                 "name": i,
                 "id": i,
@@ -386,7 +398,7 @@ if __name__ == "__main__":
                 "permissions": [],
                 "python_modules": []
             }
-            mod_path = os.path.join(cur_path, "Mods", i)
+            mod_path = os.path.join(mods_folder, "Mods", i)
             if os.path.isdir(mod_path):
                 manifest_path = os.path.join(mod_path, "Manifest.json")
                 mod_script_path = os.path.join(mod_path, "ModScript.py")
@@ -427,12 +439,26 @@ if __name__ == "__main__":
                             if va.get("detection") and va.get("detection") in mod_script_text and not (pe in mod_info["permissions"]): mod_info["permissions"].append(pe)
                         if ("EfazRobloxBootstrapAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
                         elif ("OrangeAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
+                        if "import OrangeAPI" in mod_script_text: 
+                            for mod_line in mod_script_text.splitlines():
+                                if mod_line.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
+                                elif mod_line.startswith("from OrangeAPI"): mod_script_text = mod_script_text.replace("from OrangeAPI", "#from OrangeAPI")
+                        if "EfazRobloxBootstrapAPI()" in mod_script_text or "import EfazRobloxBootstrapAPI" in mod_script_text or "from EfazRobloxBootstrapAPI" in mod_script_text: mod_script_text = mod_script_text.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
+                        if "from OrangeAPI import OrangeAPI;" in mod_script_text or " = OrangeAPI()" in mod_script_text: mod_script_text = mod_script_text.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
+                        if "import RobloxFastFlagsInstaller" in mod_script_text: mod_script_text = mod_script_text.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
+                        if "import PipHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import PipHandler", "import OrangeAPI")
+                        if "import PyKits" in mod_script_text: mod_script_text = mod_script_text.replace("import PyKits", "import OrangeAPI")
+                        if "import Install" in mod_script_text: mod_script_text = mod_script_text.replace("import Install", "import OrangeAPI")
+                        if "import DiscordPresenceHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import DiscordPresenceHandler", "import OrangeAPI")
+                        if "import Main" in mod_script_text: mod_script_text = mod_script_text.replace("import Main", "import OrangeAPI")
+                        if "import builtins" in mod_script_text: mod_script_text = mod_script_text.replace("import builtins", "import OrangeAPI")
+                        with open(mod_script_path, "w", encoding="utf-8") as f: f.write(mod_script_text)
                         mod_info["mod_script_path"] = mod_script_path
                         mod_info["mod_script_hash"] = generateFileHash(mod_script_path)
                 else: mod_info["mod_script"] = False
                 generated_manifest[i] = mod_info
         return generated_manifest
-    def getSettings():
+    def getSettings(updating: bool=False):
         global main_config
         if main_os == "Darwin":
             if os.path.exists(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist")): os.remove(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist"))
@@ -447,7 +473,7 @@ if __name__ == "__main__":
             try: obfuscated_json = json.loads(obfuscated_json)
             except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
             main_config = obfuscated_json
-        if main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
+        if updating == False and main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
             try:
                 req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "main"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
                 if req.ok: 
@@ -504,7 +530,7 @@ if __name__ == "__main__":
             macos_preference_expected = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
             if os.path.exists(macos_preference_expected): app_configuration = plist_class.readPListFile(macos_preference_expected)
             else: app_configuration = {}
-            app_configuration["InstalledAppPath"] = os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/")
+            app_configuration["InstalledAppPath"] = os.path.realpath(os.path.join(macos_app_path, "../") + "/")
             app_configuration["Configuration"] = main_config
             plist_class.writePListFile(macos_preference_expected, app_configuration, binary=True)
         else:
@@ -524,8 +550,12 @@ if __name__ == "__main__":
             return True
     def generateCodesignCommand(pa, iden, entitlements: str=None): return [["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", pa], ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", pa], ["/usr/bin/xattr", "-cr", pa], ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"] + (["--entitlements", entitlements] if entitlements else []) + ["-s", iden, pa]]
     def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
-    def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "../MacOS/OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
-    def generateFileKey(id: str): return os.path.join(cur_path, f"{id}_{user_folder_name}")
+    def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(macos_app_path, "Contents", "MacOS", "OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
+    def generateFileKey(id: str, ext: str=""): 
+        if main_os == "Darwin":
+            makedirs(orangeblox_library)
+            return os.path.join(orangeblox_library, f"{id}{ext}")
+        return os.path.join(cur_path, f"{id}_{user_folder_name}{ext}")
     def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False): 
         main_ui_options = {}
         options = sorted(options, key=lambda x: x["index"])
@@ -667,6 +697,12 @@ if __name__ == "__main__":
         if main_config and main_config.get("EFlagEnableDebugMode") == True: pip_class.debug = True
         if waitForInternet() == True: printWarnMessage("-----------")
         versions_folder = os.path.join(cur_path, "Versions")
+        if main_os == "Darwin": 
+            makedirs(orangeblox_library)
+            versions_folder = os.path.join(orangeblox_library, "Versions")
+            if not os.path.exists(os.path.join(orangeblox_library, "Mods")): shutil.copytree(os.path.join(cur_path, "Mods"), os.path.join(orangeblox_library, "Mods"))
+            makedirs(versions_folder)
+            mods_folder = os.path.join(orangeblox_library, "Mods")
         if not (main_os == "Windows" or main_os == "Darwin"):
             printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
             input("> ")
@@ -725,7 +761,7 @@ if __name__ == "__main__":
         pip_class.restartScript("Main.py", sys.argv)
         printSuccessMessage("Successfully installed modules!")
 
-    # Python Modules (Pypi Installed)
+    # Python Modules (PyPi Installed)
     try:
         import psutil
         from DiscordPresenceHandler import Presence
@@ -769,7 +805,6 @@ if __name__ == "__main__":
         RFFI.windows_versions_dir = versions_folder
         RFFI.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         RFFI.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
-        if not os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')) and main_os == "Darwin": versions_folder = os.path.join(cur_path, "Versions", user_folder_name)
         RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
         RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
         RFFI.macOS_installedPath = os.path.join(versions_folder)
@@ -792,8 +827,8 @@ if __name__ == "__main__":
                 shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerInstaller.exe"))
                 with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxInstallFolderName", RFFI.windows_player_folder_name), "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
             elif main_os == "Darwin":
-                if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
-                    pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
+                if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
+                    pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
                     with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
@@ -839,6 +874,9 @@ if __name__ == "__main__":
             "getOppositeInstalledRobloxVersion": {"message": ts("Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
             "getRobloxInstallationFolder": {"message": ts("Get the Roblox installation folder"), "level": 2},
             "getIfRobloxIsOpen": {"message": ts("Get if the Roblox client is open"), "level": 1},
+            "getIfModIsEnabled": {"message": ts("Get if a mod is enabled or not."), "level": 1},
+            "enableMod": {"message": ts("Enable a mod on your behalf."), "level": 2},
+            "disableMod": {"message": ts("Disable a mod on your behalf."), "level": 1},
             "getFastFlagConfiguration": {"message": ts("Get and view your Roblox client flags"), "level": 1},
             "setFastFlagConfiguration": {"message": ts("Change your Roblox client flags"), "level": 2},
             "saveFastFlagConfiguration": {"message": ts("Change your Roblox client flags (with saving)"), "level": 2},
@@ -983,7 +1021,7 @@ if __name__ == "__main__":
             return ts("FFlag Settings was not saved!")
         printWarnMessage("--------------------")
         RFFI.main()
-        getSettings()
+        getSettings(updating=True)
         saveSettings()
     def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         global main_config
@@ -1000,7 +1038,7 @@ if __name__ == "__main__":
         def download_option():
             if pip_class.getIfConnectedToInternet():
                 printDebugMessage("Setting Installed App Path to Local User..") 
-                if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/"))
+                if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(macos_app_path, "../") + "/"))
                 elif main_os == "Windows": setInstalledAppPath(cur_path)
                 printDebugMessage("Sending Request to Bootstrap Version Servers..") 
                 version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
@@ -1019,7 +1057,7 @@ if __name__ == "__main__":
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
-                        printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
+                        printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printYellowMessage(f"⚠️ Download location: {download_location} => {possible_download_path}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
                         printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
@@ -1100,31 +1138,34 @@ if __name__ == "__main__":
             cache_detected = []
             for dirpath, dirnames, filenames in os.walk(cur_path):
                 if "__pycache__" in dirnames: cache_detected.append(os.path.join(dirpath, "__pycache__"))
+            if main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "VirtualEnvironments")): cache_detected.append(os.path.join(cur_path, "VirtualEnvironments"))
             return cache_detected
         def appLocksAvailableToClear():
             locks_detected = []
             for i in os.listdir(cur_path):
                 if i.endswith(f"_{user_folder_name}"): locks_detected.append(os.path.join(cur_path, i))
                 elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(cur_path, i))
+            if main_os == "Darwin" and os.path.exists(orangeblox_library):
+                for i in os.listdir(orangeblox_library):
+                    if not "." in i and os.path.isfile(os.path.join(orangeblox_library, i)): locks_detected.append(os.path.join(orangeblox_library, i))
+                    elif i.startswith("Terminal_") or i == "BootstrapCooldown": locks_detected.append(os.path.join(orangeblox_library, i))
             return locks_detected
         def bootstrapImagesAvailableToClear():
             images_detected = []
-            for i in os.listdir(os.path.join(cur_path, "BootstrapImages")):
-                if not i in bootstrap_image_needed_files: images_detected.append(os.path.join(cur_path, "BootstrapImages", i))
+            for i in os.listdir(os.path.join(cur_path, "Images")):
+                if not i in bootstrap_image_needed_files: images_detected.append(os.path.join(cur_path, "Images", i))
             return images_detected
         def unneededModsAvailableToClear():
             unneeded_detected = []
-            for i in os.listdir(os.path.join(cur_path, "Mods")):
-                if os.path.isfile(os.path.join(cur_path, "Mods", i)): unneeded_detected.append(os.path.join(cur_path, "Mods", i))
-                elif i == "GothamFont": unneeded_detected.append(os.path.join(cur_path, "Mods", i))
+            for i in os.listdir(os.path.join(mods_folder, "Mods")):
+                if os.path.isfile(os.path.join(mods_folder, "Mods", i)): unneeded_detected.append(os.path.join(mods_folder, "Mods", i))
+                elif i == "GothamFont": unneeded_detected.append(os.path.join(mods_folder, "Mods", i))
             return unneeded_detected
         def robloxFilesAvailableToClear():
-            vers_fold = os.path.join(cur_path, "Versions")
             files = []
-            for i in os.listdir(vers_fold):
-                if i.endswith(".zip"): files.append(os.path.join(vers_fold, i))
-                elif main_os == "Darwin" and os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')) and os.path.isdir(os.path.join(vers_fold, i)) and os.path.exists(os.path.join(pip_class.getUserFolder(), "..", i)): files.append(os.path.join(vers_fold, i))
-                elif main_os == "Darwin" and (not os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))) and os.path.isdir(os.path.join(vers_fold, i)) and not os.path.exists(os.path.join(pip_class.getUserFolder(), "..", i)): files.append(os.path.join(vers_fold, i))
+            for i in os.listdir(versions_folder):
+                if i.endswith(".zip"): files.append(os.path.join(versions_folder, i))
+            if main_os == "Darwin" and os.path.exists(os.path.join(cur_path, "Versions")): files.append(os.path.join(cur_path, "Versions"))
             return files
         def getTotalClearableSize(): return getRobloxLogFolderSize(static=True) + getFolderSize(orangeblox_log_path, formatWithAbbreviation=False) + getFileSize(installer_paths, formatWithAbbreviation=False) + getFileSize(pythonCacheAvailableToClear(), formatWithAbbreviation=False) + getFileSize(bootstrapImagesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(unneededModsAvailableToClear(), formatWithAbbreviation=False) + getFileSize(robloxFilesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(appLocksAvailableToClear(), formatWithAbbreviation=False)
         def continueToClearLogs(clearAll=False): # Clear All Roblox Logs
@@ -1611,9 +1652,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config[fflag] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config[fflag] = False
                     printDebugMessage("User selected: False")
@@ -1635,9 +1674,7 @@ if __name__ == "__main__":
                     printYellowMessage("2. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
                     printYellowMessage("3. After Roblox versions 0.677+, Roblox has issued a new patch on multi-instancing that closes Roblox after a certain unknown time.")
                     printYellowMessage("4. Multi-Instances may be deflicted depending if one of your accounts are assigned to a different Roblox version.")
-                elif isRequestClose(c) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(c) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(c) == True:
                     main_config["EFlagEnableDuplicationOfClients"] = False
                     printDebugMessage("User selected: False")
@@ -1662,9 +1699,7 @@ if __name__ == "__main__":
                     printMainMessage("Input the start arguments to use when running Roblox!")
                     main_config["EFlagRobloxPlayerArguments"] = input("> ")
                     printDebugMessage(f'User selected: {main_config.get("EFlagRobloxPlayerArguments")}')
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagRobloxPlayerArguments"] = None
                     printDebugMessage("User selected: None")
@@ -1677,9 +1712,7 @@ if __name__ == "__main__":
                         printMainMessage("Input the start arguments to use when running Roblox Studio!")
                         main_config["EFlagRobloxStudioArguments"] = input("> ")
                         printDebugMessage(f'User selected: {main_config.get("EFlagRobloxStudioArguments")}')
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagRobloxStudioArguments"] = None
                         printDebugMessage("User selected: None")
@@ -1711,9 +1744,7 @@ if __name__ == "__main__":
                         if isYes(d) == True:
                             main_config["EFlagRobloxUnfriendCheckUserID"] = req_int()
                             printDebugMessage("User selected: True")
-                        elif isRequestClose(d) == True:
-                            printMainMessage("Closing settings..")
-                            return ts("Settings was closed.")
+                        elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     else: main_config["EFlagRobloxUnfriendCheckUserID"] = req_int()
 
                 if main_os == "Darwin":
@@ -1726,36 +1757,10 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagEnableSkipModificationMode"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagEnableSkipModificationMode"] = False
                         printDebugMessage("User selected: False")
-
-                    if pip_class.getIfLoggedInIsMacOSAdmin():
-                        printMainMessage("Would you like to disable Roblox Overlap Prevention? (y/n)")
-                        printYellowMessage("It allows the prevention of overlapping Roblox apps throughout all users of this computer.")
-                        printYellowMessage("It is suggested that you keep Roblox Overlap Prevention enabled in order to prevent issues.")
-                        printMainMessage(f"Current Setting: {os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))}")
-                        d = input("> ")
-                        if isYes(d) == True:
-                            with open(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'), "w", encoding="utf-8") as f: f.write(f"Enabled by user: {user_folder_name}")
-                            printDebugMessage("User selected: True")
-                            saveSettings()
-                            printMainMessage("Please restart OrangeBlox in order to continue with this setup!")
-                            input("> ")
-                            sys.exit(0)
-                        elif isRequestClose(d) == True:
-                            printMainMessage("Closing settings..")
-                            return ts("Settings was closed.")
-                        elif isNo(d) == True:
-                            if os.path.exists(os.path.join('.', 'Versions', 'DisableRobloxOverlapping')): os.remove(os.path.join('.', 'Versions', 'DisableRobloxOverlapping'))
-                            printDebugMessage("User selected: False")
-                            saveSettings()
-                            printMainMessage("Please restart OrangeBlox in order to continue with this setup!")
-                            input("> ")
-                            sys.exit(0)
 
                 printMainMessage("Would you like to disable Roblox Reinstall checks? (y/n)")
                 printMainMessage("This may ignore when a Roblox reinstall is needed due to signing.")
@@ -1774,9 +1779,7 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagLimitAPIDocsLocalization"] = "en-us"
                         printDebugMessage(f'User selected: {main_config.get("EFlagLimitAPIDocsLocalization")}')
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagLimitAPIDocsLocalization"] = None
                         printDebugMessage("User selected: None")
@@ -1905,9 +1908,7 @@ if __name__ == "__main__":
                         if d.startswith("https://discord.com/api/webhooks/"):
                             printDebugMessage("URL passed test.")
                             main_config["EFlagDiscordWebhookURL"] = d
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagUseDiscordWebhook"] = False
                         printDebugMessage("User selected: False")
@@ -1919,7 +1920,7 @@ if __name__ == "__main__":
                         if main_config.get("EFlagDiscordWebhookUserId", "").isnumeric():
                             max_setti = 6
                             co = 1
-                            if main_config.get("EFlagRobloxStudioEnabled") == True: max_setti += 1
+                            if main_config.get("EFlagRobloxStudioEnabled") == True: max_setti += 2
                             printMainMessage("What should this Discord Webhook send?")
                             printMainMessage(f"[{co}/{max_setti}] Roblox Connecting Information (y/n)")
                             printMainMessage("When you join a Roblox game (or edit a Roblox Studio game), your webhook gets pinged with information such as Server Location and Joining Link.")
@@ -1998,6 +1999,17 @@ if __name__ == "__main__":
                                 elif isNo(d) == True:
                                     main_config["EFlagDiscordWebhookGamePublished"] = False
                                     printDebugMessage("User selected: False")
+                                co += 1
+                                printMainMessage(f"[{co}/{max_setti}] Saving Game Information (y/n)")
+                                printMainMessage("When you save a game from Roblox Studio, your webhook gets pinged with game information such as Server Location and Editing Link.")
+                                printMainMessage(f'Current Setting: {(main_config.get("EFlagDiscordWebhookGameSaved")==True)}')
+                                d = input("> ")
+                                if isYes(d) == True:
+                                    main_config["EFlagDiscordWebhookGameSaved"] = True
+                                    printDebugMessage("User selected: True")
+                                elif isNo(d) == True:
+                                    main_config["EFlagDiscordWebhookGameSaved"] = False
+                                    printDebugMessage("User selected: False")
                             printMainMessage("Would you like it to show the pid number in the webhook footer? (y/n)")
                             printMainMessage(f'Current Setting: {(main_config.get("EFlagDiscordWebhookShowPidInFooter")==True)}')
                             d = input("> ")
@@ -2066,12 +2078,22 @@ if __name__ == "__main__":
                 elif a == "2":
                     main_config["EFlagRebuildPyinstallerAppFromSourceDuringUpdates"] = False
                     main_config["EFlagRebuildNuitkaAppFromSourceDuringUpdates"] = True
-                elif isRequestClose(a) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(a) == True:
                     main_config["EFlagRebuildPyinstallerAppFromSourceDuringUpdates"] = False
                     main_config["EFlagRebuildNuitkaAppFromSourceDuringUpdates"] = False
+                    printDebugMessage("User selected: False")
+
+                printMainMessage("Would you like to enable installing the latest version of EfazDev ECC Security CA? (y/n)")
+                printMainMessage(f'Current Setting: {(main_config.get("EFlagInstallEfazDevECCCertificates")==True)}')
+                printYellowMessage("This is apart of code-signing and may affect security.")
+                a = input("> ")
+                if isYes(a) == True:
+                    main_config["EFlagInstallEfazDevECCCertificates"] = True
+                    printDebugMessage("User selected: True")
+                elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
+                elif isNo(a) == True:
+                    main_config["EFlagInstallEfazDevECCCertificates"] = False
                     printDebugMessage("User selected: False")
 
                 if main_os == "Darwin":
@@ -2082,9 +2104,7 @@ if __name__ == "__main__":
                     if isYes(a) == True:
                         main_config["EFlagRebuildClangAppFromSourceDuringUpdates"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(a) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(a) == True:
                         main_config["EFlagRebuildClangAppFromSourceDuringUpdates"] = False
                         printDebugMessage("User selected: False")
@@ -2105,6 +2125,16 @@ if __name__ == "__main__":
                 d = handleBasicSetting("EFlagDisablePythonUpdateChecks", False)
                 if d: return d
 
+                printMainMessage("Would you like to disable Python Module Update Checks? (y/n)")
+                d = handleBasicSetting("EFlagDisablePythonModuleUpdateChecks", False)
+                if d: return d
+
+                if main_config.get("EFlagDisablePythonUpdateChecks", False) == False:
+                    printMainMessage("Would you like to enable slient Python installs instead of a prompt for python updates? (y/n)")
+                    if main_os == "Darwin": printYellowMessage("For macOS users, admin permission is needed in order to install.")
+                    d = handleBasicSetting("EFlagEnableSlientPythonInstalls", False)
+                    if d: return d
+
                 printMainMessage("Would you like to enable OrangeBlox Beta? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagBootstrapUpdateServer")=="https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json")}')
                 printYellowMessage("Betas could contain bugs that could break your Roblox installation!")
@@ -2112,9 +2142,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagBootstrapUpdateServer"] = "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json"
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagBootstrapUpdateServer"] = "https://obx.efaz.dev/Version.json"
                     printDebugMessage("User selected: False")
@@ -2131,12 +2159,18 @@ if __name__ == "__main__":
                     if isYes(d) == True:
                         main_config["EFlagDisableBootstrapCooldown"] = True
                         printDebugMessage("User selected: True")
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagDisableBootstrapCooldown"] = False
                         printDebugMessage("User selected: False")
+
+                printMainMessage("Would you like to use Python Virtual Environments for OrangeBlox? (y/n)")
+                d = handleBasicSetting("EFlagEnablePythonVirtualEnvironments", False)
+                if d: return d
+
+                printMainMessage("Would you like to build Python cache on app start? (y/n)")
+                d = handleBasicSetting("EFlagBuildPythonCacheOnStart", False)
+                if d: return d
                     
                 if main_os == "Windows":
                     printMainMessage("Would you like to make shortcuts for OrangeBlox? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
@@ -2157,9 +2191,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagEnableDebugMode"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagEnableDebugMode"] = False
                     printDebugMessage("User selected: False")
@@ -2206,9 +2238,7 @@ if __name__ == "__main__":
                                 printErrorMessage("Something went wrong. Please try again or use LIVE!")
                                 t()
                     t()
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagRobloxClientChannel"] = "LIVE"
                     main_config["EFlagDisableRobloxUpdateChecks"] = False
@@ -2247,9 +2277,7 @@ if __name__ == "__main__":
                                     printErrorMessage("Something went wrong. Please try again or use LIVE!")
                                     t()
                         t()
-                    elif isRequestClose(d) == True:
-                        printMainMessage("Closing settings..")
-                        return ts("Settings was closed.")
+                    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                     elif isNo(d) == True:
                         main_config["EFlagRobloxStudioClientChannel"] = "LIVE"
                         main_config["EFlagDisableRobloxUpdateChecks"] = False
@@ -2262,9 +2290,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagDisableSecureHashSecurity"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagDisableSecureHashSecurity"] = False
                     printDebugMessage("User selected: False")
@@ -2276,9 +2302,7 @@ if __name__ == "__main__":
                 if isYes(d) == True:
                     main_config["EFlagVerifyRobloxHashAfterInstall"] = True
                     printDebugMessage("User selected: True")
-                elif isRequestClose(d) == True:
-                    printMainMessage("Closing settings..")
-                    return ts("Settings was closed.")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
                     main_config["EFlagVerifyRobloxHashAfterInstall"] = False
                     printDebugMessage("User selected: False")
@@ -2383,27 +2407,28 @@ if __name__ == "__main__":
             return ts("Settings was not saved!")
         return mainSettings()
     def continueToCredits(): # Credits
+        quote = "'"
         printWarnMessage("--- Credits ---")
-        printMainMessage("1. Made by \033[38;5;202m@EfazDev 🍊\033[0m")
-        printMainMessage("2. Old Player Sounds and Cursors were sourced from \033[38;5;165mBloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)\033[0m")
-        printMainMessage("3. Avatar Editor Maps were from \033[38;5;197mMielesgames's Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)\033[0m slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
-        printMainMessage("4. The Kliko's Mod Tool Mod Script was edited and made from \033[38;5;196mKliko's Mod Tool and Kliko's modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)\033[0m")
+        printMainMessage(f"1. Made by {colors_class.wrap_message('@EfazDev 🍊', 202)}")
+        printMainMessage(f"2. Old Player Sounds and Cursors were sourced from {colors_class.wrap_message('Bloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)', 165)}")
+        printMainMessage(f"3. Avatar Editor Maps were from {colors_class.wrap_message(f'Mielesgames{quote}s Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)', 197)} slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
+        printMainMessage(f"4. The Kliko's Mod Tool Mod Script was edited and made from {colors_class.wrap_message(f'Kliko{quote}s Mod Tool and Kliko{quote}s modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)', 196)}")
         printMainMessage("5. Python Module Creators:")
-        printMainMessage(" • \033[38;5;34mqwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)\033[0m")
-        printMainMessage(" • \033[38;5;40mRonald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)\033[0m")
-        printMainMessage(" • \033[38;5;226mPhilip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)\033[0m")
-        printMainMessage(" • \033[38;5;129mMark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)\033[0m")
-        printMainMessage(" • \033[38;5;214mKivy (plyer) 🧰 (https://github.com/kivy/plyer)\033[0m")
-        printMainMessage(" • \033[38;5;30mPython Software Foundation (requests) 🌐 (https://github.com/psf/requests)\033[0m")
-        printMainMessage(" • \033[38;5;97mGiampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)\033[0m")
-        printMainMessage("6. The logo of OrangeBlox was made thanks of \033[38;5;226m@CabledRblx 🦆\033[0m. Thanks :)")
-        printMainMessage("7. Server Locations was made thanks to \033[38;5;39mipinfo.io 🌐\033[0m as it wouldn't be possible to convert ip addresses without them!")
+        printMainMessage(f" • {colors_class.wrap_message('qwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)', 34)}")
+        printMainMessage(f" • {colors_class.wrap_message('Ronald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)', 40)}")
+        printMainMessage(f" • {colors_class.wrap_message('Philip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)', 226)}")
+        printMainMessage(f" • {colors_class.wrap_message('Mark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)', 129)}")
+        printMainMessage(f" • {colors_class.wrap_message('Kivy (plyer) 🧰 (https://github.com/kivy/plyer)', 214)}")
+        printMainMessage(f" • {colors_class.wrap_message('Giampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)', 97)}")
+        printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
+        printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap_message('@CabledRblx 🦆', 226)}. Thanks :)")
+        printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap_message('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
-            printMainMessage(f'8. macOS App was built using \033[38;5;39mpyinstaller 📦\033[0m and \033[38;5;226mclang 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
-            printMainMessage(f"Command: {sys.executable} Install.py -r -rn -rc")
+            printMainMessage(f'8. macOS App was built using {colors_class.wrap_message("pyinstaller 📦", 39)} and {colors_class.wrap_message("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f"Command: {sys.executable} Install.py -r -rp -rc")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
-            printMainMessage(f'8. Windows App was built using \033[38;5;39mpyinstaller 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. Windows App was built using {colors_class.wrap_message("pyinstaller 📦", 39)}. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py -r -rp")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
@@ -2434,8 +2459,8 @@ if __name__ == "__main__":
                 time.sleep(1)
             
             last_pinged_friend_list = {}
-            if os.path.exists(os.path.join(cur_path, "CachedFriendsList.json")):
-                with open(os.path.join(cur_path, "CachedFriendsList.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+            if os.path.exists(os.path.join(generateFileKey("CachedFriendsList", ext=".json"))):
+                with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
             if last_pinged_friend_list.get(str(friend_check_id)):
                 for i in last_pinged_friend_list.get(str(friend_check_id)):
                     found_friend = False
@@ -2469,7 +2494,7 @@ if __name__ == "__main__":
                     except Exception as e: pass
                 last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
             else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-            with open(os.path.join(cur_path, "CachedFriendsList.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
+            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
         except Exception as e:
             printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
             unfriended_friends = []
@@ -2489,11 +2514,16 @@ if __name__ == "__main__":
         if current_python_version == latest_python_version: printSuccessMessage(f"You're already in the latest version of Python!")
         else:
             printMainMessage(f"Would you like to update Python to {latest_python_version} using the official Python Installer? (y/n)")
-            printMainMessage(f"\033[38;5;{226 if is_python_beta else 82}m[v{current_python_version} => v{latest_python_version}]\033[0m")
+            printMainMessage(f"{colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}")
             co = input("> ")
             if isYes(co) == True:
-                printMainMessage("Python Installer should launch after a moment. Follow the prompts to install!")
-                pip_class.pythonInstall(latest_python_version, is_python_beta)
+                if main_config.get("EFlagEnableSlientPythonInstalls") == True:
+                    printMainMessage("Python may take a moment to install! Please wait!")
+                    if main_os == "Darwin": printYellowMessage("For macOS users, admin permission is needed in order to install.")
+                    pip_class.pythonInstall(latest_python_version, is_python_beta, silent=True)
+                else:
+                    printMainMessage("Python Installer should launch after a moment. Follow the prompts to install!")
+                    pip_class.pythonInstall(latest_python_version, is_python_beta)
                 printMainMessage("Validating Python Installation..")
                 latest_pip_class = PyKits.pip()
                 latest_pip_class.ignore_same = True
@@ -2504,6 +2534,34 @@ if __name__ == "__main__":
                     if isYes(co) == True: pip_class.restartScript("Main.py", sys.argv)
                     sys.exit(0)
                 else: printErrorMessage("Python Installation was may be canceled or Python was not installed!")
+    def continueToUpdatePythonModules(): # Update Python Modules
+        printWarnMessage(f"--- Update Python Modules ---")
+        can_be_updated_modules = ["pypresence", "psutil"]
+        if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
+        elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
+        updating_python_modules = pip_class.updates(can_be_updated_modules)
+        if updating_python_modules and updating_python_modules["success"] == True:
+            if len(updating_python_modules["packages"]) > 0:
+                strs = []
+                only_package_names = []
+                for i in updating_python_modules["packages"]: vers1 = i['version']; vers2 = i['latest_version']; strs.append(f"{i['name']} {colors_class.wrap_message(f'(v{vers1} => v{vers2})', 82)}"); only_package_names.append(i["name"])
+                printMainMessage("The following modules are available to be updated!")
+                printMainMessage(", ".join(strs))
+                printMainMessage("Would you like to install the updates to them now?")
+                co = input("> ")
+                if isYes(co) == True:
+                    printMainMessage("Please wait while the modules are being updated!")
+                    update_modules = pip_class.install(only_package_names, upgrade=True)
+                    if update_modules["success"] == True: 
+                        printSuccessMessage("Successfully updated all Python modules!")
+                        if os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
+                    else: printErrorMessage("Unable to update all Python modules.")
+                else: return ts("Python Module updating was canceled!")
+            elif os.path.exists(generateFileKey("PythonModuleUpdate")): 
+                os.remove(generateFileKey("PythonModuleUpdate"))
+                printMainMessage("No Python module updates are available right now!"); return ts("No updates for Python Modules were available!")
+            else: printMainMessage("No Python module updates are available right now!"); return ts("No updates for Python Modules were available!")
+        else: printErrorMessage("There was an issue trying to fetch for module updates!"); return ts("Python Module updating was canceled!")
     def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
         global run_studio
         global custom_cookies
@@ -2729,13 +2787,13 @@ if __name__ == "__main__":
                                                     if icon_path: shortcut.IconLocation = icon_path
                                                     shortcut.Save()
                                                 create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}")
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "BootstrapImages", "AppIconRunStudio.ico"))
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "BootstrapImages", "AppIconRunStudio.ico"))     
+                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))
+                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))     
                                                 printSuccessMessage("Generated Shortcut App!")
                                             elif main_os == "Darwin":
-                                                if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
+                                                if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
                                                     if not (os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app")) and not os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app", "Contents", "Resources", "AlternativeLink"))):
-                                                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), dirs_exist_ok=True)
+                                                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), dirs_exist_ok=True)
                                                         with open(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app", "Contents", "Resources", "AlternativeLink"), "w", encoding="utf-8") as f: f.write(f"orangeblox://shortcuts/{key}")
                                                         for i in generateCodesignCommand(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                                                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -2845,7 +2903,7 @@ if __name__ == "__main__":
                             printDebugMessage("User selected: False")
                             return
                     if not main_config.get("EFlagSelectedModScripts"): main_config["EFlagSelectedModScripts"] = {}; saveSettings()
-                    s = [i for i, v in main_config.get('EFlagSelectedModScripts').items() if os.path.exists(os.path.join(cur_path, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
+                    s = [i for i, v in main_config.get('EFlagSelectedModScripts').items() if os.path.exists(os.path.join(mods_folder, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
                     if main_config.get('EFlagSelectedModScripts') and len(s) > 0: printMainMessage(f"Selected Mod Scripts: {', '.join(s)}")
                     else: printMainMessage(f"Selected Mod Scripts: None")
                     printMainMessage("Select an option or a mod to enable/disable!")
@@ -2867,7 +2925,7 @@ if __name__ == "__main__":
                         generated_ui_options.append({"index": 1, "message": f"[{final_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                     generated_ui_options.append({"index": 999998, "message": ts("Mod Script Settings")})
                     generated_ui_options.append({"index": 999998.5, "message": ts("Special Mod Settings")})
-                    if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Mods"))): generated_ui_options.append({"index": 999999, "message": ts("Sync Mods from Installation Folder")})
+                    if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Mods", "Mods"))): generated_ui_options.append({"index": 999999, "message": ts("Sync Mods from Installation Folder")})
                     generated_ui_options.append({"index": 1000000, "message": ts("Open Mods Folder")})
                     generated_ui_options.append({"index": 1000001, "message": ts("Disable Appling Mods")})
                     generated_ui_options.append({"index": 1000002, "message": ts("Clear Installed Mods [Reinstall Roblox]")})
@@ -2936,8 +2994,8 @@ if __name__ == "__main__":
                                         if isYes(d) == True:
                                             printMainMessage("Starting Clearing Operation..")
                                             for i, v in mods_manifest.items():
-                                                if v["mod_script"] == True and os.path.exists(os.path.join(cur_path, "Mods", i, f"Configuration_{user_folder_name}")):
-                                                    os.remove(os.path.join(cur_path, "Mods", i, f"Configuration_{user_folder_name}"))
+                                                if v["mod_script"] == True and os.path.exists(os.path.join(mods_folder, "Mods", i, f"Configuration_{user_folder_name}")):
+                                                    os.remove(os.path.join(mods_folder, "Mods", i, f"Configuration_{user_folder_name}"))
                                                     printMainMessage(f"Removed Mod Script Configuration for {i}")
                                             printSuccessMessage("Successfully cleared all Mod Script Configurations!")
                                         else: printErrorMessage("Canceled Clearing Operation.")
@@ -2948,7 +3006,7 @@ if __name__ == "__main__":
                                             printErrorMessage(v['mod_info']["mod_script_end_support_reasoning"])
                                     elif sel_mod_script["index"] == 1:
                                         set_mod_script = sel_mod_script["mod_id"]
-                                        if sel_mod_script["mod_info"].get("mod_script") == True and os.path.exists(os.path.join(cur_path, "Mods", set_mod_script, "ModScript.py")) and not (main_config.get("EFlagAllowActivityTracking") == False):
+                                        if sel_mod_script["mod_info"].get("mod_script") == True and os.path.exists(os.path.join(mods_folder, "Mods", set_mod_script, "ModScript.py")) and not (main_config.get("EFlagAllowActivityTracking") == False):
                                             if reverify_mod_script == None and main_config.get("EFlagSelectedModScripts").get(set_mod_script) and main_config.get("EFlagSelectedModScripts").get(set_mod_script).get("enabled") == True: main_config["EFlagSelectedModScripts"][set_mod_script] = {"enabled": False}
                                             else:
                                                 printMainMessage("You will enable the following permissions for this script: ")
@@ -2967,7 +3025,7 @@ if __name__ == "__main__":
                                                 extreme_included = False
                                                 for i in sorted_perms_2:
                                                     if i.get("level") == 4:
-                                                        print(f"\033[38;5;201m- {i.get('message')}\033[0m")
+                                                        print(colors_class.wrap_message(f"- {i.get('message')}", 201))
                                                         extreme_included = True
                                                     elif i.get("level") == 3: printErrorMessage(f"- {i.get('message')}")
                                                     elif i.get("level") == 2: printWarnMessage(f"- {i.get('message')}")
@@ -2975,7 +3033,7 @@ if __name__ == "__main__":
                                                     else: printMainMessage(f"- {i.get('message')}")
                                                 if len(python_modules) > 0: printYellowMessage(f"- Install and Use Python Modules: {', '.join(python_modules)}")
                                                 printYellowMessage("Please check the scripts, permissions above and developer of this mod before using!")
-                                                printMainMessage("Color Key: \033[38;5;201m[Extreme]\033[0m \033[38;5;196m[Dangerous]\033[0m \033[38;5;202m[Caution]\033[0m \033[38;5;226m[Warning]\033[0m \033[38;5;255m[Normal]\033[0m")
+                                                printMainMessage(f"Color Key: {colors_class.wrap_message(ts('[Extreme]'), 201)} {colors_class.wrap_message(ts('[Dangerous]'), 196)} {colors_class.wrap_message(ts('[Caution]'), 202)} {colors_class.wrap_message(ts('[Warning]'), 226)} {colors_class.wrap_message(ts('[Normal]'), 255)}")
                                                 PyKits.TimerBar(5, "Are you sure you want to use this mod script? (y/n)", False).start()
                                                 a = input("> ")
                                                 if isYes(a) == True:
@@ -2984,7 +3042,7 @@ if __name__ == "__main__":
                                                         con = False
                                                         printYellowMessage("THIS SCRIPT WILL BE GRANTED THE EXTREME LEVEL PERMISSIONS LISTED! ARE YOU SURE?")
                                                         for i in sorted_perms_2:
-                                                            if i.get("level") == 4: print(f"\033[38;5;201m- {i.get('message')}\033[0m")
+                                                            if i.get("level") == 4: print(colors_class.wrap_message(f"- {i.get('message')}", 201))
                                                         PyKits.TimerBar(5, "ARE YOU SURE? (y/n)", False).start()
                                                         a = input("> ")
                                                         if isYes(a) == True: con = True
@@ -3000,7 +3058,7 @@ if __name__ == "__main__":
                                                         main_config["EFlagSelectedModScripts"][set_mod_script] = {
                                                             "enabled": True,
                                                             "permissions": actual_permissions,
-                                                            "hash": generateFileHash(os.path.join(cur_path, "Mods", set_mod_script, "ModScript.py"))
+                                                            "hash": generateFileHash(os.path.join(mods_folder, "Mods", set_mod_script, "ModScript.py"))
                                                         }
                                                         printSuccessMessage(f'Successfully enabled mod script to "{sel_mod_script["final_name"]}"!')
                                                     else:
@@ -3036,11 +3094,11 @@ if __name__ == "__main__":
                         c = input("> ")
                         if isYes(c) == True:
                             main_config["EFlagEnableChangeAvatarEditorBackground"] = True
-                            def scan_name(a): return os.path.exists(os.path.join(cur_path, "AvatarEditorMaps", f"{a}.rbxl"))
+                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "AvatarEditorMaps", f"{a}.rbxl"))
                             def getName():
                                 got_backgrounds = []
-                                for i in os.listdir(os.path.join(cur_path, "AvatarEditorMaps")):
-                                    if os.path.isfile(os.path.join(cur_path, "AvatarEditorMaps", i)) and i.endswith(".rbxl"): got_backgrounds.append(i)
+                                for i in os.listdir(os.path.join(mods_folder, "AvatarEditorMaps")):
+                                    if os.path.isfile(os.path.join(mods_folder, "AvatarEditorMaps", i)) and i.endswith(".rbxl"): got_backgrounds.append(i)
                                 printWarnMessage("Select the number that is associated with the map you want to use.")
                                 got_backgrounds = sorted(got_backgrounds)
                                 count = 1
@@ -3082,11 +3140,11 @@ if __name__ == "__main__":
                         c = input("> ")
                         if isYes(c) == True:
                             main_config["EFlagEnableChangeCursor"] = True
-                            def scan_name(a): return os.path.exists(os.path.join(cur_path, "Cursors", a, "ArrowCursor.png")) and os.path.exists(os.path.join(cur_path, "Cursors", a, "ArrowFarCursor.png"))
+                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "Cursors", a, "ArrowCursor.png")) and os.path.exists(os.path.join(mods_folder, "Cursors", a, "ArrowFarCursor.png"))
                             def getName():
                                 got_cursors = []
-                                for i in os.listdir(os.path.join(cur_path, "Cursors")):
-                                    if os.path.isdir(os.path.join(cur_path, "Cursors", i)): got_cursors.append(i)
+                                for i in os.listdir(os.path.join(mods_folder, "Cursors")):
+                                    if os.path.isdir(os.path.join(mods_folder, "Cursors", i)): got_cursors.append(i)
                                 got_cursors = sorted(got_cursors)
                                 printWarnMessage("Select the number that is associated with the cursor you want to use.")
                                 count = 1
@@ -3126,11 +3184,11 @@ if __name__ == "__main__":
                         c = input("> ")
                         if isYes(c) == True:
                             main_config["EFlagEnableChangeBrandIcons"] = True
-                            def scan_name(a): return os.path.exists(os.path.join(cur_path, "RobloxBrand", a, "AppIcon.icns")) or os.path.exists(os.path.join(cur_path, "RobloxBrand", a, "AppIcon.ico"))
+                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "RobloxBrand", a, "AppIcon.icns")) or os.path.exists(os.path.join(mods_folder, "RobloxBrand", a, "AppIcon.ico"))
                             def getName():
                                 got_icons = []
-                                for i in os.listdir(os.path.join(cur_path, "RobloxBrand")):
-                                    if os.path.isdir(os.path.join(cur_path, "RobloxBrand", i)): got_icons.append(i)
+                                for i in os.listdir(os.path.join(mods_folder, "RobloxBrand")):
+                                    if os.path.isdir(os.path.join(mods_folder, "RobloxBrand", i)): got_icons.append(i)
                                 got_icons = sorted(got_icons)
                                 printWarnMessage("Select the number that is associated with the icon you want to use.")
                                 count = 1
@@ -3172,11 +3230,11 @@ if __name__ == "__main__":
                             c = input("> ")
                             if isYes(c) == True:
                                 main_config["EFlagEnableChangeBrandIcons2"] = True
-                                def scan_name(a): return os.path.exists(os.path.join(cur_path, "RobloxStudioBrand", a, "AppIcon.icns")) or os.path.exists(os.path.join(cur_path, "RobloxStudioBrand", a, "AppIcon.ico"))
+                                def scan_name(a): return os.path.exists(os.path.join(mods_folder, "RobloxStudioBrand", a, "AppIcon.icns")) or os.path.exists(os.path.join(mods_folder, "RobloxStudioBrand", a, "AppIcon.ico"))
                                 def getName():
                                     got_icons = []
-                                    for i in os.listdir(os.path.join(cur_path, "RobloxStudioBrand")):
-                                        if os.path.isdir(os.path.join(cur_path, "RobloxStudioBrand", i)): got_icons.append(i)
+                                    for i in os.listdir(os.path.join(mods_folder, "RobloxStudioBrand")):
+                                        if os.path.isdir(os.path.join(mods_folder, "RobloxStudioBrand", i)): got_icons.append(i)
                                     got_icons = sorted(got_icons)
                                     printWarnMessage("Select the number that is associated with the icon you want to use.")
                                     count = 1
@@ -3237,11 +3295,11 @@ if __name__ == "__main__":
                         c = input("> ")
                         if isYes(c) == True:
                             main_config["EFlagEnableChangePlayerSound"] = True
-                            def scan_name(a): return os.path.exists(os.path.join(cur_path, "PlayerSounds", a))
+                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "PlayerSounds", a))
                             def getName():
                                 got_sounds = []
-                                for i in os.listdir(os.path.join(cur_path, "PlayerSounds")):
-                                    if os.path.isdir(os.path.join(cur_path, "PlayerSounds", i)): got_sounds.append(i)
+                                for i in os.listdir(os.path.join(mods_folder, "PlayerSounds")):
+                                    if os.path.isdir(os.path.join(mods_folder, "PlayerSounds", i)): got_sounds.append(i)
                                 got_sounds = sorted(got_sounds)
                                 printWarnMessage("Select the number that is associated with the player sounds you want to use.")
                                 count = 1
@@ -3280,12 +3338,12 @@ if __name__ == "__main__":
                         printMainMessage("Syncing mods..")
                         sync_folder_names = ["AvatarEditorMaps", "Cursors", "PlayerSounds", "RobloxBrand", "RobloxStudioBrand", "Mods"]
                         for sync_folder_name in sync_folder_names:
-                            targeted_sync_location = os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), sync_folder_name)
+                            targeted_sync_location = os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Mods", sync_folder_name)
                             if os.path.exists(targeted_sync_location) and os.path.isdir(targeted_sync_location):
                                 for i in os.listdir(targeted_sync_location):
                                     syncing_mod_path = os.path.join(targeted_sync_location, i)
                                     if os.path.isdir(syncing_mod_path):
-                                        installed_mod_path = os.path.join(cur_path, sync_folder_name, i)
+                                        installed_mod_path = os.path.join(mods_folder, sync_folder_name, i)
                                         if os.path.exists(installed_mod_path): 
                                             for e in os.listdir(installed_mod_path):
                                                 if not (e == f"Configuration_{user_folder_name}" or e == "__pycache__"): 
@@ -3297,8 +3355,8 @@ if __name__ == "__main__":
                         printSuccessMessage("Successfully synced all mods from installation folder!")
                     elif opt["index"] == 1000000:
                         printMainMessage("Opening Mods Folder..")
-                        if main_os == "Darwin": re = subprocess.run(["/usr/bin/open", os.path.join(cur_path, 'Mods')])
-                        else: re = subprocess.run(f"start {os.path.join(cur_path, 'Mods')}", shell=True)
+                        if main_os == "Darwin": re = subprocess.run(["/usr/bin/open", os.path.join(mods_folder)])
+                        else: re = subprocess.run(f"start {os.path.join(mods_folder)}", shell=True)
                         if re.returncode == 0: printSuccessMessage("Successfully opened Mods folder!")
                         else: printErrorMessage("Unable to open Mods folder!")
                     elif opt["index"] == 1000001:
@@ -3351,7 +3409,7 @@ if __name__ == "__main__":
     def continueToUpdates(): # Check for Updates
         printWarnMessage("--- Checking for Bootstrap Updates ---")
         printDebugMessage("Setting Installed App Path to Local User..") 
-        if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(cur_path, "../", "../", "../") + "/"))
+        if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(macos_app_path, "../") + "/"))
         elif main_os == "Windows": setInstalledAppPath(os.path.realpath(cur_path))
         printDebugMessage("Sending Request to Bootstrap Version Servers..") 
         version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
@@ -3375,7 +3433,7 @@ if __name__ == "__main__":
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
-                        printYellowMessage("⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev")
+                        printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"⚠️ Download Location: {download_location}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
                         printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
@@ -3406,7 +3464,7 @@ if __name__ == "__main__":
                                                 try: pip_class.copyTreeWithMetadata(src_path, dest_path, dirs_exist_ok=True)
                                                 except Exception as e: printDebugMessage(f"Update Error for directory ({src_path}): \n{trace()}")
                                             else:
-                                                if not file.endswith(".json"):
+                                                if (not file.endswith(".json")) or file == "Version.json":
                                                     try: shutil.copy2(src_path, dest_path)
                                                     except Exception as e: printDebugMessage(f"Update Error for file ({src_path}): \n{trace()}")
                                         if main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir")):
@@ -3418,7 +3476,7 @@ if __name__ == "__main__":
                                                     try: pip_class.copyTreeWithMetadata(src_path, dest_path, dirs_exist_ok=True)
                                                     except Exception as e: printDebugMessage(f"Update Error for directory ({src_path}): \n{trace()}")
                                                 else:
-                                                    if not file.endswith(".json"):
+                                                    if (not file.endswith(".json")) or file == "Version.json":
                                                         try: shutil.copy2(src_path, dest_path)
                                                         except Exception as e: printDebugMessage(f"Update Error for file ({src_path}): \n{trace()}")
                                         if os.path.exists(generateFileKey("OrangeBloxUpdate")): os.remove(generateFileKey("OrangeBloxUpdate"))
@@ -3521,30 +3579,30 @@ if __name__ == "__main__":
                                     main_config = obfuscated_json
                                 saveSettings()
                                 printMainMessage("Copying AvatarEditorMaps..")
-                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "AvatarEditorMaps"), os.path.join(cur_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "AvatarEditorMaps"), os.path.join(mods_folder, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying Cursors..")
-                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Cursors"), os.path.join(cur_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Cursors"), os.path.join(mods_folder, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 if os.path.exists(os.path.join(backup_path, "PlayerSounds")):
                                     printMainMessage("Copying PlayerSounds..")
-                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "PlayerSounds"), os.path.join(cur_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "PlayerSounds"), os.path.join(mods_folder, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 else:
                                     printMainMessage("Copying DeathSounds..")
-                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "DeathSounds"), os.path.join(cur_path, "DeathSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
-                                    if os.path.exists(os.path.join(cur_path, "DeathSounds")):
-                                        for i in os.listdir(os.path.join(cur_path, "DeathSounds")):
-                                            if os.path.isfile(os.path.join(cur_path, "DeathSounds", i)):
+                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "DeathSounds"), os.path.join(mods_folder, "DeathSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                    if os.path.exists(os.path.join(mods_folder, "DeathSounds")):
+                                        for i in os.listdir(os.path.join(mods_folder, "DeathSounds")):
+                                            if os.path.isfile(os.path.join(mods_folder, "DeathSounds", i)):
                                                 possible_name = i.split(".")
                                                 if len(possible_name) > 1: possible_name = possible_name[0]
                                                 else: possible_name = i
                                                 makedirs(os.path.join(backup_path, "PlayerSounds", possible_name))
-                                                shutil.copy(os.path.join(cur_path, "DeathSounds", i), os.path.join(cur_path, "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
-                                        shutil.rmtree(os.path.join(cur_path, "DeathSounds"), ignore_errors=True)
+                                                shutil.copy(os.path.join(mods_folder, "DeathSounds", i), os.path.join(mods_folder, "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
+                                        shutil.rmtree(os.path.join(mods_folder, "DeathSounds"), ignore_errors=True)
                                 printMainMessage("Copying Mods..")
-                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Mods"), os.path.join(cur_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Mods"), os.path.join(mods_folder, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying RobloxBrand..")
-                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxBrand"), os.path.join(cur_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxBrand"), os.path.join(mods_folder, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Copying RobloxStudioBrand..")
-                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxStudioBrand"), os.path.join(cur_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxStudioBrand"), os.path.join(mods_folder, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                 printMainMessage("Finished transferring! Deleting backup data..")
                                 if os.path.exists(backup_path): shutil.rmtree(backup_path, ignore_errors=True)
                                 if os.path.exists(os.path.join(cur_path, "Backup.obx")): os.remove(os.path.join(cur_path, "Backup.obx"))
@@ -3814,7 +3872,7 @@ if __name__ == "__main__":
                             if (not (current_python_version == latest_python_version)) and latest_python_version:
                                 generated_ui_options.append({
                                     "index": 8.5, 
-                                    "message": ts(f"Update Python \033[38;5;{226 if is_python_beta else 82}m[v{current_python_version} => v{latest_python_version}]\033[0m"), 
+                                    "message": ts(f"Update Python {colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}"), 
                                     "func": continueToUpdatePython, 
                                     "go_to_rbx": True, 
                                     "end_mes": ts("Python has been updated!"),
@@ -3822,8 +3880,36 @@ if __name__ == "__main__":
                                 })
                                 displayNotification(ts("Python Update Available!"), ts(f'Python {latest_python_version} is now available for download! Install the update by opening the main menu, checking for Python updates and then install!'))
                             else: os.remove(generateFileKey("PythonUpdate"))
-                    def bootstrap_update_check():
-                        if main_config.get("EFlagDisableBootstrapChecks") == False:
+                    if not (main_config.get("EFlagDisablePythonModuleUpdateChecks") == True):
+                        can_be_updated_modules = ["pypresence", "psutil"]
+                        if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
+                        elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
+                        def python_module_update_check():
+                            updating_python_modules = pip_class.updates(can_be_updated_modules)
+                            if updating_python_modules and updating_python_modules["success"] == True:
+                                if len(updating_python_modules["packages"]) > 0:
+                                    dumped = json.dumps(updating_python_modules["packages"], ensure_ascii=False)
+                                    if os.path.exists(generateFileKey("PythonModuleUpdate")):
+                                        with open(generateFileKey("PythonModuleUpdate"), "r") as f: ss = f.read()
+                                        if ss == dumped: return
+                                    with open(generateFileKey("PythonModuleUpdate"), "w", encoding="utf-8") as f: f.write(dumped)
+                                    displayNotification(ts("Python Module Updates Available!"), ts(f'{len(updating_python_modules["packages"])} python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
+                                elif os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
+                        threading.Thread(target=python_module_update_check, daemon=True).start()
+                        if os.path.exists(generateFileKey("PythonModuleUpdate")):
+                            with open(generateFileKey("PythonModuleUpdate"), "r") as f: modules_updating = json.load(f)
+                            if len(modules_updating) > 0:
+                                generated_ui_options.append({
+                                    "index": 8.75, 
+                                    "message": ts(f"Update Python Modules {colors_class.wrap_message(f'[+{len(modules_updating)}]', 82)}"), 
+                                    "func": continueToUpdatePythonModules, 
+                                    "go_to_rbx": True, 
+                                    "end_mes": ts("Python Modules has been updated!"),
+                                    "clear_console": True
+                                })
+                            else: os.remove(generateFileKey("PythonModuleUpdate"))
+                    if not (main_config.get("EFlagDisableBootstrapChecks") == True):
+                        def bootstrap_update_check():
                             get_updates_anyway = True
                             emoji_to_define_update = ""
                             unic = ""
@@ -3840,7 +3926,7 @@ if __name__ == "__main__":
                                     latest_vers = latest_vers_res.json
                                     if current_version.get("version"):
                                         if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                                            versio_name = ts(f'\033[38;5;{unic}mNew Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}]\033[0m')
+                                            versio_name = colors_class.wrap_message(ts(f'New Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}{" " if main_os == "Darwin" else ""}]'), unic)
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                                                 with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
@@ -3848,7 +3934,7 @@ if __name__ == "__main__":
                                             displayNotification(ts("OrangeBlox Update Available!"), ts(f'OrangeBlox v{latest_vers.get("latest_version", "1.0.0")} is now available for download! Install the update by opening the main menu, checking for updates and then install!'))
                                         else:
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")): os.remove(generateFileKey("OrangeBloxUpdate"))
-                    threading.Thread(target=bootstrap_update_check, daemon=True).start()
+                        threading.Thread(target=bootstrap_update_check, daemon=True).start()
                     if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                         with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: versio_name = f.read()
                         generated_ui_options.append({
@@ -3867,7 +3953,7 @@ if __name__ == "__main__":
                         else: emoji_to_define_update = "❌"; unic = "196"
                         generated_ui_options.append({
                             "index": 9, 
-                            "message": ts(f"\033[38;5;{unic}mCheck for Updates [{emoji_to_define_update}]\033[0m"), 
+                            "message": colors_class.wrap_message(ts(f"Check for Updates [{emoji_to_define_update}{' ' if main_os == 'Darwin' else ''}]"), unic), 
                             "func": continueToUpdates, 
                             "go_to_rbx": True, 
                             "end_mes": ts("Finished checking for updates!"),
@@ -3937,6 +4023,14 @@ if __name__ == "__main__":
                             elif "new" in url: continueToRoblox()
                             elif "reconnect-studio" in url: connectExistingRobloxWindow(studio=True)
                             elif "reconnect" in url: connectExistingRobloxWindow()
+                            elif "python-updates" in url: 
+                                continueToUpdatePython()
+                                if not ("?quick-action=true" in url): handleOptionSelect()
+                                else: handleOptionSelect(isRedirectedFromApp=True)
+                            elif "python-module-updates" in url: 
+                                continueToUpdatePythonModules()
+                                if not ("?quick-action=true" in url): handleOptionSelect()
+                                else: handleOptionSelect(isRedirectedFromApp=True)
                             elif "fflag-install" in url:
                                 continueToFFlagInstaller()
                                 if not ("?quick-action=true" in url): handleOptionSelect()
@@ -4073,15 +4167,15 @@ if __name__ == "__main__":
                                                     main_config = obfuscated_json
                                                 saveSettings()
                                                 printMainMessage("Copying AvatarEditorMaps..")
-                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "AvatarEditorMaps"), os.path.join(cur_path, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "AvatarEditorMaps"), os.path.join(mods_folder, "AvatarEditorMaps"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 printMainMessage("Copying Cursors..")
-                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Cursors"), os.path.join(cur_path, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Cursors"), os.path.join(mods_folder, "Cursors"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 if os.path.exists(os.path.join(backup_path, "PlayerSounds")):
                                                     printMainMessage("Copying PlayerSounds..")
-                                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "PlayerSounds"), os.path.join(cur_path, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "PlayerSounds"), os.path.join(mods_folder, "PlayerSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 else:
                                                     printMainMessage("Copying DeathSounds..")
-                                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "DeathSounds"), os.path.join(cur_path, "DeathSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                    pip_class.copyTreeWithMetadata(os.path.join(backup_path, "DeathSounds"), os.path.join(mods_folder, "DeathSounds"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                     if os.path.exists(os.path.join(cur_path, "DeathSounds")):
                                                         for i in os.listdir(os.path.join(cur_path, "DeathSounds")):
                                                             if os.path.isfile(os.path.join(cur_path, "DeathSounds", i)):
@@ -4089,14 +4183,14 @@ if __name__ == "__main__":
                                                                 if len(possible_name) > 1: possible_name = possible_name[0]
                                                                 else: possible_name = i
                                                                 makedirs(os.path.join(backup_path, "PlayerSounds", possible_name))
-                                                                shutil.copy(os.path.join(cur_path, "DeathSounds", i), os.path.join(cur_path, "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
+                                                                shutil.copy(os.path.join(cur_path, "DeathSounds", i), os.path.join(mods_folder, "PlayerSounds", possible_name, "ouch.ogg"), follow_symlinks=False)
                                                         shutil.rmtree(os.path.join(cur_path, "DeathSounds"), ignore_errors=True)
                                                 printMainMessage("Copying Mods..")
-                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Mods"), os.path.join(cur_path, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "Mods"), os.path.join(mods_folder, "Mods"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 printMainMessage("Copying RobloxBrand..")
-                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxBrand"), os.path.join(cur_path, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxBrand"), os.path.join(mods_folder, "RobloxBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 printMainMessage("Copying RobloxStudioBrand..")
-                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxStudioBrand"), os.path.join(cur_path, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                                                pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxStudioBrand"), os.path.join(mods_folder, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 printMainMessage("Finished transferring! Deleting backup data..")
                                                 if os.path.exists(backup_path): shutil.rmtree(backup_path, ignore_errors=True)
                                                 printSuccessMessage("Successfully restored OrangeBlox data! Would you to restart the app? (y/n)")
@@ -4226,16 +4320,16 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioInstaller.exe"))
                     with open(os.path.join(versions_folder, main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio"), "RobloxStudioBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
-                    if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(cur_path, "../", "../", "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
+                    if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
+                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
+                        shutil.copy(os.path.join(macos_app_path, "../", "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
                         with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
                         for i in generateCodesignCommand(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                             else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    if os.path.exists(os.path.join(cur_path, "../", "../", "../", "Run Studio.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "../", "../", "../", "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(cur_path, "../", "../", "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
+                    if os.path.exists(os.path.join(macos_app_path, "../", "Run Studio.app")):
+                        pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
+                        shutil.copy(os.path.join(macos_app_path, "../", "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
                         with open(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
                         for i in generateCodesignCommand(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -4554,7 +4648,7 @@ if __name__ == "__main__":
                     if type(main_config.get("EFlagEnabledMods")) is dict:
                         for i, v in main_config.get("EFlagEnabledMods").items():
                             if v == True:
-                                mod_path = os.path.join(os.path.join(cur_path, "Mods"), i)
+                                mod_path = os.path.join(os.path.join(mods_folder, "Mods"), i)
                                 is_studio = False
                                 if os.path.exists(mod_path) and os.path.isdir(mod_path):
                                     ignore_given_files = []
@@ -4571,27 +4665,27 @@ if __name__ == "__main__":
                 
                 if main_config.get("EFlagEnableChangeAvatarEditorBackground") == True:
                     printMainMessage("Changing Current Avatar Editor to Set Avatar Background..")
-                    copyFile(os.path.join(cur_path, "AvatarEditorMaps", f"{main_config.get('EFlagAvatarEditorBackground')}.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
+                    copyFile(os.path.join(mods_folder, "AvatarEditorMaps", f"{main_config.get('EFlagAvatarEditorBackground')}.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
                     printSuccessMessage("Successfully changed current avatar editor with a set background!")
                 else:
                     printMainMessage("Changing Current Avatar Editor to Original Avatar Background..")
-                    copyFile(os.path.join(cur_path, "AvatarEditorMaps", "Original.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
+                    copyFile(os.path.join(mods_folder, "AvatarEditorMaps", "Original.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
                     printSuccessMessage("Successfully changed current avatar editor to original background!")
                 if main_config.get("EFlagEnableChangeCursor") == True:
                     printMainMessage("Changing Current Cursor to Set Cursor..")
-                    copyFile(os.path.join(cur_path, "Cursors", main_config.get('EFlagSelectedCursor'), "ArrowCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowCursor.png"))
-                    copyFile(os.path.join(cur_path, "Cursors", main_config.get('EFlagSelectedCursor'), "ArrowFarCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowFarCursor.png"))
-                    copyFile(os.path.join(cur_path, "Cursors", main_config.get('EFlagSelectedCursor'), "IBeamCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "IBeamCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", main_config.get('EFlagSelectedCursor'), "ArrowCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", main_config.get('EFlagSelectedCursor'), "ArrowFarCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowFarCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", main_config.get('EFlagSelectedCursor'), "IBeamCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "IBeamCursor.png"))
                     printSuccessMessage("Successfully changed current cursor with a set cursor image!")
                 else:
                     printMainMessage("Changing Current Cursor to Original Cursor..")
-                    copyFile(os.path.join(cur_path, "Cursors", "Original", "ArrowCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowCursor.png"))
-                    copyFile(os.path.join(cur_path, "Cursors", "Original", "ArrowFarCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowFarCursor.png"))
-                    copyFile(os.path.join(cur_path, "Cursors", "Original", "IBeamCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "IBeamCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", "Original", "ArrowCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", "Original", "ArrowFarCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowFarCursor.png"))
+                    copyFile(os.path.join(mods_folder, "Cursors", "Original", "IBeamCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "IBeamCursor.png"))
                     printSuccessMessage("Successfully changed current cursor with original cursor image!")
                 if main_config.get("EFlagEnableChangePlayerSound") == True:
                     printMainMessage("Changing Current Player Sounds to Set Sound Files..")
-                    sounds_folder = os.path.join(cur_path, "PlayerSounds", main_config.get('EFlagSelectedPlayerSounds'))
+                    sounds_folder = os.path.join(mods_folder, "PlayerSounds", main_config.get('EFlagSelectedPlayerSounds'))
                     copyFile(os.path.join(sounds_folder, "ouch.ogg"), os.path.join(content_folder_paths[main_os], "content", "sounds", "ouch.ogg"))
                     copyFile(os.path.join(sounds_folder, "action_falling.ogg"), os.path.join(content_folder_paths[main_os], "content", "sounds", "action_falling.ogg"))
                     copyFile(os.path.join(sounds_folder, "action_footsteps_plastic.mp3"), os.path.join(content_folder_paths[main_os], "content", "sounds", "action_footsteps_plastic.mp3"))
@@ -4605,7 +4699,7 @@ if __name__ == "__main__":
                     printSuccessMessage("Successfully changed current player sounds with a set of sound files!")
                 else:
                     printMainMessage("Changing Current Death Sound to Original Sound Files..")
-                    sounds_folder = os.path.join(cur_path, "PlayerSounds", "Current")
+                    sounds_folder = os.path.join(mods_folder, "PlayerSounds", "Current")
                     copyFile(os.path.join(sounds_folder, "ouch.ogg"), os.path.join(content_folder_paths[main_os], "content", "sounds", "ouch.ogg"))
                     copyFile(os.path.join(sounds_folder, "action_falling.ogg"), os.path.join(content_folder_paths[main_os], "content", "sounds", "action_falling.ogg"))
                     copyFile(os.path.join(sounds_folder, "action_footsteps_plastic.mp3"), os.path.join(content_folder_paths[main_os], "content", "sounds", "action_footsteps_plastic.mp3"))
@@ -4619,11 +4713,11 @@ if __name__ == "__main__":
                     printSuccessMessage("Successfully changed current player sounds with original sound files!")
                 printMainMessage("Changing Brand Images..")
                 if run_studio == True:
-                    if main_config.get("EFlagEnableChangeBrandIcons2") == True: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons2") == True: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", "Original")
                 else:
-                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxBrand", "Original")
                 if run_studio == False:
                     if os.path.exists(os.path.join(brand_fold, "MenuIcon.png")): copyFile(os.path.join(brand_fold, "MenuIcon.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "ui", "TopBar", "coloredlogo.png"))
                     if os.path.exists(os.path.join(brand_fold, "MenuIcon@2x.png")): copyFile(os.path.join(brand_fold, "MenuIcon@2x.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "ui", "TopBar", "coloredlogo@2x.png"))
@@ -4680,7 +4774,7 @@ if __name__ == "__main__":
                     shutil.copy(os.path.join(cur_path, "OrangeBlox.exe" if run_studio == True else "OrangeBlox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe" if run_studio == True else "RobloxPlayerInstaller.exe"))
                     with open(os.path.join(content_folder_paths[main_os], "RobloxStudioBetaPlayRobloxRestart.txt" if run_studio == True else "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
                 elif main_os == "Darwin":
-                    backspacing = os.path.join(cur_path, "../", "../", "../")
+                    backspacing = os.path.join(macos_app_path, "../")
                     if os.path.exists(os.path.join(backspacing, "Play Roblox.app")):
                         pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
                         shutil.copy(os.path.join(backspacing, "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
@@ -4954,7 +5048,7 @@ if __name__ == "__main__":
                     win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')}")
                     win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                     win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
-                    win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "BootstrapImages", "AppIcon.ico"))
+                    win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
                     win32api.RegSetValueEx(registry_key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                     win32api.RegSetValueEx(registry_key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                     win32api.RegSetValueEx(registry_key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
@@ -4990,10 +5084,11 @@ if __name__ == "__main__":
         # Mod Scripts
         mod_script_modules: dict[str, importlib.machinery.ModuleSpec] = {}
         generated_api_instances = {}
+        generated_secret_keys = {}
         orangeapi_modules = {}
         mod_script_jsons = {}
         mods_manifest = generateModsManifest()
-        selected_mod_scripts = [i for i, v in main_config.get('EFlagSelectedModScripts', {}).items() if os.path.exists(os.path.join(cur_path, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
+        selected_mod_scripts = [i for i, v in main_config.get('EFlagSelectedModScripts', {}).items() if os.path.exists(os.path.join(mods_folder, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
         roblox_launched_affect_mod_script = False
         def loadModScripts():
             global mod_script_modules
@@ -5003,19 +5098,20 @@ if __name__ == "__main__":
             if main_config.get("EFlagEnableMods") == True:
                 if selected_mod_scripts and not (main_config.get("EFlagAllowActivityTracking") == False) and len(selected_mod_scripts) > 0:
                     for sel_mo in selected_mod_scripts:
-                        if os.path.exists(os.path.join(cur_path, "Mods", sel_mo, "Manifest.json")):
-                            mod_script_jsons[sel_mo] = readJSONFile(os.path.join(cur_path, "Mods", sel_mo, "Manifest.json"))
+                        if os.path.exists(os.path.join(mods_folder, "Mods", sel_mo, "Manifest.json")):
+                            mod_script_jsons[sel_mo] = readJSONFile(os.path.join(mods_folder, "Mods", sel_mo, "Manifest.json"))
                             if mod_script_jsons.get(sel_mo):
                                 if mods_manifest.get(sel_mo) and mods_manifest.get(sel_mo).get("mod_script") == True:
                                     printMainMessage(f"Preparing Mod Script ({sel_mo})..")
                                     mod_manifest = mods_manifest.get(sel_mo)
                                     if mod_manifest["mod_script_supports"] <= current_version["version"] and mod_manifest["mod_script_end_support"] > current_version["version"] and mod_manifest["mod_script_supports_operating_system"] == True:
                                         def s(sel_mod):
+                                            nonlocal mod_manifest
                                             global mod_script_modules
                                             global mod_script_jsons
                                             global selected_mod_scripts
 
-                                            with open(os.path.join(cur_path, "Mods", sel_mod, "ModScript.py"), "r", encoding="utf-8") as f: mod_script_text = f.read()
+                                            with open(os.path.join(mods_folder, "Mods", sel_mod, "ModScript.py"), "r", encoding="utf-8") as f: mod_script_text = f.read()
                                             approved_items_list = main_config.get('EFlagSelectedModScripts').get(sel_mod).get("permissions", [])
                                             approved_through_scan = True
 
@@ -5027,35 +5123,42 @@ if __name__ == "__main__":
                                             if mod_manifest.get("python_modules"):
                                                 for i in mod_manifest["python_modules"]:
                                                     if not f"pip_{i}" in approved_items_list: approved_through_scan = False
-                                            if not (mod_manifest["mod_script_hash"] == main_config.get('EFlagSelectedModScripts').get(sel_mo).get("hash", "")): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {mod_manifest['mod_script_hash']} => {main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')}")
-
+                                            mod_script_detail = main_config.get('EFlagSelectedModScripts').get(sel_mo)
+                                            if not (mod_manifest["mod_script_hash"] == mod_script_detail.get("hash", "")): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {mod_manifest['mod_script_hash']} => {main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')}")
                                             if approved_through_scan == True:
                                                 if mod_manifest.get("python_modules"):
                                                     printDebugMessage("Validating Installation of Mod Script Modules..")
                                                     if not pip_class.installed(mod_manifest.get("python_modules", []), boolonly=True): pip_class.install(mod_manifest.get("python_modules", []))
                                                 printDebugMessage("Initalizing Components..")
-                                                script_path = os.path.join(cur_path, "Mods", sel_mod, "ModScript.py")
+                                                script_path = os.path.join(mods_folder, "Mods", sel_mod, "ModScript.py")
                                                 api_handled_requests = {}
                                                 try:
+                                                    # Create API Copy
+                                                    new_orange = OrangeAPI
+                                                    generated_secret_keys[sel_mod] = os.urandom(3).hex()
+
                                                     # Prepare API Instance
-                                                    import OrangeAPI as new_orange
-                                                    new_orange.requested_functions =  {}
+                                                    new_orange.requested_functions = {}
                                                     new_orange.cached_information = {}
                                                     new_orange.debug_mode = (main_config.get("EFlagEnableDebugMode")==True)
                                                     new_orange.studio_mode = run_studio==True
                                                     new_orange.launched_from_bootstrap = True
                                                     new_orange.current_version["bootstrap_version"] = current_version["version"]
-                                                    translation_path = os.path.join(cur_path, "Mods", sel_mod, "Translations", main_config.get("EFlagSelectedBootstrapLanguage", "en") + ".json")
+                                                    translation_path = os.path.join(mods_folder, "Mods", sel_mod, "Translations", main_config.get("EFlagSelectedBootstrapLanguage", "en") + ".json")
                                                     if os.path.exists(translation_path): new_orange.translator = PyKits.Translator(lang=translation_path)
                                                     else: new_orange.translator = stdout.translation_obj
                                                     orangeapi_modules[sel_mod] = new_orange
 
                                                     hosting_names = ["OrangeAPI", "EfazRobloxBootstrapAPI"]
                                                     if main_config.get("EFlagDisableEfazRobloxBootstrapAPIReplication"): hosting_names = ["OrangeAPI"]
-                                                    for na in hosting_names: generated_api_instances[f"{sel_mod}"] = new_orange.OrangeAPI()
+                                                    for na in hosting_names: generated_api_instances[f"{sel_mod}"] = new_orange.OrangeAPI(new_orange.OrangeAPIDetails(sel_mod, generated_secret_keys[sel_mod]))
                                                     
                                                     # Load Mod Script
                                                     with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
+                                                    if "import OrangeAPI" in mod_script_contents: 
+                                                        for i in mod_script_contents.splitlines():
+                                                            if i.startswith("import OrangeAPI"): mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
+                                                            elif i.startswith("from OrangeAPI"): mod_script_contents = mod_script_contents.replace("from OrangeAPI", "#from OrangeAPI")
                                                     if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents or "from EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
                                                     if "from OrangeAPI import OrangeAPI;" in mod_script_contents or " = OrangeAPI()" in mod_script_contents: mod_script_contents = mod_script_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
                                                     if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
@@ -5066,7 +5169,7 @@ if __name__ == "__main__":
                                                     if "import Main" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
                                                     if "import builtins" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import builtins", "import OrangeAPI")
                                                     with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
-                                                    spec = importlib.util.spec_from_file_location("ModScript", script_path)
+                                                    spec = importlib.util.spec_from_file_location(f"ModScript_{sel_mod}", script_path)
                                                     mod_script_modules[sel_mod] = importlib.util.module_from_spec(spec)
                                                     for na in hosting_names: setattr(mod_script_modules[sel_mod], na, generated_api_instances[f"{sel_mod}"])
                                                     
@@ -5190,7 +5293,7 @@ if __name__ == "__main__":
                                                                                         def getConfiguration(selected_scri_a: str, name: str="*"):
                                                                                             if type(name) is str:
                                                                                                 mod_script_config = {}
-                                                                                                config_path = os.path.join(cur_path, "Mods", selected_scri_a, f"Configuration_{user_folder_name}")
+                                                                                                config_path = os.path.join(mods_folder, "Mods", selected_scri_a, f"Configuration_{user_folder_name}")
                                                                                                 if os.path.exists(config_path):
                                                                                                     try:
                                                                                                         with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
@@ -5247,7 +5350,7 @@ if __name__ == "__main__":
                                                                                         def setConfiguration(selected_scri_a: str, name: str="*", data=None):
                                                                                             if type(name) is str:
                                                                                                 mod_script_config = {}
-                                                                                                config_path = os.path.join(cur_path, "Mods", selected_scri_a, f"Configuration_{user_folder_name}")
+                                                                                                config_path = os.path.join(mods_folder, "Mods", selected_scri_a, f"Configuration_{user_folder_name}")
                                                                                                 if os.path.exists(config_path):
                                                                                                     try:
                                                                                                         with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
@@ -5269,12 +5372,12 @@ if __name__ == "__main__":
                                                                                         def unzipFile(selected_scri_a: str, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True):
                                                                                             path = str(path)
                                                                                             path = path.replace("../", "").replace("..\\", "")
-                                                                                            path = os.path.join(cur_path, "Mods", selected_scri_a, path)
+                                                                                            path = os.path.join(mods_folder, "Mods", selected_scri_a, path)
                                                                                             output = str(output)
                                                                                             output = output.replace("../", "").replace("..\\", "")
-                                                                                            output = os.path.join(cur_path, "Mods", selected_scri_a, output)
-                                                                                            if path.startswith(os.path.join(cur_path, "Mods", selected_scri_a)) and output.startswith(os.path.join(cur_path, "Mods", selected_mod_scriptt)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
-                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[new_orange.OrangeAPI.DiscordWebhookField]=[], image="https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"):
+                                                                                            output = os.path.join(mods_folder, "Mods", selected_scri_a, output)
+                                                                                            if path.startswith(os.path.join(mods_folder, "Mods", selected_scri_a)) and output.startswith(os.path.join(mods_folder, "Mods", selected_mod_scriptt)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
+                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image="https://obx.efaz.dev/Images/DiscordIcon.png"):
                                                                                             if main_config.get("EFlagUseDiscordWebhook") == True:
                                                                                                 for i in fields: 
                                                                                                     if not (type(i) is generated_api_instances[selected_scri_a].DiscordWebhookField): return False
@@ -5287,7 +5390,7 @@ if __name__ == "__main__":
                                                                                                                 "description": description or "",
                                                                                                                 "color": color,
                                                                                                                 "fields": [i.convert() for i in fields],
-                                                                                                                "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png" },
+                                                                                                                "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/Images/DiscordIcon.png" },
                                                                                                                 "thumbnail": { "url": image },
                                                                                                                 "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
                                                                                                                 "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')
@@ -5307,6 +5410,20 @@ if __name__ == "__main__":
                                                                                         def startPrepareRoblox(selected_scri_a: str): 
                                                                                             if not (roblox_launched_affect_mod_script == True): prepareRobloxClient()
                                                                                         def current_ver_func(selected_scri_a: str): return current_version
+                                                                                        def getIfModIsEnabled(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if cur_mod_manifest.get(mod_name) and cur_mod_manifest.get(mod_name).get("enabled") == True: return True
+                                                                                            return False
+                                                                                        def enableMod(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                                                            if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = True
+                                                                                            saveSettings()
+                                                                                        def disableMod(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                                                            if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = False
+                                                                                            saveSettings()
 
                                                                                         defined_func = {
                                                                                             "generateModsManifest": generateModsManifest,
@@ -5322,6 +5439,9 @@ if __name__ == "__main__":
                                                                                             "getIfRobloxLaunched": getIfRobloxLaunched,
                                                                                             "sendDiscordWebhookMessage": sendDiscordWebhookMessage,
                                                                                             "reprepareRoblox": startPrepareRoblox,
+                                                                                            "enableMod": enableMod,
+                                                                                            "disableMod": disableMod,
+                                                                                            "getIfModIsEnabled": getIfModIsEnabled,
                                                                                             "getFastFlagConfiguration": getFF,
                                                                                             "setFastFlagConfiguration": setFF,
                                                                                             "saveFastFlagConfiguration": saveFF,
@@ -5354,33 +5474,43 @@ if __name__ == "__main__":
                                                                                         func_list.update(undefined_func)
                                                                                         
                                                                                         if not (api_handled_requests.get(i) == True):
-                                                                                            if v and func_list.get(v.requested):
-                                                                                                if v and v.fulfilled == False:
-                                                                                                    try:
-                                                                                                        if undefined_func.get(v.requested):
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        else:
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(str(selected_mod_scriptt), *(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(str(selected_mod_scriptt), **(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        if v:
-                                                                                                            if not type(val) is None: v.value = val
-                                                                                                            v.success = True
-                                                                                                            v.code = 0
-                                                                                                    except Exception as e:
-                                                                                                        if v:
-                                                                                                            v.success = False
-                                                                                                            v.code = 1
-                                                                                                    if v: v.fulfilled = True
-                                                                                                    orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                                    api_handled_requests[i] = True
+                                                                                            splited_id = i.split("|")
+                                                                                            if splited_id[1] == generated_secret_keys[splited_id[0]]:
+                                                                                                if v and func_list.get(v.requested):
+                                                                                                    if v and v.fulfilled == False:
+                                                                                                        try:
+                                                                                                            if undefined_func.get(v.requested):
+                                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
+                                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
+                                                                                                                else: val = func_list.get(v.requested)()
+                                                                                                            else:
+                                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(splited_id[0], *(v.args))
+                                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(splited_id[0], **(v.args))
+                                                                                                                else: val = func_list.get(v.requested)()
+                                                                                                            if v:
+                                                                                                                if not type(val) is None: v.value = val
+                                                                                                                v.success = True
+                                                                                                                v.code = 0
+                                                                                                        except Exception as e:
+                                                                                                            if v:
+                                                                                                                v.success = False
+                                                                                                                v.code = 1
+                                                                                                        if v: v.fulfilled = True
+                                                                                                        orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
+                                                                                                        api_handled_requests[i] = True
+                                                                                                else:
+                                                                                                    if v:
+                                                                                                        v.value = None
+                                                                                                        v.success = False
+                                                                                                        v.code = 3
+                                                                                                        v.fulfilled = True
+                                                                                                        orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
+                                                                                                        api_handled_requests[i] = True
                                                                                             else:
                                                                                                 if v:
                                                                                                     v.value = None
                                                                                                     v.success = False
-                                                                                                    v.code = 3
+                                                                                                    v.code = 7
                                                                                                     v.fulfilled = True
                                                                                                     orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
                                                                                                     api_handled_requests[i] = True
@@ -5429,7 +5559,7 @@ if __name__ == "__main__":
                                                         def empty(*args, **kwargs): return None
                                                         def open_config(*args, **kwargs):
                                                             mod_script_config = {}
-                                                            config_path = os.path.join(cur_path, "Mods", selected_mod_scripttt, f"Configuration_{user_folder_name}")
+                                                            config_path = os.path.join(mods_folder, "Mods", selected_mod_scripttt, f"Configuration_{user_folder_name}")
                                                             if os.path.exists(config_path):
                                                                 try:
                                                                     with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
@@ -5447,9 +5577,9 @@ if __name__ == "__main__":
 
                                                     # Launch API
                                                     if main_config.get("EFlagDisableEfazRobloxBootstrapAPIReplication"): hosting_names = ["OrangeAPI"]
-                                                    for na in hosting_names: threading.Thread(target=checkGeneratedInstances, daemon=True, args=[str(sel_mod), str(na)]).start()
-                                                    threading.Thread(target=setPythonAPIs, daemon=True, args=[str(sel_mod), list(approved_items_list)]).start()
-                                                    threading.Thread(target=handleRequests, daemon=True, args=[str(sel_mod), list(approved_items_list)]).start()
+                                                    for na in hosting_names: threading.Thread(target=checkGeneratedInstances, daemon=True, args=[sel_mod, str(na)]).start()
+                                                    threading.Thread(target=setPythonAPIs, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
+                                                    threading.Thread(target=handleRequests, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
                                                     printDebugMessage(f"Launched OrangeAPI v{orangeapi_modules[sel_mod].current_version['version']}!")
                                                     
                                                     # Launch Script
@@ -5463,8 +5593,8 @@ if __name__ == "__main__":
                                                 printErrorMessage("Please reverify this mod script in order to continue!")
                                                 resb = continueToModsManager(reverify_mod_script=sel_mod)
                                                 if resb == 5: return
-                                                else: s(sel_mod)
-                                        s(sel_mo)
+                                                else: mod_manifest = generateModsManifest().get(sel_mod); s(sel_mod)
+                                        s(str(sel_mo))
                                     else:
                                         if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"This mod script is not supported. Please update to OrangeBlox v{mod_manifest['mod_script_supports']}")
                                         elif mod_manifest["mod_script_supports_operating_system"] == False:
@@ -5482,7 +5612,7 @@ if __name__ == "__main__":
 
         # Extra Functions
         def unfriendCheckLoop():
-            alleged_path = os.path.join(cur_path, f"UnfriendCheckLoopLock_{user_folder_name}")
+            alleged_path = generateFileKey("UnfriendCheckLoopLock")
             if os.path.exists(alleged_path):
                 with open(alleged_path, "r") as f: pid_str = f.read()
                 if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
@@ -5518,8 +5648,8 @@ if __name__ == "__main__":
                         time.sleep(5)
                     if friend_list_req.ok:
                         last_pinged_friend_list = {}
-                        if os.path.exists(os.path.join(cur_path, "CachedFriendsList.json")):
-                            with open(os.path.join(cur_path, "CachedFriendsList.json"), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+                        if os.path.exists(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json"))):
+                            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
                         if last_pinged_friend_list.get(str(friend_check_id)):
                             for i in last_pinged_friend_list.get(str(friend_check_id)):
                                 found_friend = False
@@ -5551,7 +5681,7 @@ if __name__ == "__main__":
                                 except Exception as e: pass
                             last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
                         else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-                        with open(os.path.join(cur_path, "CachedFriendsList.json"), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
+                        with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
                 except Exception as e:
                     printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
                     unfriended_friends = []
@@ -5565,11 +5695,11 @@ if __name__ == "__main__":
         def setRuntimeIconLoop():
             while True:
                 if run_studio == True: 
-                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxStudioBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", "Original")
                 else:
-                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(cur_path, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
-                    else: brand_fold = os.path.join(cur_path, "RobloxBrand", "Original")
+                    if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
+                    else: brand_fold = os.path.join(mods_folder, "RobloxBrand", "Original")
                 if connected_roblox_instance:
                     windows = connected_roblox_instance.getWindowsOpened()
                     if windows:
@@ -5579,7 +5709,7 @@ if __name__ == "__main__":
                             else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
                 time.sleep(2)
         def generateEmbedField(name, value, inline=True): return {"name": name, "value": str(value), "inline": inline}
-        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
+        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/Images/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
         def clearDiscordRPC():
             if main_config.get("EFlagEnableDiscordRPC") == True: pass
         def sendDiscordWebhook(webhook_json, name):
@@ -5695,7 +5825,7 @@ if __name__ == "__main__":
                             generated_thumbnail_api_json = generated_thumbnail_api_res.json
                             generated_place_api_json = generated_place_api_res.json
                             generated_universe_api_json = generated_universe_api_res.json
-                            thumbnail_url = "https://obx.efaz.dev/BootstrapImages/AppIconRunStudio.png"
+                            thumbnail_url = "https://obx.efaz.dev/Images/AppIconRunStudio.png"
                             if generated_thumbnail_api_json.get("data"):
                                 if len(generated_thumbnail_api_json.get("data")) > 0: thumbnail_url = generated_thumbnail_api_json.get("data")[0]["imageUrl"]
                             if current_place_info: current_place_info["thumbnail_url"] = thumbnail_url
@@ -5772,11 +5902,11 @@ if __name__ == "__main__":
                                                         "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
                                                         "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                         "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
-                                                        "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/BootstrapImages/AppIconRunStudioDiscord.png",
+                                                        "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/Images/AppIconRunStudioDiscord.png",
                                                         "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
                                                         "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                     }
-                                                    if formatted_info["small_image"] == "https://obx.efaz.dev/BootstrapImages/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                    if formatted_info["small_image"] == "https://obx.efaz.dev/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
                                                     if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Opened Studio as {connected_user_info.get('display')} (@{connected_user_info.get('name')})!")
                                                     cur_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                                     if formatted_info.get("stop") and formatted_info.get("stop") < cur_time:
@@ -5899,7 +6029,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"
+                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -5949,7 +6079,7 @@ if __name__ == "__main__":
                 printSuccessMessage("Roblox Game has been successfully published to Roblox!")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGamePublished") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"
+                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -5983,6 +6113,45 @@ if __name__ == "__main__":
                             generateEmbedField(ts("Server Location"), f"{server_location}")
                         ], thumbnail_url)
                         try: sendDiscordWebhook(generated_body, "onRobloxPublishing")
+                        except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
+            def onRobloxSaving(info):
+                printSuccessMessage("Roblox Game has been successfully saved to Roblox!")
+                if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGameSaved") == True:
+                    if main_config.get("EFlagDiscordWebhookURL"):
+                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
+                        server_location = ts("Unknown Location")
+                        start_time = 0
+                        place_info = {"name": "???"}
+                        if current_place_info:
+                            if current_place_info.get("start_time"): start_time = current_place_info.get("start_time")
+                            if current_place_info.get("server_location"): server_location = current_place_info.get("server_location")
+                            if current_place_info.get("place_info"): place_info = current_place_info.get("place_info")
+                            if current_place_info.get("thumbnail_url"): thumbnail_url = current_place_info.get("thumbnail_url")
+
+                        title = ts(f"Roblox Game Saved!")
+                        color = 16745942
+                        user_connected_text = ts("Unknown User")
+                        if connected_user_info: user_connected_text = f'[@{connected_user_info["name"]} [{connected_user_info["id"]}]](https://www.roblox.com/users/{connected_user_info["id"]}/profile)'
+
+                        buttons = []
+                        if current_place_info.get("universeId") == -100:
+                            buttons = [
+                                generateEmbedField(ts("Is Local File"), f"True"),
+                                generateEmbedField(ts("Local File Path"), f"{current_place_info.get('place_identifier')}")
+                            ]
+                        else:
+                            buttons = [
+                                generateEmbedField(ts("Is Local File"), f"False"),
+                                generateEmbedField(ts("Saved Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
+                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                            ]
+
+                        generated_body = generateDiscordPayload(title, color, buttons + [
+                            generateEmbedField(ts("Started"), f"<t:{int(start_time)}:R>"),
+                            generateEmbedField(ts("User Connected"), user_connected_text),
+                            generateEmbedField(ts("Server Location"), f"{server_location}")
+                        ], thumbnail_url)
+                        try: sendDiscordWebhook(generated_body, "onRobloxSaving")
                         except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
             def onPlayTestStart(info):
                 global current_place_info
@@ -6066,7 +6235,7 @@ if __name__ == "__main__":
                                 generated_place_api_json = generated_place_api_res.json
                                 generated_universe_api_json = generated_universe_api_res.json
 
-                                thumbnail_url = "https://obx.efaz.dev/BootstrapImages/AppIconPlayRoblox.png"
+                                thumbnail_url = "https://obx.efaz.dev/Images/AppIconPlayRoblox.png"
                                 if generated_thumbnail_api_json.get("data"):
                                     if len(generated_thumbnail_api_json.get("data")) > 0: thumbnail_url = generated_thumbnail_api_json.get("data")[0]["imageUrl"]
                                 if current_place_info: current_place_info["thumbnail_url"] = thumbnail_url
@@ -6143,14 +6312,14 @@ if __name__ == "__main__":
                                                             "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
                                                             "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                             "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
-                                                            "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/BootstrapImages/AppIconPlayRobloxDiscord.png",
+                                                            "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/Images/AppIconPlayRobloxDiscord.png",
                                                             "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
                                                             "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                         }
                                                         launch_data = ""
                                                         add_exam = False
                                                         if not formatted_info["launch_data"] == "": formatted_info["launch_data"] = f"&launchData={formatted_info['launch_data']}"; add_exam = False
-                                                        if formatted_info["small_image"] == "https://obx.efaz.dev/BootstrapImages/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                        if formatted_info["small_image"] == "https://obx.efaz.dev/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
                                                         if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!")
                                                         if current_place_info:
                                                             if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and main_config.get("EFlagAllowPrivateServerJoining") == True and set_current_private_server_key:
@@ -6290,7 +6459,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/BootstrapImages/DiscordIcon.png"
+                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6393,7 +6562,7 @@ if __name__ == "__main__":
                     rpc.connect()
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxAppStart") == True:
                 if main_config.get("EFlagDiscordWebhookURL"):
-                    thumbnail_url = "https://obx.efaz.dev/BootstrapImages/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/BootstrapImages/RobloxLogo.png"
+                    thumbnail_url = "https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"
                     embed_fields = [
                         generateEmbedField(ts("Connected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
@@ -6417,7 +6586,7 @@ if __name__ == "__main__":
             printErrorMessage(f"There was an error inside the {'RobloxStudio' if run_studio == True else 'RobloxPlayer'} that has caused it to crash! Sorry!")
             printDebugMessage(f"Crashed Data: {consoleLine}")
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxCrash") == True and main_config.get("EFlagDiscordWebhookURL"):
-                generated_body = generateDiscordPayload((ts(f"Uh oh! Roblox Studio Crashed!") if run_studio == True else ts(f"Uh oh! Roblox Crashed!")), 0, [generateEmbedField(ts("Console Log"), consoleLine)], ("https://obx.efaz.dev/BootstrapImages/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/BootstrapImages/RobloxLogo.png"))
+                generated_body = generateDiscordPayload((ts(f"Uh oh! Roblox Studio Crashed!") if run_studio == True else ts(f"Uh oh! Roblox Crashed!")), 0, [generateEmbedField(ts("Console Log"), consoleLine)], ("https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"))
                 try: sendDiscordWebhook(generated_body, "onRobloxCrash")
                 except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
         def onRobloxExit(consoleLine):
@@ -6457,7 +6626,7 @@ if __name__ == "__main__":
                 if connected_roblox_instance and not (connected_roblox_instance.log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
                     title = ts("Roblox Studio Closed!") if run_studio == True else ts("Roblox Closed!")
                     color = 12076614 if run_studio == True else 16735838
-                    thumbnail_url = "https://obx.efaz.dev/BootstrapImages/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/BootstrapImages/RobloxLogo.png"
+                    thumbnail_url = "https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"
                     embed_fields = [
                         generateEmbedField(ts("Disconnected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
@@ -6587,7 +6756,7 @@ if __name__ == "__main__":
                             if not (before_data.get(i) == rpc_info.get(i)): is_different = True
                         if is_different == False: return
                         if main_config.get("EFlagDiscordWebhookURL"):
-                            thumbnail_url = "https://obx.efaz.dev/BootstrapImages/Bloxstrap.png"
+                            thumbnail_url = "https://obx.efaz.dev/Images/Bloxstrap.png"
                             embed_fields = [generateEmbedField(ts("Requested Command"), info["command"])]
                             for i, v in passed_data.items(): embed_fields.append(generateEmbedField(i, v))
                             generated_body = generateDiscordPayload(ts("Bloxstrap RPC Changed"), 12517631, embed_fields, thumbnail_url)
@@ -6596,7 +6765,7 @@ if __name__ == "__main__":
         def onAllRobloxEvents(data):
             if main_config.get("EFlagEnableMods") == True and main_config.get("EFlagSelectedModScripts") and len(selected_mod_scripts) > 0:
                 for s in selected_mod_scripts:
-                    if os.path.exists(os.path.join(cur_path, "Mods", s, "Manifest.json")) and mods_manifest.get(s):
+                    if os.path.exists(os.path.join(mods_folder, "Mods", s, "Manifest.json")) and mods_manifest.get(s):
                         if mods_manifest[s].get("mod_script") == True:
                             try:
                                 allowed_permissions = mods_manifest[s].get("permissions")
@@ -6641,6 +6810,7 @@ if __name__ == "__main__":
                         cri.setRobloxEventCallback("onRobloxChannel", onRobloxChannel)
                         cri.addRobloxEventCallback("onPlayTestDisconnected", onPlayTestDisconnected)
                         cri.addRobloxEventCallback("onRobloxPublishing", onRobloxPublishing)
+                        cri.addRobloxEventCallback("onRobloxSaved", onRobloxSaving)
                         cri.addRobloxEventCallback("onTeamCreateDisconnect", onTeamCreateDisconnect)
                         cri.addRobloxEventCallback("onTeamCreateConnect", onTeamCreateConnect)
                         cri.addRobloxEventCallback("onBloxstrapSDK", onBloxstrapMessage)

@@ -1,0 +1,17 @@
+{
+    "name": "UBFF Theme",
+    "author": "TheKliko (ported by EfazDev)",
+    "description": "This pack can be used to recreate UBFF Theme! This pack has been ported from Kliko's modloader to OrangeBlox.",
+    "colors": ["#648bd9", "#fa94d7"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#648bd9", "#fa94d7"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}

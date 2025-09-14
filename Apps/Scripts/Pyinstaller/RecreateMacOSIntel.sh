@@ -48,7 +48,7 @@ rm -rf ./build/
 
 # Clean Up Apps
 printMessage "Cleaning Up.."
-rm -rf ./Apps/Building/OrangeBlox.app/ ./Apps/Building/OrangeBlox/ ./__pycache__/
+rm -rf ./Apps/Building/OrangeBlox.app/ ./Apps/Building/OrangeBlox/ ./Apps/OrangeBloxMac/ ./__pycache__/
 
 # Done!
 printMessage "Successfully rebuilt OrangeBlox!"

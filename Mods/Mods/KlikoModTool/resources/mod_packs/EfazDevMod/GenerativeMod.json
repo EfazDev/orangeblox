@@ -1,0 +1,20 @@
+{
+    "name": "EfazDev Mod!",
+    "author": "EfazDev",
+    "description": "This is Efaz's primary mod generation files that he uses in a daily basis!",
+    "colors": ["#ff4b00", "#ffff00", "#00ff00"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#ff4b00", "#ffff00", "#00ff00"],
+        "icons/logo/block": "{main}/AppIcon.png",
+        "icons/logo/letterform": "{main}/Banner.png",
+        "icons/logo/studiologo": "{main}/AppIconRunStudio.png",
+        "icons/logo/studiologo_small": "{main}/AppIconRunStudio.png",
+        "extracontent.textures.luaapp.auth.logo_white_1x.png": "{main}/Banner.png",
+        "extracontent.textures.luaapp.auth.logo_white_luobu.png": "{main}/Banner.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/AppIconRunStudio.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/AppIconRunStudio.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/AppIconRunStudio.png",
+        "optional-img": true
+    }
+}

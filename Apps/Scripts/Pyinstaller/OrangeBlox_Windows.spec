@@ -23,7 +23,8 @@ a = Analysis(
         "tkinter",
         "urllib3", 
         "requests",
-        "numpy"
+        "numpy",
+        "site"
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
@@ -40,7 +41,7 @@ main_exe = EXE(
     bootloader_ignore_signals=False,
     console=True,
     upx=True,
-    icon="../../../BootstrapImages/AppIcon.ico",
+    icon="../../../Images/AppIcon.ico",
     version="../../Storage/Version.txt",
     strip=True
 )

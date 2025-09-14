@@ -8,11 +8,11 @@ set "arch=%PROCESSOR_ARCHITECTURE%"
 echo %os_name% | find /i "Windows" >nul
 
 if "%arch%"=="AMD64" (
-    set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-amd64.exe"
+    set "url=https://www.python.org/ftp/python/3.13.7/python-3.13.7-amd64.exe"
 ) else if "%arch%"=="ARM64" (
-    set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5-arm64.exe"
+    set "url=https://www.python.org/ftp/python/3.13.7/python-3.13.7-arm64.exe"
 ) else (
-    set "url=https://www.python.org/ftp/python/3.13.5/python-3.13.5.exe"
+    set "url=https://www.python.org/ftp/python/3.13.7/python-3.13.7.exe"
 )
 powershell -c "Write-Host 'Install Python: Download URL: !url!' -ForegroundColor Green"
 if defined url (

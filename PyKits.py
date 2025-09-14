@@ -1,16 +1,37 @@
-# 
-# PyKits
-# Made by Efaz from efaz.dev
-# 
-# A usable set of classes with extra functions that can be used within apps.
-# Import from file: import PipKits
-# Import from class: 
-#
-# import typing
-# class requests: ...
-# class pip: ...
-# pip_class = pip()
-# 
+"""
+PyKits v1.5.5 | Made by Efaz from efaz.dev
+
+A usable set of classes with extra functions that can be used within apps. \n
+Import from file: 
+```python
+import PyKits
+pip_class = PyKits.pip()
+colors_class = PyKits.Colors()
+```
+Import from class: 
+
+```python
+import typing
+class requests: ...
+class pip: ...
+class Colors: ...
+pip_class = pip()
+colors_class = Colors()
+```
+
+However! Classes may depend on other classes. Use this resource list:
+    request: typing (module)
+    pip: typing (module), request
+    plist: typing (module)
+    Translator: None
+    Colors: typing (module), pip (+ request)
+    stdout: Translator?
+    ProgressBar: None
+    TimerBar: None
+    InstantRequestJSONResponse: None
+    BuiltinEditor: None
+    PyKitsIsAModule: None
+"""
 
 import typing
 class request:
@@ -578,19 +599,20 @@ class pip:
     ignore_same = False
     requests: request = None
     
-    # Pip Functionalities
+    # Pip / PyPi Functionalities
     def __init__(self, command: list=[], executable: str=None, debug: bool=False, find: bool=False, arch: str=None):
         import sys
         import os
         import tempfile
         import re
+        import json
         import platform
         import importlib
+        import importlib.metadata
         import subprocess
         import glob
         import stat
         import shutil
-        import hashlib
         import urllib.parse
         import time
         import mmap
@@ -601,13 +623,14 @@ class pip:
         self._re = re
         self._platform = platform
         self._importlib = importlib
+        self._importlib_metadata = importlib.metadata
         self._subprocess = subprocess
         self._glob = glob
         self._stat = stat
         self._shutil = shutil
-        self._hashlib = hashlib
         self._urllib_parse = urllib.parse
         self._time = time
+        self._json = json
         self._mmap = mmap
 
         self._main_os = platform.system()
@@ -646,13 +669,14 @@ class pip:
         self.ensure()
         res = {}
         generated_list = []
+        if self.getIfVirtualEnvironment(): user = False
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
                 a = self._subprocess.call([self.executable, "-m", "pip", "install"] + (["--upgrade"] if upgrade == True else []) + (["--user"] if user == True else []) + generated_list, stdout=(not self.debug) and self._subprocess.DEVNULL or None, stderr=(not self.debug) and self._subprocess.DEVNULL or None)
                 if a == 0: return {"success": True, "message": "Successfully installed modules!"}
-                else: return {"success": False, "message": f"Command has failed!"}
+                else: return {"success": False, "message": f"Command has failed! Code: {a}"}
             except Exception as e: return {"success": False, "message": str(e)}
         return res
     def uninstall(self, packages: typing.List[str]):
@@ -671,8 +695,8 @@ class pip:
         self.ensure()
         if self.isSameRunningPythonExecutable() and not len(packages) == 0:
             def che(a):
-                try: self._importlib.metadata.version(a); return True
-                except self._importlib.metadata.PackageNotFoundError: return False
+                try: self._importlib_metadata.version(a); return True
+                except self._importlib_metadata.PackageNotFoundError: return False
             if len(packages) == 1: return che(packages[0].lower())
             else:
                 installed_checked = {}
@@ -777,15 +801,21 @@ class pip:
             else:
                 self.printDebugMessage(f"Unable to download pip due to no internet access.")
                 return False
-    
-    # Pypi Packages
-    def getGitHubRepository(self, packages: typing.List[str]):
+    def updates(self, packages: typing.List[str]=[]):
+        sub = self._subprocess.run([self.executable, "-m", "pip", "list", "--outdated", "--format=json"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
+        json_str = sub.stdout.decode().replace("\r", "")
+        try:
+            tried = self._json.loads(json_str)
+            if packages and len(packages) > 0: return {"success": True, "packages": [i for i in tried if i["name"] in packages]}
+            return {"success": True, "packages": tried}
+        except: return {"success": False, "packages": []}
+    def info(self, packages: typing.List[str]):
         generated_list = []
         for i in packages:
             if type(i) is str: generated_list.append(i)
         if len(generated_list) > 0:
             try:
-                links = {}
+                information = {}
                 for i in generated_list:
                     urll = f"https://pypi.org/pypi/{i}/json"
                     if self.getIfConnectedToInternet() == False: return {"success": False}
@@ -793,11 +823,27 @@ class pip:
                     if response.ok:
                         data = response.json
                         info = data["info"]
-                        url = info.get("project_urls", {}).get("Source") or info.get("home_page")
-                        if url: links[i] = url
-                return {"success": True, "repositories": links}
-            except Exception as e:
-                return {"success": False}
+                        information[i] = info
+                return {"success": True, "data": information}
+            except Exception as e: return {"success": False}
+        return {"success": False}
+    def github(self, packages: typing.List[str]):
+        generated_list = []
+        for i in packages:
+            if type(i) is str: generated_list.append(i)
+        if len(generated_list) > 0:
+            try:
+                informed = self.info(generated_list)
+                if informed["success"] == True:
+                    informed = informed["data"]
+                    links = {}
+                    for i in generated_list:
+                        if informed.get(i):
+                            info = informed[i]
+                            url = info.get("project_urls", {}).get("Source") or info.get("home_page")
+                            if url: links[i] = url
+                    return {"success": True, "repositories": links}
+            except Exception as e: return {"success": False}
         return {"success": False}
     
     # Python Management
@@ -857,11 +903,14 @@ class pip:
     def pythonSupported(self, major: int=3, minor: int=13, patch: int=2):
         cur_version = self.getCurrentPythonVersion()
         if not cur_version: return False
-        match = self._re.match(r"(\d+)\.(\d+)\.(\w+)", cur_version)
+        return self.pythonSupportedStatic(cur_version, major, minor, patch)
+    def pythonSupportedStatic(self, version: str, major: int=3, minor: int=13, patch: int=2):
+        if not version: return False
+        match = self._re.match(r"(\d+)\.(\d+)\.(\w+)", version)
         if match:
-            cur_version = match.groups() 
+            version = match.groups() 
             def to_int(val): return int(self._re.sub(r'\D', '', val))
-            return tuple(map(to_int, cur_version)) >= (major, minor, patch)
+            return tuple(map(to_int, version)) >= (major, minor, patch)
         else: return False
     def osSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)):
         if self._main_os == "Windows":
@@ -876,10 +925,17 @@ class pip:
             while len(macos_version) < 3: min_version += (0,)
             return version_tuple >= macos_version
         else: return False
-    def pythonInstall(self, version: str="", beta: bool=False):
+    def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False):
         ma_os = self._main_os
         ma_arch = self._platform.architecture()
         ma_processor = self._platform.machine()
+        macos_version_numbers = {
+            "3.10.0a3": "11.0",
+            "3.9.1rc1": "11.0"
+        }
+        if not self.pythonSupportedStatic(version, 3, 9, 2):
+            if not self.pythonSupportedStatic(version, 3, 9, 2) and self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.9"
+            elif self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.6"
         if self.getIfConnectedToInternet() == False:
             self.printDebugMessage("Failed to download Python installer.")
             return
@@ -890,16 +946,22 @@ class pip:
         version_url_folder = version
         if beta == True: version_url_folder = self._re.match(r'^\d+\.\d+\.\d+', version).group()
         if ma_os == "Darwin":
-            url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos11.pkg"
+            url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos{macos_version_numbers.get(version, '11')}.pkg"
             with self._tempfile.NamedTemporaryFile(suffix=".pkg", delete=False) as temp_file: pkg_file_path = temp_file.name
             result = self.requests.download(url, pkg_file_path)            
             if result.ok:
-                self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
-                self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
+                if silent == True: 
+                    self.printDebugMessage(f"Silently installing Python packages.. Admin permissions may be requested.")
+                    self._subprocess.run(["osascript", "-e", f"do shell script \"installer -pkg '{pkg_file_path}' -target /\" with administrator privileges"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Successfully installed Python package: {pkg_file_path}")
+                else:
+                    self._subprocess.run(["open", pkg_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    while self.getIfProcessIsOpened("/System/Library/CoreServices/Installer.app") == True: self._time.sleep(0.1)
+                    self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
             else:
                 self.printDebugMessage("Failed to download Python installer.")
         elif ma_os == "Windows":
+            if version < "3.11.0": self.printDebugMessage("PyKits is not normally made for versions less than 3.11.0.")
             if ma_arch[0] == "64bit":
                 if ma_processor.lower() == "arm64": url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-arm64.exe"
                 else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-amd64.exe"
@@ -907,8 +969,13 @@ class pip:
             with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
             result = self.requests.download(url, exe_file_path)
             if result.ok:
-                self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
+                if silent == True:
+                    self.printDebugMessage(f"Silently installing Python packages..")
+                    self._subprocess.run([exe_file_path, "/quiet"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Successfully installed Python package: {exe_file_path}")
+                else:
+                    self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                    self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
             else:
                 self.printDebugMessage("Failed to download Python installer.")
     def installLocalPythonCertificates(self):
@@ -957,6 +1024,9 @@ class pip:
                 arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
                 return arch_map.get(machine, "")
             else: return machine_var
+    def getIfVirtualEnvironment(self):
+        alleged_path = self._os.path.dirname(self.executable)
+        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
         ma_os = self._main_os
         if ma_os == "Darwin":
@@ -1089,8 +1159,8 @@ class pip:
             if main_os == "Darwin": self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
             elif main_os == "Windows": self._subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=self._subprocess.DEVNULL)
             else: self._subprocess.run(f"kill -9 {pid}", shell=True, stdout=self._subprocess.DEVNULL)
-    def importModule(self, module_name: str, install_module_if_not_found: bool=False):
-        self._importlib.invalidate_caches()
+    def importModule(self, module_name: str, install_module_if_not_found: bool=False, loop_until_import: bool=False):
+        self.uncacheLoadedModules()
         try: 
             s = self._importlib.import_module(module_name)
             if type(s) is None: raise ModuleNotFoundError("")
@@ -1098,12 +1168,24 @@ class pip:
         except ModuleNotFoundError:
             try:
                 if install_module_if_not_found == True and self.isSameRunningPythonExecutable(): self.install([module_name])
-                self._importlib.invalidate_caches()
+                self.uncacheLoadedModules()
                 s = self._importlib.import_module(module_name)
                 if type(s) is None: raise ModuleNotFoundError("")
                 else: return s
-            except Exception: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+            except Exception: 
+                if loop_until_import == False: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
+                self._time.sleep(1)
+                return self.importModule(module_name=module_name, install_module_if_not_found=install_module_if_not_found, loop_until_import=loop_until_import)
         except Exception as e: raise ImportError(f'Unable to import module "{module_name}" in Python {self.getCurrentPythonVersion()} environment. Exception: {str(e)}')
+    def uncacheLoadedModules(self):
+        if getattr(self._sys, "frozen", False): pass
+        else:
+            import site
+            self._site = site
+            site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
+            for path in site_packages_paths:
+                if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
+        self._importlib.invalidate_caches()
     def unzipFile(self, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True, moving_file_func: typing.Callable=None):
         class result():
             returncode = 0
@@ -1111,7 +1193,7 @@ class pip:
         if not self._os.path.exists(output): self._os.makedirs(output, mode=511)
         previous_output = output
         if output.endswith("/"): output = output[:-1]
-        if len(look_for) > 0: output = output + f"_Full_{str(self._hashlib.sha256(self._os.urandom(6)).hexdigest()[:6])}"; self._os.makedirs(output, mode=511)
+        if len(look_for) > 0: output = output + f"_Full_{self._os.urandom(3).hex()}"; self._os.makedirs(output, mode=511)
         if self._main_os == "Windows": zip_extract = self._subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", path] + export_out + ["-C", output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         else: zip_extract = self._subprocess.run(["/usr/bin/ditto", "-xk", path, output], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, check=check)
         if len(look_for) > 0:
@@ -1347,6 +1429,204 @@ class Translator:
                 if i in tried_templates: continue
                 if v.fullmatch(message) and self.translation_json.get(i): return self.pre_translate(message, i)
         return message
+class Colors:
+    class Color:
+        def __init__(self, r: int, g: int, b: int):
+            self.__colors_obj__ = Colors()
+            r, g, b = self.__colors_obj__.limit_rgb_value(r), self.__colors_obj__.limit_rgb_value(g), self.__colors_obj__.limit_rgb_value(b)
+            self.rgb = (r, g, b)
+            self.hex = self.__colors_obj__.rgb_to_hex(r, g, b)
+            self.ansi = self.__colors_obj__.hex_to_ansi2(self.hex)
+            self.decimal = self.__colors_obj__.hex_to_decimal(self.hex)
+        def __int__(self): return self.ansi
+        def __str__(self): return f"Color[{', '.join([str(i) for i in self.rgb])}]"
+        def wrap_message(self, message): return self.__colors_obj__.wrap_message(message, self.ansi)
+        def grayscale(self): return self.__colors_obj__.apply_grayscale(*(self.rgb))
+    class Black(Color):
+        def __init__(self): 
+            super().__init__(0, 0, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Black"]
+        def __str__(self): return "Black"
+    class Red(Color):
+        def __init__(self): 
+            super().__init__(255, 0, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Red"]
+        def __str__(self): return "Red"
+    class Yellow(Color):
+        def __init__(self): 
+            super().__init__(255, 255, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Yellow"]
+        def __str__(self): return "Yellow"
+    class Green(Color):
+        def __init__(self): 
+            super().__init__(0, 255, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Green"]
+        def __str__(self): return "Green"
+    class Teal(Color):
+        def __init__(self): 
+            super().__init__(0, 255, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Teal"]
+        def __str__(self): return "Teal"
+    class Blue(Color):
+        def __init__(self): 
+            super().__init__(0, 0, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Blue"]
+        def __str__(self): return "Blue"
+    class Magneta(Color):
+        def __init__(self): 
+            super().__init__(255, 0, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Magneta"]
+        def __str__(self): return "Magneta"
+    class White(Color):
+        def __init__(self): 
+            super().__init__(255, 255, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["White"]
+        def __str__(self): return "White"
+    ansi_to_hex_table = {
+        # 16 bit ANSI
+        0: "#000000",  1: "#800000",  2: "#008000",  3: "#808000",
+        4: "#000080",  5: "#800080",  6: "#008080",  7: "#c0c0c0",
+        8: "#808080",  9: "#ff0000", 10: "#00ff00", 11: "#ffff00",
+        12: "#0000ff", 13: "#ff00ff", 14: "#00ffff", 15: "#ffffff",
+
+        # 256 bit ANSI
+        16: "#000000", 17: "#00005f", 18: "#000087", 19: "#0000af", 20: "#0000d7", 21: "#0000ff",
+        22: "#005f00", 23: "#005f5f", 24: "#005f87", 25: "#005faf", 26: "#005fd7", 27: "#005fff",
+        28: "#008700", 29: "#00875f", 30: "#008787", 31: "#0087af", 32: "#0087d7", 33: "#0087ff",
+        34: "#00af00", 35: "#00af5f", 36: "#00af87", 37: "#00afaf", 38: "#00afd7", 39: "#00afff",
+        40: "#00d700", 41: "#00d75f", 42: "#00d787", 43: "#00d7af", 44: "#00d7d7", 45: "#00d7ff",
+        46: "#00ff00", 47: "#00ff5f", 48: "#00ff87", 49: "#00ffaf", 50: "#00ffd7", 51: "#00ffff",
+        52: "#5f0000", 53: "#5f005f", 54: "#5f0087", 55: "#5f00af", 56: "#5f00d7", 57: "#5f00ff",
+        58: "#5f5f00", 59: "#5f5f5f", 60: "#5f5f87", 61: "#5f5faf", 62: "#5f5fd7", 63: "#5f5fff",
+        64: "#5f8700", 65: "#5f875f", 66: "#5f8787", 67: "#5f87af", 68: "#5f87d7", 69: "#5f87ff",
+        70: "#5faf00", 71: "#5faf5f", 72: "#5faf87", 73: "#5fafaf", 74: "#5fafd7", 75: "#5fafff",
+        76: "#5fd700", 77: "#5fd75f", 78: "#5fd787", 79: "#5fd7af", 80: "#5fd7d7", 81: "#5fd7ff",
+        82: "#5fff00", 83: "#5fff5f", 84: "#5fff87", 85: "#5fffaf", 86: "#5fffd7", 87: "#5fffff",
+        88: "#870000", 89: "#87005f", 90: "#870087", 91: "#8700af", 92: "#8700d7", 93: "#8700ff",
+        94: "#875f00", 95: "#875f5f", 96: "#875f87", 97: "#875faf", 98: "#875fd7", 99: "#875fff",
+        100: "#878700", 101: "#87875f", 102: "#878787", 103: "#8787af", 104: "#8787d7", 105: "#8787ff",
+        106: "#87af00", 107: "#87af5f", 108: "#87af87", 109: "#87afaf", 110: "#87afd7", 111: "#87afff",
+        112: "#87d700", 113: "#87d75f", 114: "#87d787", 115: "#87d7af", 116: "#87d7d7", 117: "#87d7ff",
+        118: "#87ff00", 119: "#87ff5f", 120: "#87ff87", 121: "#87ffaf", 122: "#87ffd7", 123: "#87ffff",
+        124: "#af0000", 125: "#af005f", 126: "#af0087", 127: "#af00af", 128: "#af00d7", 129: "#af00ff",
+        130: "#af5f00", 131: "#af5f5f", 132: "#af5f87", 133: "#af5faf", 134: "#af5fd7", 135: "#af5fff",
+        136: "#af8700", 137: "#af875f", 138: "#af8787", 139: "#af87af", 140: "#af87d7", 141: "#af87ff",
+        142: "#afaf00", 143: "#afaf5f", 144: "#afaf87", 145: "#afafaf", 146: "#afafd7", 147: "#afafff",
+        148: "#afd700", 149: "#afd75f", 150: "#afd787", 151: "#afd7af", 152: "#afd7d7", 153: "#afd7ff",
+        154: "#afff00", 155: "#afff5f", 156: "#afff87", 157: "#afffaf", 158: "#afffd7", 159: "#afffff",
+        160: "#d70000", 161: "#d7005f", 162: "#d70087", 163: "#d700af", 164: "#d700d7", 165: "#d700ff",
+        166: "#d75f00", 167: "#d75f5f", 168: "#d75f87", 169: "#d75faf", 170: "#d75fd7", 171: "#d75fff",
+        172: "#d78700", 173: "#d7875f", 174: "#d78787", 175: "#d787af", 176: "#d787d7", 177: "#d787ff",
+        178: "#d7af00", 179: "#d7af5f", 180: "#d7af87", 181: "#d7afaf", 182: "#d7afd7", 183: "#d7afff",
+        184: "#d7d700", 185: "#d7d75f", 186: "#d7d787", 187: "#d7d7af", 188: "#d7d7d7", 189: "#d7d7ff",
+        190: "#d7ff00", 191: "#d7ff5f", 192: "#d7ff87", 193: "#d7ffaf", 194: "#d7ffd7", 195: "#d7ffff",
+        196: "#ff0000", 197: "#ff005f", 198: "#ff0087", 199: "#ff00af", 200: "#ff00d7", 201: "#ff00ff",
+        202: "#ff5f00", 203: "#ff5f5f", 204: "#ff5f87", 205: "#ff5faf", 206: "#ff5fd7", 207: "#ff5fff",
+        208: "#ff8700", 209: "#ff875f", 210: "#ff8787", 211: "#ff87af", 212: "#ff87d7", 213: "#ff87ff",
+        214: "#ffaf00", 215: "#ffaf5f", 216: "#ffaf87", 217: "#ffafaf", 218: "#ffafd7", 219: "#ffafff",
+        220: "#ffd700", 221: "#ffd75f", 222: "#ffd787", 223: "#ffd7af", 224: "#ffd7d7", 225: "#ffd7ff",
+        226: "#ffff00", 227: "#ffff5f", 228: "#ffff87", 229: "#ffffaf", 230: "#ffffd7", 231: "#ffffff",
+
+        # Grayscale
+        232: "#080808", 233: "#121212", 234: "#1c1c1c", 235: "#262626",
+        236: "#303030", 237: "#3a3a3a", 238: "#444444", 239: "#4e4e4e",
+        240: "#585858", 241: "#626262", 242: "#6c6c6c", 243: "#767676",
+        244: "#808080", 245: "#8a8a8a", 246: "#949494", 247: "#9e9e9e",
+        248: "#a8a8a8", 249: "#b2b2b2", 250: "#bcbcbc", 251: "#c6c6c6",
+        252: "#d0d0d0", 253: "#dadada", 254: "#e4e4e4", 255: "#eeeeee"
+    }
+    sgi_color_table = {
+        "Black": [30, 90, 40, 100], 
+        "Red": [31, 91, 41, 101], 
+        "Green": [32, 92, 42, 102], 
+        "Yellow": [33, 93, 43, 103], 
+        "Blue": [34, 94, 44, 104], 
+        "Magenta": [35, 95, 45, 105], 
+        "Teal": [36, 96, 46, 106], 
+        "White": [37, 97, 47, 107]
+    }
+    def __init__(self): pass
+    def fix_windows_ansi(self):
+        if not hasattr(self, "_pip"): self._pip = pip()
+        if self._pip.getIfRunningWindowsAdmin():
+            if not hasattr(self, "_ctypes"): import ctypes; self._ctypes = ctypes
+            kernel32 = self._ctypes.windll.kernel32
+            handle = kernel32.GetStdHandle(-11)
+            mode = self._ctypes.c_uint()
+            kernel32.GetConsoleMode(handle, self._ctypes.byref(mode))
+            kernel32.SetConsoleMode(handle, mode.value | 0x0004)
+    def get_reset_color(self): return "\033[0m"
+    def get_ansi_start(self, ansi_num: int): return f"\033[38;5;{ansi_num}m"
+    def get_sgr_start(self, sgr_num: int): return f"\033[{sgr_num}m"
+    def bold(self, message: str): return f"\033[1m{message}\033[0m"
+    def italic(self, message: str): return f"\033[3m{message}\033[0m"
+    def underline(self, message: str): return f"\033[4m{message}\033[0m"
+    def strikethrough(self, message: str): return f"\033[9m{message}\033[0m"
+    def foreground(self, message: str, color: str="White", bright: bool=False): 
+        if isinstance(color, self.Color): color = color.__str__()
+        return f"{self.get_sgr_start(self.sgi_color_table[color][1 if bright == True else 0])}{message}{self.get_reset_color()}"
+    def background(self, message: str, color: str="White", bright: bool=False): 
+        if isinstance(color, self.Color): color = color.__str__()
+        return f"{self.get_sgr_start(self.sgi_color_table[color][3 if bright == True else 2])}{message}{self.get_reset_color()}"
+    def wrap_message(self, message: str, ansi_num: int): return f"{self.get_ansi_start(ansi_num)}{message}{self.get_reset_color()}"
+    def print(self, message: str, ansi_num: int): print(self.wrap_message(message=message, ansi_num=ansi_num))
+    def print_gradient(self, message: str, color_stops: typing.List[str]): print(self.wrap_gradient_message(message=message, color_stops=color_stops))
+    def hex_to_rgb(self, hex_code: str): hex_code = hex_code.lstrip("#"); return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
+    def rgb_to_hex(self, r: int, g: int, b: int): r, g, b = self.limit_rgb_value(r), self.limit_rgb_value(g), self.limit_rgb_value(b); return f"#{r:02x}{g:02x}{b:02x}"
+    def hex_to_gray(self, hex_code: str): return self.rgb_to_hex(*(self.apply_grayscale(*(self.hex_to_rgb(hex_code)))))
+    def ansi_to_hex(self, ansi_num: int): return self.ansi_to_hex_table.get(ansi_num, "#000000")
+    def decimal_to_rgb(self, value: int): return ((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
+    def rgb_to_decimal(self, r: int, g: int, b: int): return (self.limit_rgb_value(r) << 16) + (self.limit_rgb_value(g) << 8) + self.limit_rgb_value(b)
+    def decimal_to_hex(self, value: int): return self.rgb_to_hex(*self.decimal_to_rgb(value))
+    def hex_to_decimal(self, hex_code: str): return self.rgb_to_decimal(*self.hex_to_rgb(hex_code))
+    def hex_to_ansi(self, hex_code: str):
+        target_rgb = self.hex_to_rgb(hex_code)
+        closest_code = None
+        closest_dist = float("inf")
+        for c, hex in self.ansi_to_hex_table.items():
+            cr, cg, cb = self.hex_to_rgb(hex)
+            dist = ((cr - target_rgb[0]) ** 2 + (cg - target_rgb[1]) ** 2 + (cb - target_rgb[2]) ** 2)
+            if dist < closest_dist: closest_dist = dist; closest_code = c
+        return closest_code
+    def hex_to_ansi2(self, hex_code: str):
+        closest_code = None
+        closest_dist = float("inf")
+        r, g, b = self.hex_to_rgb(hex_code)
+        for c, hex in self.ansi_to_hex_table.items():
+            cr, cg, cb = self.hex_to_rgb(hex)
+            dist = (cr - r)**2 + (cg - g)**2 + (cb - b)**2
+            if dist < closest_dist: closest_code = c; closest_dist = dist
+        return closest_code
+    def limit_rgb_value(self, value: int): return 0 if value < 0 else (255 if value > 255 else value)
+    def gamma_correct(self, value: int): return (value / 255) ** 2.2
+    def inverse_gamma(self, value: int): return int((value ** (1/2.2)) * 255)
+    def apply_grayscale(self, r: int, g: int, b: int): res = int(0.299*r + 0.587*g + 0.114*b); return res, res, res
+    def wrap_gradient_message(self, message: str, color_stops: typing.List[str]): 
+        length = len(message)
+        if length == 0 or len(color_stops) < 1: return message
+        if len(color_stops) < 2: return self.wrap_message(message, self.hex_to_ansi(color_stops[0]))
+        stops_rgb = []
+        for hex_color in color_stops:
+            r, g, b = self.hex_to_rgb(hex_color)
+            stops_rgb.append((
+                self.gamma_correct(r),
+                self.gamma_correct(g),
+                self.gamma_correct(b)
+            ))
+        result = ""
+        num_segments = len(color_stops) - 1
+        for i, char in enumerate(message):
+            seg_length = length / num_segments
+            seg_index = min(int(i / seg_length), num_segments - 1)
+            start_rgb = stops_rgb[seg_index]
+            end_rgb = stops_rgb[seg_index + 1]
+            t = (i - seg_index * seg_length) / seg_length
+            r = self.inverse_gamma(start_rgb[0] + (end_rgb[0] - start_rgb[0]) * t)
+            g = self.inverse_gamma(start_rgb[1] + (end_rgb[1] - start_rgb[1]) * t)
+            b = self.inverse_gamma(start_rgb[2] + (end_rgb[2] - start_rgb[2]) * t)
+            ansi_code = self.hex_to_ansi2(self.rgb_to_hex(r, g, b))
+            result += f"{self.get_ansi_start(ansi_code)}{char}"
+        return result + self.get_reset_color()
 class stdout:
     buffer: str = ""
     logger = None
@@ -1584,4 +1864,5 @@ class BuiltinEditor:
         _original_input = builtins_mod.input
         builtins_mod.open = holding_open
         builtins_mod.input = holding_input
-if __name__ == "__main__": print("PyKits is a module and not a runable instance!")
+class PyKitsIsAModule(Exception): pass
+if __name__ == "__main__": raise PyKitsIsAModule("PyKits is a module and not a runable instance!")

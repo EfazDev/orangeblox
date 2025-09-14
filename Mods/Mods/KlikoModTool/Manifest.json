@@ -1,0 +1,24 @@
+{
+    "name": "Kliko Mod Tool",
+    "version": "1.2.0",
+    "player_studio_support": true,
+    "list_in_normal_mods": false,
+    "mod_script": true,
+    "mod_script_requirements": [
+        "allowAccessingPythonFiles",
+        "getInstalledRobloxVersion",
+        "sendDiscordWebhookMessage",
+        "getLatestRobloxVersion",
+        "generateModsManifest",
+        "importOtherModules",
+        "getIfRobloxIsOpen",
+        "getIfModIsEnabled",
+        "configureModModes",
+        "grantFileEditing",
+        "reprepareRoblox",
+        "runOtherScripts",
+        "enableMod"
+    ],
+    "python_modules": ["pillow", "requests", "tk", "numpy", "promptlib"],
+    "mod_script_supports": "2.3.0"
+}
