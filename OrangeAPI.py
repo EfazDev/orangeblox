@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0j
+# v2.3.0
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0j
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -26,7 +26,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.3.0j", "bootstrap_version": "2.3.0j"}
+current_version = {"version": "2.3.0", "bootstrap_version": "2.3.0"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -393,7 +393,7 @@ class OrangeAPI:
         """
         Disable a currently installed mod that is enabled!
         
-        Permission: disableMod | Level: 1 [Caution]
+        Permission: disableMod | Level: 1 [Warning]
 
         **This function is only available in OrangeAPI v2.3.0+**
 
@@ -406,7 +406,7 @@ class OrangeAPI:
         """
         Get if a mod is currently enabled or not!
         
-        Permission: getIfModIsEnabled | Level: 1 [Caution]
+        Permission: getIfModIsEnabled | Level: 1 [Warning]
 
         **This function is only available in OrangeAPI v2.3.0+**
 

@@ -2,10 +2,10 @@
     "name": "Bloxstrap theme",
     "author": "TheKliko (ported by EfazDev)",
     "description": "This pack can be used to recreate Bloxstrap theme! This pack has been ported from Kliko's modloader to OrangeBlox.",
-    "colors": ["#a011fe", "#5460f9"],
+    "colors": ["#d556a6", "#3834b3"],
     "angle": 135,
     "advanced": {
-        "*": ["#a011fe", "#5460f9"],
+        "*": ["#d556a6", "#3834b3"],
         "icons/logo/block": "{main}/Logo.png",
         "icons/logo/studiologo": "{main}/Logo.png",
         "icons/logo/studiologo_small": "{main}/Logo.png",
