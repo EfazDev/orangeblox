@@ -1,6 +1,6 @@
 {
     "name": "Kliko Mod Tool",
-    "version": "1.1.5",
+    "version": "1.2.0",
     "player_studio_support": true,
     "list_in_normal_mods": false,
     "mod_script": true,
@@ -12,11 +12,13 @@
         "generateModsManifest",
         "importOtherModules",
         "getIfRobloxIsOpen",
+        "getIfModIsEnabled",
         "configureModModes",
         "grantFileEditing",
         "reprepareRoblox",
-        "runOtherScripts"
+        "runOtherScripts",
+        "enableMod"
     ],
     "python_modules": ["pillow", "requests", "tk", "numpy", "promptlib"],
-    "mod_script_supports": "2.0.1"
+    "mod_script_supports": "2.3.0"
 }

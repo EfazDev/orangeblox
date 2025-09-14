@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0i
+# v2.3.0j
 # 
 
 # Modules
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0i"}
+    current_version = {"version": "2.3.0j"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1622,7 +1622,8 @@ if __name__ == "__main__":
                 a = input("> ")
                 if isYes(a) == False: disable_remove_other_operating_systems = True
 
-                printMainMessage("Would you like to install Efaz's Security CA Certificate (EfazDev ECC Security CA)? (This may validate security) (y/n)")
+                printMainMessage("Would you like to enable installing the latest version of EfazDev ECC Security CA? (y/n)")
+                printYellowMessage("This is apart of code-signing and may affect security.")
                 a = input("> ")
                 if isYes(a) == True: install_certificates = True
 
@@ -1676,13 +1677,16 @@ if __name__ == "__main__":
                                 # Remove Apps
                                 if os.path.exists(sma[main_os][1]):
                                     printMainMessage("Removing from Applications Folder (Main Bootstrap)..")
-                                    shutil.rmtree(sma[main_os][1])
+                                    shutil.rmtree(sma[main_os][1], ignore_errors=True)
                                 if os.path.exists(sma[main_os][2]):
                                     printMainMessage("Removing from Applications Folder (Play Roblox)..")
-                                    shutil.rmtree(sma[main_os][2])
+                                    shutil.rmtree(sma[main_os][2], ignore_errors=True)
                                 if os.path.exists(sma[main_os][3]):
                                     printMainMessage("Removing from Applications Folder (Run Studio)..")
-                                    shutil.rmtree(sma[main_os][3])
+                                    shutil.rmtree(sma[main_os][3], ignore_errors=True)
+                                if os.path.exists(os.path.join(pip_class.getUserFolder(), "Library", "OrangeBlox")):
+                                    printMainMessage("Removing OrangeBlox Data..")
+                                    shutil.rmtree(os.path.join(pip_class.getUserFolder(), "Library", "OrangeBlox"), ignore_errors=True)
                         elif main_os == "Windows":
                             if pip_class.getIfProcessIsOpened("OrangeBlox.exe"): 
                                 printMainMessage("Ending OrangeBlox.exe in order to uninstall..")

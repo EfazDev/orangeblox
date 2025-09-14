@@ -211,7 +211,7 @@ def generate_user_selected_files(
         modded_icon = get_mask(colors, angle, image.size, source.name)
         modded_icon.putalpha(a)
         modded_icon.save(target_path, format="PNG", optimize=False)
-def generate_additional_files(base_directory: Path, colors: list[str], angle: int) -> None:
+def generate_additional_files(base_directory: Path, colors: list[str], angle: int, studio: bool) -> None:
     cur_path = os.path.dirname(os.path.abspath(__file__))
     mod_generator_files = Path(cur_path) / "modules" / "additional_files"
     index_filepath: Path = mod_generator_files / "index.json"
@@ -219,6 +219,8 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
     for filepath in mod_generator_files.iterdir():
         if filepath.name == index_filepath.name: continue
+        if studio == False and "studio-" in filepath.name: continue
+        if "optional-" in filepath.name and not (type(colors) is dict and (colors.get(filepath.name) or colors.get("optional-img") == True)): continue
         target: list[str] | None = data.get(filepath.name)
         if not target or not isinstance(target, list): Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
         target_path: Path = Path(base_directory, *target)
@@ -228,10 +230,19 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
             r, g, b, a = image.split()
         if type(colors) is dict and colors.get(filepath.name):
             if type(colors.get(filepath.name)) is str:
-                if colors.get(filepath.name).startswith("mask-"):
-                    colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
+                if "mask-" in colors.get(filepath.name) or "mask-" in filepath.name:
+                    if "mask-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
+                    if "mask-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
                     modded_icon = get_mask(colors, angle, image.size, f"{filepath.name}_temp")
                     modded_icon.putalpha(a)
+                    modded_icon.save(target_path, format="PNG", optimize=False)
+                elif "mask2-" in colors.get(filepath.name) or "mask2-" in filepath.name:
+                    if "mask2-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
+                    if "mask2-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
+                    base = image.convert("RGBA")
+                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp")
+                    mask = mask_overlay.getchannel("A")
+                    modded_icon = Image.composite(mask_overlay, base, mask)
                     modded_icon.save(target_path, format="PNG", optimize=False)
                 else:
                     custom_roblox_logo_path = Path(colors.get(filepath.name))

@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0i
+# v2.3.0j
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0i
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0j
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -26,7 +26,7 @@ import json
 from urllib.parse import urlparse
 
 # Variables
-current_version = {"version": "2.3.0i", "bootstrap_version": "2.3.0i"}
+current_version = {"version": "2.3.0j", "bootstrap_version": "2.3.0j"}
 requested_functions = {}
 cached_information = {}
 translator = None
@@ -376,6 +376,45 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "generateModsManifest").generateResponse().response
+    def enableMod(self, mod_name: str) -> Response | None: # Permission: enableMod
+        """
+        Enable a currently installed mod that hasn't been enabled yet!
+        
+        Permission: enableMod | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.3.0+**
+
+        ```python
+        response = OrangeAPI.enableMod("EfazDev Mod!") # -> Response
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "enableMod", {"mod_name": mod_name}).generateResponse()
+    def disableMod(self, mod_name: str) -> Response | None: # Permission: disableMod
+        """
+        Disable a currently installed mod that is enabled!
+        
+        Permission: disableMod | Level: 1 [Caution]
+
+        **This function is only available in OrangeAPI v2.3.0+**
+
+        ```python
+        response = OrangeAPI.disableMod("EfazDev Mod!") # -> Response
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "disableMod", {"mod_name": mod_name}).generateResponse()
+    def getIfModIsEnabled(self, mod_name: str) -> bool | None: # Permission: getIfModIsEnabled
+        """
+        Get if a mod is currently enabled or not!
+        
+        Permission: getIfModIsEnabled | Level: 1 [Caution]
+
+        **This function is only available in OrangeAPI v2.3.0+**
+
+        ```python
+        response = OrangeAPI.getIfModIsEnabled("EfazDev Mod!") # -> True
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getIfModIsEnabled", {"mod_name": mod_name}).generateResponse().response
     def sendBloxstrapRPC(self, command: str="SetRichPresence", data: typing.Union[BloxstrapRichPresence, dict, str]={}, disableWebhook: bool=True) -> Response | None: # Permission: sendBloxstrapRPC
         """
         This changes the current Discord Presence if found using BloxstrapRPC. If disableWebhook is enabled, the Discord webhook notification is disabled. [Original Example from Bloxstrap in Roblox Lua](https://github.com/bloxstraplabs/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game#function-setrichpresence)

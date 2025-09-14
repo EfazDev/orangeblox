@@ -88,7 +88,7 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
             if s == 0: img_sets.generate_imagesets((temp_target / imageset_path), icon_maps[0], colors, angle); s += 1
             elif s == 1: img_sets.generate_imagesets((temp_target / "ExtraContent" / "textures" / "ui" / "ImageSet"), icon_maps[1], colors, angle); s += 1
         progress_bar.submit("[MOD_GEN] Generating Additional Files..", 90)
-        img_sets.generate_additional_files(temp_target, colors, angle)
+        img_sets.generate_additional_files(temp_target, colors, angle, studio)
         if user_selected_files: 
             progress_bar.submit("[MOD_GEN] Generating User Selected Files..", 95)
             img_sets.generate_user_selected_files(temp_target, colors, angle, user_selected_files)

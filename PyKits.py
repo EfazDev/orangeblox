@@ -1,16 +1,37 @@
-# 
-# PyKits v1.5.0
-# Made by Efaz from efaz.dev
-# 
-# A usable set of classes with extra functions that can be used within apps.
-# Import from file: import PipKits
-# Import from class: 
-#
-# import typing
-# class requests: ...
-# class pip: ...
-# pip_class = pip()
-# 
+"""
+PyKits v1.5.5 | Made by Efaz from efaz.dev
+
+A usable set of classes with extra functions that can be used within apps. \n
+Import from file: 
+```python
+import PyKits
+pip_class = PyKits.pip()
+colors_class = PyKits.Colors()
+```
+Import from class: 
+
+```python
+import typing
+class requests: ...
+class pip: ...
+class Colors: ...
+pip_class = pip()
+colors_class = Colors()
+```
+
+However! Classes may depend on other classes. Use this resource list:
+    request: typing (module)
+    pip: typing (module), request
+    plist: typing (module)
+    Translator: None
+    Colors: typing (module), pip (+ request)
+    stdout: Translator?
+    ProgressBar: None
+    TimerBar: None
+    InstantRequestJSONResponse: None
+    BuiltinEditor: None
+    PyKitsIsAModule: None
+"""
 
 import typing
 class request:
@@ -1416,24 +1437,51 @@ class Colors:
             self.rgb = (r, g, b)
             self.hex = self.__colors_obj__.rgb_to_hex(r, g, b)
             self.ansi = self.__colors_obj__.hex_to_ansi2(self.hex)
+            self.decimal = self.__colors_obj__.hex_to_decimal(self.hex)
+        def __int__(self): return self.ansi
+        def __str__(self): return f"Color[{', '.join([str(i) for i in self.rgb])}]"
         def wrap_message(self, message): return self.__colors_obj__.wrap_message(message, self.ansi)
         def grayscale(self): return self.__colors_obj__.apply_grayscale(*(self.rgb))
     class Black(Color):
-        def __init__(self): super().__init__(0, 0, 0)
+        def __init__(self): 
+            super().__init__(0, 0, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Black"]
+        def __str__(self): return "Black"
     class Red(Color):
-        def __init__(self): super().__init__(255, 0, 0)
+        def __init__(self): 
+            super().__init__(255, 0, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Red"]
+        def __str__(self): return "Red"
     class Yellow(Color):
-        def __init__(self): super().__init__(255, 255, 0)
+        def __init__(self): 
+            super().__init__(255, 255, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Yellow"]
+        def __str__(self): return "Yellow"
     class Green(Color):
-        def __init__(self): super().__init__(0, 255, 0)
+        def __init__(self): 
+            super().__init__(0, 255, 0)
+            self.sgi = self.__colors_obj__.sgi_color_table["Green"]
+        def __str__(self): return "Green"
     class Teal(Color):
-        def __init__(self): super().__init__(0, 255, 255)
+        def __init__(self): 
+            super().__init__(0, 255, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Teal"]
+        def __str__(self): return "Teal"
     class Blue(Color):
-        def __init__(self): super().__init__(0, 0, 255)
+        def __init__(self): 
+            super().__init__(0, 0, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Blue"]
+        def __str__(self): return "Blue"
     class Magneta(Color):
-        def __init__(self): super().__init__(255, 0, 255)
+        def __init__(self): 
+            super().__init__(255, 0, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["Magneta"]
+        def __str__(self): return "Magneta"
     class White(Color):
-        def __init__(self): super().__init__(255, 255, 255)
+        def __init__(self): 
+            super().__init__(255, 255, 255)
+            self.sgi = self.__colors_obj__.sgi_color_table["White"]
+        def __str__(self): return "White"
     ansi_to_hex_table = {
         # 16 bit ANSI
         0: "#000000",  1: "#800000",  2: "#008000",  3: "#808000",
@@ -1487,14 +1535,50 @@ class Colors:
         248: "#a8a8a8", 249: "#b2b2b2", 250: "#bcbcbc", 251: "#c6c6c6",
         252: "#d0d0d0", 253: "#dadada", 254: "#e4e4e4", 255: "#eeeeee"
     }
+    sgi_color_table = {
+        "Black": [30, 90, 40, 100], 
+        "Red": [31, 91, 41, 101], 
+        "Green": [32, 92, 42, 102], 
+        "Yellow": [33, 93, 43, 103], 
+        "Blue": [34, 94, 44, 104], 
+        "Magenta": [35, 95, 45, 105], 
+        "Teal": [36, 96, 46, 106], 
+        "White": [37, 97, 47, 107]
+    }
     def __init__(self): pass
+    def fix_windows_ansi(self):
+        if not hasattr(self, "_pip"): self._pip = pip()
+        if self._pip.getIfRunningWindowsAdmin():
+            if not hasattr(self, "_ctypes"): import ctypes; self._ctypes = ctypes
+            kernel32 = self._ctypes.windll.kernel32
+            handle = kernel32.GetStdHandle(-11)
+            mode = self._ctypes.c_uint()
+            kernel32.GetConsoleMode(handle, self._ctypes.byref(mode))
+            kernel32.SetConsoleMode(handle, mode.value | 0x0004)
     def get_reset_color(self): return "\033[0m"
     def get_ansi_start(self, ansi_num: int): return f"\033[38;5;{ansi_num}m"
+    def get_sgr_start(self, sgr_num: int): return f"\033[{sgr_num}m"
+    def bold(self, message: str): return f"\033[1m{message}\033[0m"
+    def italic(self, message: str): return f"\033[3m{message}\033[0m"
+    def underline(self, message: str): return f"\033[4m{message}\033[0m"
+    def strikethrough(self, message: str): return f"\033[9m{message}\033[0m"
+    def foreground(self, message: str, color: str="White", bright: bool=False): 
+        if isinstance(color, self.Color): color = color.__str__()
+        return f"{self.get_sgr_start(self.sgi_color_table[color][1 if bright == True else 0])}{message}{self.get_reset_color()}"
+    def background(self, message: str, color: str="White", bright: bool=False): 
+        if isinstance(color, self.Color): color = color.__str__()
+        return f"{self.get_sgr_start(self.sgi_color_table[color][3 if bright == True else 2])}{message}{self.get_reset_color()}"
     def wrap_message(self, message: str, ansi_num: int): return f"{self.get_ansi_start(ansi_num)}{message}{self.get_reset_color()}"
+    def print(self, message: str, ansi_num: int): print(self.wrap_message(message=message, ansi_num=ansi_num))
+    def print_gradient(self, message: str, color_stops: typing.List[str]): print(self.wrap_gradient_message(message=message, color_stops=color_stops))
     def hex_to_rgb(self, hex_code: str): hex_code = hex_code.lstrip("#"); return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
     def rgb_to_hex(self, r: int, g: int, b: int): r, g, b = self.limit_rgb_value(r), self.limit_rgb_value(g), self.limit_rgb_value(b); return f"#{r:02x}{g:02x}{b:02x}"
     def hex_to_gray(self, hex_code: str): return self.rgb_to_hex(*(self.apply_grayscale(*(self.hex_to_rgb(hex_code)))))
     def ansi_to_hex(self, ansi_num: int): return self.ansi_to_hex_table.get(ansi_num, "#000000")
+    def decimal_to_rgb(self, value: int): return ((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
+    def rgb_to_decimal(self, r: int, g: int, b: int): return (self.limit_rgb_value(r) << 16) + (self.limit_rgb_value(g) << 8) + self.limit_rgb_value(b)
+    def decimal_to_hex(self, value: int): return self.rgb_to_hex(*self.decimal_to_rgb(value))
+    def hex_to_decimal(self, hex_code: str): return self.rgb_to_decimal(*self.hex_to_rgb(hex_code))
     def hex_to_ansi(self, hex_code: str):
         target_rgb = self.hex_to_rgb(hex_code)
         closest_code = None

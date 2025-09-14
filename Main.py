@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0i
+# v2.3.0j
 # 
 
 # Python Modules
@@ -37,6 +37,7 @@ if __name__ == "__main__":
     pip_class: PyKits.pip = PyKits.pip()
     requests: PyKits.request = PyKits.request()
     plist_class: PyKits.plist = PyKits.plist()
+    colors_class: PyKits.Colors = PyKits.Colors()
     submit_status: PyKits.ProgressBar = PyKits.ProgressBar()
     handler: RFFI.Handler = RFFI.Handler()
     cur_path: str = os.path.dirname(os.path.abspath(__file__))
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0i"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.0j"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -218,21 +219,21 @@ if __name__ == "__main__":
         _, tb_v, tb_b = sys.exc_info()
         tb_lines = traceback.extract_tb(tb_b)
         lines = []
-        lines.append("\033[95mTraceback (most recent call last):\033[0m")
+        lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
         for fn, ln, f, tx in tb_lines:
-            lines.append(f'  File \033[95m"{fn}"\033[0m, line \033[95m{ln}\033[0m, in \033[95m{f}\033[0m')
+            lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
             if tx: lines.append(f'    {tx}')
         exc_t = type(tb_v).__name__
         exc_m = str(tb_v)
-        lines.append(f'\033[95m\033[1m{exc_t}:\033[0m\033[0m \033[35m{exc_m}\033[0m')
+        lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
-    def printMainMessage(mes): print(f"\033[38;5;255m{ts(mes)}\033[0m")
-    def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m")
-    def printSuccessMessage(mes): print(f"\033[38;5;82m{ts(mes)}\033[0m")
-    def printWarnMessage(mes): print(f"\033[38;5;202m{ts(mes)}\033[0m")
-    def printYellowMessage(mes): print(f"\033[38;5;226m{ts(mes)}\033[0m")
+    def printMainMessage(mes): print(colors_class.wrap_message(ts(mes), 255))
+    def printErrorMessage(mes): print(colors_class.wrap_message(ts(mes), 196))
+    def printSuccessMessage(mes): print(colors_class.wrap_message(ts(mes), 82))
+    def printWarnMessage(mes): print(colors_class.wrap_message(ts(mes), 202))
+    def printYellowMessage(mes): print(colors_class.wrap_message(ts(mes), 226))
     def printDebugMessage(mes): 
-        if main_config.get("EFlagEnableDebugMode"): print(f"\033[38;5;226m[DEBUG]: {ts(mes)}\033[0m"); logging.debug(mes)
+        if main_config.get("EFlagEnableDebugMode"): print(colors_class.wrap_message(f"[DEBUG]: {ts(mes)}", 226)); logging.debug(mes)
 
     # Basic Functions
     def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
@@ -873,6 +874,9 @@ if __name__ == "__main__":
             "getOppositeInstalledRobloxVersion": {"message": ts("Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
             "getRobloxInstallationFolder": {"message": ts("Get the Roblox installation folder"), "level": 2},
             "getIfRobloxIsOpen": {"message": ts("Get if the Roblox client is open"), "level": 1},
+            "getIfModIsEnabled": {"message": ts("Get if a mod is enabled or not."), "level": 1},
+            "enableMod": {"message": ts("Enable a mod on your behalf."), "level": 2},
+            "disableMod": {"message": ts("Disable a mod on your behalf."), "level": 1},
             "getFastFlagConfiguration": {"message": ts("Get and view your Roblox client flags"), "level": 1},
             "setFastFlagConfiguration": {"message": ts("Change your Roblox client flags"), "level": 2},
             "saveFastFlagConfiguration": {"message": ts("Change your Roblox client flags (with saving)"), "level": 2},
@@ -2080,7 +2084,7 @@ if __name__ == "__main__":
                     main_config["EFlagRebuildNuitkaAppFromSourceDuringUpdates"] = False
                     printDebugMessage("User selected: False")
 
-                printMainMessage("Would you enable installing the latest version of EfazDev ECC Security CA?")
+                printMainMessage("Would you like to enable installing the latest version of EfazDev ECC Security CA? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagInstallEfazDevECCCertificates")==True)}')
                 printYellowMessage("This is apart of code-signing and may affect security.")
                 a = input("> ")
@@ -2403,27 +2407,28 @@ if __name__ == "__main__":
             return ts("Settings was not saved!")
         return mainSettings()
     def continueToCredits(): # Credits
+        quote = "'"
         printWarnMessage("--- Credits ---")
-        printMainMessage("1. Made by \033[38;5;202m@EfazDev 🍊\033[0m")
-        printMainMessage("2. Old Player Sounds and Cursors were sourced from \033[38;5;165mBloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)\033[0m")
-        printMainMessage("3. Avatar Editor Maps were from \033[38;5;197mMielesgames's Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)\033[0m slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
-        printMainMessage("4. The Kliko's Mod Tool Mod Script was edited and made from \033[38;5;196mKliko's Mod Tool and Kliko's modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)\033[0m")
+        printMainMessage(f"1. Made by {colors_class.wrap_message('@EfazDev 🍊', 202)}")
+        printMainMessage(f"2. Old Player Sounds and Cursors were sourced from {colors_class.wrap_message('Bloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)', 165)}")
+        printMainMessage(f"3. Avatar Editor Maps were from {colors_class.wrap_message(f'Mielesgames{quote}s Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)', 197)} slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
+        printMainMessage(f"4. The Kliko's Mod Tool Mod Script was edited and made from {colors_class.wrap_message(f'Kliko{quote}s Mod Tool and Kliko{quote}s modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)', 196)}")
         printMainMessage("5. Python Module Creators:")
-        printMainMessage(" • \033[38;5;34mqwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)\033[0m")
-        printMainMessage(" • \033[38;5;40mRonald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)\033[0m")
-        printMainMessage(" • \033[38;5;226mPhilip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)\033[0m")
-        printMainMessage(" • \033[38;5;129mMark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)\033[0m")
-        printMainMessage(" • \033[38;5;214mKivy (plyer) 🧰 (https://github.com/kivy/plyer)\033[0m")
-        printMainMessage(" • \033[38;5;97mGiampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)\033[0m")
+        printMainMessage(f" • {colors_class.wrap_message('qwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)', 34)}")
+        printMainMessage(f" • {colors_class.wrap_message('Ronald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)', 40)}")
+        printMainMessage(f" • {colors_class.wrap_message('Philip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)', 226)}")
+        printMainMessage(f" • {colors_class.wrap_message('Mark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)', 129)}")
+        printMainMessage(f" • {colors_class.wrap_message('Kivy (plyer) 🧰 (https://github.com/kivy/plyer)', 214)}")
+        printMainMessage(f" • {colors_class.wrap_message('Giampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)', 97)}")
         printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
-        printMainMessage("6. The logo of OrangeBlox was made thanks of \033[38;5;226m@CabledRblx 🦆\033[0m. Thanks :)")
-        printMainMessage("7. Server Locations was made thanks to \033[38;5;39mipinfo.io 🌐\033[0m as it wouldn't be possible to convert ip addresses without them!")
+        printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap_message('@CabledRblx 🦆', 226)}. Thanks :)")
+        printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap_message('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
-            printMainMessage(f'8. macOS App was built using \033[38;5;39mpyinstaller 📦\033[0m and \033[38;5;226mclang 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. macOS App was built using {colors_class.wrap_message("pyinstaller 📦", 39)} and {colors_class.wrap_message("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py -r -rp -rc")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
-            printMainMessage(f'8. Windows App was built using \033[38;5;39mpyinstaller 📦\033[0m. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. Windows App was built using {colors_class.wrap_message("pyinstaller 📦", 39)}. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py -r -rp")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
@@ -2509,7 +2514,7 @@ if __name__ == "__main__":
         if current_python_version == latest_python_version: printSuccessMessage(f"You're already in the latest version of Python!")
         else:
             printMainMessage(f"Would you like to update Python to {latest_python_version} using the official Python Installer? (y/n)")
-            printMainMessage(f"\033[38;5;{226 if is_python_beta else 82}m[v{current_python_version} => v{latest_python_version}]\033[0m")
+            printMainMessage(f"{colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}")
             co = input("> ")
             if isYes(co) == True:
                 if main_config.get("EFlagEnableSlientPythonInstalls") == True:
@@ -2539,7 +2544,7 @@ if __name__ == "__main__":
             if len(updating_python_modules["packages"]) > 0:
                 strs = []
                 only_package_names = []
-                for i in updating_python_modules["packages"]: strs.append(f"{i['name']} \033[38;5;82m(v{i['version']} => v{i['latest_version']})\033[0m"); only_package_names.append(i["name"])
+                for i in updating_python_modules["packages"]: vers1 = i['version']; vers2 = i['latest_version']; strs.append(f"{i['name']} {colors_class.wrap_message(f'(v{vers1} => v{vers2})', 82)}"); only_package_names.append(i["name"])
                 printMainMessage("The following modules are available to be updated!")
                 printMainMessage(", ".join(strs))
                 printMainMessage("Would you like to install the updates to them now?")
@@ -3020,7 +3025,7 @@ if __name__ == "__main__":
                                                 extreme_included = False
                                                 for i in sorted_perms_2:
                                                     if i.get("level") == 4:
-                                                        print(f"\033[38;5;201m- {i.get('message')}\033[0m")
+                                                        print(colors_class.wrap_message(f"- {i.get('message')}", 201))
                                                         extreme_included = True
                                                     elif i.get("level") == 3: printErrorMessage(f"- {i.get('message')}")
                                                     elif i.get("level") == 2: printWarnMessage(f"- {i.get('message')}")
@@ -3028,7 +3033,7 @@ if __name__ == "__main__":
                                                     else: printMainMessage(f"- {i.get('message')}")
                                                 if len(python_modules) > 0: printYellowMessage(f"- Install and Use Python Modules: {', '.join(python_modules)}")
                                                 printYellowMessage("Please check the scripts, permissions above and developer of this mod before using!")
-                                                printMainMessage("Color Key: \033[38;5;201m[Extreme]\033[0m \033[38;5;196m[Dangerous]\033[0m \033[38;5;202m[Caution]\033[0m \033[38;5;226m[Warning]\033[0m \033[38;5;255m[Normal]\033[0m")
+                                                printMainMessage(f"Color Key: {colors_class.wrap_message(ts('[Extreme]'), 201)} {colors_class.wrap_message(ts('[Dangerous]'), 196)} {colors_class.wrap_message(ts('[Caution]'), 202)} {colors_class.wrap_message(ts('[Warning]'), 226)} {colors_class.wrap_message(ts('[Normal]'), 255)}")
                                                 PyKits.TimerBar(5, "Are you sure you want to use this mod script? (y/n)", False).start()
                                                 a = input("> ")
                                                 if isYes(a) == True:
@@ -3037,7 +3042,7 @@ if __name__ == "__main__":
                                                         con = False
                                                         printYellowMessage("THIS SCRIPT WILL BE GRANTED THE EXTREME LEVEL PERMISSIONS LISTED! ARE YOU SURE?")
                                                         for i in sorted_perms_2:
-                                                            if i.get("level") == 4: print(f"\033[38;5;201m- {i.get('message')}\033[0m")
+                                                            if i.get("level") == 4: print(colors_class.wrap_message(f"- {i.get('message')}", 201))
                                                         PyKits.TimerBar(5, "ARE YOU SURE? (y/n)", False).start()
                                                         a = input("> ")
                                                         if isYes(a) == True: con = True
@@ -3867,7 +3872,7 @@ if __name__ == "__main__":
                             if (not (current_python_version == latest_python_version)) and latest_python_version:
                                 generated_ui_options.append({
                                     "index": 8.5, 
-                                    "message": ts(f"Update Python \033[38;5;{226 if is_python_beta else 82}m[v{current_python_version} => v{latest_python_version}]\033[0m"), 
+                                    "message": ts(f"Update Python {colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}"), 
                                     "func": continueToUpdatePython, 
                                     "go_to_rbx": True, 
                                     "end_mes": ts("Python has been updated!"),
@@ -3896,7 +3901,7 @@ if __name__ == "__main__":
                             if len(modules_updating) > 0:
                                 generated_ui_options.append({
                                     "index": 8.75, 
-                                    "message": ts(f"Update Python Modules \033[38;5;82m[+{len(modules_updating)}]\033[0m"), 
+                                    "message": ts(f"Update Python Modules {colors_class.wrap_message(f'[+{len(modules_updating)}]', 82)}"), 
                                     "func": continueToUpdatePythonModules, 
                                     "go_to_rbx": True, 
                                     "end_mes": ts("Python Modules has been updated!"),
@@ -3921,7 +3926,7 @@ if __name__ == "__main__":
                                     latest_vers = latest_vers_res.json
                                     if current_version.get("version"):
                                         if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                                            versio_name = ts(f'\033[38;5;{unic}mNew Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update} ]\033[0m')
+                                            versio_name = colors_class.wrap_message(ts(f'New Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}{" " if main_os == "Darwin" else ""}]'), unic)
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                                                 with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
@@ -3948,7 +3953,7 @@ if __name__ == "__main__":
                         else: emoji_to_define_update = "❌"; unic = "196"
                         generated_ui_options.append({
                             "index": 9, 
-                            "message": ts(f"\033[38;5;{unic}mCheck for Updates [{emoji_to_define_update} ]\033[0m"), 
+                            "message": colors_class.wrap_message(ts(f"Check for Updates [{emoji_to_define_update}{' ' if main_os == 'Darwin' else ''}]"), unic), 
                             "func": continueToUpdates, 
                             "go_to_rbx": True, 
                             "end_mes": ts("Finished checking for updates!"),
@@ -5405,6 +5410,20 @@ if __name__ == "__main__":
                                                                                         def startPrepareRoblox(selected_scri_a: str): 
                                                                                             if not (roblox_launched_affect_mod_script == True): prepareRobloxClient()
                                                                                         def current_ver_func(selected_scri_a: str): return current_version
+                                                                                        def getIfModIsEnabled(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if cur_mod_manifest.get(mod_name) and cur_mod_manifest.get(mod_name).get("enabled") == True: return True
+                                                                                            return False
+                                                                                        def enableMod(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                                                            if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = True
+                                                                                            saveSettings()
+                                                                                        def disableMod(selected_scri_a: str, mod_name: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                                                            if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = False
+                                                                                            saveSettings()
 
                                                                                         defined_func = {
                                                                                             "generateModsManifest": generateModsManifest,
@@ -5420,6 +5439,9 @@ if __name__ == "__main__":
                                                                                             "getIfRobloxLaunched": getIfRobloxLaunched,
                                                                                             "sendDiscordWebhookMessage": sendDiscordWebhookMessage,
                                                                                             "reprepareRoblox": startPrepareRoblox,
+                                                                                            "enableMod": enableMod,
+                                                                                            "disableMod": disableMod,
+                                                                                            "getIfModIsEnabled": getIfModIsEnabled,
                                                                                             "getFastFlagConfiguration": getFF,
                                                                                             "setFastFlagConfiguration": setFF,
                                                                                             "saveFastFlagConfiguration": saveFF,

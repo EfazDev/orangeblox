@@ -1,0 +1,17 @@
+{
+    "name": "Bloxstrap theme [Premium]",
+    "author": "TheKliko (ported by EfazDev)",
+    "description": "This pack can be used to recreate Bloxstrap theme [Premium]! This pack has been ported from Kliko's modloader to OrangeBlox.",
+    "colors": ["#feaa17", "#fe8b17", "#f95455"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#feaa17", "#fe8b17", "#f95455"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}

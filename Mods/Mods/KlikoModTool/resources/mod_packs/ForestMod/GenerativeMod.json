@@ -1,0 +1,17 @@
+{
+    "name": "Forest Mod",
+    "author": "EfazDev",
+    "description": "This pack can be used to recreate a forest theme of green to dark green!",
+    "colors": ["#00d11f", "#00d11f", "#00590d"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#00d11f", "#00d11f", "#00590d"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Blueberry Mod",
+    "author": "EfazDev",
+    "description": "This pack can be used to recreate a blueberry theme of blue to purple!",
+    "colors": ["#0000ff", "#5500ff", "#7700ff"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#0000ff", "#5500ff", "#7700ff"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}

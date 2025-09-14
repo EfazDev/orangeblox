@@ -57,6 +57,7 @@ if installed["success"] == True:
                     printMainMessage("Would you like to use an existing Generative Mod Configuration or would you like to make a new configuration?")
                     printMainMessage("[1] = New Configuration")
                     printMainMessage("[2] = Use Existing Configuration")
+                    printMainMessage("[3] = Use Provided Configuration")
                     a = OrangeAPI.requestInput("Enter here:", "> ")
                     if a and a == "1":
                         mod_name = OrangeAPI.requestInput("Alright then! Enter the name of the configuration below to get started!", "> ")
@@ -96,7 +97,7 @@ if installed["success"] == True:
                         OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
                         printSuccessMessage("Successfully saved Configuration!")
                         printSuccessMessage(f"File Path: {selected_file}")
-                    else:
+                    elif a and a == "2":
                         if OrangeAPI.getPlatform() == "macOS": selected_file = OrangeAPI.requestInput("Please drag your Generative Mod Configuration file here! (or manually enter the file path of the configuration.)", "> ").strip().strip('"').strip("'")
                         else:
                             printMainMessage("Please select your Generative Mod Configuration file!")
@@ -107,6 +108,33 @@ if installed["success"] == True:
                             OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
                             printSuccessMessage(f"Saved selected mod configuration to settings! Path: {mod_style_file}")
                         else: printErrorMessage("No file was given. Disabled Generative Mods.")
+                    else:
+                        printMainMessage("Please select the Provided Mod Configuration to use.")
+                        mod_packs_dir = os.path.join(cur_path, "resources", "mod_packs")
+                        provided_mods = os.listdir(mod_packs_dir)
+                        configurations = {}
+                        for mod in provided_mods:
+                            if os.path.isdir(os.path.join(mod_packs_dir, mod)) and os.path.exists(os.path.join(mod_packs_dir, mod, "GenerativeMod.json")):
+                                try:
+                                    with open(os.path.join(mod_packs_dir, mod, "GenerativeMod.json"), "r", encoding="utf-8") as f:
+                                        configurations[mod] = json.load(f)
+                                    if not type(configurations[mod]) is dict: configurations.pop(mod)
+                                except: pass
+                        indexed = {}
+                        for i, v in configurations.items():
+                            indexed[str(len(indexed) + 1)] = (i, v)
+                            de = v.get('description')
+                            au = v.get('author')
+                            printMainMessage(f"[{len(indexed)}] - {v.get('name') if v.get('name') else i}{f' - {de}' if de else ''}{f' - By {au}' if au else ''}")
+                        b = OrangeAPI.requestInput("Enter here:", "> ")
+                        if b and indexed.get(b):
+                            i, v = indexed.get(b)
+                            selected_file = os.path.join(mod_packs_dir, i, "GenerativeMod.json")
+                            if os.path.exists(selected_file) and os.path.isfile(selected_file):
+                                mod_style_file = selected_file
+                                OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
+                                printSuccessMessage(f"Saved selected mod configuration to settings! Path: {mod_style_file}")
+                            else: printErrorMessage("No file was given. Disabled Generative Mods.")
                 else: printErrorMessage("File was unable to be asked for. Disabled Generative Mods.")
             if not (type(OrangeAPI.getConfiguration("EnabledRobloxStudio")) is bool):
                 a = OrangeAPI.requestInput("Would you like to enable mod generation for Roblox Studio too? (y/n)", "> ")
@@ -138,6 +166,7 @@ if installed["success"] == True:
                                 res = subprocess.run([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
                                 if res.returncode == 0: 
                                     OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
+                                    if not OrangeAPI.getIfModIsEnabled(fold_name): OrangeAPI.enableMod(fold_name)
                                     printMainMessage("Repreparing Roblox..")
                                     OrangeAPI.reprepareRoblox()
                                     printSuccessMessage("Proxy has ended with a success!")
@@ -209,6 +238,8 @@ if installed["success"] == True:
                     res = subprocess.run([sys.executable, os.path.join(cur_path, "UpdaterProxy.py"), json.dumps(verified_mods), str(studio), json.dumps(installed)])
                     if res.returncode == 0: 
                         OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
+                        for i in enabled_mods:
+                            if not OrangeAPI.getIfModIsEnabled(i): OrangeAPI.enableMod(i)
                         printMainMessage("Repreparing Roblox..")
                         OrangeAPI.reprepareRoblox()
                         printSuccessMessage("Proxy has ended with a success!")

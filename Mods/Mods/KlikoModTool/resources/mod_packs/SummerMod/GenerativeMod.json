@@ -1,0 +1,17 @@
+{
+    "name": "Summer Mod",
+    "author": "EfazDev",
+    "description": "This pack can be used to recreate a summer theme of yellow to green!",
+    "colors": ["#ffff00", "#ffff00", "#00ff00"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#ffff00", "#ffff00", "#00ff00"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}

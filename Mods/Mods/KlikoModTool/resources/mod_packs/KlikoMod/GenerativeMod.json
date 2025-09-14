@@ -1,0 +1,17 @@
+{
+    "name": "Kliko's mod",
+    "author": "TheKliko (ported by EfazDev)",
+    "description": "This pack can be used to recreate Kliko's mod! This pack has been ported from Kliko's modloader to OrangeBlox.",
+    "colors": ["#990000", "#ff006e"],
+    "angle": 135,
+    "advanced": {
+        "*": ["#990000", "#ff006e"],
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "optional-img": true
+    }
+}
