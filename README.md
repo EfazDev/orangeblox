@@ -1,4 +1,4 @@
-<h1 align="center"><img align="center" src="https://obx.efaz.dev/Images/Banner.png" height="105" width="378"></h1>
+<h1 align="center"><img align="center" src="Images/Banner.png" height="105" width="378"></h1>
 <h2 align="center">Push your Roblox limitations to a new level!</h2>
 <p align="center">
     <a href="https://github.com/EfazDev/orangeblox/releases/latest"><img src="https://img.shields.io/github/v/release/EfazDev/orangeblox?color=ff4b00&label=%F0%9F%94%84%20Version" alt="Version"></a>
@@ -9,7 +9,7 @@
     <a href="https://discord.efaz.dev"><img src="https://img.shields.io/discord/1099350065560166543?logo=discord&logoColor=white&label=discord&color=4d3dff" alt="Discord"></a>    
 </p>
 <p align="center">
-    <img align="center" src="https://obx.efaz.dev/Images/Collage.png" alt="OrangeBlox Collage"><br>
+    <img align="center" src="Images/Collage.png" alt="OrangeBlox Collage"><br>
 </p>
 
 > [!IMPORTANT]
@@ -19,7 +19,7 @@
 OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+console+terminal&udm=2) program heavily inspired by Bloxstrap made for macOS and Windows that applies modifications onto the Roblox Client using files! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
 
 > [!IMPORTANT]
-> This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
+> This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox), [obxbeta.efaz.dev](https://obxbeta.efaz.dev) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
 1. Set FFlag and Global Setting Customizations on your Roblox installation!
@@ -67,14 +67,14 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `3017de1a6ae6f632eb63c2388c554c94` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `c45af53dc899aab7c356f340ed14c41b` |
-| Installer (Install.py) | `8db47df5c57073d41e986ca854a936b6` |
-| Bootstrap API (OrangeAPI.py) | `e497ce6bb3d0b339b096e25f971757a2` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `6ca694c3bc1a51a0997a6799c32fb783` |
-| Bootstrap Loader (OrangeBlox.py) | `0b0e1b8f2a23bf20c5bff265e45011f7` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `3bfb67de55e4374fc941c501473c0182` |
-| PyKits API (PyKits.py) | `3c2862a7d8b143c2a16bcba809b7f876` |
+| Main Bootstrap (Main.py) | `146d09b5fff55e0b083b17f6c81c2693` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `ee2814e89a7f9195e3bab41a6e5db0db` |
+| Installer (Install.py) | `3181e4bf22ba64ebeb2f41e78ac2a27f` |
+| Bootstrap API (OrangeAPI.py) | `d78a21e65ffee2030cbed6a5a6591cc8` |
+| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `48e387bb73f3bcd4afd716c1ea7fe3a8` |
+| Bootstrap Loader (OrangeBlox.py) | `979e3f29d44236a1b5c372ecfbf0a80d` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `5931f807a3b10bef665f01c494df7e67` |
+| PyKits API (PyKits.py) | `c7068bd2b5023e9378ceb9774b5e5676` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

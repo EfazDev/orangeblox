@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0k
+# v2.3.1a
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0k
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.1a
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -24,11 +24,13 @@ import platform
 import typing
 import json
 from urllib.parse import urlparse
+from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.3.0k", "bootstrap_version": "2.3.0k"}
+current_version = {"version": "2.3.1a", "bootstrap_version": "2.3.1a"}
 requested_functions = {}
 cached_information = {}
+colors_class = Colors()
 translator = None
 debug_mode = False
 studio_mode = False
@@ -382,7 +384,7 @@ class OrangeAPI:
         
         Permission: enableMod | Level: 2 [Caution]
 
-        **This function is only available in OrangeAPI v2.3.0k+**
+        **This function is only available in OrangeAPI v2.3.0+**
 
         ```python
         response = OrangeAPI.enableMod("EfazDev Mod!") # -> Response
@@ -395,7 +397,7 @@ class OrangeAPI:
         
         Permission: disableMod | Level: 1 [Warning]
 
-        **This function is only available in OrangeAPI v2.3.0k+**
+        **This function is only available in OrangeAPI v2.3.0+**
 
         ```python
         response = OrangeAPI.disableMod("EfazDev Mod!") # -> Response
@@ -408,7 +410,7 @@ class OrangeAPI:
         
         Permission: getIfModIsEnabled | Level: 1 [Warning]
 
-        **This function is only available in OrangeAPI v2.3.0k+**
+        **This function is only available in OrangeAPI v2.3.0+**
 
         ```python
         response = OrangeAPI.getIfModIsEnabled("EfazDev Mod!") # -> True
@@ -867,7 +869,7 @@ class OrangeAPI:
         ```
         """
         if Request(self, self.__orangeapi_details__, "getIfRobloxLaunched").generateResponse().response == False:
-            print(f"\033[38;5;255m[MOD SCRIPT]: {question}\033[0m")
+            colors_class.print(f"[MOD SCRIPT]: {question}", 255)
             return input(prompt)
         else:
             return None
@@ -909,7 +911,7 @@ class OrangeAPI:
         OrangeAPI.printMainMessage("Hello World!") # -> None
         ```
         """
-        print(f"\033[38;5;255m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 255)
     def printColoredMessage(self, mes: str, ansi: int) -> None: # No Permission Needed
         """
         Print a message on the python console using an ANSI 256 bit color number.
@@ -924,7 +926,7 @@ class OrangeAPI:
         """
         if type(ansi) is int: 
             if ansi == 202 or ansi == 208 or ansi == 166: return
-            print(f"\033[38;5;{ansi}m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+            colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", ansi)
     def printErrorMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a red message on the python console using the bootstrap. [Indicates error]
@@ -937,7 +939,7 @@ class OrangeAPI:
         OrangeAPI.printErrorMessage("Uh oh!") # -> None
         ```
         """
-        print(f"\033[38;5;196m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 196)
     def printSuccessMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a green message on the python console using the bootstrap. [Indicates success]
@@ -950,7 +952,7 @@ class OrangeAPI:
         OrangeAPI.printSuccessMessage("Woo!") # -> None
         ```
         """
-        print(f"\033[38;5;82m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 82)
     def printWarnMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -963,7 +965,7 @@ class OrangeAPI:
         OrangeAPI.printWarnMessage("Wait!") # -> None
         ```
         """
-        print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 226)
     def printYellowMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -989,7 +991,7 @@ class OrangeAPI:
         OrangeAPI.printDebugMessage("Wait!") # -> None
         ```
         """
-        if debug_mode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        if debug_mode == True: colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 226)
     def translate(self, mes: str) -> str: # No Permission Needed
         """
         Translate a message to the current user's selected language using a localization set. If no localization set is found, it will return the original message.

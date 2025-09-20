@@ -1,5 +1,5 @@
 """
-PyKits v1.5.5 | Made by Efaz from efaz.dev
+PyKits v1.6.0 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -27,7 +27,7 @@ However! Classes may depend on other classes. Use this resource list:
     Colors: typing (module), pip (+ request)
     stdout: Translator?
     ProgressBar: None
-    TimerBar: None
+    TimerBar: ProgressBar
     InstantRequestJSONResponse: None
     BuiltinEditor: None
     PyKitsIsAModule: None
@@ -57,6 +57,7 @@ class request:
         scheme: str = ""
         redirected: bool = False
         ok: bool = False
+        __raw_stderr__: str = ""
     class FileDownload(Response):
         returncode = 0
         path = ""
@@ -113,10 +114,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "GET"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -145,10 +147,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "POST", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "POST"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -177,10 +180,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PATCH", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "PATCH"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -209,10 +213,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "PUT", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "PUT"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -241,10 +246,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "DELETE", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "DELETE"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -273,10 +279,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", "HEAD", "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = "HEAD"
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -305,10 +312,11 @@ class request:
             curl_res = self._subprocess.run([self.get_curl(), "-v", "-X", method, "--compressed"] + self.format_headers(headers) + self.format_auth(auth) + self.format_cookies(cookies) + self.format_data(data) + [url], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
             if type(curl_res) is self._subprocess.CompletedProcess:
                 new_response = self.Response()
-                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").replace("\r", ""))
+                processed_stderr = self.process_stderr(curl_res.stderr.decode("utf-8").strip())
                 for i, v in processed_stderr.items(): setattr(new_response, i, v)
                 new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8").replace("\r", "")
+                new_response.text = curl_res.stdout.decode("utf-8").strip()
+                new_response.__raw_stderr__ = curl_res.stderr.decode("utf-8").strip()
                 new_response.method = method.upper()
                 new_response.scheme = self.get_url_scheme(url)
                 new_response.path = self.get_url_path(url)
@@ -388,7 +396,8 @@ class request:
             s.method = "GET"
             s.scheme = self.get_url_scheme(path)
             s.path = self.get_url_path(path)
-            processed_stderr = self.process_stderr("".join(stderr_lines))
+            s.__raw_stderr__ = "".join(stderr_lines)
+            processed_stderr = self.process_stderr(s.__raw_stderr__)
             for i, v in processed_stderr.items(): setattr(s, i, v)
             return s
         else: 
@@ -401,7 +410,8 @@ class request:
                 s.method = "GET"
                 s.scheme = self.get_url_scheme(path)
                 s.path = self.get_url_path(path)
-                processed_stderr = self.process_stderr("".join(stderr_lines))
+                s.__raw_stderr__ = "".join(stderr_lines)
+                processed_stderr = self.process_stderr(s.__raw_stderr__)
                 for i, v in processed_stderr.items(): setattr(s, i, v)
                 return s
     def get_curl(self):
@@ -500,6 +510,7 @@ class request:
             "ok": False
         }
         for i in lines:
+            i = i.rstrip("\r")
             if self._main_os == "Windows": # Schannel based cUrl
                 status_line_match = self._re.search(r"< HTTP/([\d.]+) (\d+)", i)
                 if status_line_match:
@@ -508,7 +519,7 @@ class request:
                     data["ok"] = self.get_if_ok(data["status_code"])
                 elif i.startswith("< "):
                     sl = i.replace("< ", "", 1).split(": ")
-                    if len(sl) > 1: data["headers"][sl[0]] = sl[1]
+                    if len(sl) > 1: data["headers"][sl[0]] = sl[1].strip()
                 elif i == "* schannel: SSL/TLS connection renegotiated":
                     data["ssl_verified"] = True
                     data["ssl_issuer"] = "CN=Schannel Placeholder Certificate"
@@ -539,7 +550,7 @@ class request:
                     data["ok"] = self.get_if_ok(data["status_code"])
                 elif i.startswith("< "):
                     sl = i.replace("< ", "", 1).split(": ")
-                    if len(sl) > 1: data["headers"][sl[0]] = sl[1]
+                    if len(sl) > 1: data["headers"][sl[0]] = sl[1].strip()
                 elif i.startswith("* IPv4: "):
                     sl = i.split("* IPv4: ")
                     if len(sl) > 1: 
@@ -715,7 +726,7 @@ class pip:
                 return installed_checked
         else:
             sub = self._subprocess.run([self.executable, "-m", "pip", "list"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
-            line_splits = sub.stdout.decode().replace("\r", "").splitlines()[2:]
+            line_splits = sub.stdout.decode().strip().splitlines()[2:]
             installed_packages = [package.split()[0].lower() for package in line_splits if package.strip()]
             installed_checked = {}
             all_installed = True
@@ -803,7 +814,7 @@ class pip:
                 return False
     def updates(self, packages: typing.List[str]=[]):
         sub = self._subprocess.run([self.executable, "-m", "pip", "list", "--outdated", "--format=json"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
-        json_str = sub.stdout.decode().replace("\r", "")
+        json_str = sub.stdout.decode().strip()
         try:
             tried = self._json.loads(json_str)
             if packages and len(packages) > 0: return {"success": True, "packages": [i for i in tried if i["name"] in packages]}
@@ -868,7 +879,7 @@ class pip:
         else:
             a = self._subprocess.run([self.executable, "-V"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
             final = a.stdout.decode()
-            if a.returncode == 0: return final.replace("Python ", "").replace("\n", "").replace("\r", "")
+            if a.returncode == 0: return final.replace("Python ", "").strip()
             else: return None
     def getIfPythonVersionIsBeta(self, version=""):
         if version == "": cur_vers = self.getCurrentPythonVersion()
@@ -1013,7 +1024,7 @@ class pip:
                 try:
                     s = self._subprocess.run([exe, "-c", "import platform; machine_var = platform.machine(); print('arm' if machine_var.lower() == 'arm64' else ('intel' if machine_var.lower() == 'x86_64' else 'x86'))"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
                     final = s.stdout.decode()
-                    return final.replace("\n", "").replace("\r", "")
+                    return final.strip()
                 except: return ""
             elif self._main_os == "Windows":
                 with open(exe, "rb") as f:
@@ -1329,106 +1340,6 @@ class plist:
                 else: self._plistlib.dump(data, f)
             return {"success": True, "message": "Success!", "data": data}
         except Exception as e: return {"success": False, "message": "Something went wrong.", "data": e}
-class Translator:
-    def __init__(self, lang="en"):
-        self.language = lang
-        self.translation_json = {}
-        self.patterns = {}
-        self.extractors = {}
-        self.module_imports = {}
-        import os
-        import json
-        import re
-        from collections import defaultdict
-        self._os = os
-        self._json = json
-        self._re = re
-        self._defaultdict = defaultdict
-        if lang: self.load_new_language(lang)
-    def load_new_language(self, lang="en", include_ansi=False):
-        self.language = lang
-        if lang and not (lang == "en"):
-            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
-            if self._os.path.exists(lang): path = lang
-            else: path = self._os.path.join(cur_path, "Translations", f"{lang}.json")
-            with open(path, "r", encoding="utf-8") as f: self.translation_json = self._json.load(f)
-            self.translation_json.update({
-                "- (*)": "- (*)",
-                "[(*)] = (*)": "[(*)] = (*)",
-                "[(*)] = (*) ((*))": "[(*)] = (*) ((*))",
-                "[(*)] [(*)] = (*)": "[(*)] [(*)] = (*)",
-                "[*] = (*)": "[*] = (*)",
-                "v(*)": "v(*)",
-                "(*) | (*) => (*)": "(*) | (*) => (*)",
-                "> ": "> ",
-                "\u001b[38;5;(*)m(*)\u001b[0m": "\u001b[38;5;(*)m(*)\u001b[0m",
-                "\u001b[38;5;(*)m(*)\u001b[0m\n": "\u001b[38;5;(*)m(*)\u001b[0m\n",
-                "\u001b[38;5;(*)m(*)\u001b[0m\r\n": "\u001b[38;5;(*)m(*)\u001b[0m\r\n"
-            })
-            self.generate_patterns(include_ansi=include_ansi)
-    def generate_patterns(self, include_ansi=False):
-        adding_ansi_translations = {}
-        self.indexed_patterns = self._defaultdict(list)
-        self.fallback_patterns = []
-        for i in self.translation_json:
-            regex = self.generate_regex(i)
-            self.patterns[i] = regex
-            parts = i.split("(*)")
-            if parts[0]:
-                prefix = parts[0][:(len(parts[0]) // 2)]
-                self.indexed_patterns[prefix].append((i, regex))
-            else: self.fallback_patterns.append((i, regex))
-        if include_ansi:
-            ansi_template = f"\033[38;5;(*)m(*)\033[0m\n"
-            ansi_regex = self.generate_regex(ansi_template)
-            self.patterns[ansi_template] = ansi_regex
-            self.fallback_patterns.append((ansi_template, ansi_regex))
-            adding_ansi_translations[ansi_template] = ansi_template
-        self.translation_json.update(adding_ansi_translations)
-        self.one_group_patterns = [regex for tpl, regex in self.patterns.items() if regex.groups == 1]
-    def generate_regex(self, template: str, tolerant: bool=False):
-        parts = template.split("(*)")
-        escaped_parts = []
-        for part in parts:
-            if tolerant: part = self._re.sub(r'\.{2,}', r'\\.+', self._re.escape(part)); part = self._re.sub(r'!{2,}', r'!+', part)
-            else: part = self._re.escape(part)
-            escaped_parts.append(part)
-        pattern = "".join(part + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(escaped_parts))
-        return self._re.compile(f"^{pattern}$")
-    def extract_placeholders(self, template: str, actual: str):
-        if template not in self.extractors:
-            parts = template.split("(*)")
-            pattern = "".join(self._re.escape(part) + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(parts))
-            self.extractors[template] = self._re.compile(f"^{pattern}$")
-        match = self.extractors[template].match(actual)
-        if match: return list(match.groups())
-        return None
-    def pre_translate(self, message: str, translate_id: str):
-        try:
-            tr_me = self.translation_json.get(translate_id)
-            tr_placeholders = self.extract_placeholders(translate_id, message)
-            sp = tr_me.split("(*)")
-            result = []
-            for i in range(len(sp)):
-                result.append(sp[i])
-                if i < len(tr_placeholders):
-                    placeholder = tr_placeholders[i]
-                    if any(regex.fullmatch(placeholder) for regex in self.one_group_patterns): result.append(self.translation_json.get(tr_placeholders[i], tr_placeholders[i]))
-                    else: result.append(placeholder)
-            return "".join(result)
-        except Exception: return message
-    def translate(self, message: str): 
-        if not (self.language == "en"):
-            if message in self.translation_json: return self.translation_json[message]
-            possible_uses = self.indexed_patterns.get(message[:(len(message) // 2)], []) + self.fallback_patterns
-            tried_templates = set()
-            for i, v in possible_uses:
-                tried_templates.add(i)
-                if v.fullmatch(message) and self.translation_json.get(i): return self.pre_translate(message, i)
-            for i, v in self.patterns.items():
-                if i in tried_templates: continue
-                if v.fullmatch(message) and self.translation_json.get(i): return self.pre_translate(message, i)
-        return message
 class Colors:
     class Color:
         def __init__(self, r: int, g: int, b: int):
@@ -1440,7 +1351,7 @@ class Colors:
             self.decimal = self.__colors_obj__.hex_to_decimal(self.hex)
         def __int__(self): return self.ansi
         def __str__(self): return f"Color[{', '.join([str(i) for i in self.rgb])}]"
-        def wrap_message(self, message): return self.__colors_obj__.wrap_message(message, self.ansi)
+        def wrap(self, message): return self.__colors_obj__.wrap(message, self.ansi)
         def grayscale(self): return self.__colors_obj__.apply_grayscale(*(self.rgb))
     class Black(Color):
         def __init__(self): 
@@ -1545,7 +1456,7 @@ class Colors:
         "Teal": [36, 96, 46, 106], 
         "White": [37, 97, 47, 107]
     }
-    def __init__(self): pass
+    def __init__(self): import os, platform; self._os = os; self._platform = platform
     def fix_windows_ansi(self):
         if not hasattr(self, "_pip"): self._pip = pip()
         if self._pip.getIfRunningWindowsAdmin():
@@ -1556,21 +1467,27 @@ class Colors:
             kernel32.GetConsoleMode(handle, self._ctypes.byref(mode))
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
     def get_reset_color(self): return "\033[0m"
-    def get_ansi_start(self, ansi_num: int): return f"\033[38;5;{ansi_num}m"
+    def get_ansi_start(self, ansi_num: int): 
+        if isinstance(ansi_num, self.Color): ansi_num = ansi_num.ansi
+        return f"\033[38;5;{ansi_num}m"
     def get_sgr_start(self, sgr_num: int): return f"\033[{sgr_num}m"
     def bold(self, message: str): return f"\033[1m{message}\033[0m"
     def italic(self, message: str): return f"\033[3m{message}\033[0m"
     def underline(self, message: str): return f"\033[4m{message}\033[0m"
     def strikethrough(self, message: str): return f"\033[9m{message}\033[0m"
+    def clear_console(self): self._os.system("cls" if self._os.name == "nt" else 'echo "\033c\033[3J"; clear')
+    def set_console_title(self, title: str):
+        if self._platform.system() == "Windows": self._os.system(f"title {title}")
+        else: self._os.system(f'echo "\\033]0;{title}\\007"')
     def foreground(self, message: str, color: str="White", bright: bool=False): 
         if isinstance(color, self.Color): color = color.__str__()
         return f"{self.get_sgr_start(self.sgi_color_table[color][1 if bright == True else 0])}{message}{self.get_reset_color()}"
     def background(self, message: str, color: str="White", bright: bool=False): 
         if isinstance(color, self.Color): color = color.__str__()
         return f"{self.get_sgr_start(self.sgi_color_table[color][3 if bright == True else 2])}{message}{self.get_reset_color()}"
-    def wrap_message(self, message: str, ansi_num: int): return f"{self.get_ansi_start(ansi_num)}{message}{self.get_reset_color()}"
-    def print(self, message: str, ansi_num: int): print(self.wrap_message(message=message, ansi_num=ansi_num))
-    def print_gradient(self, message: str, color_stops: typing.List[str]): print(self.wrap_gradient_message(message=message, color_stops=color_stops))
+    def wrap(self, message: str, ansi_num: int): return f"{self.get_ansi_start(ansi_num)}{message}{self.get_reset_color()}"
+    def print(self, message: str, ansi_num: int): print(self.wrap(message=message, ansi_num=ansi_num))
+    def print_gradient(self, message: str, color_stops: typing.List[str]): print(self.wrap_gradient(message=message, color_stops=color_stops))
     def hex_to_rgb(self, hex_code: str): hex_code = hex_code.lstrip("#"); return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
     def rgb_to_hex(self, r: int, g: int, b: int): r, g, b = self.limit_rgb_value(r), self.limit_rgb_value(g), self.limit_rgb_value(b); return f"#{r:02x}{g:02x}{b:02x}"
     def hex_to_gray(self, hex_code: str): return self.rgb_to_hex(*(self.apply_grayscale(*(self.hex_to_rgb(hex_code)))))
@@ -1601,12 +1518,13 @@ class Colors:
     def gamma_correct(self, value: int): return (value / 255) ** 2.2
     def inverse_gamma(self, value: int): return int((value ** (1/2.2)) * 255)
     def apply_grayscale(self, r: int, g: int, b: int): res = int(0.299*r + 0.587*g + 0.114*b); return res, res, res
-    def wrap_gradient_message(self, message: str, color_stops: typing.List[str]): 
+    def wrap_gradient(self, message: str, color_stops: typing.List[str]): 
         length = len(message)
         if length == 0 or len(color_stops) < 1: return message
-        if len(color_stops) < 2: return self.wrap_message(message, self.hex_to_ansi(color_stops[0]))
+        if len(color_stops) < 2: return self.wrap(message, self.hex_to_ansi(color_stops[0]))
         stops_rgb = []
         for hex_color in color_stops:
+            if isinstance(hex_color, self.Color): hex_color = hex_color.hex
             r, g, b = self.hex_to_rgb(hex_color)
             stops_rgb.append((
                 self.gamma_correct(r),
@@ -1627,6 +1545,106 @@ class Colors:
             ansi_code = self.hex_to_ansi2(self.rgb_to_hex(r, g, b))
             result += f"{self.get_ansi_start(ansi_code)}{char}"
         return result + self.get_reset_color()
+class Translator:
+    def __init__(self, lang="en"):
+        self.language = lang
+        self.translation_json = {}
+        self.patterns = {}
+        self.extractors = {}
+        self.module_imports = {}
+        import os
+        import json
+        import re
+        from collections import defaultdict
+        self._os = os
+        self._json = json
+        self._re = re
+        self._defaultdict = defaultdict
+        if lang: self.load_new_language(lang)
+    def load_new_language(self, lang="en", include_ansi=False):
+        self.language = lang
+        if lang and not (lang == "en"):
+            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
+            if self._os.path.exists(lang): path = lang
+            else: path = self._os.path.join(cur_path, "Translations", f"{lang}.json")
+            with open(path, "r", encoding="utf-8") as f: self.translation_json = self._json.load(f)
+            self.translation_json.update({
+                "- (*)": "- (*)",
+                "[(*)] = (*)": "[(*)] = (*)",
+                "[(*)] = (*) ((*))": "[(*)] = (*) ((*))",
+                "[(*)] [(*)] = (*)": "[(*)] [(*)] = (*)",
+                "[*] = (*)": "[*] = (*)",
+                "v(*)": "v(*)",
+                "(*) | (*) => (*)": "(*) | (*) => (*)",
+                "> ": "> ",
+                "\u001b[38;5;(*)m(*)\u001b[0m": "\u001b[38;5;(*)m(*)\u001b[0m",
+                "\u001b[38;5;(*)m(*)\u001b[0m\n": "\u001b[38;5;(*)m(*)\u001b[0m\n",
+                "\u001b[38;5;(*)m(*)\u001b[0m\r\n": "\u001b[38;5;(*)m(*)\u001b[0m\r\n"
+            })
+            self.generate_patterns(include_ansi=include_ansi)
+    def generate_patterns(self, include_ansi=False):
+        adding_ansi_translations = {}
+        self.indexed_patterns = self._defaultdict(list)
+        self.fallback_patterns = []
+        for i in self.translation_json:
+            regex = self.generate_regex(i)
+            self.patterns[i] = regex
+            parts = i.split("(*)")
+            if parts[0]:
+                prefix = parts[0][:(len(parts[0]) // 2)]
+                self.indexed_patterns[prefix].append((i, regex))
+            else: self.fallback_patterns.append((i, regex))
+        if include_ansi:
+            ansi_template = f"\033[38;5;(*)m(*)\033[0m\n"
+            ansi_regex = self.generate_regex(ansi_template)
+            self.patterns[ansi_template] = ansi_regex
+            self.fallback_patterns.append((ansi_template, ansi_regex))
+            adding_ansi_translations[ansi_template] = ansi_template
+        self.translation_json.update(adding_ansi_translations)
+        self.one_group_patterns = [regex for tpl, regex in self.patterns.items() if regex.groups == 1]
+    def generate_regex(self, template: str, tolerant: bool=False):
+        parts = template.split("(*)")
+        escaped_parts = []
+        for part in parts:
+            if tolerant: part = self._re.sub(r'\.{2,}', r'\\.+', self._re.escape(part)); part = self._re.sub(r'!{2,}', r'!+', part)
+            else: part = self._re.escape(part)
+            escaped_parts.append(part)
+        pattern = "".join(part + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(escaped_parts))
+        return self._re.compile(f"^{pattern}$")
+    def extract_placeholders(self, template: str, actual: str):
+        if template not in self.extractors:
+            parts = template.split("(*)")
+            pattern = "".join(self._re.escape(part) + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(parts))
+            self.extractors[template] = self._re.compile(f"^{pattern}$")
+        match = self.extractors[template].match(actual)
+        if match: return list(match.groups())
+        return None
+    def pre_translate(self, message: str, translate_id: str):
+        try:
+            tr_me = self.translation_json.get(translate_id)
+            tr_placeholders = self.extract_placeholders(translate_id, message)
+            sp = tr_me.split("(*)")
+            result = []
+            for i in range(len(sp)):
+                result.append(sp[i])
+                if i < len(tr_placeholders):
+                    placeholder = tr_placeholders[i]
+                    if any(regex.fullmatch(placeholder) for regex in self.one_group_patterns): result.append(self.translation_json.get(tr_placeholders[i], tr_placeholders[i]))
+                    else: result.append(placeholder)
+            return "".join(result)
+        except Exception: return message
+    def translate(self, message: str): 
+        if not (self.language == "en"):
+            if message in self.translation_json: return self.translation_json[message]
+            possible_uses = self.indexed_patterns.get(message[:(len(message) // 2)], []) + self.fallback_patterns
+            tried_templates = set()
+            for i, v in possible_uses:
+                tried_templates.add(i)
+                if v.fullmatch(message) and self.translation_json.get(i): return self.pre_translate(message, i)
+            for i, v in self.patterns.items():
+                if i in tried_templates: continue
+                if v.fullmatch(message) and self.translation_json.get(i): return self.pre_translate(message, i)
+        return message
 class stdout:
     buffer: str = ""
     logger = None
@@ -1742,7 +1760,7 @@ class stdout:
                     try:  _, status = self._os.waitpid(pid, 0)
                     except ChildProcessError: status = 0
                 returncode = self._os.WEXITSTATUS(status)
-                return self.CompletedProcess(b''.join(output).decode().replace("\r", ""), returncode)
+                return self.CompletedProcess(b''.join(output).decode().strip(), returncode)
         else:
             proc = self._subprocess.Popen(
                 args,
@@ -1778,69 +1796,67 @@ class stdout:
             except KeyboardInterrupt: proc.terminate()
             reader_thread.join()
             returncode = proc.wait()
-            return self.CompletedProcess(b''.join(output).decode().replace("\r", ""), returncode)
+            return self.CompletedProcess(b''.join(output).decode().strip(), returncode)
     def flush(self):
         if self.buffer.rstrip():
             try: self.logger.log(self.log_level, self.buffer.rstrip()); 
             except Exception: self.logger.log(self.log_level, self.buffer.rstrip().encode(self.encoding, errors="replace").decode(self.encoding))
         self.buffer = ""
-class ProgressBar:   
-    current_percentage = 0
-    status_text = ""
-    def submit(self, status_text: str, percentage: int):
+class ProgressBar:
+    def __init__(self): 
         import sys
+        self._sys = sys
+        self.current_percentage = 0
+        self.status_text = ""
+    def submit(self, status_text: str, percentage: int):
         self.current_percentage = percentage
         self.status_text = status_text
         fin = round(self.current_percentage/(100/20))
         beginning = '\033[38;5;82m✅' if self.current_percentage >= 100 else '\033[38;5;255m🚀'
         if self.status_text.startswith("\033ERR"): beginning = '\033[38;5;196m❌'; self.status_text = self.status_text.replace("\033ERR", "", 1)
         message = f"{beginning} {self.status_text} [{'█'*int(fin)}{'░'*int(20-fin)}] {self.current_percentage}%\033[0m"
-        if hasattr(sys.stdout, "change_last_message"): sys.stdout.change_last_message(message)
+        if hasattr(self._sys.stdout, "change_last_message"): self._sys.stdout.change_last_message(message)
         else: 
-            sys.__stdout__.write("\033[1A")
-            sys.__stdout__.write("\033[2K")
-            sys.__stdout__.write(message + "\n")
-            sys.__stdout__.flush()
+            self._sys.__stdout__.write("\033[1A")
+            self._sys.__stdout__.write("\033[2K")
+            self._sys.__stdout__.write(message + "\n")
+            self._sys.__stdout__.flush()
     def start(self): 
-        import sys
-        if hasattr(sys.stdout, "change_last_message"): print("\033{progress}")
+        if hasattr(self._sys.stdout, "change_last_message"): print("\033{progress}")
     def end(self): 
-        import sys
-        if hasattr(sys.stdout, "change_last_message"): print("\033{progressend}")
-class TimerBar:   
-    current_countdown = 5
-    started = 5
-    finished_text = "Continue with your action!"
-    begin_in_end = True
+        if hasattr(self._sys.stdout, "change_last_message"): print("\033{progressend}")
+    def error(self): return "\033ERR"
+class TimerBar(ProgressBar):
     def __init__(self, countdown: int=5, finished_text: str="Continue with your action!", begin_in_end: bool=True):
+        import sys
+        import time
+        self._sys = sys
+        self._time = time
         self.current_countdown = int(countdown); 
         self.started = int(countdown); 
         self.finished_text = finished_text; 
         self.begin_in_end = begin_in_end
     def submit(self):
-        import sys
         fin = round(((self.current_countdown/self.started)*100)/(100/self.started))
         if self.begin_in_end == True or self.current_countdown > 0: beginning = f"\033[38;5;82m✅ [{'█'*int(fin)}{'░'*int(self.started-fin)}] " if self.current_countdown == 0 else f"\033[38;5;255m⏰ [{'█'*int(fin)}{'░'*int(self.started-fin)}] "
         else: beginning = "\033[38;5;255m"
         if self.current_countdown == 0: message = f"{beginning}{self.finished_text}\033[0m"
         else: message = f"{beginning}{self.current_countdown}s\033[0m"
-        if hasattr(sys.stdout, "change_last_message"): sys.stdout.change_last_message(message)
+        if hasattr(self._sys.stdout, "change_last_message"): self._sys.stdout.change_last_message(message)
         else: 
-            sys.__stdout__.write("\033[1A")
-            sys.__stdout__.write("\033[2K")
-            sys.__stdout__.write(message + "\n")
-            sys.__stdout__.flush()
+            self._sys.__stdout__.write("\033[1A")
+            self._sys.__stdout__.write("\033[2K")
+            self._sys.__stdout__.write(message + "\n")
+            self._sys.__stdout__.flush()
     def start(self): 
-        import sys
-        if hasattr(sys.stdout, "change_last_message"): print("\033{progress}")
-        import time
+        if hasattr(self._sys.stdout, "change_last_message"): print("\033{progress}")
         while self.current_countdown:
             self.submit()
             if self.current_countdown == 0: break
             self.current_countdown -= 1
-            time.sleep(1)
+            self._time.sleep(1)
         self.submit()
-        if hasattr(sys.stdout, "change_last_message"): print("\033{progressend}")
+        if hasattr(self._sys.stdout, "change_last_message"): print("\033{progressend}")
 class InstantRequestJSONResponse:
     ok = True
     json = None

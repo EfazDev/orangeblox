@@ -260,7 +260,7 @@
             let latest_downloads = 0;
 
             if (beta == true) {
-                version_req = await fetch("https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json");
+                version_req = await fetch("https://obxbeta.efaz.dev/Version.json");
             } else {
                 version_req = await fetch("https://obx.efaz.dev/Version.json");
             }

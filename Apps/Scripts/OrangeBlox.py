@@ -15,11 +15,12 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.0k"}
+    current_version = {"version": "2.3.1a"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
     pip_class = PyKits.pip(find=True)
+    colors_class = PyKits.Colors()
     app_path = ""
     macos_path = ""
     logs = []
@@ -152,6 +153,7 @@ if __name__ == "__main__":
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
+        "EFlagEnableDefaultDiscordRPC": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
@@ -164,20 +166,21 @@ if __name__ == "__main__":
         _, tb_v, tb_b = sys.exc_info()
         tb_lines = traceback.extract_tb(tb_b)
         lines = []
-        lines.append("\033[95mTraceback (most recent call last):\033[0m")
+        lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
         for fn, ln, f, tx in tb_lines:
-            lines.append(f'  File \033[95m"{fn}"\033[0m, line \033[95m{ln}\033[0m, in \033[95m{f}\033[0m')
+            lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
             if tx: lines.append(f'    {tx}')
         exc_t = type(tb_v).__name__
         exc_m = str(tb_v)
-        lines.append(f'\033[95m\033[1m{exc_t}:\033[0m\033[0m \033[35m{exc_m}\033[0m')
+        lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
-    def printMainMessage(mes): print(f"\033[38;5;255m{ts(mes)}\033[0m"); logs.append((ts(mes), 0))
-    def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m"); logs.append((ts(mes), 1))
+    def printMainMessage(mes): colors_class.print(ts(mes), 255); logs.append((ts(mes), 0))
+    def printErrorMessage(mes): colors_class.print(ts(mes), 196); logs.append((ts(mes), 1))
+    def printSuccessMessage(mes): colors_class.print(ts(mes), 82); logs.append((ts(mes), 4))
+    def printWarnMessage(mes): colors_class.print(ts(mes), 202); logs.append((ts(mes), 3))
+    def printYellowMessage(mes): colors_class.print(ts(mes), 226); logs.append((ts(mes), 2))
     def printDebugMessage(mes): 
-        if main_config.get("EFlagEnableDebugMode") == True: print(f"\033[38;5;226m{ts(mes)}\033[0m"); logs.append((ts(mes), 2))
-    def printWarnMessage(mes): print(f"\033[38;5;202m{ts(mes)}\033[0m"); logs.append((ts(mes), 3))
-    def printSuccessMessage(mes): print(f"\033[38;5;82m{ts(mes)}\033[0m"); logs.append((ts(mes), 4))
+        if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logs.append((ts(mes), 2))
     def setLoggingHandler(handler_name):
         global app_path
         global main_os
@@ -199,6 +202,7 @@ if __name__ == "__main__":
         logger.addHandler(stdout_stream)
         sys.stdout = PyKits.stdout(logger, logging.INFO, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
         sys.stderr = PyKits.stdout(logger, logging.ERROR, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
+        if main_os == "Windows": colors_class.fix_windows_ansi()
         return True
     def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
     def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
@@ -1480,10 +1484,8 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         local_app_data = pip_class.getLocalAppData()
-        
+        colors_class.set_console_title("OrangeBlox 🍊")
         if os.path.exists(os.path.join(app_path, "Main.py")):
-            os.system("title OrangeBlox 🍊")
-            os.system("chcp 65001")
             if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
                 if not main_config.get("EFlagDisableBootstrapCooldown") == True:
                     with open(os.path.join(app_path, "BootstrapCooldown"), "r", encoding="utf-8") as f:
@@ -1604,7 +1606,7 @@ if __name__ == "__main__":
                             build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                             if build_cache_process.returncode == 0: printSuccessMessage("Successfully built Python cache!")
                             else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
-                        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+                        colors_class.clear_console()
                         result = subprocess.run([pythonExecutable, os.path.join(app_path, "Main.py")], cwd=os.path.join(app_path))
                         printMainMessage("Ending Bootstrap..")
                         ended = True

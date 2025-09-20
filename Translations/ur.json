@@ -1637,11 +1637,6 @@
  "[exit] = Exit Mod Selector": "[باہر نکلیں] = ایک سے باہر نکلیں جدید سلیکٹر",
  "[generate_loop_key()]: Loop key is generated! Key: (*)": "[جنریٹ_لوپ_کی ()]: لوپ کلید تیار کی گئی ہے! کلید: (*)",
  "[set_debug_mode()]: Debug Mode is enabled!": "[set_debug_mode()]: ڈیبگ موڈ فعال ہے!",
- "https://clientsettings.roblox.com/v2/user-channel?binaryType=(*)": "https://ClientSettings.Roblox.com/v2/user-channel؟binarytype=(*)",
- "https://developer.apple.com/xcode/resources/": "https://developer.apple.com/xcode/resources/",
- "https://github.com/EfazDev/orangeblox/issues": "https://github.com/EfazDev/orangeblox/issues",
- "https://nuitka.net/user-documentation/user-manual.html": "https://nuitka.net/user-docamentation/user-manual.html",
- "https://www.google.com/search?q=color+picker": "https://www.google.com/search؟q=Color+picker",
  "macOS Application finished launching..": "میکوس ایپلی کیشن لانچنگ ختم..",
  "v(*) [Current] => v(*) [Latest]": "v(*) [موجودہ] => v(*) [تازہ ترین]",
  "⚠️ Download Location: (*)": "⚠ ڈاؤن لوڈ مقام: (*)",
@@ -2079,8 +2074,6 @@
  "--- Rename Connections to Friends ---": "--- دوستوں سے رابطوں کا نام ---",
  "Would you like to enable renaming Connections back to Friends on the client? (y/n)": "کیا آپ مؤکل کے دوستوں سے واپس آنے والے رابطوں کو قابل بنانا چاہیں گے؟ (y/n)",
  "Input the number of animations you would like to limit:": "متحرک تصاویر کی تعداد کو ان پٹ کریں جس کو آپ محدود کرنا چاہتے ہیں:",
- "\u001b[38;5;(*)mCheck for Updates [(*) ](*)": "[38 ؛ 5 ؛ (*)تازہ کاریوں کے لئے میک چیک [(*)] (*)",
- "\u001b[38;5;(*)mNew Updates Available! [v(*) => v(*)] [(*) ](*)": "[38 ؛ 5 ؛ (*)MNEW اپڈیٹس دستیاب ہیں! [v(*)=> v(*)] [(*)] (*)",
  "Building Python Cache..": "عمارت ازگر کیشے..",
  "Would you like to build Python cache on app start? (y/n)": "کیا آپ ایپ اسٹارٹ پر ازگر کیچ بنانا چاہیں گے؟ (y/n)",
  "Successfully built Python cache!": "کامیابی کے ساتھ ازگر کیشے بنائے گئے!",
@@ -2130,8 +2123,6 @@
  "Please select the Provided Mod Configuration to use.": "براہ کرم استعمال کرنے کے لئے فراہم کردہ Mod کنفیگریشن کو منتخب کریں۔",
  "[(*)] - (*)(*)": "[(*)] - (*)(*)",
  "[3] = Use Provided Configuration": "[3] = فراہم کردہ ترتیب استعمال کریں",
- " • (*)": "• (*)",
- "(*)": "(*)",
  "1. Made by (*)": "1. بذریعہ (*)",
  "2. Old Player Sounds and Cursors were sourced from (*)": "2. پرانے کھلاڑی کی آوازیں اور کرسر (*)سے کھڑا کیا گیا تھا",
  "3. Avatar Editor Maps were from (*) slightly edited to be usable for the current version of Roblox (as of the time of writing this)": "3. اوتار ایڈیٹر کے نقشے (*)سے تھے جو روبلوکس کے موجودہ ورژن کے لئے استعمال کے قابل تھے (یہ لکھنے کے وقت کے مطابق)",
@@ -2153,5 +2144,15 @@
  "Disable a mod on your behalf.": "اپنی طرف سے ایک موڈ کو غیر فعال کریں۔",
  "Enable a mod on your behalf.": "اپنی طرف سے ایک موڈ کو فعال کریں۔",
  "Get if a mod is enabled or not.": "اگر ایک Mod فعال ہے یا نہیں تو حاصل کریں۔",
- "[(*)] - (*)(*)(*)": "[(*)] - (*)(*)(*)"
+ "[(*)] - (*)(*)(*)": "[(*)] - (*)(*)(*)",
+ "This FFlag was from the LatteFlags GitHub! (https://github.com/espresso-soft/latteflags)": "یہ ایف فلاگ لیٹفلاگس گٹ ہب سے تھا! (https://github.com/espresso-soft/latteflags)",
+ "Skipping Preparation because you're connecting instead of launching a new window!": "تیاری کو چھوڑیں کیونکہ آپ نئی ونڈو لانچ کرنے کے بجائے رابطہ قائم کر رہے ہیں!",
+ "Go to Roblox! 🌐": "روبلوکس پر جائیں! 🌐",
+ "Connection may be broken. Error: (*)": "کنکشن ٹوٹ سکتا ہے۔ خرابی: (*)",
+ "Deactivated Discord Presence!": "غیر فعال ڈسکارڈ کی موجودگی!",
+ "Reactivated Discord Presence!": "دوبارہ متحرک ڈسکارڈ کی موجودگی!",
+ "Started Discord Presence!": "تنازعہ کی موجودگی شروع کردی!",
+ "Unable to connect to Discord (1)! Error: (*)": "ڈسکارڈ (1) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
+ "Unable to connect to Discord (2)! Error: (*)": "ڈسکارڈ (2) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
+ "Would you like to enable Idling Roblox RPC? (y/n)": "کیا آپ بیکار روبلوکس آر پی سی کو قابل بنانا چاہیں گے؟ (y/n)"
 }

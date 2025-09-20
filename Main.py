@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0k
+# v2.3.1a
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.0k"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1a"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -181,6 +181,7 @@ if __name__ == "__main__":
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
+        "EFlagEnableDefaultDiscordRPC": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -209,6 +210,29 @@ if __name__ == "__main__":
         "ur": "Urdu (اُردُو)",
         "vi": "Vietnamese (Tiếng Việt)"
     }
+    special_logo_mods = {
+        "reg": [
+            "OrangeBlox", 
+            "Roblox2008", 
+            "Roblox2011", 
+            "Roblox2015", 
+            "Roblox2015Red", 
+            "Roblox2021", 
+            "Roblox2025"
+        ],
+        "studio": [
+            "OrangeBlox",
+            "Studio2008",
+            "Studio2011",
+            "Studio2013",
+            "Studio2015",
+            "Studio2017",
+            "Studio2025",
+            "StudioBlue2008",
+            "StudioBlue2011"
+        ]
+    }
+    main_host = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
 
     # Printing Functions
     def ts(mes: str):
@@ -227,13 +251,13 @@ if __name__ == "__main__":
         exc_m = str(tb_v)
         lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
-    def printMainMessage(mes): print(colors_class.wrap_message(ts(mes), 255))
-    def printErrorMessage(mes): print(colors_class.wrap_message(ts(mes), 196))
-    def printSuccessMessage(mes): print(colors_class.wrap_message(ts(mes), 82))
-    def printWarnMessage(mes): print(colors_class.wrap_message(ts(mes), 202))
-    def printYellowMessage(mes): print(colors_class.wrap_message(ts(mes), 226))
+    def printMainMessage(mes): colors_class.print(ts(mes), 255)
+    def printErrorMessage(mes): colors_class.print(ts(mes), 196)
+    def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
+    def printWarnMessage(mes): colors_class.print(ts(mes), 202)
+    def printYellowMessage(mes): colors_class.print(ts(mes), 226)
     def printDebugMessage(mes): 
-        if main_config.get("EFlagEnableDebugMode"): print(colors_class.wrap_message(f"[DEBUG]: {ts(mes)}", 226)); logging.debug(mes)
+        if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logging.debug(mes)
 
     # Basic Functions
     def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
@@ -690,7 +714,7 @@ if __name__ == "__main__":
     # First Actions
     getSettings()
     setLoggingHandler("Main")
-    if main_os == "Darwin": os.system('echo "\\033]0;OrangeBlox 🍊\\007"')
+    if main_os == "Darwin": colors_class.set_console_title("OrangeBlox 🍊")
 
     # Requirement Checks
     try:
@@ -1888,6 +1912,10 @@ if __name__ == "__main__":
                         d = handleBasicSetting("EFlagAllowBloxstrapSDK", False)
                         if d: return d
 
+                        printMainMessage("Would you like to enable Idling Roblox RPC? (y/n)")
+                        d = handleBasicSetting("EFlagEnableDefaultDiscordRPC", True)
+                        if d: return d
+
                         if main_config.get("EFlagRobloxStudioEnabled") == True:
                             printMainMessage("Would you like to enable Roblox Studio to use the Bloxstrap SDK? (y/n)")
                             d = handleBasicSetting("EFlagAllowBloxstrapStudioSDK", False)
@@ -2136,11 +2164,11 @@ if __name__ == "__main__":
                     if d: return d
 
                 printMainMessage("Would you like to enable OrangeBlox Beta? (y/n)")
-                printMainMessage(f'Current Setting: {(main_config.get("EFlagBootstrapUpdateServer")=="https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json")}')
+                printMainMessage(f'Current Setting: {(main_config.get("EFlagBootstrapUpdateServer")=="https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json" or main_config.get("EFlagBootstrapUpdateServer")=="https://obxbeta.efaz.dev/Version.json")}')
                 printYellowMessage("Betas could contain bugs that could break your Roblox installation!")
                 d = input("> ")
                 if isYes(d) == True:
-                    main_config["EFlagBootstrapUpdateServer"] = "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json"
+                    main_config["EFlagBootstrapUpdateServer"] = "https://obxbeta.efaz.dev/Version.json"
                     printDebugMessage("User selected: True")
                 elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(d) == True:
@@ -2409,26 +2437,26 @@ if __name__ == "__main__":
     def continueToCredits(): # Credits
         quote = "'"
         printWarnMessage("--- Credits ---")
-        printMainMessage(f"1. Made by {colors_class.wrap_message('@EfazDev 🍊', 202)}")
-        printMainMessage(f"2. Old Player Sounds and Cursors were sourced from {colors_class.wrap_message('Bloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)', 165)}")
-        printMainMessage(f"3. Avatar Editor Maps were from {colors_class.wrap_message(f'Mielesgames{quote}s Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)', 197)} slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
-        printMainMessage(f"4. The Kliko's Mod Tool Mod Script was edited and made from {colors_class.wrap_message(f'Kliko{quote}s Mod Tool and Kliko{quote}s modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)', 196)}")
+        printMainMessage(f"1. Made by {colors_class.wrap('@EfazDev 🍊', 202)}")
+        printMainMessage(f"2. Old Player Sounds and Cursors were sourced from {colors_class.wrap('Bloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)', 165)}")
+        printMainMessage(f"3. Avatar Editor Maps were from {colors_class.wrap(f'Mielesgames{quote}s Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)', 197)} slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
+        printMainMessage(f"4. The Kliko's Mod Tool Mod Script was edited and made from {colors_class.wrap(f'Kliko{quote}s Mod Tool and Kliko{quote}s modloader 🎮 (https://github.com/klikos-modloader/klikos-modloader)', 196)}")
         printMainMessage("5. Python Module Creators:")
-        printMainMessage(f" • {colors_class.wrap_message('qwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)', 34)}")
-        printMainMessage(f" • {colors_class.wrap_message('Ronald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)', 40)}")
-        printMainMessage(f" • {colors_class.wrap_message('Philip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)', 226)}")
-        printMainMessage(f" • {colors_class.wrap_message('Mark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)', 129)}")
-        printMainMessage(f" • {colors_class.wrap_message('Kivy (plyer) 🧰 (https://github.com/kivy/plyer)', 214)}")
-        printMainMessage(f" • {colors_class.wrap_message('Giampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)', 97)}")
+        printMainMessage(f" • {colors_class.wrap('qwertyquerty (pypresence) 🦖 (https://github.com/qwertyquerty/pypresence)', 34)}")
+        printMainMessage(f" • {colors_class.wrap('Ronald Oussoren (pyobjc) 🔁 (https://github.com/ronaldoussoren/pyobjc)', 40)}")
+        printMainMessage(f" • {colors_class.wrap('Philip Semanchuk (posix-ipc) 🙂 (https://github.com/osvenskan/posix_ipc)', 226)}")
+        printMainMessage(f" • {colors_class.wrap('Mark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)', 129)}")
+        printMainMessage(f" • {colors_class.wrap('Kivy (plyer) 🧰 (https://github.com/kivy/plyer)', 214)}")
+        printMainMessage(f" • {colors_class.wrap('Giampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)', 97)}")
         printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
-        printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap_message('@CabledRblx 🦆', 226)}. Thanks :)")
-        printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap_message('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
+        printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap('@CabledRblx 🦆', 226)}. Thanks :)")
+        printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
-            printMainMessage(f'8. macOS App was built using {colors_class.wrap_message("pyinstaller 📦", 39)} and {colors_class.wrap_message("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. macOS App was built using {colors_class.wrap("pyinstaller 📦", 39)} and {colors_class.wrap("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py -r -rp -rc")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
-            printMainMessage(f'8. Windows App was built using {colors_class.wrap_message("pyinstaller 📦", 39)}. You can recreate and deploy using the following command! Use the README.md for more information.')
+            printMainMessage(f'8. Windows App was built using {colors_class.wrap("pyinstaller 📦", 39)}. You can recreate and deploy using the following command! Use the README.md for more information.')
             printMainMessage(f"Command: {sys.executable} Install.py -r -rp")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
@@ -2514,7 +2542,7 @@ if __name__ == "__main__":
         if current_python_version == latest_python_version: printSuccessMessage(f"You're already in the latest version of Python!")
         else:
             printMainMessage(f"Would you like to update Python to {latest_python_version} using the official Python Installer? (y/n)")
-            printMainMessage(f"{colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}")
+            printMainMessage(f"{colors_class.wrap(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}")
             co = input("> ")
             if isYes(co) == True:
                 if main_config.get("EFlagEnableSlientPythonInstalls") == True:
@@ -2544,7 +2572,7 @@ if __name__ == "__main__":
             if len(updating_python_modules["packages"]) > 0:
                 strs = []
                 only_package_names = []
-                for i in updating_python_modules["packages"]: vers1 = i['version']; vers2 = i['latest_version']; strs.append(f"{i['name']} {colors_class.wrap_message(f'(v{vers1} => v{vers2})', 82)}"); only_package_names.append(i["name"])
+                for i in updating_python_modules["packages"]: vers1 = i['version']; vers2 = i['latest_version']; strs.append(f"{i['name']} {colors_class.wrap(f'(v{vers1} => v{vers2})', 82)}"); only_package_names.append(i["name"])
                 printMainMessage("The following modules are available to be updated!")
                 printMainMessage(", ".join(strs))
                 printMainMessage("Would you like to install the updates to them now?")
@@ -3025,7 +3053,7 @@ if __name__ == "__main__":
                                                 extreme_included = False
                                                 for i in sorted_perms_2:
                                                     if i.get("level") == 4:
-                                                        print(colors_class.wrap_message(f"- {i.get('message')}", 201))
+                                                        print(colors_class.wrap(f"- {i.get('message')}", 201))
                                                         extreme_included = True
                                                     elif i.get("level") == 3: printErrorMessage(f"- {i.get('message')}")
                                                     elif i.get("level") == 2: printWarnMessage(f"- {i.get('message')}")
@@ -3033,7 +3061,7 @@ if __name__ == "__main__":
                                                     else: printMainMessage(f"- {i.get('message')}")
                                                 if len(python_modules) > 0: printYellowMessage(f"- Install and Use Python Modules: {', '.join(python_modules)}")
                                                 printYellowMessage("Please check the scripts, permissions above and developer of this mod before using!")
-                                                printMainMessage(f"Color Key: {colors_class.wrap_message(ts('[Extreme]'), 201)} {colors_class.wrap_message(ts('[Dangerous]'), 196)} {colors_class.wrap_message(ts('[Caution]'), 202)} {colors_class.wrap_message(ts('[Warning]'), 226)} {colors_class.wrap_message(ts('[Normal]'), 255)}")
+                                                printMainMessage(f"Color Key: {colors_class.wrap(ts('[Extreme]'), 201)} {colors_class.wrap(ts('[Dangerous]'), 196)} {colors_class.wrap(ts('[Caution]'), 202)} {colors_class.wrap(ts('[Warning]'), 226)} {colors_class.wrap(ts('[Normal]'), 255)}")
                                                 PyKits.TimerBar(5, "Are you sure you want to use this mod script? (y/n)", False).start()
                                                 a = input("> ")
                                                 if isYes(a) == True:
@@ -3042,7 +3070,7 @@ if __name__ == "__main__":
                                                         con = False
                                                         printYellowMessage("THIS SCRIPT WILL BE GRANTED THE EXTREME LEVEL PERMISSIONS LISTED! ARE YOU SURE?")
                                                         for i in sorted_perms_2:
-                                                            if i.get("level") == 4: print(colors_class.wrap_message(f"- {i.get('message')}", 201))
+                                                            if i.get("level") == 4: print(colors_class.wrap(f"- {i.get('message')}", 201))
                                                         PyKits.TimerBar(5, "ARE YOU SURE? (y/n)", False).start()
                                                         a = input("> ")
                                                         if isYes(a) == True: con = True
@@ -3872,7 +3900,7 @@ if __name__ == "__main__":
                             if (not (current_python_version == latest_python_version)) and latest_python_version:
                                 generated_ui_options.append({
                                     "index": 8.5, 
-                                    "message": ts(f"Update Python {colors_class.wrap_message(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}"), 
+                                    "message": ts(f"Update Python {colors_class.wrap(f'[v{current_python_version} => v{latest_python_version}]', 226 if is_python_beta else 82)}"), 
                                     "func": continueToUpdatePython, 
                                     "go_to_rbx": True, 
                                     "end_mes": ts("Python has been updated!"),
@@ -3901,7 +3929,7 @@ if __name__ == "__main__":
                             if len(modules_updating) > 0:
                                 generated_ui_options.append({
                                     "index": 8.75, 
-                                    "message": ts(f"Update Python Modules {colors_class.wrap_message(f'[+{len(modules_updating)}]', 82)}"), 
+                                    "message": ts(f"Update Python Modules {colors_class.wrap(f'[+{len(modules_updating)}]', 82)}"), 
                                     "func": continueToUpdatePythonModules, 
                                     "go_to_rbx": True, 
                                     "end_mes": ts("Python Modules has been updated!"),
@@ -3915,7 +3943,7 @@ if __name__ == "__main__":
                             unic = ""
                             version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
                             if version_server == "https://obx.efaz.dev/Version.json": emoji_to_define_update = "✅"; get_updates_anyway = True; unic = "82"
-                            elif version_server == "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json": emoji_to_define_update = "⚠️"; get_updates_anyway = True; unic = "226"
+                            elif version_server == "https://obxbeta.efaz.dev/Version.json" or version_server == "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json": emoji_to_define_update = "⚠️"; get_updates_anyway = True; unic = "226"
                             elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""): emoji_to_define_update = "🔨"; get_updates_anyway = True; unic = "226"
                             else: emoji_to_define_update = "❌"; get_updates_anyway = False; unic = "196"
                             if get_updates_anyway == True:
@@ -3926,7 +3954,7 @@ if __name__ == "__main__":
                                     latest_vers = latest_vers_res.json
                                     if current_version.get("version"):
                                         if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
-                                            versio_name = colors_class.wrap_message(ts(f'New Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}{" " if main_os == "Darwin" else ""}]'), unic)
+                                            versio_name = colors_class.wrap(ts(f'New Updates Available! [v{current_version.get("version", "1.0.0")} => v{latest_vers.get("latest_version", "1.0.0")}] [{emoji_to_define_update}{" " if main_os == "Darwin" else ""}]'), unic)
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                                                 with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
@@ -3948,12 +3976,12 @@ if __name__ == "__main__":
                     else:
                         version_server = main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
                         if version_server == "https://obx.efaz.dev/Version.json": emoji_to_define_update = "✅"; unic = "82"
-                        elif version_server == "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json": emoji_to_define_update = "⚠️"; unic = "226"
+                        elif version_server == "https://obxbeta.efaz.dev/Version.json" or version_server == "https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json": emoji_to_define_update = "⚠️"; unic = "226"
                         elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""): emoji_to_define_update = "🔨"; unic = "226"
                         else: emoji_to_define_update = "❌"; unic = "196"
                         generated_ui_options.append({
                             "index": 9, 
-                            "message": colors_class.wrap_message(ts(f"Check for Updates [{emoji_to_define_update}{' ' if main_os == 'Darwin' else ''}]"), unic), 
+                            "message": colors_class.wrap(ts(f"Check for Updates [{emoji_to_define_update}{' ' if main_os == 'Darwin' else ''}]"), unic), 
                             "func": continueToUpdates, 
                             "go_to_rbx": True, 
                             "end_mes": ts("Finished checking for updates!"),
@@ -4600,6 +4628,7 @@ if __name__ == "__main__":
                 input("> ")
                 sys.exit(0)
                 return
+            if connect_instead == True: printMainMessage("Skipping Preparation because you're connecting instead of launching a new window!"); return
             
             try:
                 printDebugMessage(f"Roblox Resources Location: {content_folder_paths[main_os]}")
@@ -5377,7 +5406,7 @@ if __name__ == "__main__":
                                                                                             output = output.replace("../", "").replace("..\\", "")
                                                                                             output = os.path.join(mods_folder, "Mods", selected_scri_a, output)
                                                                                             if path.startswith(os.path.join(mods_folder, "Mods", selected_scri_a)) and output.startswith(os.path.join(mods_folder, "Mods", selected_mod_scriptt)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
-                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image="https://obx.efaz.dev/Images/DiscordIcon.png"):
+                                                                                        def sendDiscordWebhookMessage(selected_scri_a: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image=f"{main_host}/Images/DiscordIcon.png"):
                                                                                             if main_config.get("EFlagUseDiscordWebhook") == True:
                                                                                                 for i in fields: 
                                                                                                     if not (type(i) is generated_api_instances[selected_scri_a].DiscordWebhookField): return False
@@ -5390,7 +5419,7 @@ if __name__ == "__main__":
                                                                                                                 "description": description or "",
                                                                                                                 "color": color,
                                                                                                                 "fields": [i.convert() for i in fields],
-                                                                                                                "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/Images/DiscordIcon.png" },
+                                                                                                                "author": { "name": "OrangeBlox", "icon_url": f"{main_host}/Images/DiscordIcon.png" },
                                                                                                                 "thumbnail": { "url": image },
                                                                                                                 "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
                                                                                                                 "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')
@@ -5709,7 +5738,7 @@ if __name__ == "__main__":
                             else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
                 time.sleep(2)
         def generateEmbedField(name, value, inline=True): return {"name": name, "value": str(value), "inline": inline}
-        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": "https://obx.efaz.dev/Images/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
+        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": f"{main_host}/Images/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
         def clearDiscordRPC():
             if main_config.get("EFlagEnableDiscordRPC") == True: pass
         def sendDiscordWebhook(webhook_json, name):
@@ -5825,7 +5854,7 @@ if __name__ == "__main__":
                             generated_thumbnail_api_json = generated_thumbnail_api_res.json
                             generated_place_api_json = generated_place_api_res.json
                             generated_universe_api_json = generated_universe_api_res.json
-                            thumbnail_url = "https://obx.efaz.dev/Images/AppIconRunStudio.png"
+                            thumbnail_url = f"{main_host}/Images/AppIconRunStudio.png"
                             if generated_thumbnail_api_json.get("data"):
                                 if len(generated_thumbnail_api_json.get("data")) > 0: thumbnail_url = generated_thumbnail_api_json.get("data")[0]["imageUrl"]
                             if current_place_info: current_place_info["thumbnail_url"] = thumbnail_url
@@ -5853,7 +5882,7 @@ if __name__ == "__main__":
                                             for i in windows_opened: i.setWindowTitle(ts(f"Roblox Studio - Opened {place_info.get('name', 'Unknown')}"))
                                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                                 try:
-                                    start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                    start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                     if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
                                     if current_place_info: current_place_info["start_time"] = start_time
                                     if main_config.get("EFlagEnableDiscordRPC") == True:
@@ -5902,11 +5931,11 @@ if __name__ == "__main__":
                                                         "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
                                                         "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                         "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
-                                                        "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/Images/AppIconRunStudioDiscord.png",
+                                                        "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconRunStudioDiscord.png",
                                                         "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
                                                         "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                     }
-                                                    if formatted_info["small_image"] == "https://obx.efaz.dev/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                    if formatted_info["small_image"] == f"{main_host}/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
                                                     if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Opened Studio as {connected_user_info.get('display')} (@{connected_user_info.get('name')})!")
                                                     cur_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                                     if formatted_info.get("stop") and formatted_info.get("stop") < cur_time:
@@ -6029,7 +6058,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
+                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6079,7 +6108,7 @@ if __name__ == "__main__":
                 printSuccessMessage("Roblox Game has been successfully published to Roblox!")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGamePublished") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
+                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6118,7 +6147,7 @@ if __name__ == "__main__":
                 printSuccessMessage("Roblox Game has been successfully saved to Roblox!")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGameSaved") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
+                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6235,7 +6264,7 @@ if __name__ == "__main__":
                                 generated_place_api_json = generated_place_api_res.json
                                 generated_universe_api_json = generated_universe_api_res.json
 
-                                thumbnail_url = "https://obx.efaz.dev/Images/AppIconPlayRoblox.png"
+                                thumbnail_url = f"{main_host}/Images/AppIconPlayRoblox.png"
                                 if generated_thumbnail_api_json.get("data"):
                                     if len(generated_thumbnail_api_json.get("data")) > 0: thumbnail_url = generated_thumbnail_api_json.get("data")[0]["imageUrl"]
                                 if current_place_info: current_place_info["thumbnail_url"] = thumbnail_url
@@ -6264,7 +6293,7 @@ if __name__ == "__main__":
                                                 for i in windows_opened: i.setWindowTitle(ts(f"Roblox - Playing {place_info.get('name', 'Unknown')}"))
                                     except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                                     try:
-                                        start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                                        start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                         if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
                                         if current_place_info: current_place_info["start_time"] = start_time
                                         if main_config.get("EFlagEnableDiscordRPC") == True:
@@ -6312,14 +6341,14 @@ if __name__ == "__main__":
                                                             "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
                                                             "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                             "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
-                                                            "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else "https://obx.efaz.dev/Images/AppIconPlayRobloxDiscord.png",
+                                                            "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconPlayRobloxDiscord.png",
                                                             "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
                                                             "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                         }
                                                         launch_data = ""
                                                         add_exam = False
                                                         if not formatted_info["launch_data"] == "": formatted_info["launch_data"] = f"&launchData={formatted_info['launch_data']}"; add_exam = False
-                                                        if formatted_info["small_image"] == "https://obx.efaz.dev/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                        if formatted_info["small_image"] == f"{main_host}/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
                                                         if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!")
                                                         if current_place_info:
                                                             if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and main_config.get("EFlagAllowPrivateServerJoining") == True and set_current_private_server_key:
@@ -6459,7 +6488,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = "https://obx.efaz.dev/Images/DiscordIcon.png"
+                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6551,6 +6580,10 @@ if __name__ == "__main__":
             def onRobloxVoiceChatUnmute(data): printDebugMessage("Voice Chat microphone has been unmuted!")
         def onRobloxAppStart(consoleLine):
             global rpc
+            thumbnail_url = f"{main_host}/Images/RobloxStudioLogo.png" if run_studio == True else f"{main_host}/Images/RobloxLogo.png"
+            selected_brand = main_config.get(f"EFlagSelectedBrandLogo{'2' if run_studio == True else ''}", '')
+            if selected_brand in special_logo_mods["studio" if run_studio == True else "reg"]:
+                thumbnail_url = f"{main_host}/Mods/Roblox{'Studio' if run_studio == True else ''}Brand/{selected_brand}/{'AppIcon' if run_studio == True else 'RobloxTilt'}.png"
             if main_config.get("EFlagEnableDiscordRPC") == True:
                 need_new_rpc = True
                 try: 
@@ -6560,9 +6593,26 @@ if __name__ == "__main__":
                     rpc = Presence("1367683523338698863" if run_studio == True else "1297668920349823026")
                     rpc.set_debug_mode(main_config.get("EFlagEnableDebugMode") == True)
                     rpc.connect()
+                    if not (main_config.get("EFlagEnableDefaultDiscordRPC") == False):
+                        start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
+                        if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
+                        rpc.update(
+                            details=f"Idling Roblox{' Studio' if run_studio == True else ''}",
+                            start=start_time,
+                            large_image=thumbnail_url, 
+                            large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
+                            small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
+                            small_text="OrangeBlox", 
+                            buttons=[
+                                {
+                                    "label": ts("Go to Roblox! 🌐"), 
+                                    "url": f"https://www.roblox.com/"
+                                }
+                            ]
+                        )
+                        rpc.default_presence = rpc.current_presence
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxAppStart") == True:
                 if main_config.get("EFlagDiscordWebhookURL"):
-                    thumbnail_url = "https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"
                     embed_fields = [
                         generateEmbedField(ts("Connected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
@@ -6586,7 +6636,11 @@ if __name__ == "__main__":
             printErrorMessage(f"There was an error inside the {'RobloxStudio' if run_studio == True else 'RobloxPlayer'} that has caused it to crash! Sorry!")
             printDebugMessage(f"Crashed Data: {consoleLine}")
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxCrash") == True and main_config.get("EFlagDiscordWebhookURL"):
-                generated_body = generateDiscordPayload((ts(f"Uh oh! Roblox Studio Crashed!") if run_studio == True else ts(f"Uh oh! Roblox Crashed!")), 0, [generateEmbedField(ts("Console Log"), consoleLine)], ("https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"))
+                thumbnail_url = f"{main_host}/Images/RobloxStudioLogo.png" if run_studio == True else f"{main_host}/Images/RobloxLogo.png"
+                selected_brand = main_config.get(f"EFlagSelectedBrandLogo{'2' if run_studio == True else ''}", '')
+                if selected_brand in special_logo_mods["studio" if run_studio == True else "reg"]:
+                    thumbnail_url = f"{main_host}/Mods/Roblox{'Studio' if run_studio == True else ''}Brand/{selected_brand}/{'AppIcon' if run_studio == True else 'RobloxTilt'}.png"
+                generated_body = generateDiscordPayload((ts(f"Uh oh! Roblox Studio Crashed!") if run_studio == True else ts(f"Uh oh! Roblox Crashed!")), 0, [generateEmbedField(ts("Console Log"), consoleLine)], thumbnail_url)
                 try: sendDiscordWebhook(generated_body, "onRobloxCrash")
                 except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
         def onRobloxExit(consoleLine):
@@ -6626,7 +6680,10 @@ if __name__ == "__main__":
                 if connected_roblox_instance and not (connected_roblox_instance.log_file == "") and main_config.get("EFlagDiscordWebhookURL"):
                     title = ts("Roblox Studio Closed!") if run_studio == True else ts("Roblox Closed!")
                     color = 12076614 if run_studio == True else 16735838
-                    thumbnail_url = "https://obx.efaz.dev/Images/RobloxStudioLogo.png" if run_studio == True else "https://obx.efaz.dev/Images/RobloxLogo.png"
+                    thumbnail_url = f"{main_host}/Images/RobloxStudioLogo.png" if run_studio == True else f"{main_host}/Images/RobloxLogo.png"
+                    selected_brand = main_config.get(f"EFlagSelectedBrandLogo{'2' if run_studio == True else ''}", '')
+                    if selected_brand in special_logo_mods["studio" if run_studio == True else "reg"]:
+                        thumbnail_url = f"{main_host}/Mods/Roblox{'Studio' if run_studio == True else ''}Brand/{selected_brand}/{'AppIcon' if run_studio == True else 'RobloxTilt'}.png"
                     embed_fields = [
                         generateEmbedField(ts("Disconnected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
@@ -6756,7 +6813,7 @@ if __name__ == "__main__":
                             if not (before_data.get(i) == rpc_info.get(i)): is_different = True
                         if is_different == False: return
                         if main_config.get("EFlagDiscordWebhookURL"):
-                            thumbnail_url = "https://obx.efaz.dev/Images/Bloxstrap.png"
+                            thumbnail_url = f"{main_host}/Images/Bloxstrap.png"
                             embed_fields = [generateEmbedField(ts("Requested Command"), info["command"])]
                             for i, v in passed_data.items(): embed_fields.append(generateEmbedField(i, v))
                             generated_body = generateDiscordPayload(ts("Bloxstrap RPC Changed"), 12517631, embed_fields, thumbnail_url)
@@ -6839,7 +6896,7 @@ if __name__ == "__main__":
             if main_config.get("EFlagEnableEndingRobloxCrashHandler") == True: handler.endRobloxCrashHandler()
             if run_studio == True:
                 if connect_instead == True:
-                    connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(studio=True), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=True, await_log_creation=True)
+                    connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(studio=True), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=True, await_log_creation=False)
                     if connected_roblox_instance:
                         connectCallEvents(connected_roblox_instance)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
@@ -6904,7 +6961,7 @@ if __name__ == "__main__":
                     else: printDebugMessage("No RobloxInstance class was registered")
             else:
                 if connect_instead == True:
-                    connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=False, await_log_creation=True)
+                    connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=False, await_log_creation=False)
                     if connected_roblox_instance:
                         connectCallEvents(connected_roblox_instance)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")

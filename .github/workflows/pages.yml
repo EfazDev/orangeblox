@@ -25,7 +25,6 @@ jobs:
         run: |
           cp .github/404.html 404.html
           cp .github/index.html index.html
-          cp .github/beta.html beta.html
           cp .github/discord.svg discord.svg
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
