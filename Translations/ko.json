@@ -2155,5 +2155,6 @@
  "Started Discord Presence!": "불화가 시작되었습니다!",
  "Unable to connect to Discord (1)! Error: (*)": "불화에 연결할 수 없습니다 (1)! 오류: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "불화에 연결할 수 없습니다 (2)! 오류: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "공회전 Roblox RPC를 활성화 하시겠습니까? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "공회전 Roblox RPC를 활성화 하시겠습니까? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)파이썬 모듈 (*)가 이제 업데이트 될 수 있습니다! 기본 메뉴를 열고 Python 모듈 업데이트를 확인한 다음 설치하여 업데이트를 설치하십시오!"
 }

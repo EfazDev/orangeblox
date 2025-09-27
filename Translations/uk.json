@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "Почав присутність розбрата!",
  "Unable to connect to Discord (1)! Error: (*)": "Неможливо підключитися до розбрата (1)! Помилка: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Неможливо підключитися до розбрата (2)! Помилка: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "Чи хотіли б ви ввімкнути холоду RPC Roblox? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "Чи хотіли б ви ввімкнути холоду RPC Roblox? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Модуль Python (*)тепер доступний для оновлення! Встановіть оновлення, відкривши головне меню, перевіряючи наявність оновлень модуля Python, а потім встановіть!"
 }

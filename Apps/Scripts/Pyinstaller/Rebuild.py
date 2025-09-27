@@ -87,9 +87,7 @@ def windows_rebuild():
         [RM_DIR, os.path.join(cur_path, "__pycache__")],
         [RM_DIR, os.path.join(variables["building_dir"], "OrangeBlox")],
         [RM_DIR, os.path.join(cur_path, "build")],
-        [RM_DIR, os.path.join(cur_path, "Apps", "Scripts", "Nuitka", "__pycache__")],
-        [PRINT, "Successfully rebuilt OrangeBlox!"],
-        [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxWindows.zip"]
+        [RM_DIR, os.path.join(cur_path, "Apps", "Scripts", "Nuitka", "__pycache__")]
     ]
 macos = {
     "intel": [
@@ -109,7 +107,7 @@ macos = {
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Scripts/Pyinstaller/__pycache__"],
-        [PRINT, "Successfully rebuilt OrangeBlox!"],
+        [PRINT, "Successfully rebuilt OrangeBlox for Intel macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMacIntel.zip"]
     ],
     "arm": [
@@ -129,7 +127,7 @@ macos = {
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Scripts/Pyinstaller/__pycache__"],
-        [PRINT, "Successfully rebuilt OrangeBlox!"],
+        [PRINT, "Successfully rebuilt OrangeBlox for arm64 macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMac.zip"]
     ]
 }
@@ -137,17 +135,23 @@ windows = {
     "x64": [
         [SET_VAR, "arch", "x64"],
         [SET_VAR, "building_dir", os.path.join(cur_path, "Apps", "Building")],
-        [FUNCTION, windows_rebuild]
+        [FUNCTION, windows_rebuild],
+        [PRINT, "Successfully rebuilt OrangeBlox for x64!"],
+        [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxWindows.zip"]
     ],
     "x86": [
         [SET_VAR, "arch", "x86"],
         [SET_VAR, "building_dir", os.path.join(cur_path, "Apps", "Building")],
-        [FUNCTION, windows_rebuild]
+        [FUNCTION, windows_rebuild],
+        [PRINT, "Successfully rebuilt OrangeBlox for x86!"],
+        [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxWindows.zip"]
     ],
     "arm": [
         [SET_VAR, "arch", "arm64"],
         [SET_VAR, "building_dir", os.path.join(cur_path, "Apps", "Building")],
-        [FUNCTION, windows_rebuild]
+        [FUNCTION, windows_rebuild],
+        [PRINT, "Successfully rebuilt OrangeBlox for arm64!"],
+        [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxWindows.zip"]
     ]
 }
 

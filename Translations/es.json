@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "¡Comenzó la presencia de Discord!",
  "Unable to connect to Discord (1)! Error: (*)": "¡No se puede conectar a Discord (1)! Error: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "¡No se puede conectar a Discord (2)! Error: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "¿Le gustaría habilitar RPC Roblox en ralentí? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "¿Le gustaría habilitar RPC Roblox en ralentí? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)¡El módulo Python (*)ahora están disponibles para actualizarse! Instale la actualización abriendo el menú principal, verificando las actualizaciones del módulo de Python y luego instale.."
 }

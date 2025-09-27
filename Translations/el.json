@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "Ξεκίνησε την παρουσία της Discord!",
  "Unable to connect to Discord (1)! Error: (*)": "Δεν είναι δυνατή η σύνδεση με το Discord (1)! Σφάλμα: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Δεν είναι δυνατή η σύνδεση με το Discord (2)! Σφάλμα: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "Θα θέλατε να ενεργοποιήσετε το ρελαντί Roblox rpc; (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "Θα θέλατε να ενεργοποιήσετε το ρελαντί Roblox rpc; (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Η μονάδα Python (*)είναι τώρα διαθέσιμη για να ενημερωθεί! Εγκαταστήστε την ενημέρωση ανοίγοντας το κύριο μενού, ελέγχοντας για ενημερώσεις μονάδων Python και στη συνέχεια εγκαταστήστε!"
 }

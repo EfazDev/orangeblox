@@ -2155,5 +2155,6 @@
  "Started Discord Presence!": "不一致の存在を始めました!",
  "Unable to connect to Discord (1)! Error: (*)": "Discordに接続できません(1)!エラー: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Discord(2)に接続できません!エラー: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "アイドリングRoblox RPCを有効にしますか? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "アイドリングRoblox RPCを有効にしますか? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Pythonモジュール(*)が更新できるようになりました!メインメニューを開いて更新をインストールし,Pythonモジュールの更新を確認してからインストールしてください!"
 }

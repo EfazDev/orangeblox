@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "कलह की उपस्थिति शुरू की!",
  "Unable to connect to Discord (1)! Error: (*)": "डिस्कॉर्ड (1) से कनेक्ट करने में असमर्थ! गलती: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "डिस्कॉर्ड (2) से कनेक्ट करने में असमर्थ! गलती: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "क्या आप Roblox RPC को निष्क्रिय करना चाहेंगे? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "क्या आप Roblox RPC को निष्क्रिय करना चाहेंगे? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)पायथन मॉड्यूल (*)अब अपडेट होने के लिए उपलब्ध हैं! मुख्य मेनू खोलकर अपडेट इंस्टॉल करें, पायथन मॉड्यूल अपडेट के लिए जाँच करें और फिर इंस्टॉल करें!"
 }

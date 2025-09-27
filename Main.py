@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1a
+# v2.3.1b
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.1a"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1b"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -80,7 +80,6 @@ if __name__ == "__main__":
         "EFlagEnableDebugMode": "bool",
         "EFlagEnabledMods": "dict",
         "EFlagMakeMainBootstrapLogFiles": "bool",
-        "EFlagUseVanillaRobloxApp": "bool",
         "EFlagCompletedTutorial": "bool",
         "EFlagVerifyRobloxHashAfterInstall": "bool",
         "EFlagEnableDuplicationOfClients": "bool",
@@ -2567,6 +2566,8 @@ if __name__ == "__main__":
         can_be_updated_modules = ["pypresence", "psutil"]
         if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
         elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
+        for mod_info in generateModsManifest().values():
+            if mod_info.get("mod_script") == True and mod_info.get("enabled") == True and mod_info.get("python_modules"): can_be_updated_modules += [str(module_needed) for module_needed in mod_info.get("python_modules", []) if not module_needed in can_be_updated_modules]
         updating_python_modules = pip_class.updates(can_be_updated_modules)
         if updating_python_modules and updating_python_modules["success"] == True:
             if len(updating_python_modules["packages"]) > 0:
@@ -3912,6 +3913,8 @@ if __name__ == "__main__":
                         can_be_updated_modules = ["pypresence", "psutil"]
                         if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
                         elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
+                        for mod_info in generateModsManifest().values():
+                            if mod_info.get("mod_script") == True and mod_info.get("enabled") == True and mod_info.get("python_modules"): can_be_updated_modules += [str(module_needed) for module_needed in mod_info.get("python_modules", []) if not module_needed in can_be_updated_modules]
                         def python_module_update_check():
                             updating_python_modules = pip_class.updates(can_be_updated_modules)
                             if updating_python_modules and updating_python_modules["success"] == True:
@@ -3921,7 +3924,7 @@ if __name__ == "__main__":
                                         with open(generateFileKey("PythonModuleUpdate"), "r") as f: ss = f.read()
                                         if ss == dumped: return
                                     with open(generateFileKey("PythonModuleUpdate"), "w", encoding="utf-8") as f: f.write(dumped)
-                                    displayNotification(ts("Python Module Updates Available!"), ts(f'{len(updating_python_modules["packages"])} python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
+                                    displayNotification(ts("Python Module Updates Available!"), ts(f'{len(updating_python_modules["packages"])} Python module{"" if len(updating_python_modules["packages"]) == 1 else "s"} are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
                                 elif os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
                         threading.Thread(target=python_module_update_check, daemon=True).start()
                         if os.path.exists(generateFileKey("PythonModuleUpdate")):
@@ -4406,11 +4409,6 @@ if __name__ == "__main__":
                         if current_roblox_version["client_version"] == latest_roblox_version["client_version"]: printMainMessage("Running latest version of Roblox Studio!")
                         else:
                             continue_to_update = True
-                            if latest_roblox_version.get("client_version") and main_config.get("EFlagUseVanillaRobloxApp") == True:
-                                if main_os == "Darwin": latest_roblox_update_download_req = requests.head(f"https://setup.rbxcdn.com/mac/{latest_roblox_version['client_version']}-RobloxStudio.dmg")
-                                elif main_os == "Windows": latest_roblox_update_download_req = requests.head(f"https://setup.rbxcdn.com/{latest_roblox_version['client_version']}-RobloxStudioInstaller.exe")
-                                if not latest_roblox_update_download_req.ok: continue_to_update = False
-                            
                             printSuccessMessage(f"A new version of Roblox Studio is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['hash']}")
                             printWarnMessage("--- Installing Latest Roblox Studio Version ---")
                             if continue_to_update == True:
@@ -4424,9 +4422,6 @@ if __name__ == "__main__":
                                     sys.exit(0)
                                 if main_os == "Darwin":
                                     while not os.path.exists(RFFI.macOS_studioDir): time.sleep(0.1)
-                                elif main_os == "Windows" and main_config.get("EFlagUseVanillaRobloxApp") == True:
-                                    path_expected = os.path.join(RFFI.windows_dir, "Versions", latest_roblox_version["client_version"], "ExtraContent")
-                                    while not os.path.exists(path_expected): time.sleep(0.1)
                                 new_latest_roblox_version = handler.getCurrentClientVersion(studio=True)
                                 printSuccessMessage(f"Successfully updated Roblox Studio to {new_latest_roblox_version.get('version')}!")
                                 installed_update = True
@@ -4569,11 +4564,6 @@ if __name__ == "__main__":
                         if current_roblox_version["client_version"] == latest_roblox_version["client_version"]: printMainMessage("Running latest version of Roblox!")
                         else:
                             continue_to_update = True
-                            if latest_roblox_version.get("client_version") and main_config.get("EFlagUseVanillaRobloxApp") == True:
-                                if main_os == "Darwin": latest_roblox_update_download_req = requests.head(f"https://setup.rbxcdn.com/mac/{latest_roblox_version['client_version']}-Roblox.dmg")
-                                elif main_os == "Windows": latest_roblox_update_download_req = requests.head(f"https://setup.rbxcdn.com/{latest_roblox_version['client_version']}-RobloxPlayerInstaller.exe")
-                                if not latest_roblox_update_download_req.ok: continue_to_update = False
-                            
                             printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['hash']}")
                             printWarnMessage("--- Installing Latest Roblox Version ---")
                             if continue_to_update == True:
@@ -4587,9 +4577,6 @@ if __name__ == "__main__":
                                     sys.exit(0)
                                 if main_os == "Darwin":
                                     while not os.path.exists(RFFI.macOS_dir): time.sleep(0.1)
-                                elif main_os == "Windows" and main_config.get("EFlagUseVanillaRobloxApp") == True:
-                                    path_expected = os.path.join(RFFI.windows_dir, "Versions", latest_roblox_version["client_version"], "ExtraContent")
-                                    while not os.path.exists(path_expected): time.sleep(0.1)
                                 new_latest_roblox_version = handler.getCurrentClientVersion()
                                 printSuccessMessage(f"Successfully updated Roblox to {new_latest_roblox_version.get('version')}!")
                                 installed_update = True

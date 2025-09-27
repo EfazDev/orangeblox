@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "Começou a presença de discórdia!",
  "Unable to connect to Discord (1)! Error: (*)": "Incapaz de se conectar à discórdia (1)! Erro: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Incapaz de se conectar à discórdia (2)! Erro: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "Você gostaria de ativar o RPC Roblox Iding? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "Você gostaria de ativar o RPC Roblox Iding? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)O módulo Python (*)já está disponível para ser atualizado! Instale a atualização abrindo o menu principal, verificando as atualizações do módulo Python e instale!"
 }

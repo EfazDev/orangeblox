@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "ডিসকর্ড উপস্থিতি শুরু!",
  "Unable to connect to Discord (1)! Error: (*)": "ডিসকর্ডের সাথে সংযোগ করতে অক্ষম (1)! ত্রুটি: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "ডিসকর্ডের সাথে সংযোগ করতে অক্ষম (2)! ত্রুটি: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "আপনি কি আইডলিং রোব্লক্স আরপিসি সক্ষম করতে চান? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "আপনি কি আইডলিং রোব্লক্স আরপিসি সক্ষম করতে চান? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)পাইথন মডিউল (*)এখন আপডেট হওয়ার জন্য উপলব্ধ! প্রধান মেনু খোলার মাধ্যমে আপডেটটি ইনস্টল করুন, পাইথন মডিউল আপডেটগুলি পরীক্ষা করে এবং তারপরে ইনস্টল করুন!"
 }

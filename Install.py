@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1a
+# v2.3.1b
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.1a"}
+    current_version = {"version": "2.3.1b"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -139,7 +139,6 @@ if __name__ == "__main__":
         "EFlagEnableDebugMode": "bool",
         "EFlagEnabledMods": "dict",
         "EFlagMakeMainBootstrapLogFiles": "bool",
-        "EFlagUseVanillaRobloxApp": "bool",
         "EFlagCompletedTutorial": "bool",
         "EFlagVerifyRobloxHashAfterInstall": "bool",
         "EFlagEnableDuplicationOfClients": "bool",
@@ -1224,6 +1223,7 @@ if __name__ == "__main__":
                         pip_class.endProcess("OrangeBlox.exe")
                     printMainMessage("Installing EXE File..")
                     try:
+                        if os.path.exists(os.path.join(sma[main_os][0], "_internal")): shutil.rmtree(os.path.join(sma[main_os][0], "_internal"), ignore_errors=True)
                         if pip_class.getIf32BitWindows() or use_x86_windows == True:
                             shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), sma[main_os][1])
                             pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(sma[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)

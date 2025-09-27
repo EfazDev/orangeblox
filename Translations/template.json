@@ -1,7 +1,7 @@
 {
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "",
  "(*) Would you like to return to settings or exit it?": "",
  "(*) Would you like to return to the main menu or would you like to continue to Roblox?": "",
- "(*) python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "",
  "(*). @(*) [ID: (*)]": "",
  "(The windows may automatically close once the login is successful.)": "",
  "- Discord Presence (+ BloxstrapRPC support)": "",
@@ -2030,6 +2030,7 @@
  "8. macOS App was built using (*)pyinstaller 📦(*) and (*)clang 📦(*). You can recreate and deploy using the following command! Use the README.md for more information.": "",
  "Made by (*)": "",
  "There was an error on getting friends user info! Error: (*)": "",
+ "(*) python modules are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "",
  "Update Python Modules (*)[+(*)](*)": "",
  "[(*)] - (*)(*)": ""
 }

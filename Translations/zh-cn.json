@@ -2154,5 +2154,6 @@
  "Started Discord Presence!": "开始不和谐!",
  "Unable to connect to Discord (1)! Error: (*)": "无法连接到Discord(1)!错误: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "无法连接到Discord(2)!错误: (*)",
- "Would you like to enable Idling Roblox RPC? (y/n)": "您想启用空闲的Roblox RPC吗? (y/n)"
+ "Would you like to enable Idling Roblox RPC? (y/n)": "您想启用空闲的Roblox RPC吗? (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python模块(*)现在可以更新!通过打开主菜单来安装更新,检查Python模块更新,然后安装!"
 }

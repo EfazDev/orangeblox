@@ -65,7 +65,7 @@ macos = {
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],
         [LOOP, macos_codesign],
         [RM_DIR, "./Apps/Scripts/Clang/__pycache__"],
-        [PRINT, "Successfully rebuilt OrangeLoader, OrangePlayRoblox and OrangeRunStudio!"],
+        [PRINT, "Successfully rebuilt OrangeLoader!"],
         [PRINT, "The executables have been moved to their assigned bundles and are ready for RecreateMacOS.sh!"]
     ],
     "arm": [
@@ -84,7 +84,7 @@ macos = {
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],
         [LOOP, macos_codesign],
         [RM_DIR, "./Apps/Scripts/Clang/__pycache__"],
-        [PRINT, "Successfully rebuilt OrangeLoader, OrangePlayRoblox and OrangeRunStudio!"],
+        [PRINT, "Successfully rebuilt OrangeLoader!"],
         [PRINT, "The executables have been moved to their assigned bundles and are ready for RecreateMacOS.sh!"]
     ]
 }
