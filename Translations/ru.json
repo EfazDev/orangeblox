@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Невозможно подключиться к Discord (1)! Ошибка: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Невозможно подключиться к Discord (2)! Ошибка: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Хотели бы вы включить Roblox RPC на холостом ходу? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Модуль Python (*)теперь доступны для обновления! Установите обновление, открыв основное меню, проверив обновления модулей Python, а затем установите!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Модуль Python (*)теперь доступны для обновления! Установите обновление, открыв основное меню, проверив обновления модулей Python, а затем установите!",
+ "Unable to create shortcuts: (*)": "Невозможно создать ярлыки: (*)"
 }

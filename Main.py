@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1b
+# v2.3.1c
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.1b"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1c"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -2805,20 +2805,22 @@ if __name__ == "__main__":
                                             info['name'] = info['name'].replace("../", "").replace("./", "")
                                             printMainMessage("Generating Shortcut App..")
                                             if main_os == "Windows":
-                                                import win32com.client as win32client # type: ignore
-                                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
-                                                    shell = win32client.Dispatch('WScript.Shell')
-                                                    if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
-                                                    shortcut = shell.CreateShortcut(shortcut_path)
-                                                    shortcut.TargetPath = target_path
-                                                    if arguments: shortcut.Arguments = arguments
-                                                    if working_directory: shortcut.WorkingDirectory = working_directory
-                                                    if icon_path: shortcut.IconLocation = icon_path
-                                                    shortcut.Save()
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}")
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))
-                                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))     
-                                                printSuccessMessage("Generated Shortcut App!")
+                                                try:
+                                                    import win32com.client as win32client # type: ignore
+                                                    def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                                                        shell = win32client.Dispatch('WScript.Shell')
+                                                        if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
+                                                        shortcut = shell.CreateShortcut(shortcut_path)
+                                                        shortcut.TargetPath = target_path
+                                                        if arguments: shortcut.Arguments = arguments
+                                                        if working_directory: shortcut.WorkingDirectory = working_directory
+                                                        if icon_path: shortcut.IconLocation = icon_path
+                                                        shortcut.Save()
+                                                    create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}")
+                                                    create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))
+                                                    create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), f"{info['name']}.lnk"), arguments=f"orangeblox://shortcuts/{key}", icon_path=os.path.join(cur_path, "Images", "AppIconRunStudio.ico"))     
+                                                    printSuccessMessage("Generated Shortcut App!")
+                                                except Exception as e: printErrorMessage(f"Unable to create shortcuts: {str(e)}")
                                             elif main_os == "Darwin":
                                                 if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
                                                     if not (os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app")) and not os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), f"{info['name']}.app", "Contents", "Resources", "AlternativeLink"))):
@@ -4760,28 +4762,30 @@ if __name__ == "__main__":
                 elif main_os == "Windows":
                     printMainMessage("Changing App Shortcuts Icon..")
                     if os.path.exists(os.path.join(brand_fold, "AppIcon.ico")): 
-                        import win32com.client as win32client # type: ignore
-                        def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
-                            shell = win32client.Dispatch('WScript.Shell')
-                            if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
-                            shortcut = shell.CreateShortcut(shortcut_path)
-                            shortcut.TargetPath = target_path
-                            if arguments: shortcut.Arguments = arguments
-                            if working_directory: shortcut.WorkingDirectory = working_directory
-                            if icon_path: shortcut.IconLocation = icon_path
-                            shortcut.Save()
-                        bootstrap_path = os.path.join(cur_path, "OrangeBlox.exe")
-                        create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
-                        create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                        if run_studio == True:
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
-                        else:
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
-                            create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
-                        printSuccessMessage("Successfully changed current shortcut icons! It may take a moment for Windows to identify it!")
+                        try:
+                            import win32com.client as win32client # type: ignore
+                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                                shell = win32client.Dispatch('WScript.Shell')
+                                if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
+                                shortcut = shell.CreateShortcut(shortcut_path)
+                                shortcut.TargetPath = target_path
+                                if arguments: shortcut.Arguments = arguments
+                                if working_directory: shortcut.WorkingDirectory = working_directory
+                                if icon_path: shortcut.IconLocation = icon_path
+                                shortcut.Save()
+                            bootstrap_path = os.path.join(cur_path, "OrangeBlox.exe")
+                            create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
+                            create_shortcut(bootstrap_path, os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
+                            if run_studio == True:
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://run-studio")
+                            else:
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
+                                create_shortcut(os.path.join(cur_path, "OrangeBlox.exe"), os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), icon_path=os.path.join(brand_fold, "AppIcon.ico") if main_config.get("EFlagUseRobloxAppIconAsShortcutIcon") else "", arguments="orangeblox://continue")
+                            printSuccessMessage("Successfully changed current shortcut icons! It may take a moment for Windows to identify it!")
+                        except Exception as e: printErrorMessage(f"Unable to create shortcuts: {str(e)}")
                 if (run_studio == True and main_config.get("EFlagEnableChangeBrandIcons2") == True) or (run_studio == False and main_config.get("EFlagEnableChangeBrandIcons") == True): printSuccessMessage("Successfully changed brand images!")
                 else: printSuccessMessage("Successfully changed brand images to original!")
                 printMainMessage("Installing Updater Apps..")
@@ -5716,11 +5720,11 @@ if __name__ == "__main__":
                 else:
                     if main_config.get("EFlagEnableChangeBrandIcons") == True: brand_fold = os.path.join(mods_folder, "RobloxBrand", main_config.get('EFlagSelectedBrandLogo'))
                     else: brand_fold = os.path.join(mods_folder, "RobloxBrand", "Original")
+                icon = os.path.join(brand_fold, "AppIcon.ico")
                 if connected_roblox_instance:
                     windows = connected_roblox_instance.getWindowsOpened()
                     if windows:
                         for i in windows:
-                            icon = os.path.join(brand_fold, "AppIcon.ico")
                             if os.path.exists(icon): i.setWindowIcon(icon)
                             else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
                 time.sleep(2)

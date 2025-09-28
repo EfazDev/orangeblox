@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Impossibile connettersi a Discord (1)! Errore: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Impossibile connettersi a Discord (2)! Errore: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Vorresti abilitare RPC Roblox al minimo? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Il Modulo Python (*)è ora disponibile per essere aggiornato! Installa l'aggiornamento aprendo il menu principale, controllando gli aggiornamenti del Modulo Python e quindi installa!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Il Modulo Python (*)è ora disponibile per essere aggiornato! Installa l'aggiornamento aprendo il menu principale, controllando gli aggiornamenti del Modulo Python e quindi installa!",
+ "Unable to create shortcuts: (*)": "Impossibile creare scorciatoie: (*)"
 }

@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "ไม่สามารถเชื่อมต่อกับ Discord (1)! ข้อผิดพลาด: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "ไม่สามารถเชื่อมต่อกับ Discord (2)! ข้อผิดพลาด: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "คุณต้องการเปิดใช้งาน Roblox RPC ที่ไม่ทำงานหรือไม่? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)โมดูล Python (*)พร้อมให้อัปเดตแล้ว! ติดตั้งการอัปเดตโดยเปิดเมนูหลักตรวจสอบการอัปเดตโมดูล Python จากนั้นติดตั้ง!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)โมดูล Python (*)พร้อมให้อัปเดตแล้ว! ติดตั้งการอัปเดตโดยเปิดเมนูหลักตรวจสอบการอัปเดตโมดูล Python จากนั้นติดตั้ง!",
+ "Unable to create shortcuts: (*)": "ไม่สามารถสร้างทางลัด: (*)"
 }

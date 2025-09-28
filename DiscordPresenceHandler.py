@@ -150,7 +150,8 @@ class Presence(pypresence.Presence):
         else: return {"success": False, "code": 1}
     def clear(self, *args, **kwargs):
         if self.connected == True:
-            if self.discord_session_connected == True: super(Presence, self).clear(*args, **kwargs)
+            if self.default_presence == None and self.discord_session_connected == True: super(Presence, self).clear(*args, **kwargs)
+            elif self.discord_session_connected == True: super(Presence, self).update(**(self.current_presence))
             self.current_presence = self.default_presence
             self.current_loop_id = None
             return {"success": True, "code": 0}

@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Შეუძლებელია დაკავშირება უთანხმოებასთან (1)! შეცდომა: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Შეუძლებელია დაკავშირება უთანხმოებასთან (2)! შეცდომა: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Გსურთ ჩართოთ Imling Roblox RPC? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)პითონის მოდული (*)ახლა შესაძლებელია განახლებული! დააინსტალირეთ განახლება მთავარი მენიუს გახსნით, პითონის მოდულის განახლებების შემოწმებით და შემდეგ დააინსტალირეთ!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)პითონის მოდული (*)ახლა შესაძლებელია განახლებული! დააინსტალირეთ განახლება მთავარი მენიუს გახსნით, პითონის მოდულის განახლებების შემოწმებით და შემდეგ დააინსტალირეთ!",
+ "Unable to create shortcuts: (*)": "Მალსახმობების შექმნა შეუძლებელია: (*)"
 }

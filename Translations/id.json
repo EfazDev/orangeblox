@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Tidak dapat terhubung ke Discord (1)! Kesalahan: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Tidak dapat terhubung ke Discord (2)! Kesalahan: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Apakah Anda ingin mengaktifkan RPC Roblox IDLING? (y/t)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Modul Python (*)sekarang tersedia untuk diperbarui! Instal pembaruan dengan membuka menu utama, memeriksa pembaruan Modul Python dan kemudian instal!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Modul Python (*)sekarang tersedia untuk diperbarui! Instal pembaruan dengan membuka menu utama, memeriksa pembaruan Modul Python dan kemudian instal!",
+ "Unable to create shortcuts: (*)": "Tidak dapat membuat jalan pintas: (*)"
 }

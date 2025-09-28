@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "غير قادر على الاتصال بالخلاف (1)! خطأ: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "غير قادر على الاتصال بالخلاف (2)! خطأ: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "هل ترغب في تمكين idling Roblox Rpc؟ (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)وحدة بيثون (*)متاحة الآن لتحديثها! قم بتثبيت التحديث عن طريق فتح القائمة الرئيسية ، والتحقق من تحديثات وحدة Python ثم تثبيت!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)وحدة بيثون (*)متاحة الآن لتحديثها! قم بتثبيت التحديث عن طريق فتح القائمة الرئيسية ، والتحقق من تحديثات وحدة Python ثم تثبيت!",
+ "Unable to create shortcuts: (*)": "غير قادر على إنشاء اختصارات: (*)"
 }

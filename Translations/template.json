@@ -1405,6 +1405,7 @@
  "Unable to build python cache. Return code: (*)": "",
  "Unable to connect to Discord (1)! Error: (*)": "",
  "Unable to connect to Discord (2)! Error: (*)": "",
+ "Unable to create shortcuts: (*)": "",
  "Unable to download Roblox (*) installer due to an error. Code: (*)": "",
  "Unable to download Roblox (*) installer due to an http error.": "",
  "Unable to download Roblox (*) installer due to an http error. Code: (*)": "",

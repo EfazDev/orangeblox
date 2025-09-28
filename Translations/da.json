@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Kan ikke oprette forbindelse til Discord (1)! Fejl: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Kan ikke oprette forbindelse til Discord (2)! Fejl: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Vil du aktivere Idling Roblox RPC? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)er nu tilgængelige for at blive opdateret! Installer opdateringen ved at åbne hovedmenuen, kontrollere for Python -Modulopdateringer, og installer derefter!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)er nu tilgængelige for at blive opdateret! Installer opdateringen ved at åbne hovedmenuen, kontrollere for Python -Modulopdateringer, og installer derefter!",
+ "Unable to create shortcuts: (*)": "Kan ikke oprette genveje: (*)"
 }

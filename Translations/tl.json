@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Hindi makakonekta sa Discord (1)! Error: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Hindi makakonekta sa Discord (2)! Error: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Nais mo bang paganahin ang idling Roblox RPC? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Ang Module ng Python (*)ay magagamit na ngayon upang ma -update! I -install ang pag -update sa pamamagitan ng pagbubukas ng pangunahing menu, pagsuri para sa mga update ng Module ng python at pagkatapos ay i -install!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Ang Module ng Python (*)ay magagamit na ngayon upang ma -update! I -install ang pag -update sa pamamagitan ng pagbubukas ng pangunahing menu, pagsuri para sa mga update ng Module ng python at pagkatapos ay i -install!",
+ "Unable to create shortcuts: (*)": "Hindi makalikha ng mga shortcut: (*)"
 }

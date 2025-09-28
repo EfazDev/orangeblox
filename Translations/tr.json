@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Discord (1) 'e bağlanılamıyor! Hata: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Discord (2) 'ye bağlanılamıyor! Hata: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Boşaltma Roblox RPC'yi etkinleştirmek ister misiniz? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python Modülü (*)artık güncellenebilir! Ana menüyü açarak, Python Modül güncellemelerini kontrol ederek güncellemeyi yükleyin ve ardından yükleyin!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python Modülü (*)artık güncellenebilir! Ana menüyü açarak, Python Modül güncellemelerini kontrol ederek güncellemeyi yükleyin ve ardından yükleyin!",
+ "Unable to create shortcuts: (*)": "Kısayollar oluşturulamıyor: (*)"
 }

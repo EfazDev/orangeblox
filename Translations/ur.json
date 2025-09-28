@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "ڈسکارڈ (1) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "ڈسکارڈ (2) سے رابطہ قائم کرنے سے قاصر! خرابی: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "کیا آپ بیکار روبلوکس آر پی سی کو قابل بنانا چاہیں گے؟ (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)ازگر ماڈیول (*)اب اپ ڈیٹ کرنے کے لئے دستیاب ہیں! مین مینو کھول کر ، ازگر ماڈیول کی تازہ کاریوں کی جانچ پڑتال کرکے اپ ڈیٹ انسٹال کریں اور پھر انسٹال کریں!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)ازگر ماڈیول (*)اب اپ ڈیٹ کرنے کے لئے دستیاب ہیں! مین مینو کھول کر ، ازگر ماڈیول کی تازہ کاریوں کی جانچ پڑتال کرکے اپ ڈیٹ انسٹال کریں اور پھر انسٹال کریں!",
+ "Unable to create shortcuts: (*)": "شارٹ کٹ بنانے سے قاصر: (*)"
 }

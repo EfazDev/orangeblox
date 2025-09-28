@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Không thể kết nối với Discord (1)! Lỗi: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Không thể kết nối với Discord (2)! Lỗi: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Bạn có muốn kích hoạt RPC Roblox không hoạt động không? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Mô -đun Python (*)hiện có sẵn để được cập nhật! Cài đặt bản cập nhật bằng cách mở menu chính, kiểm tra các bản cập nhật mô -đun Python và sau đó cài đặt!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Mô -đun Python (*)hiện có sẵn để được cập nhật! Cài đặt bản cập nhật bằng cách mở menu chính, kiểm tra các bản cập nhật mô -đun Python và sau đó cài đặt!",
+ "Unable to create shortcuts: (*)": "Không thể tạo các phím tắt: (*)"
 }

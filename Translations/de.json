@@ -2155,5 +2155,6 @@
  "Unable to connect to Discord (1)! Error: (*)": "Es kann keine Verbindung zu Discord (1) herstellen! Fehler: (*)",
  "Unable to connect to Discord (2)! Error: (*)": "Ich kann keine Verbindung zu Discord (2) herstellen! Fehler: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Möchten Sie das Leblox RPC im Leerlauf ermöglichen? (y/n)",
- "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)können jetzt aktualisiert werden! Installieren Sie das Update, indem Sie das Hauptmenü öffnen, nach Python -Modul -Updates überprüfen und dann installieren!"
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)können jetzt aktualisiert werden! Installieren Sie das Update, indem Sie das Hauptmenü öffnen, nach Python -Modul -Updates überprüfen und dann installieren!",
+ "Unable to create shortcuts: (*)": "Verknüpfungen können nicht erstellen: (*)"
 }
