@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Შეუძლებელია დაკავშირება უთანხმოებასთან (2)! შეცდომა: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Გსურთ ჩართოთ Imling Roblox RPC? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)პითონის მოდული (*)ახლა შესაძლებელია განახლებული! დააინსტალირეთ განახლება მთავარი მენიუს გახსნით, პითონის მოდულის განახლებების შემოწმებით და შემდეგ დააინსტალირეთ!",
- "Unable to create shortcuts: (*)": "Მალსახმობების შექმნა შეუძლებელია: (*)"
+ "Unable to create shortcuts: (*)": "Მალსახმობების შექმნა შეუძლებელია: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "API დოკუმენტაციის და სტუდიის შრიფტების გადაწერა შეუძლებელია. ჩაწერილი შეცდომა: (*)(*)",
+ "Now for some configurations!": "Ახლა რამდენიმე კონფიგურაციისთვის!",
+ "Select the types of ui to color! (y/n)": "Შეარჩიეთ UI- ს ტიპები ფერის! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Შემდეგ, როდესაც თქვენ დასრულდებით, ჩაწერეთ \"გასვლა\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Რაღაც არასწორად შეცვლიდა Roblox კლიენტის ინფორმაციის შეცვლას: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Რაღაც არასწორედ ჩაიარა რეესტრის შექმნით: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Ვერ გამოიყენებს Mod ფაილებს (*). ჩაწერილი შეცდომა: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Ვერ შეძლო ცვლილებების შეტანა დოკში: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Ინსტალერის პროგრამების განახლება შეუძლებელია! ჩაწერილი შეცდომა: (*)(*)"
 }

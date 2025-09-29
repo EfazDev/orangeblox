@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Hindi makakonekta sa Discord (2)! Error: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Nais mo bang paganahin ang idling Roblox RPC? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Ang Module ng Python (*)ay magagamit na ngayon upang ma -update! I -install ang pag -update sa pamamagitan ng pagbubukas ng pangunahing menu, pagsuri para sa mga update ng Module ng python at pagkatapos ay i -install!",
- "Unable to create shortcuts: (*)": "Hindi makalikha ng mga shortcut: (*)"
+ "Unable to create shortcuts: (*)": "Hindi makalikha ng mga shortcut: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Hindi ma -overwrite ang dokumentasyon ng API at mga font ng studio. Naitala na error: (*)(*)",
+ "Now for some configurations!": "Ngayon para sa ilang mga pagsasaayos!",
+ "Select the types of ui to color! (y/n)": "Piliin ang mga uri ng UI upang kulayan! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Pagkatapos, kapag tapos ka na, i -type ang \"exit\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Isang bagay na mali ang pagbabago ng impormasyon.Plist ng Roblox client: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "May mali sa pag -set up ng pagpapatala: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Hindi mailapat ang mga file ng Mod ng (*). Naitala na error: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Hindi makagawa ng mga pagbabago sa pantalan: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Hindi ma -update ang mga apps ng installer! Naitala na error: (*)(*)"
 }

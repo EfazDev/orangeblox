@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Неможливо підключитися до розбрата (2)! Помилка: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Чи хотіли б ви ввімкнути холоду RPC Roblox? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Модуль Python (*)тепер доступний для оновлення! Встановіть оновлення, відкривши головне меню, перевіряючи наявність оновлень модуля Python, а потім встановіть!",
- "Unable to create shortcuts: (*)": "Неможливо створити ярлики: (*)"
+ "Unable to create shortcuts: (*)": "Неможливо створити ярлики: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Неможливо перезаписати документацію API та шрифти студії. Записана помилка: (*)(*)",
+ "Now for some configurations!": "Тепер для деяких конфігурацій!",
+ "Select the types of ui to color! (y/n)": "Виберіть типи користувача для кольору! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Потім, коли закінчите, введіть \"Вихід\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Щось пішло не так, щоб змінити інформацію..",
+ "Something went wrong setting up registry: (*)(*)": "Щось пішло не так, щоб налаштувати реєстр: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Неможливо застосувати моди -файли (*). Записана помилка: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Не в змозі внести зміни до док -станції: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Неможливо оновити додатки для встановлення! Записана помилка: (*)(*)"
 }

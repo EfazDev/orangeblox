@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "डिस्कॉर्ड (2) से कनेक्ट करने में असमर्थ! गलती: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "क्या आप Roblox RPC को निष्क्रिय करना चाहेंगे? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)पायथन मॉड्यूल (*)अब अपडेट होने के लिए उपलब्ध हैं! मुख्य मेनू खोलकर अपडेट इंस्टॉल करें, पायथन मॉड्यूल अपडेट के लिए जाँच करें और फिर इंस्टॉल करें!",
- "Unable to create shortcuts: (*)": "शॉर्टकट बनाने में असमर्थ: (*)"
+ "Unable to create shortcuts: (*)": "शॉर्टकट बनाने में असमर्थ: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "एपीआई प्रलेखन और स्टूडियो फोंट को अधिलेखित करने में असमर्थ। रिकॉर्ड की गई त्रुटि: (*)(*)",
+ "Now for some configurations!": "अब कुछ कॉन्फ़िगरेशन के लिए!",
+ "Select the types of ui to color! (y/n)": "रंग के लिए UI के प्रकारों का चयन करें! (y/n)",
+ "Then, when you're done, type \"exit\"!": "फिर, जब आप कर रहे हों, तो \"बाहर निकलें\" टाइप करें!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "कुछ गलत हो गया। Roblox क्लाइंट की जानकारी",
+ "Something went wrong setting up registry: (*)(*)": "कुछ गलत सेटिंग रजिस्ट्री: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)की Mod फ़ाइलों को लागू करने में असमर्थ। रिकॉर्ड की गई त्रुटि: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "डॉक में परिवर्तन करने में असमर्थ: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Unable to update installer apps! रिकॉर्ड की गई त्रुटि: (*)(*)"
 }

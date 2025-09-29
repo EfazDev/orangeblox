@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Impossible de se connecter à Discord (2)! Erreur: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Souhaitez-vous activer le RPC Roblox au ralenti? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Le Module Python (*)est désormais disponible pour être mis à jour! Installez la mise à jour en ouvrant le menu principal, en vérifiant les mises à jour du Module Python, puis installez!",
- "Unable to create shortcuts: (*)": "Impossible de créer des raccourcis: (*)"
+ "Unable to create shortcuts: (*)": "Impossible de créer des raccourcis: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Impossible d'écraser la documentation de l'API et les polices de studio. Erreur enregistrée: (*)(*)",
+ "Now for some configurations!": "Maintenant pour certaines configurations!",
+ "Select the types of ui to color! (y/n)": "Sélectionnez les types d'interface utilisateur à colorer! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Ensuite, lorsque vous avez terminé, tapez \"sortie\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Quelque chose s'est mal passé à Modifier les informations.plist du client roblox: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Quelque chose s'est mal passé en configuration du registre: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Impossible d'appliquer des fichiers Mod de (*). Erreur enregistrée: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Impossible d'apporter des Modifications au quai: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Impossible de mettre à jour les applications d'installation! Erreur enregistrée: (*)(*)"
 }

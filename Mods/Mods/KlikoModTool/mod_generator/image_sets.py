@@ -78,74 +78,43 @@ def _crop_to_fit(image: Image.Image, target_ratio: float) -> Image.Image:
     bottom = top + new_h
     cropped = image.crop((left, top, right, bottom))
     return cropped
-if sys.version_info < (3, 14, 0):
-    def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int) -> Image.Image:
-        angle -= 90
-        width, height = size
-        rgb_colors = [hex_to_rgb(c) for c in colors]
-        num_segments = len(rgb_colors) - 1
+def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int) -> Image.Image:
+    angle -= 90
+    width, height = size
+    rgb_colors = [hex_to_rgb(c) for c in colors]
+    num_segments = len(rgb_colors) - 1
 
-        x = np.linspace(0, 1, width)
-        y = np.linspace(0, 1, height)
-        xx, yy = np.meshgrid(x, y)
+    x = np.linspace(0, 1, width)
+    y = np.linspace(0, 1, height)
+    xx, yy = np.meshgrid(x, y)
+    angle_rad = np.radians(angle)
+    gradient = xx * np.cos(angle_rad) + yy * np.sin(angle_rad)
 
-        angle_rad = np.radians(angle)
-        gradient = xx * np.cos(angle_rad) + yy * np.sin(angle_rad)
-        gradient = (gradient - gradient.min()) / (gradient.max() - gradient.min())
-
-        scaled = gradient * num_segments
-        indices = np.floor(scaled).astype(int)
-        indices = np.clip(indices, 0, num_segments - 1)
-        t = scaled - indices
-
+    gmin = float(gradient.min())
+    gmax = float(gradient.max())
+    denom = gmax - gmin
+    if denom == 0: norm = np.zeros_like(gradient)
+    else: norm = (gradient - gmin) / denom
+    if num_segments <= 0:
         result = np.zeros((height, width, 3), dtype=np.uint8)
-        for channel in range(3):
-            c1 = np.array([color[channel] for color in rgb_colors])[indices]
-            c2 = np.array([color[channel] for color in rgb_colors])[np.clip(indices + 1, 0, num_segments)]
-            result[..., channel] = (c1 + (c2 - c1) * t).astype(np.uint8)
-
+        for ch in range(3):
+            result[..., ch] = int(rgb_colors[0][ch])
         return Image.fromarray(result)
-else:
-    def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int) -> Image.Image:
-        angle -= 90
-        width, height = size
-        rgb_colors = [hex_to_rgb(c) for c in colors]
-        num_segments = len(rgb_colors) - 1
+    pos = norm
 
-        x, y = np.meshgrid(np.linspace(0, 1, width), np.linspace(0, 1, height))
-        angle_rad = np.radians(angle)
-        gradient = np.cos(angle_rad) * x + np.sin(angle_rad) * y
-        gradient = (gradient - gradient.min()) / (gradient.max() - gradient.min())
-
-        if num_segments == 0:
-            # Only one color, fill the image
-            result = np.zeros((height, width, 3), dtype=np.uint8)
-            for channel in range(3):
-                result[..., channel] = rgb_colors[0][channel]
-            return Image.fromarray(result)
-
-        scaled = gradient * num_segments
-        indices = np.floor(scaled).astype(int)
-        indices_c1 = np.clip(indices, 0, num_segments - 1)
-        indices_c2 = np.clip(indices + 1, 0, num_segments)
-        t = scaled - indices_c1
-
-        result = np.zeros((height, width, 3), dtype=np.uint8)
-        for channel in range(3):
-            color_channel = np.array([color[channel] for color in rgb_colors]).flatten()
-            # Ensure indices are 2D and color_channel is 1D
-            c1 = np.take(color_channel, indices_c1, mode='clip')
-            c2 = np.take(color_channel, indices_c2, mode='clip')
-            # Interpolate and cast
-            result[..., channel] = np.round(c1 + (c2 - c1) * t).astype(np.uint8)
-
-        return Image.fromarray(result)
+    xp = np.linspace(0.0, 1.0, len(rgb_colors))
+    result = np.zeros((height, width, 3), dtype=np.uint8)
+    for channel in range(3):
+        channel_values = np.array([c[channel] for c in rgb_colors], dtype=float)
+        flat = np.interp(pos.ravel(), xp, channel_values)
+        result[..., channel] = np.round(flat.reshape((height, width))).astype(np.uint8)
+    return Image.fromarray(result)
 def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: str="*") -> Image.Image:
     # Generate a unique cache key based on all colors, angle, and size
     if type(colors) is dict:
-        key = f"image-mask-colors-{angle}-{size[0]}-{size[1]}"
+        key = f"image-mask-colors-{angle}-{size[0]}-{size[1]}-{icon_name}"
     else:
-        key = f"{'-'.join(colors)}-{angle}-{size[0]}-{size[1]}"
+        key = f"{'-'.join(colors)}-{angle}-{size[0]}-{size[1]}-{icon_name}"
     
     if key in IMAGE_CACHE: return IMAGE_CACHE[key]
     if len(colors) == 1:
@@ -154,23 +123,24 @@ def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: st
     elif type(colors) is dict:
         if colors.get(icon_name):
             if type(colors.get(icon_name)) is list:
-                mask = create_gradient_image(size, colors.get(icon_name), angle)
+                if len(colors.get(icon_name)) == 1: mask = Image.new("RGBA", size, colors.get(icon_name)[0])
+                else: mask = create_gradient_image(size, colors.get(icon_name), angle)
                 IMAGE_CACHE[key] = mask
                 return mask
             else:
                 with Image.open(colors.get(icon_name)) as ma: image = ma.copy()
-        else:
-            if colors.get("*"):
-                if type(colors.get("*")) is list:
-                    mask = create_gradient_image(size, colors.get("*"), angle)
-                    IMAGE_CACHE[key] = mask
-                    return mask
-                else:
-                    with Image.open(colors.get("*")) as ma: image = ma.copy()
-            else:
-                mask = Image.new("RGBA", size, "#ffffff")
+        elif colors.get("*"):
+            if type(colors.get("*")) is list:
+                if len(colors.get("*")) == 1: mask = Image.new("RGBA", size, colors.get("*")[0])
+                else: mask = create_gradient_image(size, colors.get("*"), angle)
                 IMAGE_CACHE[key] = mask
                 return mask
+            else:
+                with Image.open(colors.get("*")) as ma: image = ma.copy()
+        else:
+            mask = Image.new("RGBA", size, "#ffffff")
+            IMAGE_CACHE[key] = mask
+            return mask
         cache_key: str = f"{image}-{size}"
         if image.mode != "RGBA":
             image = image.convert("RGBA")
@@ -213,14 +183,36 @@ def generate_user_selected_files(
         modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int, studio: bool) -> None:
     cur_path = os.path.dirname(os.path.abspath(__file__))
-    mod_generator_files = Path(cur_path) / "modules" / "additional_files"
+    mod_generator_files = Path(cur_path) / "additional_files"
     index_filepath: Path = mod_generator_files / "index.json"
     if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! index.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
     for filepath in mod_generator_files.iterdir():
         if filepath.name == index_filepath.name: continue
         if studio == False and "studio-" in filepath.name: continue
-        if "optional-" in filepath.name and not (type(colors) is dict and (colors.get(filepath.name) or colors.get("optional-img") == True)): continue
+        if type(colors) is dict:
+            authorized = False
+
+            # Enable basely
+            if colors.get(filepath.name): authorized = True
+            if colors.get("_all_optional") == True: authorized = True
+            elif "voicechat-" in filepath.name and colors.get("_voice_chat") == True: authorized = True
+            elif "cursor-" in filepath.name and colors.get("_cursor") == True: authorized = True
+            elif "leaderboard-" in filepath.name and colors.get("_leaderboard") == True: authorized = True
+            elif "emotes-" in filepath.name and colors.get("_emotes") == True: authorized = True
+            elif "devconsole-" in filepath.name and colors.get("_devconsole") == True: authorized = True
+            elif "menubar-" in filepath.name and colors.get("_menubar") == True: authorized = True
+            elif "topbar-" in filepath.name and colors.get("_topbar") == True: authorized = True
+            elif not "other-" in filepath.name: authorized = True
+            # Disable in case of power
+            if "voicechat-" in filepath.name and colors.get("_voice_chat") == False: authorized = False
+            elif "cursor-" in filepath.name and colors.get("_cursor") == False: authorized = False
+            elif "leaderboard-" in filepath.name and colors.get("_leaderboard") == False: authorized = False
+            elif "emotes-" in filepath.name and colors.get("_emotes") == False: authorized = False
+            elif "devconsole-" in filepath.name and colors.get("_devconsole") == False: authorized = False
+            elif "menubar-" in filepath.name and colors.get("_menubar") == False: authorized = False
+            elif "topbar-" in filepath.name and colors.get("_topbar") == False: authorized = False
+            if authorized == False: continue
         target: list[str] | None = data.get(filepath.name)
         if not target or not isinstance(target, list): Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
         target_path: Path = Path(base_directory, *target)
@@ -228,7 +220,7 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
         with Image.open(filepath, formats=("PNG",)) as image:
             image = image.convert("RGBA")
             r, g, b, a = image.split()
-        if type(colors) is dict and colors.get(filepath.name):
+        if type(colors) is dict:
             if type(colors.get(filepath.name)) is str:
                 if "mask-" in colors.get(filepath.name) or "mask-" in filepath.name:
                     if "mask-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
@@ -237,12 +229,28 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
                     modded_icon.putalpha(a)
                     modded_icon.save(target_path, format="PNG", optimize=False)
                 elif "mask2-" in colors.get(filepath.name) or "mask2-" in filepath.name:
-                    if "mask2-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
+                    if "mask2-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask2-", "", 1)
                     if "mask2-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
                     base = image.convert("RGBA")
-                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp")
+                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp").convert("RGBA")
                     mask = mask_overlay.getchannel("A")
                     modded_icon = Image.composite(mask_overlay, base, mask)
+                    modded_icon.save(target_path, format="PNG", optimize=False)
+                elif "whiteout-" in colors.get(filepath.name) or "whiteout-" in filepath.name:
+                    if "whiteout-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("whiteout-", "", 1)
+                    if "whiteout-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
+                    base = image.convert("RGBA")
+                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp").convert("RGBA")
+                    base_pixels = base.load()
+                    mask_overlay_pixels = mask_overlay.load()
+                    width, height = base.size
+                    for y in range(height):
+                        for x in range(width):
+                            r, g, b, a = base_pixels[x, y]
+                            if a > 0 and r > 240 and g > 240 and b > 240:
+                                or_, og, ob, oa = mask_overlay_pixels[x, y]
+                                base_pixels[x, y] = (or_, og, ob, a)
+                    modded_icon = base
                     modded_icon.save(target_path, format="PNG", optimize=False)
                 else:
                     custom_roblox_logo_path = Path(colors.get(filepath.name))
@@ -256,6 +264,28 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
                     centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
                     image.paste(centered_logo, (0,0), mask=centered_logo)
                     image.save(target_path, format="PNG", optimize=False)
+            elif "mask2-" in filepath.name:
+                if colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name]
+                base = image.convert("RGBA")
+                mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp").convert("RGBA")
+                mask = mask_overlay.getchannel("A")
+                modded_icon = Image.composite(mask_overlay, base, mask)
+                modded_icon.save(target_path, format="PNG", optimize=False)
+            elif "whiteout-" in filepath.name:
+                if colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name]
+                base = image.convert("RGBA")
+                mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp").convert("RGBA")
+                base_pixels = base.load()
+                mask_overlay_pixels = mask_overlay.load()
+                width, height = base.size
+                for y in range(height):
+                    for x in range(width):
+                        r, g, b, a = base_pixels[x, y]
+                        if a > 0 and r > 240 and g > 240 and b > 240:
+                            or_, og, ob, oa = mask_overlay_pixels[x, y]
+                            base_pixels[x, y] = (or_, og, ob, a)
+                modded_icon = base
+                modded_icon.save(target_path, format="PNG", optimize=False)
             else:
                 modded_icon = get_mask(colors, angle, image.size, filepath.name)
                 modded_icon.putalpha(a)
@@ -272,7 +302,7 @@ def generate_imagesets(
 ) -> None:
     clear_cache()
     modded_imagesets: list[str] = []
-    blacklist: list[str] = get_blacklist()
+    blacklist: list[str] = get_blacklist(get_authorized_from_blacklist(colors))
     formatted_icon_map: dict[str, dict[str, Path | list[tuple[int, int, int, int]]]] = {}
 
     for _, icons in icon_map.items():
@@ -302,12 +332,32 @@ def generate_imagesets(
                 box = icon_data["box"]
                 icon: Image.Image = image.crop(box)
                 r, g, b, a = icon.split()
-                if type(colors) is dict and colors.get(icon_name):
+                if type(colors) is dict:
                     if type(colors.get(icon_name)) is str:
                         if colors.get(icon_name).startswith("mask-"):
                             colors[f"{icon_name}_temp"] = colors[icon_name].replace("mask-", "", 1)
                             modded_icon = get_mask(colors, angle, icon.size, f"{icon_name}_temp")
                             modded_icon.putalpha(a)
+                            masked_icon = modded_icon
+                        elif colors.get(icon_name).startswith("mask2-"):
+                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("mask2-", "", 1)
+                            mask_overlay = get_mask(colors, angle, icon.size, f"{icon_name}_temp").convert("RGBA")
+                            mask = mask_overlay.getchannel("A")
+                            modded_icon = Image.composite(mask_overlay, icon, mask)
+                            masked_icon = modded_icon
+                        elif colors.get(icon_name).startswith("whiteout-") or icon_name.startswith("icons/controls/voice/"):
+                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("whiteout-", "", 1)
+                            mask_overlay = get_mask(colors, angle, icon.size, f"{icon_name}_temp").convert("RGBA")
+                            base_pixels = icon.load()
+                            mask_overlay_pixels = mask_overlay.load()
+                            width, height = icon.size
+                            for y in range(height):
+                                for x in range(width):
+                                    r, g, b, a = base_pixels[x, y]
+                                    if a > 0 and r > 240 and g > 240 and b > 240:
+                                        or_, og, ob, oa = mask_overlay_pixels[x, y]
+                                        base_pixels[x, y] = (or_, og, ob, a)
+                            modded_icon = icon
                             masked_icon = modded_icon
                         else:
                             custom_roblox_logo_path = Path(colors.get(icon_name))
@@ -321,6 +371,19 @@ def generate_imagesets(
                             centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
                             image.paste(centered_logo, box, mask=centered_logo)
                             continue
+                    elif icon_name.startswith("icons/controls/voice/"):
+                        mask_overlay = get_mask(colors, angle, icon.size, icon_name).convert("RGBA")
+                        base_pixels = icon.load()
+                        mask_overlay_pixels = mask_overlay.load()
+                        width, height = icon.size
+                        for y in range(height):
+                            for x in range(width):
+                                r, g, b, a = base_pixels[x, y]
+                                if a > 0 and r > 240 and g > 240 and b > 240:
+                                    or_, og, ob, oa = mask_overlay_pixels[x, y]
+                                    base_pixels[x, y] = (or_, og, ob, a)
+                        modded_icon = icon
+                        masked_icon = modded_icon
                     else:
                         modded_icon = get_mask(colors, angle, icon.size, icon_name)
                         modded_icon.putalpha(a)
@@ -336,8 +399,129 @@ def generate_imagesets(
     if modded_imagesets:
         for item in base_directory.iterdir():
             if item.is_file() and item.name not in modded_imagesets: item.unlink()
-def get_blacklist() -> list[str]:
-    return [
+def get_authorized_from_blacklist(colors: list):
+    if type(colors) is dict:
+        total = []
+        if colors.get("_voice_chat") == True:
+            total += [
+                "icons/controls/voice/microphone_0_dark",
+                "icons/controls/voice/microphone_0_light",
+                "icons/controls/voice/microphone_0_small_dark",
+                "icons/controls/voice/microphone_0_small_light",
+                "icons/controls/voice/microphone_100_dark",
+                "icons/controls/voice/microphone_100_light",
+                "icons/controls/voice/microphone_100_small_dark",
+                "icons/controls/voice/microphone_100_small_light",
+                "icons/controls/voice/microphone_20_dark",
+                "icons/controls/voice/microphone_20_light",
+                "icons/controls/voice/microphone_20_small_dark",
+                "icons/controls/voice/microphone_20_small_light",
+                "icons/controls/voice/microphone_40_dark",
+                "icons/controls/voice/microphone_40_light",
+                "icons/controls/voice/microphone_40_small_dark",
+                "icons/controls/voice/microphone_40_small_light",
+                "icons/controls/voice/microphone_60_dark",
+                "icons/controls/voice/microphone_60_light",
+                "icons/controls/voice/microphone_60_small_dark",
+                "icons/controls/voice/microphone_60_small_light",
+                "icons/controls/voice/microphone_80_dark",
+                "icons/controls/voice/microphone_80_light",
+                "icons/controls/voice/microphone_80_small_dark",
+                "icons/controls/voice/microphone_80_small_light",
+                "icons/controls/voice/microphone_error_dark",
+                "icons/controls/voice/microphone_error_light",
+                "icons/controls/voice/microphone_error_small_dark",
+                "icons/controls/voice/microphone_error_small_light",
+                "icons/controls/voice/microphone_off_dark",
+                "icons/controls/voice/microphone_off_light",
+                "icons/controls/voice/microphone_off_small_dark",
+                "icons/controls/voice/microphone_off_small_light",
+                "icons/controls/voice/microphone_on_dark",
+                "icons/controls/voice/microphone_on_light",
+                "icons/controls/voice/microphone_on_small_dark",
+                "icons/controls/voice/microphone_on_small_light",
+                "icons/controls/voice/red_speaker_0_dark",
+                "icons/controls/voice/red_speaker_0_light",
+                "icons/controls/voice/red_speaker_0_small_dark",
+                "icons/controls/voice/red_speaker_0_small_light",
+                "icons/controls/voice/red_speaker_100_dark",
+                "icons/controls/voice/red_speaker_100_light",
+                "icons/controls/voice/red_speaker_100_small_dark",
+                "icons/controls/voice/red_speaker_100_small_light",
+                "icons/controls/voice/red_speaker_20_dark",
+                "icons/controls/voice/red_speaker_20_light",
+                "icons/controls/voice/red_speaker_20_small_dark",
+                "icons/controls/voice/red_speaker_20_small_light",
+                "icons/controls/voice/red_speaker_40_dark",
+                "icons/controls/voice/red_speaker_40_light",
+                "icons/controls/voice/red_speaker_40_small_dark",
+                "icons/controls/voice/red_speaker_40_small_light",
+                "icons/controls/voice/red_speaker_60_dark",
+                "icons/controls/voice/red_speaker_60_light",
+                "icons/controls/voice/red_speaker_60_small_dark",
+                "icons/controls/voice/red_speaker_60_small_light",
+                "icons/controls/voice/red_speaker_80_dark",
+                "icons/controls/voice/red_speaker_80_light",
+                "icons/controls/voice/red_speaker_80_small_dark",
+                "icons/controls/voice/red_speaker_80_small_light",
+                "icons/controls/voice/speaker_0_dark",
+                "icons/controls/voice/speaker_0_light",
+                "icons/controls/voice/speaker_0_small_dark",
+                "icons/controls/voice/speaker_0_small_light",
+                "icons/controls/voice/speaker_100_dark",
+                "icons/controls/voice/speaker_100_light",
+                "icons/controls/voice/speaker_100_small_dark",
+                "icons/controls/voice/speaker_100_small_light",
+                "icons/controls/voice/speaker_20_dark",
+                "icons/controls/voice/speaker_20_light",
+                "icons/controls/voice/speaker_20_small_dark",
+                "icons/controls/voice/speaker_20_small_light",
+                "icons/controls/voice/speaker_40_dark",
+                "icons/controls/voice/speaker_40_light",
+                "icons/controls/voice/speaker_40_small_dark",
+                "icons/controls/voice/speaker_40_small_light",
+                "icons/controls/voice/speaker_60_dark",
+                "icons/controls/voice/speaker_60_light",
+                "icons/controls/voice/speaker_60_small_dark",
+                "icons/controls/voice/speaker_60_small_light",
+                "icons/controls/voice/speaker_80_dark",
+                "icons/controls/voice/speaker_80_light",
+                "icons/controls/voice/speaker_80_small_dark",
+                "icons/controls/voice/speaker_80_small_light",
+                "icons/controls/voice/speaker_error_dark",
+                "icons/controls/voice/speaker_error_light",
+                "icons/controls/voice/speaker_error_small_dark",
+                "icons/controls/voice/speaker_error_small_light",
+                "icons/controls/voice/speaker_off_dark",
+                "icons/controls/voice/speaker_off_light",
+                "icons/controls/voice/speaker_off_small_dark",
+                "icons/controls/voice/speaker_off_small_light",
+                "icons/controls/voice/speaker_on_dark",
+                "icons/controls/voice/speaker_on_light",
+                "icons/controls/voice/speaker_on_small_dark",
+                "icons/controls/voice/speaker_on_small_light",
+                "icons/controls/voice/video_error_dark",
+                "icons/controls/voice/video_error_light",
+                "icons/controls/voice/video_error_small_dark",
+                "icons/controls/voice/video_error_small_light",
+                "icons/controls/voice/video_off_dark",
+                "icons/controls/voice/video_off_light",
+                "icons/controls/voice/video_off_small_dark",
+                "icons/controls/voice/video_off_small_light",
+                "icons/controls/voice/video_on_dark",
+                "icons/controls/voice/video_on_light",
+                "icons/controls/voice/video_on_small_dark",
+                "icons/controls/voice/video_on_small_light",
+                "icons/graphic/voicechat_large"
+            ]
+        if colors.get("_loading") == True:
+            total += [
+                "icons/graphic/loadingspinner"
+            ]
+        return total
+    return []
+def get_blacklist(authorized: list=[]) -> list[str]:
+    blacklist = [
         "chat_bubble/chat-bubble",
         "chat_bubble/chat-bubble-bottom",
         "chat_bubble/chat-bubble-middle",
@@ -542,3 +726,6 @@ def get_blacklist() -> list[str]:
         "squircles/hollow",
         "squircles/hollowBold"
     ]
+    for i in authorized:
+        if i in blacklist: blacklist.remove(i)
+    return blacklist

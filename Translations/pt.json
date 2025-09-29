@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Incapaz de se conectar à discórdia (2)! Erro: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Você gostaria de ativar o RPC Roblox Iding? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)O módulo Python (*)já está disponível para ser atualizado! Instale a atualização abrindo o menu principal, verificando as atualizações do módulo Python e instale!",
- "Unable to create shortcuts: (*)": "Incapaz de criar atalhos: (*)"
+ "Unable to create shortcuts: (*)": "Incapaz de criar atalhos: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Não é possível substituir a documentação da API e fontes de estúdio. Erro gravado: (*)(*)",
+ "Now for some configurations!": "Agora, para algumas configurações!",
+ "Select the types of ui to color! (y/n)": "Selecione os tipos de interface do usuário para colorir! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Então, quando terminar, digite \"Exit\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Algo deu errado Informações de Modificação.Plist of Roblox Client: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Algo deu errado configurar o registro: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Não é possível aplicar arquivos Mod de (*). Erro gravado: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Incapaz de fazer alterações no dock: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Incapaz de atualizar os aplicativos do instalador! Erro gravado: (*)(*)"
 }

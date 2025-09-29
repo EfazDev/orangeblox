@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Kan ikke oprette forbindelse til Discord (2)! Fejl: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Vil du aktivere Idling Roblox RPC? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)er nu tilgængelige for at blive opdateret! Installer opdateringen ved at åbne hovedmenuen, kontrollere for Python -Modulopdateringer, og installer derefter!",
- "Unable to create shortcuts: (*)": "Kan ikke oprette genveje: (*)"
+ "Unable to create shortcuts: (*)": "Kan ikke oprette genveje: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Kan ikke overskrive API -dokumentation og studio -skrifttyper. Optaget fejl: (*)(*)",
+ "Now for some configurations!": "Nu for nogle konfigurationer!",
+ "Select the types of ui to color! (y/n)": "Vælg de typer UI til farve! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Derefter, når du er færdig, skal du skrive \"exit\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Noget gik galt med at ændre info.plist fra Roblox Client: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Noget gik galt med opsætning af register: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Kan ikke anvende Mod -filer af (*). Optaget fejl: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Kan ikke foretage ændringer i dokken: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Kan ikke opdatere installationsapps! Optaget fejl: (*)(*)"
 }

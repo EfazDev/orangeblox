@@ -2157,5 +2157,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "불화에 연결할 수 없습니다 (2)! 오류: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "공회전 Roblox RPC를 활성화 하시겠습니까? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)파이썬 모듈 (*)가 이제 업데이트 될 수 있습니다! 기본 메뉴를 열고 Python 모듈 업데이트를 확인한 다음 설치하여 업데이트를 설치하십시오!",
- "Unable to create shortcuts: (*)": "바로 가기를 만들 수 없습니다: (*)"
+ "Unable to create shortcuts: (*)": "바로 가기를 만들 수 없습니다: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Api 문서 및 스튜디오 글꼴을 덮어 쓸 수 없습니다. 기록 된 오류: (*)(*)",
+ "Now for some configurations!": "이제 일부 구성을 위해!",
+ "Select the types of ui to color! (y/n)": "Ui 유형을 색상으로 선택하십시오! (y/n)",
+ "Then, when you're done, type \"exit\"!": "그런 다음 완료되면 \"종료\"를 입력하십시오!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "정보 수정이 잘못되었습니다..",
+ "Something went wrong setting up registry: (*)(*)": "뭔가 잘못되었고 레지스트리 설정: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)의 Mod 파일을 적용 할 수 없습니다. 기록 된 오류: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "도크를 변경할 수 없습니다: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "설치 프로그램 앱을 업데이트 할 수 없습니다! 기록 된 오류: (*)(*)"
 }

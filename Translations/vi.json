@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Không thể kết nối với Discord (2)! Lỗi: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Bạn có muốn kích hoạt RPC Roblox không hoạt động không? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Mô -đun Python (*)hiện có sẵn để được cập nhật! Cài đặt bản cập nhật bằng cách mở menu chính, kiểm tra các bản cập nhật mô -đun Python và sau đó cài đặt!",
- "Unable to create shortcuts: (*)": "Không thể tạo các phím tắt: (*)"
+ "Unable to create shortcuts: (*)": "Không thể tạo các phím tắt: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Không thể ghi đè tài liệu API và phông chữ studio. Lỗi đã ghi: (*)(*)",
+ "Now for some configurations!": "Bây giờ cho một số cấu hình!",
+ "Select the types of ui to color! (y/n)": "Chọn các loại UI để tô màu! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Sau đó, khi bạn hoàn thành, nhập \"Thoát\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Có gì đó đã sai sửa đổi thông tin..",
+ "Something went wrong setting up registry: (*)(*)": "Đã xảy ra sai khi thiết lập sổ đăng ký: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Không thể áp dụng các tệp Mod của (*). Lỗi đã ghi: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Không thể thay đổi dock: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Không thể cập nhật ứng dụng trình cài đặt! Lỗi đã ghi: (*)(*)"
 }

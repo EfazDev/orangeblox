@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Ich kann keine Verbindung zu Discord (2) herstellen! Fehler: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Möchten Sie das Leblox RPC im Leerlauf ermöglichen? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python -Modul (*)können jetzt aktualisiert werden! Installieren Sie das Update, indem Sie das Hauptmenü öffnen, nach Python -Modul -Updates überprüfen und dann installieren!",
- "Unable to create shortcuts: (*)": "Verknüpfungen können nicht erstellen: (*)"
+ "Unable to create shortcuts: (*)": "Verknüpfungen können nicht erstellen: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "API -Dokumentation und Studio -Schriftarten nicht überschreiben. Aufgenommener Fehler: (*)(*)",
+ "Now for some configurations!": "Nun für einige Konfigurationen!",
+ "Select the types of ui to color! (y/n)": "Wählen Sie die Arten von UI aus, um zu färben! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Dann, wenn Sie fertig sind, geben Sie \"Beenden\" ein!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Etwas ist schief gelaufen, um info.plist des Roblox -Clients zu ändern: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Etwas ist schief gelaufen, Registrierung einrichten: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Mod -Dateien von (*)können nicht angewendet werden. Aufgenommener Fehler: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Änderungen am Dock nicht vornehmen: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Installateur -Apps können nicht aktualisiert werden! Aufgenommener Fehler: (*)(*)"
 }

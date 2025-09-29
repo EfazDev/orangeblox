@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "无法连接到Discord(2)!错误: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "您想启用空闲的Roblox RPC吗? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python模块(*)现在可以更新!通过打开主菜单来安装更新,检查Python模块更新,然后安装!",
- "Unable to create shortcuts: (*)": "无法创建快捷方式:(*)"
+ "Unable to create shortcuts: (*)": "无法创建快捷方式:(*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "无法覆盖api文档和工作室字体.记录错误:(*)(*)",
+ "Now for some configurations!": "现在可以进行一些配置!",
+ "Select the types of ui to color! (y/n)": "选择为颜色的ui类型! (y/n)",
+ "Then, when you're done, type \"exit\"!": "然后,完成后,输入\"退出\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "有问题修改信息..",
+ "Something went wrong setting up registry: (*)(*)": "设置注册表的问题出了问题:(*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "无法应用(*)的Mod文件.记录错误:(*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "无法更改码头:(*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "无法更新安装程序应用程序!记录错误:(*)(*)"
 }

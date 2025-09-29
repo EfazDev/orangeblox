@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "ডিসকর্ডের সাথে সংযোগ করতে অক্ষম (2)! ত্রুটি: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "আপনি কি আইডলিং রোব্লক্স আরপিসি সক্ষম করতে চান? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)পাইথন মডিউল (*)এখন আপডেট হওয়ার জন্য উপলব্ধ! প্রধান মেনু খোলার মাধ্যমে আপডেটটি ইনস্টল করুন, পাইথন মডিউল আপডেটগুলি পরীক্ষা করে এবং তারপরে ইনস্টল করুন!",
- "Unable to create shortcuts: (*)": "শর্টকাট তৈরি করতে অক্ষম: (*)"
+ "Unable to create shortcuts: (*)": "শর্টকাট তৈরি করতে অক্ষম: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "এপিআই ডকুমেন্টেশন এবং স্টুডিও ফন্টগুলি ওভাররাইট করতে অক্ষম। রেকর্ড করা ত্রুটি: (*)(*)",
+ "Now for some configurations!": "এখন কিছু কনফিগারেশনের জন্য!",
+ "Select the types of ui to color! (y/n)": "রঙিন থেকে ইউআই প্রকারগুলি নির্বাচন করুন! (y/n)",
+ "Then, when you're done, type \"exit\"!": "তারপরে, আপনি হয়ে গেলে, \"প্রস্থান\" টাইপ করুন!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "কিছু ভুল হয়ে গেছে রোব্লক্স ক্লায়েন্টের তথ্য সংশোধন করার জন্য: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "রেজিস্ট্রি সেট আপ করার কিছু ভুল হয়েছে: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)এর মোড ফাইল প্রয়োগ করতে অক্ষম। রেকর্ড করা ত্রুটি: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "ডকের পরিবর্তন করতে অক্ষম: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "ইনস্টলার অ্যাপ্লিকেশন আপডেট করতে অক্ষম! রেকর্ড করা ত্রুটি: (*)(*)"
 }

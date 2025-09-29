@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.1c"}
+    current_version = {"version": "2.3.1d"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()

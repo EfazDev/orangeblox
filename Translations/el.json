@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Δεν είναι δυνατή η σύνδεση με το Discord (2)! Σφάλμα: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Θα θέλατε να ενεργοποιήσετε το ρελαντί Roblox rpc; (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Η μονάδα Python (*)είναι τώρα διαθέσιμη για να ενημερωθεί! Εγκαταστήστε την ενημέρωση ανοίγοντας το κύριο μενού, ελέγχοντας για ενημερώσεις μονάδων Python και στη συνέχεια εγκαταστήστε!",
- "Unable to create shortcuts: (*)": "Δεν είναι δυνατή η δημιουργία συντομεύσεων: (*)"
+ "Unable to create shortcuts: (*)": "Δεν είναι δυνατή η δημιουργία συντομεύσεων: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Δεν είναι δυνατή η αντικατάσταση των γραμματοσειρών τεκμηρίωσης API και στούντιο. Καταγραφμένο σφάλμα: (*)(*)",
+ "Now for some configurations!": "Τώρα για μερικές διαμορφώσεις!",
+ "Select the types of ui to color! (y/n)": "Επιλέξτε τους τύπους του UI στο χρώμα! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Στη συνέχεια, όταν τελειώσετε, πληκτρολογήστε \"έξοδο\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Κάτι πήγε λάθος τροποποιώντας το info.plist του πελάτη roblox: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Κάτι πήγε στραβά ρύθμιση του μητρώου: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Δεν είναι δυνατή η εφαρμογή αρχείων Mod του (*). Καταγραφμένο σφάλμα: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Δεν είναι δυνατή η πραγματοποίηση αλλαγών στην αποβάθρα: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Δεν είναι δυνατή η ενημέρωση εφαρμογών εγκαταστάτη! Καταγραφμένο σφάλμα: (*)(*)"
 }

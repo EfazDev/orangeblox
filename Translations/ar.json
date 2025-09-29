@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "غير قادر على الاتصال بالخلاف (2)! خطأ: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "هل ترغب في تمكين idling Roblox Rpc؟ (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)وحدة بيثون (*)متاحة الآن لتحديثها! قم بتثبيت التحديث عن طريق فتح القائمة الرئيسية ، والتحقق من تحديثات وحدة Python ثم تثبيت!",
- "Unable to create shortcuts: (*)": "غير قادر على إنشاء اختصارات: (*)"
+ "Unable to create shortcuts: (*)": "غير قادر على إنشاء اختصارات: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "غير قادر على الكتابة فوق وثائق Api وخطوط الاستوديو. خطأ مسجل: (*)(*)",
+ "Now for some configurations!": "الآن لبعض التكوينات!",
+ "Select the types of ui to color! (y/n)": "حدد أنواع واجهة المستخدم للون! (y/n)",
+ "Then, when you're done, type \"exit\"!": "ثم ، عندما تنتهي ، اكتب \"خروج\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "حدث خطأ ما تعديل info.plist من عميل roblox: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "حدث خطأ ما إعداد السجل: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "غير قادر على تطبيق ملفات وزارة الدفاع (*). خطأ مسجل: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "غير قادر على إجراء تغييرات على قفص الاتهام: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "غير قادر على تحديث تطبيقات المثبت! خطأ مسجل: (*)(*)"
 }

@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "ไม่สามารถเชื่อมต่อกับ Discord (2)! ข้อผิดพลาด: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "คุณต้องการเปิดใช้งาน Roblox RPC ที่ไม่ทำงานหรือไม่? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)โมดูล Python (*)พร้อมให้อัปเดตแล้ว! ติดตั้งการอัปเดตโดยเปิดเมนูหลักตรวจสอบการอัปเดตโมดูล Python จากนั้นติดตั้ง!",
- "Unable to create shortcuts: (*)": "ไม่สามารถสร้างทางลัด: (*)"
+ "Unable to create shortcuts: (*)": "ไม่สามารถสร้างทางลัด: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "ไม่สามารถเขียนทับเอกสาร api และแบบอักษรสตูดิโอ ข้อผิดพลาดที่บันทึกไว้: (*)(*)",
+ "Now for some configurations!": "ตอนนี้สำหรับการกำหนดค่าบางอย่าง!",
+ "Select the types of ui to color! (y/n)": "เลือกประเภทของ UI เป็นสี! (y/n)",
+ "Then, when you're done, type \"exit\"!": "จากนั้นเมื่อเสร็จแล้วให้พิมพ์ \"ออก\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "มีบางอย่างผิดปกติในการแก้ไขข้อมูล Plist of Roblox Client: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "มีบางอย่างผิดปกติในการตั้งค่ารีจิสทรี: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "ไม่สามารถใช้ไฟล์ Mod ของ (*)ข้อผิดพลาดที่บันทึกไว้: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "ไม่สามารถเปลี่ยนแปลงท่าเรือ: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "ไม่สามารถอัปเดตแอพที่ติดตั้งได้! ข้อผิดพลาดที่บันทึกไว้: (*)(*)"
 }

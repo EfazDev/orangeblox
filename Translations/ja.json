@@ -2157,5 +2157,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Discord(2)に接続できません!エラー: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "アイドリングRoblox RPCを有効にしますか? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Pythonモジュール(*)が更新できるようになりました!メインメニューを開いて更新をインストールし,Pythonモジュールの更新を確認してからインストールしてください!",
- "Unable to create shortcuts: (*)": "ショートカットを作成できません:(*)"
+ "Unable to create shortcuts: (*)": "ショートカットを作成できません:(*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Apiドキュメントとスタジオフォントを上書きすることができません.記録されたエラー:(*)(*)",
+ "Now for some configurations!": "いくつかの構成のために!",
+ "Select the types of ui to color! (y/n)": "Uiの種類を選択して色を選択してください! (y/n)",
+ "Then, when you're done, type \"exit\"!": "次に,完了したら,\"終了\"と入力します!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Info.plist of Robloxクライアントの変更が間違っていた何か:(*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "レジストリのセットアップのセットアップが間違っていました:(*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)のModファイルを適用できません.記録されたエラー:(*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "ドックに変更を加えることができません:(*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "インストーラーアプリを更新できません!記録されたエラー:(*)(*)"
 }

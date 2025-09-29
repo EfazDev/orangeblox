@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1c
+# v2.3.1d
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.1c"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1d"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -4620,7 +4620,10 @@ if __name__ == "__main__":
             if connect_instead == True: printMainMessage("Skipping Preparation because you're connecting instead of launching a new window!"); return
             
             try:
+                # Debug
                 printDebugMessage(f"Roblox Resources Location: {content_folder_paths[main_os]}")
+
+                # Remove Builder Font
                 if main_config.get("EFlagRemoveBuilderFont") == True:
                     printMainMessage("Changing Font Files..")
                     # Copy All Builder/Monsterrat Files to Separate Files
@@ -4629,6 +4632,9 @@ if __name__ == "__main__":
                         copyFile(os.path.join(font_folder_paths[main_os], "BuilderSans-Bold.otf"), os.path.join(font_folder_paths[main_os], "BuilderSans-Bold-Locked.otf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "BuilderSans-Medium.otf"), os.path.join(font_folder_paths[main_os], "BuilderSans-Medium-Locked.otf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "BuilderSans-Regular.otf"), os.path.join(font_folder_paths[main_os], "BuilderSans-Regular-Locked.otf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-Bold.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-Bold-Locked.otf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-SemiBold.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-SemiBold-Locked.otf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-Regular.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-Regular-Locked.otf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "Montserrat-Black.ttf"), os.path.join(font_folder_paths[main_os], "Montserrat-Black-Locked.ttf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "Montserrat-Bold.ttf"), os.path.join(font_folder_paths[main_os], "Montserrat-Bold-Locked.ttf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "Montserrat-Medium.ttf"), os.path.join(font_folder_paths[main_os], "Montserrat-Medium-Locked.ttf"))
@@ -4658,29 +4664,14 @@ if __name__ == "__main__":
                         copyFile(os.path.join(font_folder_paths[main_os], "BuilderMono-Bold-Locked.otf"), os.path.join(font_folder_paths[main_os], "BuilderMono-Bold.otf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "Arimo-Regular-Locked.ttf"), os.path.join(font_folder_paths[main_os], "Arimo-Regular.ttf"))
                         copyFile(os.path.join(font_folder_paths[main_os], "Arimo-Bold-Locked.ttf"), os.path.join(font_folder_paths[main_os], "Arimo-Bold.ttf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-Bold-Locked.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-Bold.otf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-SemiBold-Locked.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-SemiBold.otf"))
+                        copyFile(os.path.join(font_folder_paths[main_os], "BuilderExtended-Regular-Locked.otf"), os.path.join(font_folder_paths[main_os], "BuilderExtended-Regular.otf"))
                         with open(os.path.join(font_folder_paths[main_os], "BuilderSansLock"), "w", encoding="utf-8") as f: f.write("EnabledGothamFontMode")
                         printSuccessMessage("Successfully reverted Builder Sans/Monsterrat files!")
                     else: printDebugMessage("Builder Sans are already being used!")
-                if main_config.get("EFlagEnableMods") == True:
-                    printMainMessage("Applying Mods..")
-                    if type(main_config.get("EFlagEnabledMods")) is dict:
-                        for i, v in main_config.get("EFlagEnabledMods").items():
-                            if v == True:
-                                mod_path = os.path.join(os.path.join(mods_folder, "Mods"), i)
-                                is_studio = False
-                                if os.path.exists(mod_path) and os.path.isdir(mod_path):
-                                    ignore_given_files = []
-                                    if os.path.exists(os.path.join(mod_path, "Manifest.json")):
-                                        manife = readJSONFile(os.path.join(mod_path, "Manifest.json"))
-                                        if manife and manife.get("ignore_transfer_of_files") and type(manife.get("ignore_transfer_of_files")) is list: ignore_given_files = manife.get("ignore_transfer_of_files")
-                                        if manife and (manife.get("is_studio_mod") == True or (run_studio == True and manife.get("player_studio_support") == True)): is_studio = True
-                                    if os.path.exists(os.path.join(mod_path, "StudioMod")): is_studio = True
-                                    if is_studio == run_studio:
-                                        def ignore_files_here(dir, files): return set(["ModScript.py", "Manifest.json", "Translations", f"Configuration_{user_folder_name}", "__pycache__"] + ignore_given_files) & set(files)
-                                        pip_class.copyTreeWithMetadata(mod_path, content_folder_paths[main_os], dirs_exist_ok=True, ignore=ignore_files_here)
-                                        printDebugMessage(f'Successfully applied "{i}" mod!')
-                        printSuccessMessage("Successfully applied all enabled mods!")
                 
+                # Avatar Background
                 if main_config.get("EFlagEnableChangeAvatarEditorBackground") == True:
                     printMainMessage("Changing Current Avatar Editor to Set Avatar Background..")
                     copyFile(os.path.join(mods_folder, "AvatarEditorMaps", f"{main_config.get('EFlagAvatarEditorBackground')}.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
@@ -4689,6 +4680,8 @@ if __name__ == "__main__":
                     printMainMessage("Changing Current Avatar Editor to Original Avatar Background..")
                     copyFile(os.path.join(mods_folder, "AvatarEditorMaps", "Original.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
                     printSuccessMessage("Successfully changed current avatar editor to original background!")
+                
+                # Cursors
                 if main_config.get("EFlagEnableChangeCursor") == True:
                     printMainMessage("Changing Current Cursor to Set Cursor..")
                     copyFile(os.path.join(mods_folder, "Cursors", main_config.get('EFlagSelectedCursor'), "ArrowCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowCursor.png"))
@@ -4701,6 +4694,8 @@ if __name__ == "__main__":
                     copyFile(os.path.join(mods_folder, "Cursors", "Original", "ArrowFarCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "ArrowFarCursor.png"))
                     copyFile(os.path.join(mods_folder, "Cursors", "Original", "IBeamCursor.png"), os.path.join(content_folder_paths[main_os], "content", "textures", "Cursors", "KeyboardMouse", "IBeamCursor.png"))
                     printSuccessMessage("Successfully changed current cursor with original cursor image!")
+                
+                # Player Sounds
                 if main_config.get("EFlagEnableChangePlayerSound") == True:
                     printMainMessage("Changing Current Player Sounds to Set Sound Files..")
                     sounds_folder = os.path.join(mods_folder, "PlayerSounds", main_config.get('EFlagSelectedPlayerSounds'))
@@ -4729,6 +4724,8 @@ if __name__ == "__main__":
                     copyFile(os.path.join(sounds_folder, "impact_water.mp3"), os.path.join(content_folder_paths[main_os], "content", "sounds", "impact_water.mp3"))
                     copyFile(os.path.join(sounds_folder, "volume_slider.ogg"), os.path.join(content_folder_paths[main_os], "content", "sounds", "volume_slider.ogg"))
                     printSuccessMessage("Successfully changed current player sounds with original sound files!")
+                
+                # App Icons
                 printMainMessage("Changing Brand Images..")
                 if run_studio == True:
                     if main_config.get("EFlagEnableChangeBrandIcons2") == True: brand_fold = os.path.join(mods_folder, "RobloxStudioBrand", main_config.get('EFlagSelectedBrandLogo2'))
@@ -4788,43 +4785,76 @@ if __name__ == "__main__":
                         except Exception as e: printErrorMessage(f"Unable to create shortcuts: {str(e)}")
                 if (run_studio == True and main_config.get("EFlagEnableChangeBrandIcons2") == True) or (run_studio == False and main_config.get("EFlagEnableChangeBrandIcons") == True): printSuccessMessage("Successfully changed brand images!")
                 else: printSuccessMessage("Successfully changed brand images to original!")
+                
+                # Installer Apps
                 printMainMessage("Installing Updater Apps..")
-                if main_os == "Windows":
-                    pip_class.copyTreeWithMetadata(os.path.join(cur_path, "_internal"), os.path.join(content_folder_paths[main_os], "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
-                    shutil.copy(os.path.join(cur_path, "OrangeBlox.exe" if run_studio == True else "OrangeBlox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe" if run_studio == True else "RobloxPlayerInstaller.exe"))
-                    with open(os.path.join(content_folder_paths[main_os], "RobloxStudioBetaPlayRobloxRestart.txt" if run_studio == True else "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
-                elif main_os == "Darwin":
-                    backspacing = os.path.join(macos_app_path, "../")
-                    if os.path.exists(os.path.join(backspacing, "Play Roblox.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(backspacing, "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
-                        with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
-                        for i in generateCodesignCommand(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
-                            if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                            else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    if os.path.exists(RFFI.macOS_studioDir) and run_studio == True and os.path.exists(os.path.join(backspacing, "Run Studio.app")):
-                        pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
-                        shutil.copy(os.path.join(backspacing, "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
-                        with open(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
-                        for i in generateCodesignCommand(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
-                            if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                            else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                printSuccessMessage("Successfully installed updater apps!")
-                api_doc = os.path.join(content_folder_paths[main_os], "content", "api_docs")
-                if run_studio == True and main_config.get("EFlagLimitAPIDocsLocalization") and os.path.exists(api_doc):
-                    printMainMessage(f"Clearing API Docs Localization to {main_config.get('EFlagLimitAPIDocsLocalization')}.json")
-                    for i in os.listdir(api_doc):
-                        if i == f'{main_config.get("EFlagLimitAPIDocsLocalization")}.json': continue
-                        if os.path.isfile(os.path.join(api_doc, i)): os.remove(os.path.join(api_doc, i))
-                    printSuccessMessage("Cleared Localization Set!")
-                studio_fonts = os.path.join(content_folder_paths[main_os], "StudioFonts")
-                if run_studio == True and main_config.get("EFlagOverwriteUnneededStudioFonts") and os.path.exists(studio_fonts):
-                    printMainMessage(f"Overwriting Studio Fonts to None..")
-                    for i in os.listdir(studio_fonts):
-                        if not i.startswith("NotoSans"): continue
-                        if os.path.isfile(os.path.join(studio_fonts, i)): 
-                            with open(os.path.join(studio_fonts, i), "w", encoding="utf-8") as f: f.write("")
-                    printSuccessMessage("Overwritten Studio Fonts!")
+                try:
+                    if main_os == "Windows":
+                        pip_class.copyTreeWithMetadata(os.path.join(cur_path, "_internal"), os.path.join(content_folder_paths[main_os], "_internal"), dirs_exist_ok=True, ignore_if_not_exist=True)
+                        shutil.copy(os.path.join(cur_path, "OrangeBlox.exe" if run_studio == True else "OrangeBlox.exe"), os.path.join(content_folder_paths[main_os], "RobloxStudioInstaller.exe" if run_studio == True else "RobloxPlayerInstaller.exe"))
+                        with open(os.path.join(content_folder_paths[main_os], "RobloxStudioBetaPlayRobloxRestart.txt" if run_studio == True else "RobloxPlayerBetaPlayRobloxRestart.txt"), "w", encoding="utf-8") as f: f.write(cur_path)
+                    elif main_os == "Darwin":
+                        backspacing = os.path.join(macos_app_path, "../")
+                        if os.path.exists(os.path.join(backspacing, "Play Roblox.app")):
+                            pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
+                            shutil.copy(os.path.join(backspacing, "Play Roblox.app", "Contents", "MacOS", "OrangePlayRoblox"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "MacOS", "RobloxPlayerInstaller"))
+                            with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
+                            for i in generateCodesignCommand(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
+                                if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        if os.path.exists(RFFI.macOS_studioDir) and run_studio == True and os.path.exists(os.path.join(backspacing, "Run Studio.app")):
+                            pip_class.copyTreeWithMetadata(os.path.join(backspacing, "Run Studio.app"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), dirs_exist_ok=True)
+                            shutil.copy(os.path.join(backspacing, "Run Studio.app", "Contents", "MacOS", "OrangeRunStudio"), os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "MacOS", "RobloxStudioInstaller"))
+                            with open(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app", "Contents", "Resources", "RobloxStudioBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
+                            for i in generateCodesignCommand(os.path.join(RFFI.macOS_studioDir, "Contents", "MacOS", "RobloxStudioInstaller.app"), main_config.get("EFlagRobloxCodesigningName", "-")): 
+                                if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    printSuccessMessage("Successfully installed updater apps!")
+                except Exception as e: printErrorMessage(f"Unable to update installer apps! Recorded Error: \n{trace()}")
+
+                # Studio Documentations and Fonts
+                try:
+                    api_doc = os.path.join(content_folder_paths[main_os], "content", "api_docs")
+                    if run_studio == True and main_config.get("EFlagLimitAPIDocsLocalization") and os.path.exists(api_doc):
+                        printMainMessage(f"Clearing API Docs Localization to {main_config.get('EFlagLimitAPIDocsLocalization')}.json")
+                        for i in os.listdir(api_doc):
+                            if i == f'{main_config.get("EFlagLimitAPIDocsLocalization")}.json': continue
+                            if os.path.isfile(os.path.join(api_doc, i)): os.remove(os.path.join(api_doc, i))
+                        printSuccessMessage("Cleared Localization Set!")
+                    studio_fonts = os.path.join(content_folder_paths[main_os], "StudioFonts")
+                    if run_studio == True and main_config.get("EFlagOverwriteUnneededStudioFonts") and os.path.exists(studio_fonts):
+                        printMainMessage(f"Overwriting Studio Fonts to None..")
+                        for i in os.listdir(studio_fonts):
+                            if not i.startswith("NotoSans"): continue
+                            if os.path.isfile(os.path.join(studio_fonts, i)): 
+                                with open(os.path.join(studio_fonts, i), "w", encoding="utf-8") as f: f.write("")
+                        printSuccessMessage("Overwritten Studio Fonts!")
+                except Exception as e: printErrorMessage(f"Unable to overwrite API Documentation and Studio Fonts. Recorded Error: \n{trace()}")
+                
+                # Custom Mods
+                if main_config.get("EFlagEnableMods") == True:
+                    printMainMessage("Applying Mods..")
+                    if type(main_config.get("EFlagEnabledMods")) is dict:
+                        for i, v in main_config.get("EFlagEnabledMods").items():
+                            if v == True:
+                                try:
+                                    mod_path = os.path.join(os.path.join(mods_folder, "Mods"), i)
+                                    is_studio = False
+                                    if os.path.exists(mod_path) and os.path.isdir(mod_path):
+                                        ignore_given_files = []
+                                        if os.path.exists(os.path.join(mod_path, "Manifest.json")):
+                                            manife = readJSONFile(os.path.join(mod_path, "Manifest.json"))
+                                            if manife and manife.get("ignore_transfer_of_files") and type(manife.get("ignore_transfer_of_files")) is list: ignore_given_files = manife.get("ignore_transfer_of_files")
+                                            if manife and (manife.get("is_studio_mod") == True or (run_studio == True and manife.get("player_studio_support") == True)): is_studio = True
+                                        if os.path.exists(os.path.join(mod_path, "StudioMod")): is_studio = True
+                                        if is_studio == run_studio:
+                                            def ignore_files_here(dir, files): return set(["ModScript.py", "Manifest.json", "Translations", f"Configuration_{user_folder_name}", "__pycache__"] + ignore_given_files) & set(files)
+                                            pip_class.copyTreeWithMetadata(mod_path, content_folder_paths[main_os], dirs_exist_ok=True, ignore=ignore_files_here)
+                                            printDebugMessage(f'Successfully applied "{i}" mod!')
+                                except Exception as e: printErrorMessage(f"Unable to apply mod files of {i}. Recorded Error: \n{trace()}")
+                        printSuccessMessage("Successfully applied all enabled mods!")
+                
+                # FFlags
                 printMainMessage("Installing Fast Flags..")
                 try:
                     filtered_fast_flags = {}
@@ -4840,156 +4870,162 @@ if __name__ == "__main__":
                     printSuccessMessage("Successfully installed FFlags to the Roblox files!")
                 except Exception as e: printErrorMessage(f"Unable to install Fast Flags to the client! Recorded Error: \n{trace()}")
 
+                # Registration
                 if main_os == "Darwin":
-                    if run_studio == True:
-                        if os.path.exists(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist")):
-                            plist_data = plist_class.readPListFile(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist"))
-                            if plist_data.get("CFBundleName"):
-                                printMainMessage("Editing Roblox Studio Info.plist..")
-                                plist_data["CFBundleURLTypes"] = []
-                                plist_data["CFBundleDocumentTypes"] = []
-                                plist_data["UTExportedTypeDeclarations"] = []
-                                plist_data["NSDisableAutomaticTermination"] = True
-                                plist_data["NSPersistentStoreRebuildDisallowed"] = True
-                                plist_data["CFBundleIconFile"] = "AppIcon.icns"
-                                plist_data["CFBundleIconName"] = "AppIcon.icns"
-                                printDebugMessage(f"Successfully removed all URL Schemes for Roblox Studio.app!")
-                                s = plist_class.writePListFile(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist"), plist_data)
-                                if s["success"] == True:
-                                    subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(content_folder_paths[main_os], '../', '../')], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
-                                    printSuccessMessage("Successfully wrote to Info.plist!")
-                                else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
-                                if main_config.get("EFlagRemoveCodeSigningMacOS") == True:
-                                    printMainMessage("Checking for Code Signatures..")
-                                    if os.path.exists(f"{RFFI.macOS_studioDir}/Contents/_CodeSignature/"):
-                                        shutil.rmtree(f"{RFFI.macOS_studioDir}/Contents/_CodeSignature/", ignore_errors=True)
-                                        printSuccessMessage("Removed Code-signing on Roblox Studio.app!")
-                                    else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
-                                def check_codesign():
-                                    try:
-                                        result = subprocess.run(
-                                            f"cat '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}' > /dev/null && \
-                                                codesign -v --no-strict '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}'",
-                                            shell=True, cwd=cur_path
-                                        )   
-                                        printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
-                                        if result.returncode == 0: return True
-                                        else: return False
-                                    except Exception as e:
-                                        printDebugMessage(f"Unable to validate codesign: \n{trace()}")
-                                        return False
-                                printMainMessage("Validating code-sign..")
-                                if main_config.get("EFlagRemoveCodeSigningMacOS") == True or check_codesign() == False:
-                                    printMainMessage("Signing Roblox Studio.app..")
-                                    def req_codesign(co=0):
-                                        plist_class.writePListFile(os.path.join(cur_path, "RbxStudioEntitlements.plist"), {
-                                            "com.apple.security.cs.allow-jit": True,
-                                            "com.apple.security.cs.disable-executable-page-protection": True,
-                                            "com.apple.security.device.audio-input": True,
-                                            "com.apple.security.device.camera": True,
-                                            "com.apple.security.network.client": True
-                                        })
-                                        for i in generateCodesignCommand(RFFI.macOS_studioDir, main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cur_path, "RbxStudioEntitlements.plist")): result = subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                                        os.remove(os.path.join(cur_path, "RbxStudioEntitlements.plist"))
-                                        printDebugMessage(f"Code Signing Response: {result.returncode}")
-                                        if result.returncode == 0: printSuccessMessage("Successfully signed Roblox Studio.app!")
-                                        else:
-                                            printErrorMessage(f"Unable to sign Roblox Studio.app: {result.returncode}")
-                                            if co == 0: printMainMessage("Attempting Resign! Please wait!")
-                                            if os.path.exists(os.path.join(RFFI.macOS_studioDir, "Contents", "_CodeSignature")): shutil.rmtree(os.path.join(RFFI.macOS_studioDir, "Contents", "_CodeSignature"), ignore_errors=True)
-                                            req_codesign(co=co+1)
-                                    req_codesign()
-                                else: printSuccessMessage("Code-signing is valid for use!")
-                            else: printErrorMessage(f"Something went wrong reading Roblox Studio Info.plist: Bundle name not found")
-                        else: printErrorMessage(f"Something went wrong reading Roblox Studio Info.plist: Bundle not found")
-                    else:
-                        if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist")):
-                            plist_data = plist_class.readPListFile(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist"))
-                            if plist_data.get("CFBundleName"):
-                                printMainMessage("Editing Roblox Info.plist..")
-                                plist_data["CFBundleIconFile"] = "AppIcon.icns"
-                                plist_data["CFBundleIconName"] = "AppIcon.icns"
-                                if (main_config.get("EFlagEnableDuplicationOfClients") == True):
-                                    if plist_data.get("LSMultipleInstancesProhibited") == True:
-                                        plist_data["LSMultipleInstancesProhibited"] = False
-                                        printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to False!")
-                                else:
-                                    if plist_data.get("LSMultipleInstancesProhibited") == False:
-                                        plist_data["LSMultipleInstancesProhibited"] = True
-                                        printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to True!")
-                                if plist_data.get("CFBundleURLTypes"):
+                    try:
+                        if run_studio == True:
+                            if os.path.exists(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist")):
+                                plist_data = plist_class.readPListFile(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist"))
+                                if plist_data.get("CFBundleName"):
+                                    printMainMessage("Editing Roblox Studio Info.plist..")
                                     plist_data["CFBundleURLTypes"] = []
+                                    plist_data["CFBundleDocumentTypes"] = []
+                                    plist_data["UTExportedTypeDeclarations"] = []
                                     plist_data["NSDisableAutomaticTermination"] = True
                                     plist_data["NSPersistentStoreRebuildDisallowed"] = True
-                                    printDebugMessage(f"Successfully removed all URL Schemes for Roblox.app!")
-                                s = plist_class.writePListFile(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist"), plist_data)
-                                if s["success"] == True:
-                                    subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(content_folder_paths[main_os], '../', '../')], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
-                                    printSuccessMessage("Successfully wrote to Info.plist!")
-                                else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
-                                if main_config.get("EFlagRemoveCodeSigningMacOS") == True:
-                                    printMainMessage("Checking for Code Signatures..")
-                                    if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature")):
-                                        shutil.rmtree(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature"), ignore_errors=True)
-                                        printSuccessMessage("Removed Code-signing on Roblox.app!")
-                                    else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
-                                def check_codesign():
-                                    try:
-                                        result = subprocess.run(
-                                            f"cat {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')} > /dev/null && \
-                                                codesign -v --no-strict {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')}",
-                                            shell=True, cwd=cur_path
-                                        )   
-                                        printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
-                                        if result.returncode == 0: return True
-                                        else: return False
-                                    except Exception as e:
-                                        printDebugMessage(f"Unable to validate codesign: \n{trace()}")
-                                        return False
-                                printMainMessage("Validating code-sign..")
-                                if main_config.get("EFlagRemoveCodeSigningMacOS") == True or check_codesign() == False:
-                                    printMainMessage("Signing Roblox.app..")
-                                    def req_codesign(co=0):
-                                        plist_class.writePListFile(os.path.join(cur_path, "RbxEntitlements.plist"), {
-                                            "com.apple.security.cs.allow-jit": True,
-                                            "com.apple.security.cs.disable-executable-page-protection": True,
-                                            "com.apple.security.device.audio-input": True,
-                                            "com.apple.security.device.camera": True,
-                                            "com.apple.security.network.client": True
-                                        })
-                                        for i in generateCodesignCommand(RFFI.macOS_dir, main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cur_path, "RbxEntitlements.plist")): result = subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
-                                        os.remove(os.path.join(cur_path, "RbxEntitlements.plist"))
-                                        printDebugMessage(f"Code Signing Response: {result.returncode}")
-                                        if result.returncode == 0: printSuccessMessage("Successfully signed Roblox.app!")
-                                        else:
-                                            printErrorMessage(f"Unable to sign Roblox.app: {result.returncode}")
-                                            if co == 0: printMainMessage("Attempting Resign! Please wait!")
-                                            if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature")): shutil.rmtree(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature"), ignore_errors=True)
-                                            req_codesign(co=co+1)
-                                    req_codesign()
-                                else: printSuccessMessage("Code-signing is valid for use!")
-                            else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
-                        else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
-                    if main_config.get("EFlagRemoveRobloxAppDockShortcut") == True:
-                        dock_path = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "com.apple.dock.plist")
-                        dock_data = {}
-                        shortcut_replaced = False
-                        if os.path.exists(dock_path):
-                            dock_data = plist_class.readPListFile(dock_path)
-                            printMainMessage("Overwriting Dock..")
-                            if dock_data.get("persistent-apps"):
-                                for i in dock_data["persistent-apps"]:
-                                    if i and i.get("tile-data"):
-                                        if i["tile-data"].get("bundle-identifier") == ("com.Roblox.RobloxStudio" if run_studio == True else "com.roblox.RobloxPlayer"):
-                                            dock_data["persistent-apps"].remove(i)
-                                            shortcut_replaced = True
-                        if shortcut_replaced == True:
-                            plist_class.writePListFile(dock_path, dock_data)
-                            time.sleep(1)
-                            subprocess.run(["/usr/bin/killall", "cfprefsd"], cwd=cur_path)
-                            subprocess.run(["/usr/bin/killall", "Dock"], cwd=cur_path)
-                            printSuccessMessage("Successfully removed RobloxStudio.app Dock Shortcut!" if run_studio == True else "Successfully removed Roblox.app Dock Shortcut!")
-                        else: printSuccessMessage("No changes were made to the dock!")
+                                    plist_data["CFBundleIconFile"] = "AppIcon.icns"
+                                    plist_data["CFBundleIconName"] = "AppIcon.icns"
+                                    printDebugMessage(f"Successfully removed all URL Schemes for Roblox Studio.app!")
+                                    s = plist_class.writePListFile(os.path.join(RFFI.macOS_studioDir, "Contents", "Info.plist"), plist_data)
+                                    if s["success"] == True:
+                                        subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(content_folder_paths[main_os], '../', '../')], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                                        printSuccessMessage("Successfully wrote to Info.plist!")
+                                    else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
+                                    if main_config.get("EFlagRemoveCodeSigningMacOS") == True:
+                                        printMainMessage("Checking for Code Signatures..")
+                                        if os.path.exists(f"{RFFI.macOS_studioDir}/Contents/_CodeSignature/"):
+                                            shutil.rmtree(f"{RFFI.macOS_studioDir}/Contents/_CodeSignature/", ignore_errors=True)
+                                            printSuccessMessage("Removed Code-signing on Roblox Studio.app!")
+                                        else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
+                                    def check_codesign():
+                                        try:
+                                            result = subprocess.run(
+                                                f"cat '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}' > /dev/null && \
+                                                    codesign -v --no-strict '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}'",
+                                                shell=True, cwd=cur_path
+                                            )   
+                                            printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
+                                            if result.returncode == 0: return True
+                                            else: return False
+                                        except Exception as e:
+                                            printDebugMessage(f"Unable to validate codesign: \n{trace()}")
+                                            return False
+                                    printMainMessage("Validating code-sign..")
+                                    if main_config.get("EFlagRemoveCodeSigningMacOS") == True or check_codesign() == False:
+                                        printMainMessage("Signing Roblox Studio.app..")
+                                        def req_codesign(co=0):
+                                            plist_class.writePListFile(os.path.join(cur_path, "RbxStudioEntitlements.plist"), {
+                                                "com.apple.security.cs.allow-jit": True,
+                                                "com.apple.security.cs.disable-executable-page-protection": True,
+                                                "com.apple.security.device.audio-input": True,
+                                                "com.apple.security.device.camera": True,
+                                                "com.apple.security.network.client": True
+                                            })
+                                            for i in generateCodesignCommand(RFFI.macOS_studioDir, main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cur_path, "RbxStudioEntitlements.plist")): result = subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                            os.remove(os.path.join(cur_path, "RbxStudioEntitlements.plist"))
+                                            printDebugMessage(f"Code Signing Response: {result.returncode}")
+                                            if result.returncode == 0: printSuccessMessage("Successfully signed Roblox Studio.app!")
+                                            else:
+                                                printErrorMessage(f"Unable to sign Roblox Studio.app: {result.returncode}")
+                                                if co == 0: printMainMessage("Attempting Resign! Please wait!")
+                                                if os.path.exists(os.path.join(RFFI.macOS_studioDir, "Contents", "_CodeSignature")): shutil.rmtree(os.path.join(RFFI.macOS_studioDir, "Contents", "_CodeSignature"), ignore_errors=True)
+                                                req_codesign(co=co+1)
+                                        req_codesign()
+                                    else: printSuccessMessage("Code-signing is valid for use!")
+                                else: printErrorMessage(f"Something went wrong reading Roblox Studio Info.plist: Bundle name not found")
+                            else: printErrorMessage(f"Something went wrong reading Roblox Studio Info.plist: Bundle not found")
+                        else:
+                            if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist")):
+                                plist_data = plist_class.readPListFile(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist"))
+                                if plist_data.get("CFBundleName"):
+                                    printMainMessage("Editing Roblox Info.plist..")
+                                    plist_data["CFBundleIconFile"] = "AppIcon.icns"
+                                    plist_data["CFBundleIconName"] = "AppIcon.icns"
+                                    if (main_config.get("EFlagEnableDuplicationOfClients") == True):
+                                        if plist_data.get("LSMultipleInstancesProhibited") == True:
+                                            plist_data["LSMultipleInstancesProhibited"] = False
+                                            printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to False!")
+                                    else:
+                                        if plist_data.get("LSMultipleInstancesProhibited") == False:
+                                            plist_data["LSMultipleInstancesProhibited"] = True
+                                            printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to True!")
+                                    if plist_data.get("CFBundleURLTypes"):
+                                        plist_data["CFBundleURLTypes"] = []
+                                        plist_data["NSDisableAutomaticTermination"] = True
+                                        plist_data["NSPersistentStoreRebuildDisallowed"] = True
+                                        printDebugMessage(f"Successfully removed all URL Schemes for Roblox.app!")
+                                    s = plist_class.writePListFile(os.path.join(RFFI.macOS_dir, "Contents", "Info.plist"), plist_data)
+                                    if s["success"] == True:
+                                        subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(content_folder_paths[main_os], '../', '../')], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                                        printSuccessMessage("Successfully wrote to Info.plist!")
+                                    else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
+                                    if main_config.get("EFlagRemoveCodeSigningMacOS") == True:
+                                        printMainMessage("Checking for Code Signatures..")
+                                        if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature")):
+                                            shutil.rmtree(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature"), ignore_errors=True)
+                                            printSuccessMessage("Removed Code-signing on Roblox.app!")
+                                        else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
+                                    def check_codesign():
+                                        try:
+                                            result = subprocess.run(
+                                                f"cat {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')} > /dev/null && \
+                                                    codesign -v --no-strict {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')}",
+                                                shell=True, cwd=cur_path
+                                            )   
+                                            printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
+                                            if result.returncode == 0: return True
+                                            else: return False
+                                        except Exception as e:
+                                            printDebugMessage(f"Unable to validate codesign: \n{trace()}")
+                                            return False
+                                    printMainMessage("Validating code-sign..")
+                                    if main_config.get("EFlagRemoveCodeSigningMacOS") == True or check_codesign() == False:
+                                        printMainMessage("Signing Roblox.app..")
+                                        def req_codesign(co=0):
+                                            plist_class.writePListFile(os.path.join(cur_path, "RbxEntitlements.plist"), {
+                                                "com.apple.security.cs.allow-jit": True,
+                                                "com.apple.security.cs.disable-executable-page-protection": True,
+                                                "com.apple.security.device.audio-input": True,
+                                                "com.apple.security.device.camera": True,
+                                                "com.apple.security.network.client": True
+                                            })
+                                            for i in generateCodesignCommand(RFFI.macOS_dir, main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cur_path, "RbxEntitlements.plist")): result = subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
+                                            os.remove(os.path.join(cur_path, "RbxEntitlements.plist"))
+                                            printDebugMessage(f"Code Signing Response: {result.returncode}")
+                                            if result.returncode == 0: printSuccessMessage("Successfully signed Roblox.app!")
+                                            else:
+                                                printErrorMessage(f"Unable to sign Roblox.app: {result.returncode}")
+                                                if co == 0: printMainMessage("Attempting Resign! Please wait!")
+                                                if os.path.exists(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature")): shutil.rmtree(os.path.join(RFFI.macOS_dir, "Contents", "_CodeSignature"), ignore_errors=True)
+                                                req_codesign(co=co+1)
+                                        req_codesign()
+                                    else: printSuccessMessage("Code-signing is valid for use!")
+                                else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
+                            else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
+                    except Exception as e: printErrorMessage(f"Something went wrong modifying Info.plist of Roblox client: \n{trace()}")
+
+                    try:
+                        if main_config.get("EFlagRemoveRobloxAppDockShortcut") == True:
+                            dock_path = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "com.apple.dock.plist")
+                            dock_data = {}
+                            shortcut_replaced = False
+                            if os.path.exists(dock_path):
+                                dock_data = plist_class.readPListFile(dock_path)
+                                printMainMessage("Overwriting Dock..")
+                                if dock_data.get("persistent-apps"):
+                                    for i in dock_data["persistent-apps"]:
+                                        if i and i.get("tile-data"):
+                                            if i["tile-data"].get("bundle-identifier") == ("com.Roblox.RobloxStudio" if run_studio == True else "com.roblox.RobloxPlayer"):
+                                                dock_data["persistent-apps"].remove(i)
+                                                shortcut_replaced = True
+                            if shortcut_replaced == True:
+                                plist_class.writePListFile(dock_path, dock_data)
+                                time.sleep(1)
+                                subprocess.run(["/usr/bin/killall", "cfprefsd"], cwd=cur_path)
+                                subprocess.run(["/usr/bin/killall", "Dock"], cwd=cur_path)
+                                printSuccessMessage("Successfully removed RobloxStudio.app Dock Shortcut!" if run_studio == True else "Successfully removed Roblox.app Dock Shortcut!")
+                            else: printSuccessMessage("No changes were made to the dock!")
+                    except Exception as e: printErrorMessage(f"Unable to make changes to the dock: \n{trace()}")
                 elif main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")):
                     # Reapply URL Schemes
                     if not (main_config.get("EFlagDisableURLSchemeInstall") == True):
@@ -5056,26 +5092,28 @@ if __name__ == "__main__":
                         except Exception as e: printErrorMessage(f"Something went wrong setting up shortcuts: \n{trace()}")
 
                     # Reapply Installation to Windows
-                    printMainMessage("Marking Program Installation into Windows..")
-                    app_reg_path = "Software\\OrangeBlox"
-                    app_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, app_reg_path)
-                    win32api.RegSetValueEx(app_key, "InstallPath", 0, win32con.REG_SZ, bootstrap_folder_path)
-                    win32api.RegSetValueEx(app_key, "Installed", 0, win32con.REG_DWORD, 1)
-                    win32api.RegCloseKey(app_key)
-                    registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
-                    registry_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
-                    win32api.RegSetValueEx(registry_key, "UninstallString", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')} -un")
-                    win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')}")
-                    win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
-                    win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
-                    win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
-                    win32api.RegSetValueEx(registry_key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
-                    win32api.RegSetValueEx(registry_key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
-                    win32api.RegSetValueEx(registry_key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
-                    win32api.RegSetValueEx(registry_key, "InstallLocation", 0, win32con.REG_SZ, bootstrap_folder_path)
-                    win32api.RegSetValueEx(registry_key, "Publisher", 0, win32con.REG_SZ, "EfazDev")
-                    win32api.RegSetValueEx(registry_key, "EstimatedSize", 0, win32con.REG_DWORD, min(getFolderSize(bootstrap_folder_path, formatWithAbbreviation=False) // 1024, 0xFFFFFFFF))
-                    win32api.RegCloseKey(registry_key)
+                    try:
+                        printMainMessage("Marking Program Installation into Windows..")
+                        app_reg_path = "Software\\OrangeBlox"
+                        app_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, app_reg_path)
+                        win32api.RegSetValueEx(app_key, "InstallPath", 0, win32con.REG_SZ, bootstrap_folder_path)
+                        win32api.RegSetValueEx(app_key, "Installed", 0, win32con.REG_DWORD, 1)
+                        win32api.RegCloseKey(app_key)
+                        registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
+                        registry_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
+                        win32api.RegSetValueEx(registry_key, "UninstallString", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')} -un")
+                        win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')}")
+                        win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
+                        win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
+                        win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
+                        win32api.RegSetValueEx(registry_key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
+                        win32api.RegSetValueEx(registry_key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
+                        win32api.RegSetValueEx(registry_key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
+                        win32api.RegSetValueEx(registry_key, "InstallLocation", 0, win32con.REG_SZ, bootstrap_folder_path)
+                        win32api.RegSetValueEx(registry_key, "Publisher", 0, win32con.REG_SZ, "EfazDev")
+                        win32api.RegSetValueEx(registry_key, "EstimatedSize", 0, win32con.REG_DWORD, min(getFolderSize(bootstrap_folder_path, formatWithAbbreviation=False) // 1024, 0xFFFFFFFF))
+                        win32api.RegCloseKey(registry_key)
+                    except Exception as e: printErrorMessage(f"Something went wrong setting up registry: \n{trace()}")
             except Exception as e:
                 printErrorMessage(f"There was a problem applying mods to the Roblox Client!")
                 printDebugMessage(f"Error Message: \n{trace()}")

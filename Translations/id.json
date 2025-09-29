@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Tidak dapat terhubung ke Discord (2)! Kesalahan: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Apakah Anda ingin mengaktifkan RPC Roblox IDLING? (y/t)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Modul Python (*)sekarang tersedia untuk diperbarui! Instal pembaruan dengan membuka menu utama, memeriksa pembaruan Modul Python dan kemudian instal!",
- "Unable to create shortcuts: (*)": "Tidak dapat membuat jalan pintas: (*)"
+ "Unable to create shortcuts: (*)": "Tidak dapat membuat jalan pintas: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "Tidak dapat menimpa dokumentasi API dan font studio. Kesalahan yang direkam: (*)(*)",
+ "Now for some configurations!": "Sekarang untuk beberapa konfigurasi!",
+ "Select the types of ui to color! (y/n)": "Pilih jenis UI untuk mewarnai! (y/t)",
+ "Then, when you're done, type \"exit\"!": "Lalu, setelah selesai, ketik \"keLuar\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Sesuatu yang salah meModifikasi info.plist dari Roblox klien: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Sesuatu yang salah mengatur registri: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Tidak dapat menerapkan file Mod dari (*). Kesalahan yang direkam: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Tidak dapat membuat perubahan pada dermaga: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Tidak dapat memperbarui aplikasi installer! Kesalahan yang direkam: (*)(*)"
 }

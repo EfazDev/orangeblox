@@ -2156,5 +2156,14 @@
  "Unable to connect to Discord (2)! Error: (*)": "Discord (2) 'ye bağlanılamıyor! Hata: (*)",
  "Would you like to enable Idling Roblox RPC? (y/n)": "Boşaltma Roblox RPC'yi etkinleştirmek ister misiniz? (y/n)",
  "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)Python Modülü (*)artık güncellenebilir! Ana menüyü açarak, Python Modül güncellemelerini kontrol ederek güncellemeyi yükleyin ve ardından yükleyin!",
- "Unable to create shortcuts: (*)": "Kısayollar oluşturulamıyor: (*)"
+ "Unable to create shortcuts: (*)": "Kısayollar oluşturulamıyor: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "API belgelerinin ve stüdyo yazı tiplerinin üzerine yazılamıyor. Kaydedilen hata: (*)(*)",
+ "Now for some configurations!": "Şimdi bazı yapılandırmalar için!",
+ "Select the types of ui to color! (y/n)": "Renk için kullanıcı arayüzü türlerini seçin! (y/n)",
+ "Then, when you're done, type \"exit\"!": "Sonra, işiniz bittiğinde \"Çıkış\" yazın!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "Bir şeyler yanlış gitti bilgileri değiştirdi. Roblox istemcisinin plisti: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "Bir şeyler yanlış gitti Kayıt Defteri: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)'Nin Mod dosyalarını uygulanamıyor. Kaydedilen hata: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "Rıhtımda değişiklik yapamıyor: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Yükleyici uygulamalarını güncelleyemiyor! Kaydedilen hata: (*)(*)"
 }
