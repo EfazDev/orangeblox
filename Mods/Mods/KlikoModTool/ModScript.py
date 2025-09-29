@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.3.0
+# v1.3.1
 # 
 
 # Python Modules
@@ -17,7 +17,7 @@ import os
 import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
-current_version = "1.3.0"
+current_version = "1.3.1"
 cur_path = os.path.dirname(os.path.abspath(__file__))
     
 # Printing Functions
