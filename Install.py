@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1e
+# v2.3.1f
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.1e"}
+    current_version = {"version": "2.3.1f"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False

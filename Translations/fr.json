@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "Quelque chose s'est mal passé en configuration du registre: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Impossible d'appliquer des fichiers Mod de (*). Erreur enregistrée: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Impossible d'apporter des Modifications au quai: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Impossible de mettre à jour les applications d'installation! Erreur enregistrée: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Impossible de mettre à jour les applications d'installation! Erreur enregistrée: (*)(*)",
+ "Get the current displayed name of itself.": "Obtenez le nom affiché actuel de lui-même..",
+ "Get the current mod script id of itself.": "Obtenez l'ID de script Mod actuel de lui-même..",
+ "Get the current version of itself.": "Obtenez la version actuelle de lui-même.."
 }

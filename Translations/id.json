@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "Sesuatu yang salah mengatur registri: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Tidak dapat menerapkan file Mod dari (*). Kesalahan yang direkam: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Tidak dapat membuat perubahan pada dermaga: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Tidak dapat memperbarui aplikasi installer! Kesalahan yang direkam: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Tidak dapat memperbarui aplikasi installer! Kesalahan yang direkam: (*)(*)",
+ "Get the current displayed name of itself.": "Dapatkan nama yang ditampilkan saat ini sendiri..",
+ "Get the current mod script id of itself.": "Dapatkan ID skrip Mod saat ini dengan sendirinya..",
+ "Get the current version of itself.": "Dapatkan versi sendiri dari dirinya sendiri.."
 }

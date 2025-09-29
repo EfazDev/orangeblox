@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "設置註冊表的問題出了問題:(*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "無法應用(*)的Mod文件.記錄錯誤:(*)(*)",
  "Unable to make changes to the dock: (*)(*)": "無法更改碼頭:(*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "無法更新安裝程序應用程序!記錄錯誤:(*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "無法更新安裝程序應用程序!記錄錯誤:(*)(*)",
+ "Get the current displayed name of itself.": "獲取當前顯示的名稱..",
+ "Get the current mod script id of itself.": "獲取當前的Mod腳本ID..",
+ "Get the current version of itself.": "獲取本身的當前版本.."
 }

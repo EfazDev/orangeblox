@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "رجسٹری ترتیب دینے میں کچھ غلط ہوگیا: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)کی Mod فائلوں کو لاگو کرنے سے قاصر ہے۔ ریکارڈ شدہ غلطی: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "گودی میں تبدیلیاں کرنے سے قاصر: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "انسٹالر ایپس کو اپ ڈیٹ کرنے سے قاصر! ریکارڈ شدہ غلطی: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "انسٹالر ایپس کو اپ ڈیٹ کرنے سے قاصر! ریکارڈ شدہ غلطی: (*)(*)",
+ "Get the current displayed name of itself.": "خود کا موجودہ ڈسپلے نام حاصل کریں۔",
+ "Get the current mod script id of itself.": "خود کی موجودہ موڈ اسکرپٹ id حاصل کریں۔",
+ "Get the current version of itself.": "خود کا موجودہ ورژن حاصل کریں۔"
 }

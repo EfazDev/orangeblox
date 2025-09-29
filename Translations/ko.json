@@ -2166,5 +2166,8 @@
  "Something went wrong setting up registry: (*)(*)": "뭔가 잘못되었고 레지스트리 설정: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)의 Mod 파일을 적용 할 수 없습니다. 기록 된 오류: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "도크를 변경할 수 없습니다: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "설치 프로그램 앱을 업데이트 할 수 없습니다! 기록 된 오류: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "설치 프로그램 앱을 업데이트 할 수 없습니다! 기록 된 오류: (*)(*)",
+ "Get the current displayed name of itself.": "현재 표시된 이름 자체를 가져옵니다..",
+ "Get the current mod script id of itself.": "현재 모드 스크립트 id 자체를 얻으십시오..",
+ "Get the current version of itself.": "현재 버전 자체를 얻으십시오.."
 }

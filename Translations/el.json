@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "Κάτι πήγε στραβά ρύθμιση του μητρώου: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Δεν είναι δυνατή η εφαρμογή αρχείων Mod του (*). Καταγραφμένο σφάλμα: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Δεν είναι δυνατή η πραγματοποίηση αλλαγών στην αποβάθρα: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Δεν είναι δυνατή η ενημέρωση εφαρμογών εγκαταστάτη! Καταγραφμένο σφάλμα: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Δεν είναι δυνατή η ενημέρωση εφαρμογών εγκαταστάτη! Καταγραφμένο σφάλμα: (*)(*)",
+ "Get the current displayed name of itself.": "Αποκτήστε το τρέχον εμφανιζόμενο όνομα του εαυτού του..",
+ "Get the current mod script id of itself.": "Αποκτήστε το τρέχον αναγνωριστικό σεναρίου Mod του εαυτού του..",
+ "Get the current version of itself.": "Αποκτήστε την τρέχουσα έκδοση του εαυτού του.."
 }

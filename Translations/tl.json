@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "May mali sa pag -set up ng pagpapatala: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Hindi mailapat ang mga file ng Mod ng (*). Naitala na error: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Hindi makagawa ng mga pagbabago sa pantalan: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Hindi ma -update ang mga apps ng installer! Naitala na error: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Hindi ma -update ang mga apps ng installer! Naitala na error: (*)(*)",
+ "Get the current displayed name of itself.": "Kunin ang kasalukuyang IPinapakita na pangalan ng sarili nito..",
+ "Get the current mod script id of itself.": "Kunin ang kasalukuyang Mod script ng Mod ng sarili nito..",
+ "Get the current version of itself.": "Kunin ang kasalukuyang bersyon ng sarili nito.."
 }

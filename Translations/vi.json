@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "Đã xảy ra sai khi thiết lập sổ đăng ký: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Không thể áp dụng các tệp Mod của (*). Lỗi đã ghi: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Không thể thay đổi dock: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Không thể cập nhật ứng dụng trình cài đặt! Lỗi đã ghi: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Không thể cập nhật ứng dụng trình cài đặt! Lỗi đã ghi: (*)(*)",
+ "Get the current displayed name of itself.": "Nhận tên hiển thị hiện tại của chính nó..",
+ "Get the current mod script id of itself.": "Nhận id tập lệnh Mod hiện tại của chính nó..",
+ "Get the current version of itself.": "Nhận phiên bản hiện tại của chính nó.."
 }

@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "حدث خطأ ما إعداد السجل: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "غير قادر على تطبيق ملفات وزارة الدفاع (*). خطأ مسجل: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "غير قادر على إجراء تغييرات على قفص الاتهام: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "غير قادر على تحديث تطبيقات المثبت! خطأ مسجل: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "غير قادر على تحديث تطبيقات المثبت! خطأ مسجل: (*)(*)",
+ "Get the current displayed name of itself.": "احصل على الاسم الحالي المعروض لنفسه..",
+ "Get the current mod script id of itself.": "احصل على معرف البرنامج النصي الحالي لنفسه..",
+ "Get the current version of itself.": "الحصول على النسخة الحالية من نفسها.."
 }

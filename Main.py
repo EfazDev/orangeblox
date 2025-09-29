@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1e
+# v2.3.1f
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.1e"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1f"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -925,6 +925,9 @@ if __name__ == "__main__":
             "getConfiguration": {"message": ts("Get data in a separate configuration"), "level": 0, "free": True},
             "setConfiguration": {"message": ts("Store data in a separate configuration"), "level": 0, "free": True},
             "getDebugMode": {"message": ts("Get if the bootstrap is in Debug Mode"), "level": 0, "free": True},
+            "getVersion": {"message": ts("Get the current version of itself."), "level": 0, "free": True},
+            "getName": {"message": ts("Get the current displayed name of itself."), "level": 0, "free": True},
+            "getModScriptId": {"message": ts("Get the current mod script id of itself."), "level": 0, "free": True},
             "printSuccessMessage": {"message": ts("Print a console in green (indicates success)"), "level": 0, "free": True},
             "printMainMessage": {"message": ts("Print a console in the standard white color"), "level": 0, "free": True},
             "printColoredMessage": {"message": ts("Print a message on the python console using an ANSI 256 bit color number."), "level": 0, "free": True},
@@ -5468,6 +5471,13 @@ if __name__ == "__main__":
                                                                                         def startPrepareRoblox(selected_scri_a: str): 
                                                                                             if not (roblox_launched_affect_mod_script == True): prepareRobloxClient()
                                                                                         def current_ver_func(selected_scri_a: str): return current_version
+                                                                                        def modScriptName(selected_scri_a: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            return cur_mod_manifest.get(selected_scri_a).get("name") if cur_mod_manifest.get(selected_scri_a) and cur_mod_manifest.get(selected_scri_a).get("name") else None
+                                                                                        def modScriptId(selected_scri_a: str): return selected_scri_a
+                                                                                        def modScriptVersion(selected_scri_a: str): 
+                                                                                            cur_mod_manifest = generateModsManifest()
+                                                                                            return cur_mod_manifest.get(selected_scri_a).get("version") if cur_mod_manifest.get(selected_scri_a) and cur_mod_manifest.get(selected_scri_a).get("version") else None
                                                                                         def getIfModIsEnabled(selected_scri_a: str, mod_name: str): 
                                                                                             cur_mod_manifest = generateModsManifest()
                                                                                             if cur_mod_manifest.get(mod_name) and cur_mod_manifest.get(mod_name).get("enabled") == True: return True
@@ -5509,6 +5519,9 @@ if __name__ == "__main__":
                                                                                             "getDebugMode": getDebugMode,
                                                                                             "getConfiguration": getConfiguration,
                                                                                             "setConfiguration": setConfiguration,
+                                                                                            "getModScriptId": modScriptId,
+                                                                                            "getName": modScriptName,
+                                                                                            "getVersion": modScriptVersion,
                                                                                             "about": current_ver_func
                                                                                         }
                                                                                         undefined_func = {

@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "कुछ गलत सेटिंग रजिस्ट्री: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "(*)की Mod फ़ाइलों को लागू करने में असमर्थ। रिकॉर्ड की गई त्रुटि: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "डॉक में परिवर्तन करने में असमर्थ: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Unable to update installer apps! रिकॉर्ड की गई त्रुटि: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Unable to update installer apps! रिकॉर्ड की गई त्रुटि: (*)(*)",
+ "Get the current displayed name of itself.": "स्वयं का वर्तमान प्रदर्शित नाम प्राप्त करें।",
+ "Get the current mod script id of itself.": "स्वयं की वर्तमान मॉड स्क्रिप्ट आईडी प्राप्त करें।",
+ "Get the current version of itself.": "स्वयं का वर्तमान संस्करण प्राप्त करें।"
 }

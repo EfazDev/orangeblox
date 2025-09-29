@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1e
+# v2.3.1f
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.1e
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.1f
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.3.1e", "bootstrap_version": "2.3.1e"}
+current_version = {"version": "2.3.1f", "bootstrap_version": "2.3.1f"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
@@ -336,6 +336,45 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "saveFastFlagConfiguration", [configuration, full]).generateResponse()
+    def getVersion(self) -> str | None:
+        """
+        Get the version of mod script from Manifest file!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        current_version = OrangeAPI.getVersion() # -> "1.0.0"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getVersion").generateResponse()
+    def getName(self) -> str | None:
+        """
+        Get the name of mod script from Manifest file!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        mod_script_name = OrangeAPI.getName() # -> "Template Mod!"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getName").generateResponse()
+    def getModScriptId(self) -> str | None:
+        """
+        Get the id of mod script used!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        mod_script_id = OrangeAPI.getModScriptId() # -> "Template"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse()
     def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.

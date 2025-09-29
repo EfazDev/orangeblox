@@ -247,7 +247,7 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
                     for y in range(height):
                         for x in range(width):
                             r, g, b, a = base_pixels[x, y]
-                            if a > 0 and r > 240 and g > 240 and b > 240:
+                            if a > 0 and r > 175 and g > 175 and b > 175:
                                 or_, og, ob, oa = mask_overlay_pixels[x, y]
                                 base_pixels[x, y] = (or_, og, ob, a)
                     modded_icon = base
@@ -281,7 +281,7 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
                 for y in range(height):
                     for x in range(width):
                         r, g, b, a = base_pixels[x, y]
-                        if a > 0 and r > 240 and g > 240 and b > 240:
+                        if a > 0 and r > 175 and g > 175 and b > 175:
                             or_, og, ob, oa = mask_overlay_pixels[x, y]
                             base_pixels[x, y] = (or_, og, ob, a)
                 modded_icon = base
@@ -354,7 +354,7 @@ def generate_imagesets(
                             for y in range(height):
                                 for x in range(width):
                                     r, g, b, a = base_pixels[x, y]
-                                    if a > 0 and r > 240 and g > 240 and b > 240:
+                                    if a > 0 and r > 175 and g > 175 and b > 175:
                                         or_, og, ob, oa = mask_overlay_pixels[x, y]
                                         base_pixels[x, y] = (or_, og, ob, a)
                             modded_icon = icon
@@ -379,7 +379,7 @@ def generate_imagesets(
                         for y in range(height):
                             for x in range(width):
                                 r, g, b, a = base_pixels[x, y]
-                                if a > 0 and r > 240 and g > 240 and b > 240:
+                                if a > 0 and r > 175 and g > 175 and b > 175:
                                     or_, og, ob, oa = mask_overlay_pixels[x, y]
                                     base_pixels[x, y] = (or_, og, ob, a)
                         modded_icon = icon

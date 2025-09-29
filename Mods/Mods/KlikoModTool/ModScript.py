@@ -17,7 +17,7 @@ import os
 import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
-current_version = "1.3.1"
+current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
     
 # Printing Functions

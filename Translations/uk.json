@@ -2165,5 +2165,8 @@
  "Something went wrong setting up registry: (*)(*)": "Щось пішло не так, щоб налаштувати реєстр: (*)(*)",
  "Unable to apply mod files of (*). Recorded Error: (*)(*)": "Неможливо застосувати моди -файли (*). Записана помилка: (*)(*)",
  "Unable to make changes to the dock: (*)(*)": "Не в змозі внести зміни до док -станції: (*)(*)",
- "Unable to update installer apps! Recorded Error: (*)(*)": "Неможливо оновити додатки для встановлення! Записана помилка: (*)(*)"
+ "Unable to update installer apps! Recorded Error: (*)(*)": "Неможливо оновити додатки для встановлення! Записана помилка: (*)(*)",
+ "Get the current displayed name of itself.": "Отримайте поточне відображене назву себе..",
+ "Get the current mod script id of itself.": "Отримайте поточний ідентифікатор сценарію моди..",
+ "Get the current version of itself.": "Отримайте поточну версію себе.."
 }
