@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.3.1f", "bootstrap_version": "2.3.1f"}
+current_version = {"version": "2.3.1g", "bootstrap_version": "2.3.1g"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
@@ -348,7 +348,7 @@ class OrangeAPI:
         current_version = OrangeAPI.getVersion() # -> "1.0.0"
         ```
         """
-        return Request(self, self.__orangeapi_details__, "getVersion").generateResponse()
+        return Request(self, self.__orangeapi_details__, "getVersion").generateResponse().response
     def getName(self) -> str | None:
         """
         Get the name of mod script from Manifest file!
@@ -361,7 +361,7 @@ class OrangeAPI:
         mod_script_name = OrangeAPI.getName() # -> "Template Mod!"
         ```
         """
-        return Request(self, self.__orangeapi_details__, "getName").generateResponse()
+        return Request(self, self.__orangeapi_details__, "getName").generateResponse().response
     def getModScriptId(self) -> str | None:
         """
         Get the id of mod script used!
@@ -374,7 +374,7 @@ class OrangeAPI:
         mod_script_id = OrangeAPI.getModScriptId() # -> "Template"
         ```
         """
-        return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse()
+        return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse().response
     def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.
