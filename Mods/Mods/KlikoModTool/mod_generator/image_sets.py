@@ -184,8 +184,8 @@ def generate_user_selected_files(
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int, studio: bool) -> None:
     cur_path = os.path.dirname(os.path.abspath(__file__))
     mod_generator_files = Path(cur_path) / "additional_files"
-    index_filepath: Path = mod_generator_files / "index.json"
-    if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! index.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
+    index_filepath: Path = mod_generator_files / "__index__.json"
+    if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! __index_.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
     for filepath in mod_generator_files.iterdir():
         if filepath.name == index_filepath.name: continue
@@ -512,6 +512,7 @@ def get_authorized_from_blacklist(colors: list):
                 "icons/controls/voice/video_on_light",
                 "icons/controls/voice/video_on_small_dark",
                 "icons/controls/voice/video_on_small_light",
+                "icons/graphic/camera_on_off",
                 "icons/graphic/voicechat_large"
             ]
         if colors.get("_loading") == True:
