@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Ინსტალერის პროგრამების განახლება შეუძლებელია! ჩაწერილი შეცდომა: (*)(*)",
  "Get the current displayed name of itself.": "Მიიღეთ საკუთარი თავის ნაჩვენები სახელი..",
  "Get the current mod script id of itself.": "Მიიღეთ Mod Script ID- ის ამჟამინდელი ID..",
- "Get the current version of itself.": "Მიიღეთ საკუთარი თავის ამჟამინდელი ვერსია.."
+ "Get the current version of itself.": "Მიიღეთ საკუთარი თავის ამჟამინდელი ვერსია..",
+ "Location Code: 10": "Ადგილმდებარეობის კოდი: 10"
 }

@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "ไม่สามารถอัปเดตแอพที่ติดตั้งได้! ข้อผิดพลาดที่บันทึกไว้: (*)(*)",
  "Get the current displayed name of itself.": "รับชื่อที่แสดงปัจจุบันของตัวเอง",
  "Get the current mod script id of itself.": "รับรหัสสคริปต์ Mod ปัจจุบันของตัวเอง",
- "Get the current version of itself.": "รับเวอร์ชันปัจจุบันของตัวเอง"
+ "Get the current version of itself.": "รับเวอร์ชันปัจจุบันของตัวเอง",
+ "Location Code: 10": "รหัสสถานที่: 10"
 }

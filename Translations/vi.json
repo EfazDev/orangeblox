@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Không thể cập nhật ứng dụng trình cài đặt! Lỗi đã ghi: (*)(*)",
  "Get the current displayed name of itself.": "Nhận tên hiển thị hiện tại của chính nó..",
  "Get the current mod script id of itself.": "Nhận id tập lệnh Mod hiện tại của chính nó..",
- "Get the current version of itself.": "Nhận phiên bản hiện tại của chính nó.."
+ "Get the current version of itself.": "Nhận phiên bản hiện tại của chính nó..",
+ "Location Code: 10": "Mã vị trí: 10"
 }

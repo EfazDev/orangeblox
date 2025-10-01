@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Impossible de mettre à jour les applications d'installation! Erreur enregistrée: (*)(*)",
  "Get the current displayed name of itself.": "Obtenez le nom affiché actuel de lui-même..",
  "Get the current mod script id of itself.": "Obtenez l'ID de script Mod actuel de lui-même..",
- "Get the current version of itself.": "Obtenez la version actuelle de lui-même.."
+ "Get the current version of itself.": "Obtenez la version actuelle de lui-même..",
+ "Location Code: 10": "Code de localisation: 10"
 }

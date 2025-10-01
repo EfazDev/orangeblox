@@ -2169,5 +2169,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "インストーラーアプリを更新できません!記録されたエラー:(*)(*)",
  "Get the current displayed name of itself.": "現在の表示された名前を取得します..",
  "Get the current mod script id of itself.": "現在のModスクリプトidを取得します..",
- "Get the current version of itself.": "現在のバージョン自体を取得します.."
+ "Get the current version of itself.": "現在のバージョン自体を取得します..",
+ "Location Code: 10": "ロケーションコード:10"
 }

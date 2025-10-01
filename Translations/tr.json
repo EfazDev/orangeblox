@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Yükleyici uygulamalarını güncelleyemiyor! Kaydedilen hata: (*)(*)",
  "Get the current displayed name of itself.": "Mevcut görüntülenen adını alın..",
  "Get the current mod script id of itself.": "Geçerli Mod komut dosyası kimliğini alın..",
- "Get the current version of itself.": "Mevcut sürümünü alın.."
+ "Get the current version of itself.": "Mevcut sürümünü alın..",
+ "Location Code: 10": "Konum kodu: 10"
 }

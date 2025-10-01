@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Неможливо оновити додатки для встановлення! Записана помилка: (*)(*)",
  "Get the current displayed name of itself.": "Отримайте поточне відображене назву себе..",
  "Get the current mod script id of itself.": "Отримайте поточний ідентифікатор сценарію моди..",
- "Get the current version of itself.": "Отримайте поточну версію себе.."
+ "Get the current version of itself.": "Отримайте поточну версію себе..",
+ "Location Code: 10": "Код розташування: 10"
 }

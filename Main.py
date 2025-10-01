@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1f
+# v2.3.1h
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.3.1g"}
+    current_version: typing.Dict[str, str] = {"version": "2.3.1h"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -181,6 +181,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagLastModVersionMacOSCaching": "str",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -209,27 +210,17 @@ if __name__ == "__main__":
         "ur": "Urdu (اُردُو)",
         "vi": "Vietnamese (Tiếng Việt)"
     }
+    updating_mods = {
+        "PlayerSounds": ["Old", "Outdated", "Current"], 
+        "AvatarEditorMaps": ["Old.rbxl", "Original.rbxl", "BobTheBuilder.rbxl", "SubwaySurfers.rbxl", "Template.rbxl", "McDonaldsWar.rbxl", "MHA.rbxl", "Backrooms.rbxl"], 
+        "RobloxBrand": ["Roblox2011", "Roblox2015Red", "Roblox2021", "OrangeBlox", "Original", "Roblox2015", "Roblox2025", "Roblox2008"], 
+        "RobloxStudioBrand": ["OrangeBlox", "Studio2025", "Studio2013", "Original", "Studio2015", "Studio2008", "StudioBlue2011", "StudioBlue2008", "Studio2017", "Studio2011"], 
+        "Mods": ["VoiceChatRecorder", "Original", "Template", "KlikoModTool", "OldFont"], 
+        "Cursors": ["2013", "macOS", "Original", "2006"]
+    }
     special_logo_mods = {
-        "reg": [
-            "OrangeBlox", 
-            "Roblox2008", 
-            "Roblox2011", 
-            "Roblox2015", 
-            "Roblox2015Red", 
-            "Roblox2021", 
-            "Roblox2025"
-        ],
-        "studio": [
-            "OrangeBlox",
-            "Studio2008",
-            "Studio2011",
-            "Studio2013",
-            "Studio2015",
-            "Studio2017",
-            "Studio2025",
-            "StudioBlue2008",
-            "StudioBlue2011"
-        ]
+        "reg": updating_mods["RobloxBrand"],
+        "studio": updating_mods["RobloxStudioBrand"]
     }
     main_host = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
 
@@ -940,6 +931,36 @@ if __name__ == "__main__":
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
         printErrorMessage(f"Exception: \n{trace()}")
         printErrorMessage(f"Location Code: 7")
+        input("> ")
+        sys.exit(0 if main_os == "Darwin" else 1)
+
+    # For macOS, Fetch Mods Folder
+    try:
+        if main_os == "Darwin" and not main_config.get("EFlagLastModVersionMacOSCaching") == current_version["version"]:
+            printMainMessage("Syncing mods..")
+            sync_folder_names = ["AvatarEditorMaps", "Cursors", "PlayerSounds", "RobloxBrand", "RobloxStudioBrand", "Mods"]
+            for sync_folder_name in sync_folder_names:
+                targeted_sync_location = os.path.join(cur_path, "Mods", sync_folder_name)
+                if os.path.exists(targeted_sync_location) and os.path.isdir(targeted_sync_location):
+                    for i in os.listdir(targeted_sync_location):
+                        syncing_mod_path = os.path.join(targeted_sync_location, i)
+                        if os.path.isdir(syncing_mod_path) and i in updating_mods[sync_folder_name]:
+                            installed_mod_path = os.path.join(mods_folder, sync_folder_name, i)
+                            if os.path.exists(installed_mod_path): 
+                                for e in os.listdir(installed_mod_path):
+                                    if not (e == f"Configuration_{user_folder_name}" or e == "__pycache__"): 
+                                        if os.path.isdir(os.path.join(installed_mod_path, e)): shutil.rmtree(os.path.join(installed_mod_path, e), ignore_errors=True)
+                                        else: os.remove(os.path.join(installed_mod_path, e))
+                            pip_class.copyTreeWithMetadata(syncing_mod_path, installed_mod_path, dirs_exist_ok=True)
+                    printDebugMessage(f"Successfully synced mod type: {sync_folder_name}")
+                else: printDebugMessage(f"There was an issue trying to copy files for mod type: {sync_folder_name}")
+            printSuccessMessage("Successfully synced all mods from installation folder!")
+            main_config["EFlagLastModVersionMacOSCaching"] = current_version["version"]
+            saveSettings()
+    except Exception as e:
+        printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
+        printErrorMessage(f"Exception: \n{trace()}")
+        printErrorMessage(f"Location Code: 10")
         input("> ")
         sys.exit(0 if main_os == "Darwin" else 1)
 

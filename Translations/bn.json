@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "ইনস্টলার অ্যাপ্লিকেশন আপডেট করতে অক্ষম! রেকর্ড করা ত্রুটি: (*)(*)",
  "Get the current displayed name of itself.": "নিজের বর্তমান প্রদর্শিত নাম পান।",
  "Get the current mod script id of itself.": "নিজের বর্তমান মোড স্ক্রিপ্ট আইডি পান।",
- "Get the current version of itself.": "নিজের বর্তমান সংস্করণ পান।"
+ "Get the current version of itself.": "নিজের বর্তমান সংস্করণ পান।",
+ "Location Code: 10": "অবস্থান কোড: 10"
 }

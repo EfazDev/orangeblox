@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Installateur -Apps können nicht aktualisiert werden! Aufgenommener Fehler: (*)(*)",
  "Get the current displayed name of itself.": "Holen Sie sich den aktuellen angezeigten Namen von sich selbst..",
  "Get the current mod script id of itself.": "Holen Sie sich die aktuelle Mod -Skript -ID von sich selbst..",
- "Get the current version of itself.": "Holen Sie sich die aktuelle Version von sich selbst.."
+ "Get the current version of itself.": "Holen Sie sich die aktuelle Version von sich selbst..",
+ "Location Code: 10": "Standortcode: 10"
 }

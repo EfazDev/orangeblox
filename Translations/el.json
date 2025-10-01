@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "Δεν είναι δυνατή η ενημέρωση εφαρμογών εγκαταστάτη! Καταγραφμένο σφάλμα: (*)(*)",
  "Get the current displayed name of itself.": "Αποκτήστε το τρέχον εμφανιζόμενο όνομα του εαυτού του..",
  "Get the current mod script id of itself.": "Αποκτήστε το τρέχον αναγνωριστικό σεναρίου Mod του εαυτού του..",
- "Get the current version of itself.": "Αποκτήστε την τρέχουσα έκδοση του εαυτού του.."
+ "Get the current version of itself.": "Αποκτήστε την τρέχουσα έκδοση του εαυτού του..",
+ "Location Code: 10": "Κωδικός τοποθεσίας: 10"
 }

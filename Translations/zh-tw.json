@@ -2168,5 +2168,6 @@
  "Unable to update installer apps! Recorded Error: (*)(*)": "無法更新安裝程序應用程序!記錄錯誤:(*)(*)",
  "Get the current displayed name of itself.": "獲取當前顯示的名稱..",
  "Get the current mod script id of itself.": "獲取當前的Mod腳本ID..",
- "Get the current version of itself.": "獲取本身的當前版本.."
+ "Get the current version of itself.": "獲取本身的當前版本..",
+ "Location Code: 10": "位置代碼:10"
 }
