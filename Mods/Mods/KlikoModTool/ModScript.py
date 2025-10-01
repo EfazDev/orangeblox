@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.0.5
+# v1.3.1
 # 
 
 # Python Modules
@@ -17,6 +17,7 @@ import os
 import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
+current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
     
 # Printing Functions
@@ -25,8 +26,9 @@ def printErrorMessage(mes): OrangeAPI.printErrorMessage(mes) # Error Colored Con
 def printSuccessMessage(mes): OrangeAPI.printSuccessMessage(mes) # Success Colored Console Text
 def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
 def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
-def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
-
+def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
+def isNo(text: str): text = text.strip(); return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
+    
 OrangeAPI.printColoredMessage("Kliko Mod Tool 🍎 for OrangeBlox 🍊", 197)
 OrangeAPI.printColoredMessage("Edited for OrangeBlox by EfazDev 🍊 / Originally Made By TheKliko 🍎", 197)
 OrangeAPI.printColoredMessage("THIS MOD IS NOT MADE BY THEKLIKO NOR WARRANTED BY HIM!", 197)
@@ -73,7 +75,7 @@ if installed["success"] == True:
                         printMainMessage("Time for the fun part! Let's select the color for the gradient!")
                         printMainMessage("For selecting your color, use this Google link and use the Hex value.")
                         printMainMessage("https://www.google.com/search?q=color+picker")
-                        printMainMessage("Then, when you're done, type 'exit'!")
+                        printMainMessage("Then, when you're done, type \"exit\"!")
                         colors = []
                         def addColor():
                             r = OrangeAPI.requestInput("Enter the Color HEX Value here:", "> ")
@@ -86,12 +88,38 @@ if installed["success"] == True:
                                 printErrorMessage("Please try again!")
                                 return addColor()
                         addColor()
+                        printMainMessage("Now for some configurations!")
+                        printMainMessage("Select the types of ui to color! (y/n)")
+                        all_optional_enabled = isYes(OrangeAPI.requestInput("All Optional Images (if enabled, every setting below will be enabled unless you say 'n' to one of them)", "> "))
+                        emote_wheel_input = OrangeAPI.requestInput("Emote Wheel", "> ")
+                        voice_chat_icon_input = OrangeAPI.requestInput("Voice Chat Icons", "> ")
+                        menubar_input = OrangeAPI.requestInput("In Game Menu", "> ")
+                        topbar_input = OrangeAPI.requestInput("In Game Topbar", "> ")
+                        leaderboard_input = OrangeAPI.requestInput("Leaderboard Hover", "> ")
+                        dev_console_input = OrangeAPI.requestInput("Developer Console (F9)", "> ")
+                        loading_wheel_input = OrangeAPI.requestInput("Loading Wheel", "> ")
+                        cursor_input = OrangeAPI.requestInput("Cursors", "> ")
                         selected_file = os.path.join(cur_path, f"{mod_name}_GenerativeConfig.json")
+                        def broke_down(s: str=None):
+                            if not s: return all_optional_enabled
+                            return (True if isYes(s) else (False if isNo(s) else all_optional_enabled))
                         with open(selected_file, "w") as f:
                             json.dump({
                                 "name": mod_name,
                                 "colors": colors,
-                                "angle": angle
+                                "angle": angle,
+                                "advanced": {
+                                    "*": colors,
+                                    "_all_optional": all_optional_enabled,
+                                    "_voice_chat": broke_down(voice_chat_icon_input),
+                                    "_cursor": broke_down(cursor_input),
+                                    "_leaderboard": broke_down(leaderboard_input),
+                                    "_emotes": broke_down(emote_wheel_input),
+                                    "_devconsole": broke_down(dev_console_input),
+                                    "_menubar": broke_down(menubar_input),
+                                    "_topbar": broke_down(topbar_input),
+                                    "_loading": broke_down(loading_wheel_input)
+                                }
                             }, f, indent=4)
                         mod_style_file = selected_file
                         OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
@@ -149,7 +177,7 @@ if installed["success"] == True:
                     try:
                         with open(mod_style_file, "r", encoding="utf-8") as f: mod_style_json = json.load(f)
                         if mod_style_json.get("name") and (mod_style_json.get("colors") or mod_style_json.get("advanced")) and mod_style_json.get("angle"):
-                            if not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"]):
+                            if not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"] and OrangeAPI.getConfiguration(f"KlikoModVersion{'Studio' if studio else ''}") == current_version):
                                 printMainMessage("Running Proxy using Python Executable..")
                                 fold_name = mod_style_json["name"]
                                 if studio == True: fold_name = f'{mod_style_json["name"]} [STUDIO]'
@@ -166,6 +194,7 @@ if installed["success"] == True:
                                 res = subprocess.run([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
                                 if res.returncode == 0: 
                                     OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
+                                    OrangeAPI.setConfiguration(f"KlikoModVersion{'Studio' if studio else ''}", current_version)
                                     if not OrangeAPI.getIfModIsEnabled(fold_name): OrangeAPI.enableMod(fold_name)
                                     printMainMessage("Repreparing Roblox..")
                                     OrangeAPI.reprepareRoblox()

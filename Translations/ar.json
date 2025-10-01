@@ -1021,10 +1021,6 @@
  "[(*)] = Download & Run": "[(*)] = تنزيل وتشغيل",
  "[(*)] = Yes": "[(*)] = نعم",
  "[(*)] = Install/Reinstall Flags": "[(*)] = تثبيت/إعادة التثبيت",
- "https://developer.apple.com/xcode/resources/": "https://developer.apple.com/xcode/resources/",
- "https://github.com/EfazDev/orangeblox/issues": "https://github.com/EfazDev/orangeblox/issues",
- "https://nuitka.net/user-documentation/user-manual.html": "https://nuitka.net/user-documentation/user-manual.html",
- "https://www.google.com/search?q=color+picker": "https://www.google.com/search؟q=Color+Picker",
  "macOS Application finished launching..": "انتهى تطبيق macOS من إطلاق..",
  "⚠️ For information about this update, use this link to go to the EfazDev Discord server: https://discord.efaz.dev": "⚠ للحصول على معلومات حول هذا التحديث ، استخدم هذا الرابط للانتقال إلى خادم Discord EfazDev: https://discord.efaz.dev",
  "⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.": "⚠ هذا الإصدار هو إصدار تجريبي من OrangeBlox وقد يتسبب في مشاكل مع التثبيت..",
@@ -1419,7 +1415,6 @@
  "[(*)] = Uninstall Vanilla Roblox Studio": "[(*)] = إلغاء تثبيت استوديو الفانيليا روبوكس",
  "[MOD SCRIPT]: (*)": "[برنامج Mod script]: (*)",
  "[exit] = Exit Mod Selector": "[خروج] = محدد مخرج Mod",
- "https://clientsettings.roblox.com/v2/user-channel?binaryType=(*)": "https://ClientSettings.Roblox.com/v2/user-channel؟binarytype=(*)",
  "v(*) [Current] => v(*) [Latest]": "v(*) [Current] => v(*) [آخر]",
  "⚠️ Download Location: (*)": "⚠ موقع التنزيل: (*)",
  "⚠️ Download location: (*) => (*)": "⚠ موقع التنزيل: (*)=> (*)",
@@ -2079,8 +2074,6 @@
  "--- Rename Connections to Friends ---": "--- إعادة تسمية الاتصالات للأصدقاء ---",
  "Would you like to enable renaming Connections back to Friends on the client? (y/n)": "هل ترغب في تمكين إعادة تسمية الاتصالات إلى الأصدقاء على العميل؟ (y/n)",
  "Input the number of animations you would like to limit:": "أدخل عدد الرسوم المتحركة التي ترغب في الحد منها:",
- "\u001b[38;5;(*)mCheck for Updates [(*) ](*)": "[38 ؛ 5 ؛ (*)mcheck للحصول على التحديثات [(*)] (*)",
- "\u001b[38;5;(*)mNew Updates Available! [v(*) => v(*)] [(*) ](*)": "[38 ؛ 5 ؛ (*)تحديثات Mnew متاحة! [v(*)=> v(*)] [(*)] (*)",
  "Building Python Cache..": "بناء ذاكرة التخزين المؤقت بيثون..",
  "Would you like to build Python cache on app start? (y/n)": "هل ترغب في بناء ذاكرة التخزين المؤقت Python على App Start؟ (y/n)",
  "Successfully built Python cache!": "بنيت بنجاح بيثون ذاكرة التخزين المؤقت!",
@@ -2130,10 +2123,6 @@
  "Please select the Provided Mod Configuration to use.": "يرجى تحديد تكوين Mod المقدم للاستخدام..",
  "[(*)] - (*)(*)": "[(*)] - (*)(*)",
  "[3] = Use Provided Configuration": "[3] = استخدام التكوين المقدم",
- "\u001b[38;5;(*)mCheck for Updates [(*)(*)](*)": "[38 ؛ 5 ؛ (*)mcheck للحصول على التحديثات [(*)(*)] (*)",
- "\u001b[38;5;(*)mNew Updates Available! [v(*) => v(*)] [(*)(*)](*)": "[38 ؛ 5 ؛ (*)تحديثات Mnew متاحة! [v(*)=> v(*)] [(*)(*)] (*)",
- " • (*)": "• (*)",
- "(*)": "(*)",
  "1. Made by (*)": "1. صنع بواسطة (*)",
  "2. Old Player Sounds and Cursors were sourced from (*)": "2. تم الحصول على أصوات اللاعب القديمة والمؤشرات من (*)",
  "3. Avatar Editor Maps were from (*) slightly edited to be usable for the current version of Roblox (as of the time of writing this)": "3. كانت خرائط محرر الصورة الرمزية من (*)تحريرًا قليلاً لتكون قابلة للاستخدام في الإصدار الحالي من Roblox (اعتبارًا من وقت كتابة هذا)",
@@ -2155,5 +2144,30 @@
  "Disable a mod on your behalf.": "تعطيل وزارة الدفاع نيابة عنك..",
  "Enable a mod on your behalf.": "تمكين وزارة الدفاع نيابة عنك..",
  "Get if a mod is enabled or not.": "الحصول على إذا تم تمكين وزارة الدفاع أم لا..",
- "[(*)] - (*)(*)(*)": "[(*)] - (*)(*)(*)"
+ "[(*)] - (*)(*)(*)": "[(*)] - (*)(*)(*)",
+ "This FFlag was from the LatteFlags GitHub! (https://github.com/espresso-soft/latteflags)": "كان هذا FFlag من latteflags github! (https://github.com/espresso-soft/latteflags)",
+ "Skipping Preparation because you're connecting instead of launching a new window!": "تخطي التحضير لأنك تتصل بدلاً من إطلاق نافذة جديدة!",
+ "Go to Roblox! 🌐": "اذهب إلى روبوكس! 🌐",
+ "Connection may be broken. Error: (*)": "قد يتم كسر الاتصال. خطأ: (*)",
+ "Deactivated Discord Presence!": "إلغاء تنشيط التواجد!",
+ "Reactivated Discord Presence!": "تواجد الخلاف الذي أعيد تنشيطه!",
+ "Started Discord Presence!": "بدأت وجود خلاف!",
+ "Unable to connect to Discord (1)! Error: (*)": "غير قادر على الاتصال بالخلاف (1)! خطأ: (*)",
+ "Unable to connect to Discord (2)! Error: (*)": "غير قادر على الاتصال بالخلاف (2)! خطأ: (*)",
+ "Would you like to enable Idling Roblox RPC? (y/n)": "هل ترغب في تمكين idling Roblox Rpc؟ (y/n)",
+ "(*) Python module(*) are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!": "(*)وحدة بيثون (*)متاحة الآن لتحديثها! قم بتثبيت التحديث عن طريق فتح القائمة الرئيسية ، والتحقق من تحديثات وحدة Python ثم تثبيت!",
+ "Unable to create shortcuts: (*)": "غير قادر على إنشاء اختصارات: (*)",
+ "Unable to overwrite API Documentation and Studio Fonts. Recorded Error: (*)(*)": "غير قادر على الكتابة فوق وثائق Api وخطوط الاستوديو. خطأ مسجل: (*)(*)",
+ "Now for some configurations!": "الآن لبعض التكوينات!",
+ "Select the types of ui to color! (y/n)": "حدد أنواع واجهة المستخدم للون! (y/n)",
+ "Then, when you're done, type \"exit\"!": "ثم ، عندما تنتهي ، اكتب \"خروج\"!",
+ "Something went wrong modifying Info.plist of Roblox client: (*)(*)": "حدث خطأ ما تعديل info.plist من عميل roblox: (*)(*)",
+ "Something went wrong setting up registry: (*)(*)": "حدث خطأ ما إعداد السجل: (*)(*)",
+ "Unable to apply mod files of (*). Recorded Error: (*)(*)": "غير قادر على تطبيق ملفات وزارة الدفاع (*). خطأ مسجل: (*)(*)",
+ "Unable to make changes to the dock: (*)(*)": "غير قادر على إجراء تغييرات على قفص الاتهام: (*)(*)",
+ "Unable to update installer apps! Recorded Error: (*)(*)": "غير قادر على تحديث تطبيقات المثبت! خطأ مسجل: (*)(*)",
+ "Get the current displayed name of itself.": "احصل على الاسم الحالي المعروض لنفسه..",
+ "Get the current mod script id of itself.": "احصل على معرف البرنامج النصي الحالي لنفسه..",
+ "Get the current version of itself.": "الحصول على النسخة الحالية من نفسها..",
+ "Location Code: 10": "رمز الموقع: 10"
 }

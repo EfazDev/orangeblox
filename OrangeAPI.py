@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0
+# v2.3.1
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.0
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.1
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -24,11 +24,13 @@ import platform
 import typing
 import json
 from urllib.parse import urlparse
+from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.3.0", "bootstrap_version": "2.3.0"}
+current_version = {"version": "2.3.1", "bootstrap_version": "2.3.1"}
 requested_functions = {}
 cached_information = {}
+colors_class = Colors()
 translator = None
 debug_mode = False
 studio_mode = False
@@ -334,6 +336,45 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "saveFastFlagConfiguration", [configuration, full]).generateResponse()
+    def getVersion(self) -> str | None:
+        """
+        Get the version of mod script from Manifest file!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        current_version = OrangeAPI.getVersion() # -> "1.0.0"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getVersion").generateResponse().response
+    def getName(self) -> str | None:
+        """
+        Get the name of mod script from Manifest file!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        mod_script_name = OrangeAPI.getName() # -> "Template Mod!"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getName").generateResponse().response
+    def getModScriptId(self) -> str | None:
+        """
+        Get the id of mod script used!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.3.1+**
+
+        ```python
+        mod_script_id = OrangeAPI.getModScriptId() # -> "Template"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse().response
     def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.
@@ -867,7 +908,7 @@ class OrangeAPI:
         ```
         """
         if Request(self, self.__orangeapi_details__, "getIfRobloxLaunched").generateResponse().response == False:
-            print(f"\033[38;5;255m[MOD SCRIPT]: {question}\033[0m")
+            colors_class.print(f"[MOD SCRIPT]: {question}", 255)
             return input(prompt)
         else:
             return None
@@ -909,7 +950,7 @@ class OrangeAPI:
         OrangeAPI.printMainMessage("Hello World!") # -> None
         ```
         """
-        print(f"\033[38;5;255m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 255)
     def printColoredMessage(self, mes: str, ansi: int) -> None: # No Permission Needed
         """
         Print a message on the python console using an ANSI 256 bit color number.
@@ -924,7 +965,7 @@ class OrangeAPI:
         """
         if type(ansi) is int: 
             if ansi == 202 or ansi == 208 or ansi == 166: return
-            print(f"\033[38;5;{ansi}m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+            colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", ansi)
     def printErrorMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a red message on the python console using the bootstrap. [Indicates error]
@@ -937,7 +978,7 @@ class OrangeAPI:
         OrangeAPI.printErrorMessage("Uh oh!") # -> None
         ```
         """
-        print(f"\033[38;5;196m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 196)
     def printSuccessMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a green message on the python console using the bootstrap. [Indicates success]
@@ -950,7 +991,7 @@ class OrangeAPI:
         OrangeAPI.printSuccessMessage("Woo!") # -> None
         ```
         """
-        print(f"\033[38;5;82m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 82)
     def printWarnMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -963,7 +1004,7 @@ class OrangeAPI:
         OrangeAPI.printWarnMessage("Wait!") # -> None
         ```
         """
-        print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 226)
     def printYellowMessage(self, mes: str) -> None: # No Permission Needed
         """
         Print a yellow message on the python console using the bootstrap. [Indicates warning]
@@ -989,7 +1030,7 @@ class OrangeAPI:
         OrangeAPI.printDebugMessage("Wait!") # -> None
         ```
         """
-        if debug_mode == True: print(f"\033[38;5;226m[MOD SCRIPT]: {self.translate(mes)}\033[0m")
+        if debug_mode == True: colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", 226)
     def translate(self, mes: str) -> str: # No Permission Needed
         """
         Translate a message to the current user's selected language using a localization set. If no localization set is found, it will return the original message.

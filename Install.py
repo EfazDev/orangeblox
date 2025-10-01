@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.0
+# v2.3.1
 # 
 
 # Modules
@@ -24,32 +24,10 @@ import PyKits; PyKits.BuiltinEditor(builtins)
 try: import RobloxFastFlagsInstaller as RFFI
 except: PyKits.pip().restartScript("Install.py", sys.argv)
 
-def ts(mes):
-    mes = str(mes)
-    if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
-    return mes
-def trace():
-    _, tb_v, tb_b = sys.exc_info()
-    tb_lines = traceback.extract_tb(tb_b)
-    lines = []
-    lines.append("\033[95mTraceback (most recent call last):\033[0m")
-    for fn, ln, f, tx in tb_lines:
-        lines.append(f'  File \033[95m"{fn}"\033[0m, line \033[95m{ln}\033[0m, in \033[95m{f}\033[0m')
-        if tx: lines.append(f'    {tx}')
-    exc_t = type(tb_v).__name__
-    exc_m = str(tb_v)
-    lines.append(f'\033[95m\033[1m{exc_t}:\033[0m\033[0m \033[35m{exc_m}\033[0m')
-    return "\n".join(lines)
-def printMainMessage(mes): print(f"\033[38;5;255m{ts(mes)}\033[0m")
-def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m")
-def printSuccessMessage(mes): print(f"\033[38;5;82m{ts(mes)}\033[0m")
-def printWarnMessage(mes): print(f"\033[38;5;202m{ts(mes)}\033[0m")
-def printYellowMessage(mes): print(f"\033[38;5;226m{ts(mes)}\033[0m")
-def printDebugMessage(mes): print(f"\033[38;5;226m{ts(mes)}\033[0m")
-
 if __name__ == "__main__":
     main_os = platform.system()
     pip_class = PyKits.pip()
+    colors_class = PyKits.Colors()
     requests = PyKits.request()
     plist_class = PyKits.plist()
     sma = {
@@ -119,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.0"}
+    current_version = {"version": "2.3.1"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -161,7 +139,6 @@ if __name__ == "__main__":
         "EFlagEnableDebugMode": "bool",
         "EFlagEnabledMods": "dict",
         "EFlagMakeMainBootstrapLogFiles": "bool",
-        "EFlagUseVanillaRobloxApp": "bool",
         "EFlagCompletedTutorial": "bool",
         "EFlagVerifyRobloxHashAfterInstall": "bool",
         "EFlagEnableDuplicationOfClients": "bool",
@@ -262,9 +239,34 @@ if __name__ == "__main__":
         "EFlagEnablePythonVirtualEnvironments": "bool",
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
+        "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagLastModVersionMacOSCaching": "str",
         "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()
+
+    def ts(mes: str):
+        mes = str(mes)
+        if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
+        return mes
+    def trace():
+        _, tb_v, tb_b = sys.exc_info()
+        tb_lines = traceback.extract_tb(tb_b)
+        lines = []
+        lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
+        for fn, ln, f, tx in tb_lines:
+            lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
+            if tx: lines.append(f'    {tx}')
+        exc_t = type(tb_v).__name__
+        exc_m = str(tb_v)
+        lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
+        return "\n".join(lines)
+    def printMainMessage(mes): colors_class.print(ts(mes), 255)
+    def printErrorMessage(mes): colors_class.print(ts(mes), 196)
+    def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
+    def printWarnMessage(mes): colors_class.print(ts(mes), 202)
+    def printYellowMessage(mes): colors_class.print(ts(mes), 226)
+    def printDebugMessage(mes): colors_class.print(ts(mes), 226)
 
     def ignore_files_func(dir, files): return set(ignore_files) & set(files)
     def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
@@ -485,13 +487,106 @@ if __name__ == "__main__":
         tar = os.path.join(os.path.dirname(path), f'{splits[0]}Converted.{splits[1]}')
         with open(tar, "w", encoding="utf-8") as f: f.write(fi)
         return tar
+    def getPythonExecutables(python_instance: PyKits.pip, arch=None):
+        exec_array = {1: []}
+        if main_os == "Darwin":
+            exec_array[3] = [os.path.join(os.path.dirname(python_instance.executable), "pyinstaller")]
+            if not os.path.exists(exec_array[3][0]): 
+                if python_instance.getArchitecture() == "intel":
+                    s = getPythonExecutables(pip_class)
+                    if s.get(3): exec_array[3] = s.get(3)
+                    else: exec_array[3] = None
+                else: exec_array[3] = None
+            if shutil.which("nuitka"):
+                if (arch == "intel" or python_instance.getArchitecture() == "intel") and platform.machine() == "arm64": 
+                    exec_array[4] = ["/usr/bin/arch", "-x86_64", python_instance.executable, "-m", "nuitka"]
+                else:
+                    exec_array[4] = [python_instance.executable, "-m", "nuitka"]
+            if shutil.which("clang++"):
+                exec_array[5] = [shutil.which("clang++")]
+            if shutil.which("clang"):
+                exec_array[6] = [shutil.which("clang")]
+            exec_array[2] = [python_instance.executable]
+        else:
+            pos = os.path.join(pip_class.getLocalAppData(), "..", "Roaming", "Python", os.path.basename(os.path.dirname(python_instance.executable)))
+            if os.path.exists(pos) and os.path.exists(os.path.join(pos, "Scripts", "pyinstaller.exe")): 
+                exec_array[3] = [os.path.realpath(os.path.join(pos, "Scripts", "pyinstaller.exe"))]
+            else:
+                exec_array[3] = [os.path.realpath(os.path.join(os.path.dirname(python_instance.executable), "Scripts", "pyinstaller.exe"))]
+                if not os.path.exists(exec_array[3][0]): exec_array[3] = None
+            if os.path.exists(pos) and os.path.exists(os.path.join(pos, "Scripts", "nuitka.cmd")): 
+                exec_array[4] = [os.path.realpath(os.path.join(pos, "Scripts", "nuitka.cmd"))]
+            else:
+                exec_array[4] = [os.path.realpath(os.path.join(os.path.dirname(python_instance.executable), "Scripts", "nuitka.cmd"))]
+                if not os.path.exists(exec_array[4][0]): exec_array[4] = None
+            if shutil.which("clang++"):
+                exec_array[5] = [shutil.which("clang++")]
+            if shutil.which("clang"):
+                exec_array[6] = [shutil.which("clang")]
+            exec_array[2] = [os.path.join(os.path.dirname(python_instance.executable), "python.exe")]
+        return exec_array
     def waitForInternet():
         if pip_class.getIfConnectedToInternet() == False:
             printWarnMessage("--- Waiting for Internet ---")
             printMainMessage("Please connect to your internet in order to continue! If you're connecting to a VPN, try reconnecting.")
             while pip_class.getIfConnectedToInternet() == False: time.sleep(0.05)
             return True
-
+    def runChartCode(chart_module, chart_code, *args, environment_variables={}, running=[]):
+        chart_module.args = args
+        chart_module.cwd = cur_path
+        chart_module.cur_path = cur_path
+        chart_module.variables = environment_variables
+        for code in chart_code:
+            try:
+                code_id = code[0]
+                if code_id == 0: 
+                    printWarnMessage(chart_module.prefix_print + code[1])
+                    running.append(0)
+                elif code_id == 1: 
+                    if chart_module.variables.get("IDs"):
+                        if not (type(chart_module.variables.get("IDs").get(code[1])) is None):
+                            running_proc = subprocess.run(chart_module.variables.get("IDs").get(code[1]) + ([code[2]] if type(code[2]) is str else code[2]), shell=type(code[2]) is str, cwd=chart_module.cwd)
+                            running.append(running_proc.returncode)
+                        else: running.append(1)
+                    else:
+                        running_proc = subprocess.run(code[1], shell=type(code[1]) is str, cwd=chart_module.cwd)
+                        running.append(running_proc.returncode)
+                elif code_id == 2: 
+                    while True:
+                        index, generating_chart_code = code[1]()
+                        _, generated_chart_code_res = runChartCode(chart_module, generating_chart_code, *args, environment_variables=chart_module.variables, running=[])
+                        if generated_chart_code_res[index] == 0: running.append(generated_chart_code_res[index]); break
+                elif code_id == 3: 
+                    generating_chart_code = code[1]()
+                    _, generated_chart_code_res = runChartCode(chart_module, generating_chart_code, *args, environment_variables=chart_module.variables, running=[])
+                    running += generated_chart_code_res
+                elif code_id == 4: 
+                    chart_module.cwd = os.path.realpath(os.path.join(chart_module.cwd, code[1]))
+                    running.append(0)
+                elif code_id == 5: 
+                    chart_module.cwd = cur_path
+                    running.append(0)
+                elif code_id == 6: 
+                    chart_module.variables[code[1]] = code[2]
+                    running.append(0)
+                elif code_id == 7: 
+                    makedirs(code[1])
+                    running.append(0)
+                elif code_id == 8: 
+                    shutil.rmtree(code[1], ignore_errors=True)
+                    running.append(0)
+                elif code_id == 9: 
+                    if os.path.exists(code[1]): shutil.move(code[1], code[2])
+                    running.append(0)
+                elif code_id == 10: 
+                    os.remove(code[1])
+                    running.append(0)
+                else: running.append(-1)
+            except Exception as e: 
+                running.append(1)
+                printDebugMessage(trace())
+                pass
+        return 0 if not (1 in running or -1 in running) else 1, running
     if "--rebuild-mode" in sys.argv or "-r" in sys.argv:
         rebuild_mode = True
         disable_remove_other_operating_systems = True
@@ -506,12 +601,12 @@ if __name__ == "__main__":
         if "--silent" in sys.argv or "-s" in sys.argv:
             silent_mode = True
             def printMainMessage(mes): silent_mode = True
-            def printErrorMessage(mes): print(f"\033[38;5;196m{ts(mes)}\033[0m")
+            def printErrorMessage(mes): colors_class.print(ts(mes), 196)
             def printSuccessMessage(mes): silent_mode = True
             def printWarnMessage(mes): silent_mode = True
             def printDebugMessage(mes): silent_mode = True
         else:
-            if not ("--no-clear" in sys.argv or "-nc" in sys.argv): os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+            if not ("--no-clear" in sys.argv or "-nc" in sys.argv): colors_class.clear_console()
         if "--disable-remove" in sys.argv: disable_remove_other_operating_systems = True
     if "--disable-installation-sync" in sys.argv or "-ds" in sys.argv: use_installation_syncing = False
     if "--enable-unneeded-messages" in sys.argv or "-eu" in sys.argv: remove_unneeded_messages = False
@@ -632,7 +727,7 @@ if __name__ == "__main__":
                     x86_python.install(["pypresence", "psutil"] + rebuild_target)
                     if main_os == "Darwin": x86_python.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
                     elif main_os == "Windows": x86_python.install(["pywin32", "plyer"])
-        os.system("cls" if os.name == "nt" else 'echo "\033c\033[3J"; clear')
+        colors_class.clear_console()
         pip_class.restartScript("Install.py", sys.argv)
     
     # Python Modules (Pypi Installed)
@@ -755,14 +850,13 @@ if __name__ == "__main__":
                     if use_sudo_for_codesign == True: extra_detail = []
                     if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
                         with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMac.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Clang', 'MakeLoadersMacIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
-                    if rebuild_status.returncode == 0:
+                    import Apps.Scripts.Clang.Rebuild as clangRebuild
+                    pa = getPythonExecutables(pip_class)
+                    rebuild_code, rebuild_status = runChartCode(clangRebuild, clangRebuild.macos[pip_class.getArchitecture()], environment_variables={"IDs": pa})
+                    if rebuild_code == 0:
                         printSuccessMessage(f"Rebuilding Clang App succeeded! Continuing to installation..")
-                        os.remove(pa)
                     else:
-                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                        os.remove(pa)
+                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_code}")
                         return
 
                 # Rebuild Pyinstaller & Nuitka Apps
@@ -771,45 +865,44 @@ if __name__ == "__main__":
                     if use_sudo_for_codesign == True: extra_detail = []
                     if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
                         with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail = extra_detail.append("'" + f.read() + "'")
+                    import Apps.Scripts.Pyinstaller.Rebuild as pyinstallerRebuild
                     printMainMessage("Running Pyinstaller Rebuild..")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
-                    if rebuild_status.returncode == 0:
+                    pa = getPythonExecutables(pip_class)
+                    rebuild_code, rebuild_status = runChartCode(pyinstallerRebuild, pyinstallerRebuild.macos[pip_class.getArchitecture()], environment_variables={"IDs": pa})
+                    if rebuild_code == 0:
                         printSuccessMessage(f"Rebuilding Pyinstaller App succeeded! Continuing to installation..")
-                        os.remove(pa)
                     else:
-                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                        os.remove(pa)
+                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_code}")
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Pyinstaller Rebuild..")
-                        pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
-                        if rebuild_status.returncode == 0: printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
-                        else: printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                        os.remove(pa)
+                        pa = getPythonExecutables(pip_class)
+                        rebuild_code, rebuild_status = runChartCode(pyinstallerRebuild, pyinstallerRebuild.macos["intel"], environment_variables={"IDs": pa})
+                        if rebuild_code == 0:
+                            printSuccessMessage(f"Rebuilding Intel Pyinstaller App succeeded! Continuing to installation..")
+                        else:
+                            printErrorMessage(f"Rebuild failed! Status code: {rebuild_code}")
+                            return
                 elif rebuild_from_source == 2 or (main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
                     extra_detail = []
                     if use_sudo_for_codesign == True: extra_detail = []
                     if os.path.exists(os.path.join(cur_path, "SigningCertificateName")): 
                         with open(os.path.join(cur_path, "SigningCertificateName")) as f: extra_detail.append("'" + f.read() + "'")
+                    import Apps.Scripts.Nuitka.Rebuild as nuitkaRebuild
                     printMainMessage("Running Nuitka Rebuild..")
-                    pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOS.sh') if platform.machine() == "arm64" else os.path.join(cur_path, 'Apps', 'Scripts', 'Pyinstaller', 'RecreateMacOSIntel.sh'), pip_class)
-                    rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
-                    if rebuild_status.returncode == 0:
+                    pa = getPythonExecutables(pip_class)
+                    rebuild_code, rebuild_status = runChartCode(nuitkaRebuild, nuitkaRebuild.macos[pip_class.getArchitecture()], environment_variables={"IDs": pa})
+                    if rebuild_code == 0:
                         printSuccessMessage(f"Rebuilding Nuitka App succeeded! Continuing to installation..")
-                        os.remove(pa)
                     else:
-                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                        os.remove(pa)
+                        printErrorMessage(f"Rebuild failed! Status code: {rebuild_code}")
                         return
                     if full_rebuild_mode == True and platform.machine() == "arm64":
                         printMainMessage("Running Intel Nuitka Rebuild..")
-                        pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, 'Apps', 'Scripts', 'Nuitka', 'RecreateMacOSIntel.sh'), pip_class)
-                        rebuild_status = subprocess.run(["/bin/sh", pa] + extra_detail, cwd=cur_path)
-                        if rebuild_status.returncode == 0: printSuccessMessage(f"Rebuilding Intel Nuitka App succeeded! Continuing to installation..")
-                        else: printErrorMessage(f"Rebuild failed! Status code: {rebuild_status.returncode}")
-                        os.remove(pa)
+                        pa = getPythonExecutables(pip_class, arch="intel")
+                        rebuild_code, rebuild_status = runChartCode(nuitkaRebuild, nuitkaRebuild.macos[pip_class.getArchitecture()], environment_variables={"IDs": pa})
+                        if rebuild_code == 0: printSuccessMessage(f"Rebuilding Intel Nuitka App succeeded! Continuing to installation..")
+                        else: printErrorMessage(f"Rebuild failed! Status code: {rebuild_code}")
 
                 if platform.machine() == "arm64":
                     if os.path.exists(os.path.join(cur_path, "Apps", "OrangeBloxMac.zip")):
@@ -1036,33 +1129,33 @@ if __name__ == "__main__":
 
                 # Rebuild Pyinstaller & Nuitka Apps
                 if rebuild_from_source == 1 or (main_config.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates") == True and update_mode == True):
+                    import Apps.Scripts.Pyinstaller.Rebuild as pyinstallerRebuild
                     def build(arch=None):
                         build_pip_class = PyKits.pip(arch=arch)
                         if build_pip_class.pythonInstalled() and build_pip_class.installed(["pyinstaller"]):
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Pyinstaller Rebuild for {target_arch}..")
-                            pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Pyinstaller", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa], cwd=cur_path)
-                            os.remove(pa)
-                            if rebuild_status.returncode == 0: printSuccessMessage("Pyinstaller Rebuild Success!")
+                            pa = getPythonExecutables(build_pip_class)
+                            rebuild_code, rebuild_status = runChartCode(pyinstallerRebuild, pyinstallerRebuild.windows[target_arch], environment_variables={"IDs": pa})
+                            if rebuild_code == 0: printSuccessMessage("Pyinstaller Rebuild Success!")
                             else:
-                                printErrorMessage(f"Pyinstaller Rebuild failed! Status code: {rebuild_status.returncode}")
+                                printErrorMessage(f"Pyinstaller Rebuild failed! Status code: {rebuild_code}")
                                 return
                     build(pip_class.getArchitecture())
                     if full_rebuild_mode == True and pip_class.getArchitecture() == "arm": build("x64"); build("x86")
                     elif full_rebuild_mode == True and pip_class.getArchitecture() == "x64": build("x86")
                 elif rebuild_from_source == 2 or (main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates") == True and update_mode == True):
+                    import Apps.Scripts.Nuitka.Rebuild as nuitkaRebuild
                     def build(arch=None):
                         build_pip_class = PyKits.pip(arch=arch)
-                        if build_pip_class.pythonInstalled() and build_pip_class.installed(["pyinstaller"]):
+                        if build_pip_class.pythonInstalled() and build_pip_class.installed(["nuitka"]):
                             target_arch = build_pip_class.getArchitecture()
                             printMainMessage(f"Running Nuitka Rebuild for {target_arch}..")
-                            pa = convertPythonExecutablesInFileToPaths(os.path.join(cur_path, "Apps", "Scripts", "Nuitka", f"RecreateWindows{'32' if arch == 'x86' else ('Arm64' if arch == 'arm' else '')}.bat"), build_pip_class)
-                            rebuild_status = subprocess.run([pa], cwd=cur_path)
-                            os.remove(pa)
-                            if rebuild_status.returncode == 0: printSuccessMessage("Nuitka Rebuild success!")
+                            pa = getPythonExecutables(build_pip_class)
+                            rebuild_code, rebuild_status = runChartCode(nuitkaRebuild, nuitkaRebuild.windows[target_arch], environment_variables={"IDs": pa})
+                            if rebuild_code == 0: printSuccessMessage("Nuitka Rebuild success!")
                             else:
-                                printErrorMessage(f"Nuitka Rebuild failed! Status code: {rebuild_status.returncode}")
+                                printErrorMessage(f"Nuitka Rebuild failed! Status code: {rebuild_code}")
                                 return
                     build(pip_class.getArchitecture())
                     if full_rebuild_mode == True and pip_class.getArchitecture() == "arm": build("x64"); build("x86")
@@ -1131,6 +1224,7 @@ if __name__ == "__main__":
                         pip_class.endProcess("OrangeBlox.exe")
                     printMainMessage("Installing EXE File..")
                     try:
+                        if os.path.exists(os.path.join(sma[main_os][0], "_internal")): shutil.rmtree(os.path.join(sma[main_os][0], "_internal"), ignore_errors=True)
                         if pip_class.getIf32BitWindows() or use_x86_windows == True:
                             shutil.copy(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "OrangeBlox.exe"), sma[main_os][1])
                             pip_class.copyTreeWithMetadata(os.path.join(cur_path, "Apps", "OrangeBloxWindows", "x86", "_internal"), os.path.join(sma[main_os][0], "_internal"), dirs_exist_ok=True, symlinks=True, ignore_if_not_exist=True)
@@ -1482,9 +1576,7 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
                 a = input("> ")
                 if isYes(a) == True:
-                    version_server = "https://obx.efaz.dev/Version.json"
-                    if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
-                    latest_vers_res = requests.get(f"{version_server}")
+                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
                     if latest_vers_res.ok:
                         latest_vers = latest_vers_res.json
                         if current_version.get("version"):

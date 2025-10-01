@@ -12,6 +12,8 @@
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
-        "optional-img": true
+        "_all_optional": true,
+        "_loading": true,
+        "_leaderboard": false
     }
 }

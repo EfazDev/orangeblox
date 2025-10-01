@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../Images/AppIcon.icns"
-current_version = {"version": "2.3.0"}
+current_version = {"version": "2.3.1"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
