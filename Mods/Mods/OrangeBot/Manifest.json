@@ -20,5 +20,5 @@
         "createAppLock"
     ],
     "python_modules": ["pillow", "discord.py"],
-    "mod_script_supports": "2.3.2"
+    "mod_script_supports": "2.4.0"
 }
