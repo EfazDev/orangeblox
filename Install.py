@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1i
+# v2.4.0a
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.1i"}
+    current_version = {"version": "2.4.0a"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -216,7 +216,6 @@ if __name__ == "__main__":
         "EFlagDisableLinkShortcutsAccess": "bool",
         "EFlagReturnToMainMenuInstant": "bool",
         "EFlagRemoveCodeSigningMacOS": "bool",
-        "EFlagDisableEfazRobloxBootstrapAPIReplication": "bool",
         "EFlagModScriptRequestTooFastMessage": "bool",
         "EFlagModScriptAPIRefreshTime": "float",
         "EFlagRobloxUnfriendCheckCooldown": "int",
@@ -241,6 +240,8 @@ if __name__ == "__main__":
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
+        "EFlagRobloxChannelUpdateToken": "str",
+        "EFlagRobloxSecurityCookieUsage": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()

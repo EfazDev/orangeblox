@@ -6,7 +6,6 @@
 
 # Python Modules
 import subprocess
-import promptlib
 import shutil
 import json
 import sys
@@ -19,6 +18,9 @@ debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
 current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
+
+def getFilePrompt():
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
     
 # Printing Functions
 def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
@@ -126,11 +128,8 @@ if installed["success"] == True:
                         printSuccessMessage("Successfully saved Configuration!")
                         printSuccessMessage(f"File Path: {selected_file}")
                     elif a and a == "2":
-                        if OrangeAPI.getPlatform() == "macOS": selected_file = OrangeAPI.requestInput("Please drag your Generative Mod Configuration file here! (or manually enter the file path of the configuration.)", "> ").strip().strip('"').strip("'")
-                        else:
-                            printMainMessage("Please select your Generative Mod Configuration file!")
-                            prompter = promptlib.Files()
-                            selected_file = prompter.file()
+                        printMainMessage("Please select your Generative Mod Configuration file!")
+                        selected_file = getFilePrompt()
                         if os.path.exists(selected_file) and os.path.isfile(selected_file):
                             mod_style_file = selected_file
                             OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)

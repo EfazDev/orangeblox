@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.4.0
+# v2.4.5
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -12,6 +12,7 @@ import sys
 import json
 import time
 import zlib
+import base64
 import shutil
 import typing
 import hashlib
@@ -29,7 +30,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.4.0"
+script_version = "2.4.5"
 def getLocalAppData():
     import platform
     import os
@@ -1687,6 +1688,7 @@ try:
         import win32gui # type: ignore
         import win32process # type: ignore
         import win32con # type: ignore
+        import win32crypt # type: ignore
         import win32api # type: ignore
 except Exception as e:
     pip_class.install(["psutil"])
@@ -1702,6 +1704,7 @@ except Exception as e:
         win32gui = pip_class.importModule("win32gui")
         win32process = pip_class.importModule("win32process")
         win32con = pip_class.importModule("win32con")
+        win32crypt = pip_class.importModule("win32crypt")
         win32api = pip_class.importModule("win32api")
 # Install Python Packages
 
@@ -3244,15 +3247,15 @@ class Handler:
         else:
             self.unsupportedFunction()
             return
-    def getLatestClientVersion(self, studio: bool=False, debug: bool=False, channel: str="LIVE"):
+    def getLatestClientVersion(self, studio: bool=False, debug: bool=False, channel: str="LIVE", token: str=None):
         # Mac: https://clientsettingscdn.roblox.com/v2/client-version/MacPlayer | MacStudio
         # Windows: https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer | WindowsStudio64 | WindowsStudio
         try:    
             if channel == "production": channel = "LIVE"
             if self.__main_os__ == "Darwin":
                 if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-                if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}/channel/{channel}")
-                else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}")
+                if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}/channel/{channel}", headers=({"Roblox-Channel-Token": token} if token else {}))
+                else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 if res.ok:
                     jso = res.json
                     if jso.get("clientVersionUpload") and jso.get("version"):
@@ -3271,8 +3274,8 @@ class Handler:
             elif self.__main_os__ == "Windows":
                 if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
                 is32Bit = pip_class.getIf32BitWindows()
-                if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}/channel/{channel}")
-                else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}")
+                if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}/channel/{channel}", headers=({"Roblox-Channel-Token": token} if token else {}))
+                else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 if res.ok:
                     jso = res.json
                     if jso.get("clientVersionUpload") and jso.get("version"):
@@ -3340,6 +3343,48 @@ class Handler:
         else:
             self.unsupportedFunction()
             return {"success": False, "message": "OS not compatible."}
+    def getUserChannel(self, studio: bool=False, debug: bool=False):
+        # Mac: https://clientsettings.roblox.com/v2/user-channel?binaryType=MacPlayer | MacStudio
+        # Windows: https://clientsettings.roblox.com/v2/user-channel?binaryType=WindowsPlayer | WindowsStudio64 | WindowsStudio
+        try:    
+            cookie_path = self.getRobloxCookieFileLocation()
+            if not cookie_path: return {"success": False, "message": "Roblox security cookie couldn't be found."}
+            founded_roblosecurity = self.parseRobloxCookieFile(cookie_path)
+            if self.__main_os__ == "Darwin":
+                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                res = requests.get(f"https://clientsettings.roblox.com/v2/user-channel?binaryType={'MacStudio' if studio == True else 'MacPlayer'}", cookies={".ROBLOSECURITY": founded_roblosecurity})
+                if res.ok:
+                    jso = res.json
+                    if jso.get("channelName"):
+                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        return {"success": True, "channel_name": jso.get("channelName"), "channel_assignment_type": jso.get("channelAssignmentType", 0), "token": jso.get("token")}
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        return {"success": False, "message": "Something went wrong."}
+                else:
+                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    return {"success": False, "message": "Something went wrong."}
+            elif self.__main_os__ == "Windows":
+                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                is32Bit = pip_class.getIf32BitWindows()
+                res = requests.get(f"https://clientsettings.roblox.com/v2/user-channel?binaryType={('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}", cookies={".ROBLOSECURITY": founded_roblosecurity})
+                if res.ok:
+                    jso = res.json
+                    if jso.get("channelName"):
+                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        return {"success": True, "channel_name": jso.get("channelName"), "channel_assignment_type": jso.get("channelAssignmentType", 0), "token": jso.get("token")}
+                    else:
+                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        return {"success": False, "message": "Something went wrong."}
+                else:
+                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    return {"success": False, "message": "Something went wrong."}
+            else:
+                self.unsupportedFunction()
+                return {"success": False, "message": "OS not compatible."}
+        except Exception as e:
+            if debug == True: printDebugMessage(str(e))
+            return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
     def getRobloxInstallFolder(self, studio: bool=False, directory: str=""):
         if self.__main_os__ == "Windows":
             versions = None
@@ -3615,6 +3660,214 @@ class Handler:
         s = []
         for i, v in data.items(): s.append(f"{i}:{v}")
         return f"{url_scheme}:1+{'+'.join(s)}"
+    def parseRobloxCookieFile(self, file_path: str=""):
+        if not file_path: return None
+        if main_os == "Windows" and file_path.endswith(".dat"):
+            with open(file_path, "r", encoding="utf-8") as f: cookie_file = json.load(f)
+            encoded_cookies = cookie_file.get("CookiesData")
+            if encoded_cookies == None: return None
+            base64_downed = base64.b64decode(encoded_cookies)
+            cookie_data = win32crypt.CryptUnprotectData(base64_downed, None, None, None, 0)[1]
+            match = re.search(br'\.ROBLOSECURITY\t([^;]+)', cookie_data)
+            if match == None: return None
+            return match[1].decode("utf-8", errors="ignore")
+        elif main_os == "Darwin" and file_path.endswith(".binarycookies"):
+            # A converted and non-package neeeding version of the binarycookies package
+            from dataclasses import dataclass, field
+            from datetime import datetime, timezone
+            from io import BytesIO
+            from struct import unpack
+            from enum import Enum
+
+            class Flag(str, Enum):
+                SECURE = "Secure"
+                HTTPONLY = "HttpOnly"
+                UNKNOWN = "Unknown"
+                SECURE_HTTPONLY = "Secure; HttpOnly"
+            FLAGS = {
+                0: Flag.UNKNOWN,
+                1: Flag.SECURE,
+                4: Flag.HTTPONLY,
+                5: Flag.SECURE_HTTPONLY,
+            }
+            class Format(str, Enum):
+                integer = "<i"
+                integer_be = ">i"
+                string = "<b"
+                date = "<d"
+            class BinaryCookiesDecodeError(Exception):
+                def __init__(self, message: str):
+                    super().__init__(message)
+                    self.message = message
+            class BaseModel: pass
+            @dataclass
+            class BcField(BaseModel):
+                offset: int
+                size: int
+                format: Format
+            @dataclass
+            class Cookie(BaseModel):
+                name: str
+                value: str
+                url: str
+                path: str
+                create_datetime: datetime
+                expiry_datetime: datetime
+                flag: Flag
+
+                @classmethod
+                def from_dict(cls, d: typing.Dict) -> "Cookie":
+                    flag = d.get("flag", Flag.UNKNOWN)
+                    if isinstance(flag, str):
+                        try:
+                            flag = Flag(flag)
+                        except ValueError:
+                            for f in Flag:
+                                if f.name.lower() == flag.lower():
+                                    flag = f
+                                    break
+                            else:
+                                flag = Flag.UNKNOWN
+                    elif not isinstance(flag, Flag):
+                        flag = Flag.UNKNOWN
+
+                    create = d.get("create_datetime")
+                    expiry = d.get("expiry_datetime")
+                    if isinstance(create, (int, float)):
+                        create = mac_epoch_to_date(float(create))
+                    if isinstance(expiry, (int, float)):
+                        expiry = mac_epoch_to_date(float(expiry))
+
+                    return cls(
+                        name=str(d.get("name", "")),
+                        value=str(d.get("value", "")),
+                        url=str(d.get("url", "")),
+                        path=str(d.get("path", "")),
+                        create_datetime=create or datetime.now(timezone.utc),
+                        expiry_datetime=expiry or datetime.max.replace(tzinfo=timezone.utc),
+                        flag=flag,
+                    )
+            @dataclass
+            class CookieFields(BaseModel):
+                flag: BcField = field(default_factory=lambda: BcField(offset=8, size=4, format=Format.integer))
+                url_offset: BcField = field(default_factory=lambda: BcField(offset=16, size=4, format=Format.integer))
+                name_offset: BcField = field(default_factory=lambda: BcField(offset=20, size=4, format=Format.integer))
+                path_offset: BcField = field(default_factory=lambda: BcField(offset=24, size=4, format=Format.integer))
+                value_offset: BcField = field(default_factory=lambda: BcField(offset=28, size=4, format=Format.integer))
+                expiry_date: BcField = field(default_factory=lambda: BcField(offset=40, size=8, format=Format.date))
+                create_date: BcField = field(default_factory=lambda: BcField(offset=48, size=8, format=Format.date))
+            @dataclass
+            class FileFields(BaseModel):
+                header: BcField = field(default_factory=lambda: BcField(offset=0, size=4, format=Format.string))
+                num_pages: BcField = field(default_factory=lambda: BcField(offset=4, size=4, format=Format.integer_be))
+            def interpret_flag(flags: int) -> Flag:
+                return FLAGS.get(flags, Flag.UNKNOWN)
+            def mac_epoch_to_date(epoch: float) -> datetime:
+                unix_epoch = epoch + 978307200
+                try:
+                    return datetime.fromtimestamp(unix_epoch, tz=timezone.utc)
+                except (OverflowError, OSError):
+                    return datetime.max.replace(tzinfo=timezone.utc)
+            def read_string(data: BytesIO, size: int) -> str:
+                result_bytes = bytearray()
+                count = 0
+                while True:
+                    c = data.read(1)
+                    if not c:
+                        break
+                    if unpack("<b", c)[0] == 0:
+                        break
+                    result_bytes.extend(c)
+                    count += 1
+                    if count > size:
+                        break
+                try:
+                    return result_bytes.decode("utf-8")
+                except Exception:
+                    return result_bytes.decode("latin-1")
+            def read_field(data: BytesIO, field: BcField) -> typing.Union[str, int, float]:
+                data.seek(field.offset)
+                if field.format == Format.string:
+                    return read_string(data, field.size)
+                raw = data.read(field.size)
+                if len(raw) < field.size:
+                    raise BinaryCookiesDecodeError(f"Unexpected EOF reading field at offset {field.offset}")
+                return unpack(field.format.value, raw)[0]
+            def read_cookie(cookie: BytesIO, cookie_size: int) -> Cookie:
+                cookie_fields = CookieFields()
+                flag_int = read_field(cookie, cookie_fields.flag)
+                flag = interpret_flag(flag_int)
+
+                url_offset = read_field(cookie, cookie_fields.url_offset)
+                name_offset = read_field(cookie, cookie_fields.name_offset)
+                path_offset = read_field(cookie, cookie_fields.path_offset)
+                value_offset = read_field(cookie, cookie_fields.value_offset)
+
+                expiry_datetime = mac_epoch_to_date(read_field(cookie, cookie_fields.expiry_date))
+                create_datetime = mac_epoch_to_date(read_field(cookie, cookie_fields.create_date))
+
+                url = read_field(cookie, BcField(offset=url_offset, size=name_offset - url_offset, format=Format.string))
+                name = read_field(cookie, BcField(offset=name_offset, size=path_offset - name_offset, format=Format.string))
+                path = read_field(cookie, BcField(offset=path_offset, size=value_offset - path_offset, format=Format.string))
+                value = read_field(cookie, BcField(offset=value_offset, size=cookie_size - value_offset, format=Format.string))
+
+                return Cookie(
+                    name=name, value=value, url=url, path=path,
+                    create_datetime=create_datetime, expiry_datetime=expiry_datetime,
+                    flag=flag
+                )
+            def get_cookie_offsets(page: BytesIO, num_cookies: int) -> typing.List[int]:
+                return [read_field(page, BcField(offset=8 + (4 * i), size=4, format=Format.integer)) for i in range(num_cookies)]
+            def get_file_pages(binary_file: BytesIO, num_pages: int) -> typing.List[int]:
+                return [
+                    read_field(binary_file, BcField(offset=8 + (i * 4), size=4, format=Format.integer_be)) for i in range(num_pages)
+                ]
+            def _deserialize_page(page: BytesIO) -> typing.List[Cookie]:
+                num_cookies = read_field(page, BcField(offset=4, size=4, format=Format.integer))
+                cookie_offsets = get_cookie_offsets(page, num_cookies)
+                cookies = []
+                for offset in cookie_offsets:
+                    cookie_size = read_field(page, BcField(offset=offset, size=4, format=Format.integer))
+                    page.seek(offset)
+                    cookie = page.read(cookie_size)
+                    cookies.append(read_cookie(BytesIO(cookie), cookie_size))
+                return cookies
+            def loads(b: BytesIO) -> typing.List[Cookie]:
+                all_cookies = []
+                file_fields = FileFields()
+                num_pages = read_field(b, field=file_fields.num_pages)
+                page_sizes = get_file_pages(b, num_pages)
+                pages = []
+                b.seek(8 + (num_pages * 4))
+                for ps in page_sizes:
+                    pages.append(b.read(ps))
+                for page in pages:
+                    all_cookies.extend(_deserialize_page(BytesIO(page)))
+                return all_cookies
+            def load(bf: typing.BinaryIO) -> typing.List[Cookie]:
+                bf.seek(0, 2)
+                if bf.tell() == 0:
+                    raise BinaryCookiesDecodeError("The file is empty.")
+                bf.seek(0)
+                if bf.read(4) != b"cook":
+                    raise BinaryCookiesDecodeError("The file is not a valid binary cookies file. Missing magic 'cook'.")
+                bf.seek(0)
+                return loads(BytesIO(bf.read()))
+            
+            # Main handling
+            with open(file_path, "rb") as f: cookies = load(f)
+            for i in cookies:
+                if i.name == ".ROBLOSECURITY":
+                    return i.value
+        else:
+            self.unsupportedFunction()
+    def getRobloxCookieFileLocation(self):
+        if main_os == "Windows" and os.path.exists(os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")):
+            return os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")
+        elif main_os == "Darwin" and os.path.exists(os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies")):
+            return os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies")
+        else:
+            self.unsupportedFunction()
     def temporaryResetCustomizableVariables(self):
         global macOS_dir
         global macOS_studioDir
@@ -4075,7 +4328,7 @@ class Handler:
         else:
             if submit_status: submit_status.submit(f"{submit_status.error()}[GLOBALSETTINGS] Unable to find file.", 100)
             printLog("Unable to find settings file.")
-    def installRoblox(self, studio: bool=False, forceQuit: bool=True, debug: bool=False, disableRobloxAutoOpen: bool=True, downloadInstaller: bool=False, downloadChannel: str=None, copyRobloxInstallerPath: str="", verifyInstall: bool=True):
+    def installRoblox(self, studio: bool=False, forceQuit: bool=True, debug: bool=False, disableRobloxAutoOpen: bool=True, downloadInstaller: bool=False, downloadChannel: str=None, copyRobloxInstallerPath: str="", verifyInstall: bool=True, downloadToken: str=None):
         client_label = "Studio" if studio == True else "Player"
         if self.getIfRobloxIsOpen(studio=studio):
             if forceQuit == True:
@@ -4154,11 +4407,11 @@ class Handler:
                         if channel_res.get("success") == True: downloadChannel = channel_res.get("channel", "LIVE")
                         else: downloadChannel = "LIVE"
                     if submit_status: submit_status.submit("[INSTALL] Getting latest version!", 50)
-                    latest_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=downloadChannel)
+                    latest_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=downloadChannel, token=downloadToken)
                     if latest_vers["success"] == True:
                         if submit_status: submit_status.submit("[INSTALL] Installing Roblox Bundle!", 80)
                         self.endRoblox(studio=studio)
-                        s = self.installRobloxBundle(studio=studio, installPath=macOS_installedPath, appPath=(macOS_studioDir if studio == True else macOS_dir), channel=downloadChannel, debug=debug, verify=verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=macOS_installedPath, appPath=(macOS_studioDir if studio == True else macOS_dir), channel=downloadChannel, debug=debug, verify=verifyInstall, download_token=downloadToken)
                         if submit_status: submit_status.submit("[INSTALL] Installed Roblox Bundle!", 100)
                         return s
                     else:
@@ -4174,7 +4427,6 @@ class Handler:
                 waitForRobloxEnd()
                 if submit_status: submit_status.submit("[INSTALL] Roblox is installed!", 100)
                 return {"success": True}
-                return
             
             if windows_versions_dir == os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"):    
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=studio)
@@ -4236,7 +4488,7 @@ class Handler:
                     if channel_res.get("success") == True: downloadChannel = channel_res.get("channel", "LIVE")
                     else: downloadChannel = "LIVE"
                 if submit_status: submit_status.submit("[INSTALL] Fetching latest version..", 30)
-                latest_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=downloadChannel)
+                latest_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=downloadChannel, token=downloadToken)
                 if latest_vers["success"] == True:
                     self.endRoblox(studio=studio)
                     if submit_status: submit_status.submit("[INSTALL] Removing Old Roblox Bundles..", 50)
@@ -4245,13 +4497,13 @@ class Handler:
                     if submit_status: submit_status.submit(f"[INSTALL] Installing Roblox {client_label} Bundle..", 80)
                     if studio == True and not (windows_studio_folder_name == ""): 
                         makedirs(os.path.join(windows_versions_dir, windows_studio_folder_name))
-                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_studio_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_studio_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall, download_token=downloadToken)
                     elif studio == False and not (windows_player_folder_name == ""): 
                         makedirs(os.path.join(windows_versions_dir, windows_player_folder_name))
-                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_player_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir, windows_player_folder_name), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall, download_token=downloadToken)
                     else:
                         makedirs(os.path.join(windows_versions_dir))
-                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall)
+                        s = self.installRobloxBundle(studio=studio, installPath=os.path.join(windows_versions_dir), appPath="", channel=downloadChannel, debug=debug, verify=verifyInstall, download_token=downloadToken)
                     if submit_status: submit_status.submit(f"[INSTALL] Installed Roblox {client_label} Bundle!", 100)
                     return s
                 else:
@@ -4262,12 +4514,12 @@ class Handler:
             self.unsupportedFunction()
             if submit_status: submit_status.submit(f"{submit_status.error()}[INSTALL] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
             return {"success": False}
-    def installRobloxBundle(self, studio: bool=False, installPath: str="", appPath: str="", channel: str="LIVE", debug: bool=False, verify: bool=True, lock: bool=True):
+    def installRobloxBundle(self, studio: bool=False, installPath: str="", appPath: str="", channel: str="LIVE", debug: bool=False, verify: bool=True, lock: bool=True, download_token: str=None):
         if self.__main_os__ == "Darwin" or self.__main_os__ == "Windows":
             try:
                 client_label = "Studio" if studio == True else "Player"
                 if submit_status: submit_status.submit(f"[BUNDLE] Fetching Latest {client_label} Version..", 0)
-                cur_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=channel)
+                cur_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=channel, token=download_token)
                 if cur_vers and cur_vers.get("success") == True:
                     if self.getIfRobloxIsOpen(studio=studio):
                         if submit_status: submit_status.submit("[BUNDLE] Closing Roblox..", 5)
@@ -4598,7 +4850,7 @@ class Handler:
         else:
             self.unsupportedFunction()
             if submit_status: submit_status.submit(f"{submit_status.error()}[INSTALL] Roblox Fast Flags Installer is only supported for macOS and Windows.", 100)
-    def reinstallRoblox(self, studio: bool=False, debug: bool=False, clearUserData: bool=True, disableRobloxAutoOpen: bool=False, copyRobloxInstallerPath: str="", downloadInstaller: bool=False):
+    def reinstallRoblox(self, studio: bool=False, debug: bool=False, clearUserData: bool=True, disableRobloxAutoOpen: bool=False, copyRobloxInstallerPath: str="", downloadInstaller: bool=False, downloadToken: str=None):
         if self.__main_os__ == "Darwin" or self.__main_os__ == "Windows":
             client_label = "Studio" if studio == True else "Player"
             if self.getIfRobloxIsOpen(studio=studio):
@@ -4611,7 +4863,7 @@ class Handler:
             if submit_status: submit_status.submit(f"Uninstalling Roblox {client_label}", 0)
             self.uninstallRoblox(studio=studio, debug=debug, clearUserData=clearUserData)
             if submit_status: submit_status.submit(f"Installing Roblox {client_label}", 50)
-            s = self.installRoblox(studio=studio, debug=debug, disableRobloxAutoOpen=disableRobloxAutoOpen, copyRobloxInstallerPath=copyRobloxInstallerPath, downloadInstaller=downloadInstaller, downloadChannel=channel)
+            s = self.installRoblox(studio=studio, debug=debug, disableRobloxAutoOpen=disableRobloxAutoOpen, copyRobloxInstallerPath=copyRobloxInstallerPath, downloadInstaller=downloadInstaller, downloadChannel=channel, downloadToken=downloadToken)
             if submit_status: submit_status.submit(f"Successfully reinstalled Roblox {client_label}!", 100)
             return s
         else:
@@ -4739,8 +4991,8 @@ def main():
 
     # Important Information
     printWarnMessage("--- Important Information ---")
-    printMainMessage("May 2nd, 2025 - v2.0.3")
-    printMainMessage("As of some updates from Roblox, some FFlags may not work in the future. Other functions such as Roblox Opening and Activity Tracking is still available from this module.")
+    printMainMessage("October 5th, 2025 - v2.4.5")
+    printMainMessage("Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.\nIf you want to, you can still select them below just in case they're allowed back by Roblox.")
 
     # Setup Information
     printWarnMessage("--- Setup Information ---")

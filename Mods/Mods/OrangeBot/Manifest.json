@@ -1,0 +1,24 @@
+{
+    "name": "OrangeBot",
+    "version": "1.0.0",
+    "player_studio_support": true,
+    "list_in_normal_mods": false,
+    "mod_script": true,
+    "mod_script_requirements": [
+        "getCurrentPlaceInfo",
+        "getIfConnectedToGame",
+        "getConnectedUserInfo",
+        "getRobloxThumbnailURL",
+        "getCurrentRobloxPid",
+        "focusRobloxWindow",
+        "changeRobloxWindowSizeAndPosition",
+        "getInstalledRobloxVersion",
+        "allowAccessingPythonFiles",
+        "getRobloxAppSettings",
+        "grantFileEditing",
+        "endRoblox",
+        "createAppLock"
+    ],
+    "python_modules": ["pillow", "discord.py"],
+    "mod_script_supports": "2.3.2"
+}

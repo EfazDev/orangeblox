@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.1i"}
+    current_version = {"version": "2.4.0a"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -129,7 +129,6 @@ if __name__ == "__main__":
         "EFlagDisableLinkShortcutsAccess": "bool",
         "EFlagReturnToMainMenuInstant": "bool",
         "EFlagRemoveCodeSigningMacOS": "bool",
-        "EFlagDisableEfazRobloxBootstrapAPIReplication": "bool",
         "EFlagModScriptRequestTooFastMessage": "bool",
         "EFlagModScriptAPIRefreshTime": "float",
         "EFlagRobloxUnfriendCheckCooldown": "int",
@@ -154,6 +153,8 @@ if __name__ == "__main__":
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
+        "EFlagRobloxChannelUpdateToken": "str",
+        "EFlagRobloxSecurityCookieUsage": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
