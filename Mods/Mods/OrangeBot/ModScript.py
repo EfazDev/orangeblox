@@ -7,7 +7,6 @@
 # Load Bootstrap API
 import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 import traceback
-import tempfile
 import subprocess
 import threading
 import discord

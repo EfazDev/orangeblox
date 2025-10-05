@@ -41,7 +41,7 @@ def askForTask(func, *args, **kwargs):
     # Awaiting loop
     while True:
         try:
-            with open(path, "r") as f:
+            with open(path, "r", encoding="utf-8") as f:
                 if f.read().endswith("🙂"): break
         except FileNotFoundError: pass
         time.sleep(0.05)
