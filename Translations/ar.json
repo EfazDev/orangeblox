@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = مبتدئين",
  "[2] = Advanced (Skip)": "[2] = متقدم (تخطي)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "نظرًا لبعض التحديثات التي أجرتها Roblox ، لن تعمل الكثير من الأعلام المستخدمة أدناه لأن Roblox قرر القيام بقائمة بيضاء على الأعلام التي يمكنك استخدامها. (*)إذا كنت ترغب في ذلك ، فلا يزال بإمكانك تحديدها أدناه فقط في حالة السماح بها مرة أخرى بواسطة Roblox..",
- "October 5th, 2025 - v2.4.5": "5 أكتوبر ، 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 أكتوبر ، 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "فشل في bootstrap pip (فشل تنزيل get-pip.py)..",
+ "Installing PIP..": "تثبيت بيب..",
+ "Successfully installed PIP with embedded Python!": "تم تثبيت PIP بنجاح مع Python المضمن!",
+ "Successfully installed Python (*) into (Path: (*))!": "تم بنجاح تثبيت بايثون (*)في (المسار: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "غير قادر على تنزيل مثبت بايثون. محاولة التنزيل على حزمة تضمين بايثون..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "غير قادر على تثبيت PIP مع حزمة Python. رمز الإرجاع: (*)",
+ "Unzipping Python (*) package..": "فك ضغط حزمة بايثون (*)..",
+ "Adding to user path..": "إضافة إلى مسار المستخدم..",
+ "Downloading Python package..": "تحميل حزمة بايثون..",
+ "Failed to find latest Python Installer Manager version.": "فشل في العثور على أحدث إصدار من Python Installer Manager..",
+ "Registering file extensions..": "تسجيل امتدادات الملفات..",
+ "Setting up python modules..": "إعداد وحدات بايثون..",
+ "Successfully installed PIP with Python!": "تم تثبيت PIP بنجاح مع بايثون!",
+ "Successfully installed Python (*) into path: (*)": "تم بنجاح تثبيت Python (*)في المسار: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "المسار \"(*)\" كان موجودًا بالفعل في متغير بيئة path!"
 }

@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Người mới bắt đầu",
  "[2] = Advanced (Skip)": "[2] = Nâng cao (Bỏ qua)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Do một số cập nhật của Roblox, rất nhiều cờ được sử dụng dưới đây sẽ không còn hoạt động vì Roblox quyết định làm một danh sách trắng trên cờ bạn có thể sử dụng..",
- "October 5th, 2025 - v2.4.5": "Ngày 5 tháng 10 năm 2025 - V2.4.5"
+ "October 5th, 2025 - v2.4.5": "Ngày 5 tháng 10 năm 2025 - V2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Không thể khởi động pip (tải xuống get-pip.py không thành công)..",
+ "Installing PIP..": "Đang cài đặt PIP..",
+ "Successfully installed PIP with embedded Python!": "Đã cài đặt thành công PIP với Python được nhúng!",
+ "Successfully installed Python (*) into (Path: (*))!": "Đã cài đặt thành công Python (*)vào (Đường dẫn: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Không thể tải xuống trình cài đặt Python. Đang cố tải xuống gói nhúng Python..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Không thể cài đặt PIP bằng Gói Python. Mã trả lại: (*)",
+ "Unzipping Python (*) package..": "Giải nén gói Python (*)..",
+ "Adding to user path..": "Thêm vào đường dẫn người dùng..",
+ "Downloading Python package..": "Đang tải xuống gói Python..",
+ "Failed to find latest Python Installer Manager version.": "Không tìm thấy phiên bản Trình quản lý cài đặt Python mới nhất..",
+ "Registering file extensions..": "Đăng ký phần mở rộng tập tin..",
+ "Setting up python modules..": "Thiết lập mô-đun python..",
+ "Successfully installed PIP with Python!": "Đã cài đặt thành công PIP với Python!",
+ "Successfully installed Python (*) into path: (*)": "Đã cài đặt thành công Python (*)vào đường dẫn: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "Đường dẫn \"(*)\" đã có trên biến môi trường PATH!"
 }

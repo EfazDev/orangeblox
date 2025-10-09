@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Startere",
  "[2] = Advanced (Skip)": "[2] = Avanceret (spring)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "På grund af nogle opdateringer fra Roblox, fungerer mange af de flag, der bruges nedenfor, ikke længere, fordi Roblox besluttede at gøre en hvidliste på de flag, du kan bruge. (*)Hvis du vil, kan du stadig vælge dem nedenfor, hvis de er tilladt tilbage af Roblox..",
- "October 5th, 2025 - v2.4.5": "5. oktober 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5. oktober 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Kunne ikke bootstrap pip (download get-pip.py mislykkedes)..",
+ "Installing PIP..": "Installation af pip..",
+ "Successfully installed PIP with embedded Python!": "Med succes installeret PIP med indlejret Python!",
+ "Successfully installed Python (*) into (Path: (*))!": "Med succes installeret Python (*)i (sti: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Kan ikke downloade Python -installationsprogram. Forsøg på download på Python Embed -pakke..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Kan ikke installere PIP med Python -pakken. Returkode: (*)",
+ "Unzipping Python (*) package..": "Unzipping Python (*)-pakke..",
+ "Adding to user path..": "Tilføjelse til brugerstien..",
+ "Downloading Python package..": "Download af Python -pakken..",
+ "Failed to find latest Python Installer Manager version.": "Kunne ikke finde den nyeste Python Installations manager -version..",
+ "Registering file extensions..": "Registrering af filudvidelser..",
+ "Setting up python modules..": "Opsætning af Python -Moduler..",
+ "Successfully installed PIP with Python!": "Med succes installeret PIP med Python!",
+ "Successfully installed Python (*) into path: (*)": "Med succes installeret Python (*)i stien: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "Stien \"(*)\" var allerede på sti -miljøvariablen!"
 }

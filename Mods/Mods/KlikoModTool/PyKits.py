@@ -1294,7 +1294,7 @@ class pip:
             return len([pid for pid in process_ids if pid.isdigit()])
     def getIfConnectedToInternet(self): return self.requests.get_if_connected()
     def getProcessWindows(self, pid: int):
-        if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
+        if (type(pid) is str and pid.isdigit()) or type(pid) is int:
             if self._main_os == "Windows":
                 system_windows = []
                 def callback(hwnd, _):

@@ -67,7 +67,7 @@ if installed["success"] == True:
                         mod_name = OrangeAPI.requestInput("Alright then! Enter the name of the configuration below to get started!", "> ")
                         def getAngle():
                             angl = OrangeAPI.requestInput("Now, enter the angle number of the gradient image!", "> ")
-                            if angl.isnumeric() and int(angl) >= 0:
+                            if angl.isdigit() and int(angl) >= 0:
                                 printDebugMessage(f"Angle Number: {int(angl)}*")
                                 return int(angl)
                             else:

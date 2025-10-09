@@ -2240,5 +2240,20 @@
  "[1] = Starters": "[1] = 우선",
  "[2] = Advanced (Skip)": "[2] = 고급 (건너 뛰기)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Roblox의 일부 업데이트로 인해 Roblox가 사용할 수있는 플래그에서 화이트리스트를 작성하기로 결정했기 때문에 아래에 사용되는 많은 플래그가 더 이상 작동하지 않습니다. (*)원하는 경우 Roblox가 다시 허용되는 경우를 대비하여 아래에서 선택할 수 있습니다..",
- "October 5th, 2025 - v2.4.5": "2025 년 10 월 5 일 -v2.4.5"
+ "October 5th, 2025 - v2.4.5": "2025 년 10 월 5 일 -v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Pip 부트스트랩에 실패했습니다(get-pip.py 다운로드 실패)..",
+ "Installing PIP..": "Pip 설치 중..",
+ "Successfully installed PIP with embedded Python!": "Python이 내장된 PIP를 성공적으로 설치했습니다!",
+ "Successfully installed Python (*) into (Path: (*))!": "Python(*)을 (경로: (*))에 성공적으로 설치했습니다!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Python 설치 프로그램을 다운로드할 수 없습니다. Python 포함 패키지에서 다운로드를 시도하는 중입니다..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Python 패키지로 PIP를 설치할 수 없습니다. 반환 코드: (*)",
+ "Unzipping Python (*) package..": "Python(*)패키지 압축을 푸는 중입니다..",
+ "Adding to user path..": "사용자 경로에 추가 중..",
+ "Downloading Python package..": "Python 패키지를 다운로드하는 중입니다..",
+ "Failed to find latest Python Installer Manager version.": "최신 Python 설치 프로그램 관리자 버전을 찾지 못했습니다..",
+ "Registering file extensions..": "파일 확장자를 등록하는 중입니다..",
+ "Setting up python modules..": "파이썬 모듈 설정..",
+ "Successfully installed PIP with Python!": "Python으로 PIP를 성공적으로 설치했습니다!",
+ "Successfully installed Python (*) into path: (*)": "Python(*)을 다음 경로에 성공적으로 설치했습니다: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" 경로는 이미 path 환경 변수에 있습니다!"
 }

@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Початки",
  "[2] = Advanced (Skip)": "[2] = Advanced (пропустити)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Через деякі оновлення Roblox, багато прапорів, які використовуються нижче, більше не спрацюють, оскільки Roblox вирішив зробити білого на прапорах, якими ви можете використовувати..",
- "October 5th, 2025 - v2.4.5": "5 жовтня 2025 р. - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 жовтня 2025 р. - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Не вдалося завантажити PIP (завантажити get-pip.py не вдалося)..",
+ "Installing PIP..": "Встановлення ПІП..",
+ "Successfully installed PIP with embedded Python!": "Успішно встановлено PIP з вбудованим Python!",
+ "Successfully installed Python (*) into (Path: (*))!": "Успішно встановлений Python (*)в (шлях: (*)!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Неможливо завантажити інсталятор Python. Спроба завантажити на пакет Python Embed..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Неможливо встановити PIP з пакетом Python. Код повернення: (*)",
+ "Unzipping Python (*) package..": "Розпакування Python (*)Пакет..",
+ "Adding to user path..": "Додавання до шляху користувача..",
+ "Downloading Python package..": "Завантаження пакету Python..",
+ "Failed to find latest Python Installer Manager version.": "Не вдалося знайти останню версію Python Installer Manager..",
+ "Registering file extensions..": "Реєстрація розширень файлу..",
+ "Setting up python modules..": "Налаштування модулів Python..",
+ "Successfully installed PIP with Python!": "Успішно встановлено PIP з Python!",
+ "Successfully installed Python (*) into path: (*)": "Успішно встановлений Python (*)на шлях: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "Шлях \"(*)\" вже був на змінній середовищі шляху!"
 }

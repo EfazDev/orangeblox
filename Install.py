@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0a
+# v2.4.0b
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.0a"}
+    current_version = {"version": "2.4.0b"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1577,7 +1577,7 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
                 a = input("> ")
                 if isYes(a) == True:
-                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
+                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
                     if latest_vers_res.ok:
                         latest_vers = latest_vers_res.json
                         if current_version.get("version"):

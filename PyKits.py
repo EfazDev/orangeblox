@@ -1,5 +1,5 @@
 """
-PyKits v1.6.0 | Made by Efaz from efaz.dev
+PyKits v1.6.1 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -650,29 +650,6 @@ class pip:
             else: self.executable = self.findPython(arch=arch, path=True) if find == True else sys.executable
         elif type(arch) is str: self.executable = self.findPython(arch=arch, path=True)
         else: self.executable = self.findPython(arch=arch, path=True) if find == True else sys.executable
-        if self._main_os == "Windows":
-            try:
-                try:
-                    import win32gui # type: ignore
-                    import win32process # type: ignore
-                    self._win32gui = win32gui
-                    self._win32process = win32process
-                except Exception:
-                    self.install(["pywin32"])
-                    self._win32gui = self.importModule("win32gui")
-                    self._win32process = self.importModule("win32process")
-            except: pass
-        elif self._main_os == "Darwin":
-            try:
-                try:
-                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly # type: ignore
-                except Exception as e:
-                    self.install(["pyobjc-framework-Quartz"])
-                    Quartz = self.importModule("Quartz")
-                    CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly = Quartz.CGWindowListCopyWindowInfo, Quartz.kCGWindowListOptionOnScreenOnly
-                self._CGWindowListCopyWindowInfo = CGWindowListCopyWindowInfo
-                self._kCGWindowListOptionOnScreenOnly = kCGWindowListOptionOnScreenOnly
-            except: pass
         self.debug = debug==True
         self.requests = request()
         if type(command) is list and len(command) > 0: self.ensure(); subprocess.check_call([self.executable, "-m", "pip"] + command)
@@ -873,6 +850,20 @@ class pip:
         else:
             self.printDebugMessage("Failed to find latest Python version.")
             return None
+    def getLatestPythonInstallManagerVersion(self, beta: bool=False):
+        url = "https://www.python.org/downloads/windows/"
+        response = self.requests.get(url)
+        if response.ok: html = response.text
+        else: html = ""
+        if beta == True: match = self._re.search(r"Python install manager (\d+\.\d+) beta (\d+)", html)
+        else: match = self._re.search(r"Python install manager (\d+\.\d+)", html)
+        if match:
+            if beta == True: version = f'{match.group(1)}b{match.group(2)}'
+            else: version = match.group(1)
+            return version
+        else:
+            self.printDebugMessage("Failed to find latest Python Installer Manager version.")
+            return None
     def getCurrentPythonVersion(self):
         if not self.executable: return None
         if self.isSameRunningPythonExecutable(): return self._platform.python_version()
@@ -936,7 +927,7 @@ class pip:
             while len(macos_version) < 3: min_version += (0,)
             return version_tuple >= macos_version
         else: return False
-    def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False):
+    def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False, manual: bool=False, arch: str=None):
         ma_os = self._main_os
         ma_arch = self._platform.architecture()
         ma_processor = self._platform.machine()
@@ -973,22 +964,96 @@ class pip:
                 self.printDebugMessage("Failed to download Python installer.")
         elif ma_os == "Windows":
             if version < "3.11.0": self.printDebugMessage("PyKits is not normally made for versions less than 3.11.0.")
-            if ma_arch[0] == "64bit":
-                if ma_processor.lower() == "arm64": url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-arm64.exe"
-                else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-amd64.exe"
-            else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}.exe"
-            with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
-            result = self.requests.download(url, exe_file_path)
-            if result.ok:
-                if silent == True:
-                    self.printDebugMessage(f"Silently installing Python packages..")
-                    self._subprocess.run([exe_file_path, "/quiet"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                    self.printDebugMessage(f"Successfully installed Python package: {exe_file_path}")
-                else:
-                    self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
-                    self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
+            if arch == "arm64":
+                ma_processor = "arm64"
+                ma_arch = ["64bit"]
+            elif arch == "x64":
+                ma_processor = "amd64"
+                ma_arch = ["64bit"]
+            elif arch == "x86":
+                ma_arch = ["32bit"]
+            if (manual == True and self.pythonSupportedStatic(version, 3, 5, 0)) or self.pythonSupportedStatic(version, 3, 15, 0):
+                self.printDebugMessage("Setting up python modules..")
+                if self._main_os == "Windows" and (not hasattr(self, "_win32api") or not hasattr(self, "_win32con")):
+                    try:
+                        try:
+                            import win32api # type: ignore
+                            import win32con # type: ignore
+                            self._win32con = win32con
+                            self._win32api = win32api
+                        except Exception:
+                            self.install(["pywin32"])
+                            self.win32con = self.importModule("win32con")
+                            self._win32api = self.importModule("win32api")
+                    except: pass
+                self.printDebugMessage("Downloading Python package..")
+                arch_fold_end = ""
+                if ma_arch[0] == "64bit":
+                    if ma_processor.lower() == "arm64": url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-arm64.zip"; arch_fold_end = "-arm64"
+                    else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-amd64.zip"
+                else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-win32.zip"; arch_fold_end = "-32"
+                with self._tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as temp_file: zip_file_path = temp_file.name
+                result = self.requests.download(url, zip_file_path)
+                if result.ok:
+                    stripped_version = "".join(self.getMajorMinorVersion(version_url_folder).split("."))
+                    self.printDebugMessage(f"Unzipping Python {version_url_folder} package..")
+                    user_appdata_folder = self.getLocalAppData()
+                    target_python_path = self._os.path.join(user_appdata_folder, "Programs", "Python", f"Python{stripped_version}{arch_fold_end}")
+                    unzip_res = self.unzipFile(zip_file_path, target_python_path, ["python.exe"])
+                    if unzip_res.returncode == 0:
+                        self.printDebugMessage(f"Installing PIP..")
+                        pip_script_path = self._os.path.join(target_python_path, "get-pip.py")
+                        if self.requests.download("https://bootstrap.pypa.io/get-pip.py", pip_script_path).ok:
+                            python_exe = self._os.path.join(target_python_path, "python.exe")
+                            install_pip_res = self._subprocess.run([python_exe, pip_script_path], cwd=target_python_path)
+                            if install_pip_res.returncode == 0:
+                                self.printDebugMessage("Successfully installed PIP with Python!")
+                            else:
+                                self.printDebugMessage(f"Unable to install PIP with Python Package. Return Code: {install_pip_res.returncode}")
+                            self._os.remove(pip_script_path)
+                            if (not self._shutil.which("python")) or self.getArchitecture() == pip(executable=python_exe).getArchitecture():
+                                self.printDebugMessage("Adding to user path..")
+                                self.addToUserPath(target_python_path)
+                                self.addToUserPath(self._os.path.join(target_python_path, "Scripts"))
+                                self.printDebugMessage("Registering file extensions..")
+                                extensions = [(".py", "Python.File"), (".pyw", "Python.NoConFile")]
+                                for ext, prog_id in extensions:
+                                    ext_key = self._win32api.RegCreateKey(self._win32con.HKEY_CURRENT_USER, f"Software\\Classes\\{ext}")
+                                    self._win32api.RegSetValueEx(ext_key, "", 0, self._win32con.REG_SZ, prog_id)
+                                    self._win32api.RegCloseKey(ext_key)
+                                    cmd_key = win32api.RegCreateKey(self._win32con.HKEY_CURRENT_USER, f"Software\\Classes\\{prog_id}\\shell\\open\\command")
+                                    self._win32api.RegSetValueEx(cmd_key, "", 0, self._win32con.REG_SZ, f'"{python_exe}" "%1" %*')
+                                    self._win32api.RegCloseKey(cmd_key)
+                                self._win32gui.SendMessageTimeout(
+                                    self._win32con.HWND_BROADCAST,
+                                    self._win32con.WM_SETTINGCHANGE,
+                                    0,
+                                    "Environment",
+                                    self._win32con.SMTO_ABORTIFHUNG,
+                                    5000
+                                )
+                            self.printDebugMessage(f"Successfully installed Python {version} into path: {target_python_path}")
+                        else: self.printDebugMessage("Failed to bootstrap pip (download get-pip.py failed).")
+                    else: self.printDebugMessage("Failed to download Python installer.")
+                else: self.printDebugMessage("Failed to download Python installer.")
             else:
-                self.printDebugMessage("Failed to download Python installer.")
+                if ma_arch[0] == "64bit":
+                    if ma_processor.lower() == "arm64": url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-arm64.exe"
+                    else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-amd64.exe"
+                else: url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}.exe"
+                with self._tempfile.NamedTemporaryFile(suffix=".exe", delete=False) as temp_file: exe_file_path = temp_file.name
+                result = self.requests.download(url, exe_file_path)
+                if result.ok:
+                    if silent == True:
+                        self.printDebugMessage(f"Silently installing Python packages..")
+                        self._subprocess.run([exe_file_path, "/quiet"], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                        self.printDebugMessage(f"Successfully installed Python package: {exe_file_path}")
+                    else:
+                        self._subprocess.run([exe_file_path], stdout=self.debug == False and self._subprocess.DEVNULL, stderr=self.debug == False and self._subprocess.DEVNULL, check=True)
+                        self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
+                else: self.printDebugMessage("Failed to download Python installer.")
+    def findPythonInstallManager(self):
+        return self._shutil.which("python-install") or self._shutil.which("python-install-manager")
     def installLocalPythonCertificates(self):
         if self._main_os == "Darwin":
             with open("./install_local_python_certs.py", "w") as f: f.write("""import os; import os.path; import ssl; import stat; import subprocess; import sys; STAT_0o775 = ( stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_IROTH |  stat.S_IXOTH ); openssl_dir, openssl_cafile = os.path.split(ssl.get_default_verify_paths().openssl_cafile); print(" -- pip install --upgrade certifi"); subprocess.check_call([sys.executable, "-E", "-s", "-m", "pip", "install", "--upgrade", "certifi"]); import certifi; os.chdir(openssl_dir); relpath_to_certifi_cafile = os.path.relpath(certifi.where()); print(" -- removing any existing file or link"); os.remove(openssl_cafile); print(" -- creating symlink to certifi certificate bundle"); os.symlink(relpath_to_certifi_cafile, openssl_cafile); print(" -- setting permissions"); os.chmod(openssl_cafile, STAT_0o775); print(" -- update complete");""")
@@ -1132,6 +1197,7 @@ class pip:
         if not self.executable: return False
         if self._os.path.exists(self.executable) and self._os.path.exists(self._sys.executable): return self._os.path.samefile(self.executable, self._sys.executable)
         else: return False
+    def getMajorMinorVersion(self, version: str="3.14.0"): return ".".join(version.split(".")[:-1])
 
     # Python Functions
     def getLocalAppData(self):
@@ -1294,7 +1360,30 @@ class pip:
             return len([pid for pid in process_ids if pid.isdigit()])
     def getIfConnectedToInternet(self): return self.requests.get_if_connected()
     def getProcessWindows(self, pid: int):
-        if (type(pid) is str and pid.isnumeric()) or type(pid) is int:
+        if self._main_os == "Windows" and (not hasattr(self, "_win32gui") or not hasattr(self, "_win32process")):
+            try:
+                try:
+                    import win32gui # type: ignore
+                    import win32process # type: ignore
+                    self._win32gui = win32gui
+                    self._win32process = win32process
+                except Exception:
+                    self.install(["pywin32"])
+                    self._win32gui = self.importModule("win32gui")
+                    self._win32process = self.importModule("win32process")
+            except: pass
+        elif self._main_os == "Darwin" and (not hasattr(self, "_CGWindowListCopyWindowInfo") or not hasattr(self, "_kCGWindowListOptionOnScreenOnly")):
+            try:
+                try:
+                    from Quartz import CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly # type: ignore
+                except Exception as e:
+                    self.install(["pyobjc-framework-Quartz"])
+                    Quartz = self.importModule("Quartz")
+                    CGWindowListCopyWindowInfo, kCGWindowListOptionOnScreenOnly = Quartz.CGWindowListCopyWindowInfo, Quartz.kCGWindowListOptionOnScreenOnly
+                self._CGWindowListCopyWindowInfo = CGWindowListCopyWindowInfo
+                self._kCGWindowListOptionOnScreenOnly = kCGWindowListOptionOnScreenOnly
+            except: pass
+        if (type(pid) is str and pid.isdigit()) or type(pid) is int:
             if self._main_os == "Windows":
                 system_windows = []
                 def callback(hwnd, _):
@@ -1312,6 +1401,62 @@ class pip:
                 return new_set_of_system_windows
             else: return []
         else: return []
+    def addToUserPath(self, path_to_add: str):
+        if self._main_os == "Windows":
+            if not hasattr(self, "_win32api") or not hasattr(self, "_win32con") or not hasattr(self, "_win32gui"):
+                try:
+                    try:
+                        import win32api # type: ignore
+                        import win32con # type: ignore
+                        import win32gui # type: ignore
+                        self._win32con = win32con
+                        self._win32api = win32api
+                        self._win32gui = win32gui
+                    except Exception:
+                        self.install(["pywin32"])
+                        self._win32con = self.importModule("win32con")
+                        self._win32api = self.importModule("win32api")
+                        self._win32gui = self.importModule("win32gui")
+                except: pass
+            path_to_add = self._os.path.expandvars(path_to_add)
+            current_path = self._win32api.GetEnvironmentVariable("PATH")
+            paths = current_path.split(";") if current_path else []
+            if path_to_add in paths:
+                self.printDebugMessage(f"The path \"{path_to_add}\" was already on the PATH environment variable!")
+                return
+            paths.append(path_to_add)
+            self._win32api.RegSetValueEx(
+                self._win32api.RegOpenKeyEx(self._win32con.HKEY_CURRENT_USER, "Environment", 0, self._win32con.KEY_SET_VALUE),
+                "PATH",
+                0,
+                self._win32con.REG_EXPAND_SZ,
+                ";".join(paths)
+            )
+            self._win32gui.SendMessageTimeout(
+                self._win32con.HWND_BROADCAST,
+                self._win32con.WM_SETTINGCHANGE,
+                0,
+                "Environment",
+                self._win32con.SMTO_ABORTIFHUNG,
+                5000
+            )
+        elif self._main_os == "Darwin":
+            new_path = self._os.path.expandvars(self._os.path.expanduser(new_path))
+            shell = self._os.path.basename(self._os.environ.get("SHELL", "zsh"))
+            rc_file = self._os.path.expanduser(f"~/.{shell}rc")
+            export_line = f'export PATH="{new_path}:$PATH"'
+            if self._os.path.exists(rc_file):
+                with open(rc_file, "r") as f:
+                    if export_line in f.read():
+                        self.printDebugMessage(f"The path \"{rc_file}\" was already on the PATH environment variable!")
+                        pass
+                    else:
+                        with open(rc_file, "a") as f_append: f_append.write("\n" + export_line + "\n")
+            else:
+                with open(rc_file, "w") as f: f.write(export_line + "\n")
+            current_path = self._os.environ.get("PATH", "")
+            paths = current_path.split(":")
+            if new_path not in paths: self._os.environ["PATH"] = f"{new_path}:{current_path}"
     def printDebugMessage(self, message: str):
         if self.debug == True: print(f"\033[38;5;226m[PyKits] [DEBUG]: {message}\033[0m")
 class plist:

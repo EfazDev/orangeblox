@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = শুরু",
  "[2] = Advanced (Skip)": "[2] = উন্নত (এড়িয়ে যান)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "রোব্লক্সের কিছু আপডেটের কারণে, নীচে ব্যবহৃত প্রচুর পতাকাগুলি আর কাজ করবে না কারণ রোব্লক্স আপনি ব্যবহার করতে পারেন এমন পতাকাগুলিতে একটি হোয়াইটলিস্ট করার সিদ্ধান্ত নিয়েছেন ((*)আপনি যদি চান তবে আপনি যদি রোব্লক্সের দ্বারা ফিরে অনুমতি দেয় তবে কেবল নীচে সেগুলি নির্বাচন করতে পারেন।",
- "October 5th, 2025 - v2.4.5": "অক্টোবর 5, 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "অক্টোবর 5, 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "বুটস্ট্র্যাপ পাইপ করতে ব্যর্থ হয়েছে (get-pip.py ডাউনলোড করুন ব্যর্থ)।",
+ "Installing PIP..": "পিপ ইনস্টল করা..",
+ "Successfully installed PIP with embedded Python!": "এম্বেডড পাইথন সহ সফলভাবে পিআইপি ইনস্টল করা!",
+ "Successfully installed Python (*) into (Path: (*))!": "সাফল্যের সাথে পাইথন (*)ইনস্টল করা (পাথ: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "পাইথন ইনস্টলার ডাউনলোড করতে অক্ষম। পাইথন এম্বেড প্যাকেজে ডাউনলোডের চেষ্টা করা..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "পাইথন প্যাকেজ সহ পিআইপি ইনস্টল করতে অক্ষম। রিটার্ন কোড: (*)",
+ "Unzipping Python (*) package..": "অপরিশোধিত পাইথন (*)প্যাকেজ..",
+ "Adding to user path..": "ব্যবহারকারীর পথে যুক্ত করা..",
+ "Downloading Python package..": "পাইথন প্যাকেজ ডাউনলোড করা..",
+ "Failed to find latest Python Installer Manager version.": "সর্বশেষ পাইথন ইনস্টলার ম্যানেজার সংস্করণটি খুঁজে পেতে ব্যর্থ।",
+ "Registering file extensions..": "ফাইল এক্সটেনশন নিবন্ধকরণ..",
+ "Setting up python modules..": "পাইথন মডিউল স্থাপন করা..",
+ "Successfully installed PIP with Python!": "পাইথন সহ সফলভাবে পিআইপি ইনস্টল করা!",
+ "Successfully installed Python (*) into path: (*)": "সাফল্যের সাথে পাইথন (*)পথে ইনস্টল করা হয়েছে: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" পথটি ইতিমধ্যে পথ পরিবেশের পরিবর্তনশীল ছিল!"
 }

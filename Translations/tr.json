@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Yeni başlayanlar",
  "[2] = Advanced (Skip)": "[2] = Gelişmiş (atlama)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Roblox'un bazı güncellemeleri nedeniyle, aşağıda kullanılan bayrakların çoğu artık çalışmayacak çünkü Roblox kullanabileceğiniz bayraklarda bir beyaz liste yapmaya karar verdi. (*)İsterseniz, Roblox tarafından geri verildikleri takdirde bunları aşağıda seçebilirsiniz..",
- "October 5th, 2025 - v2.4.5": "5 Ekim 2025 - V2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 Ekim 2025 - V2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Pip'in önyüklemesi başarısız oldu (get-pip.py'nin indirilmesi başarısız oldu)..",
+ "Installing PIP..": "PIP'in kurulumu..",
+ "Successfully installed PIP with embedded Python!": "Gömülü Python ile PIP başarıyla kuruldu!",
+ "Successfully installed Python (*) into (Path: (*))!": "Python (*)(Yol: (*))'a başarıyla yüklendi!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Python yükleyicisi indirilemiyor. Python yerleştirme paketini indirmeye çalışılıyor..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Python Paketi ile PIP yüklenemiyor. Dönüş Kodu: (*)",
+ "Unzipping Python (*) package..": "Python (*)paketinin sıkıştırması açılıyor..",
+ "Adding to user path..": "Kullanıcı yoluna ekleniyor..",
+ "Downloading Python package..": "Python paketi indiriliyor..",
+ "Failed to find latest Python Installer Manager version.": "En son Python Installer Manager sürümü bulunamadı..",
+ "Registering file extensions..": "Dosya uzantıları kaydediliyor..",
+ "Setting up python modules..": "Python Modüllerini ayarlama..",
+ "Successfully installed PIP with Python!": "Python ile PIP başarıyla kuruldu!",
+ "Successfully installed Python (*) into path: (*)": "Python (*)şu yola başarıyla yüklendi: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" yolu zaten PATH ortam değişkenindeydi!"
 }

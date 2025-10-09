@@ -18,6 +18,7 @@
         "studio-studiocontent.textures.StartPage.RobloxStudioLockup.png": "{main}/Banner2.png",
         "studio-studiocontent.textures.StartPage.RobloxStudioLockup@2x.png": "{main}/Banner2.png",
         "_all_optional": true,
+        "_voice_chat": true,
         "_loading": true,
         "_leaderboard": false
     }

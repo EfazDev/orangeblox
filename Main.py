@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0a
+# v2.4.0b
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0a"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0b"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -223,7 +223,7 @@ if __name__ == "__main__":
         "reg": updating_mods["RobloxBrand"],
         "studio": updating_mods["RobloxStudioBrand"]
     }
-    main_host = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
+    main_host = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
 
     # Printing Functions
     def ts(mes: str):
@@ -565,6 +565,9 @@ if __name__ == "__main__":
     def generateCodesignCommand(pa, iden, entitlements: str=None): return [["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", pa], ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", pa], ["/usr/bin/xattr", "-cr", pa], ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"] + (["--entitlements", entitlements] if entitlements else []) + ["-s", iden, pa]]
     def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
     def validateInstallation(): return (main_os == "Darwin" and os.path.exists(os.path.join(macos_app_path, "Contents", "MacOS", "OrangeLoader"))) or (main_os == "Windows" and os.path.exists(os.path.join(cur_path, "OrangeBlox.exe")))
+    def safeConvertNumber(testing: str, type: typing.Type=int):
+        try: return type(testing)
+        except: return None
     def createDownloadToken(studio: bool=None):
         if studio == None: studio = run_studio
         if main_config.get("EFlagRobloxSecurityCookieUsage") == True:
@@ -977,7 +980,10 @@ if __name__ == "__main__":
                                     if not (e == f"Configuration_{user_folder_name}" or e == "__pycache__"): 
                                         if os.path.isdir(os.path.join(installed_mod_path, e)): shutil.rmtree(os.path.join(installed_mod_path, e), ignore_errors=True)
                                         else: os.remove(os.path.join(installed_mod_path, e))
-                            pip_class.copyTreeWithMetadata(syncing_mod_path, installed_mod_path, dirs_exist_ok=True)
+                            def ignore_files_func(dir, files): 
+                                config_files = [fi for fi in os.listdir(dir) if fi.startswith("Configuration_")]
+                                return set(["__pycache__"] + config_files)
+                            pip_class.copyTreeWithMetadata(syncing_mod_path, installed_mod_path, dirs_exist_ok=True, ignore=ignore_files_func)
                     printDebugMessage(f"Successfully synced mod type: {sync_folder_name}")
                 else: printDebugMessage(f"There was an issue trying to copy files for mod type: {sync_folder_name}")
             printSuccessMessage("Successfully synced all mods from installation folder!")
@@ -1806,7 +1812,7 @@ if __name__ == "__main__":
                         printMainMessage("Please enter your Roblox User ID to detect for unfriends!")
                         printMainMessage("If you don't want to enter a specific User ID, enter nothing to detect the current logged in user.")
                         re_in = input("> ")
-                        if re_in.isnumeric():
+                        if safeConvertNumber(re_in):
                             return re_in
                         elif re_in == "":
                             glob_settings = handler.getRobloxAppSettings()
@@ -1999,8 +2005,8 @@ if __name__ == "__main__":
                         printMainMessage("Enter your Discord User ID to ping you when a new notification is made (you will need Discord Developer Mode enabled in order to copy):")
                         printMainMessage(f'Current Setting: {(main_config.get("EFlagDiscordWebhookUserId"))}')
                         d = input("> ")
-                        if d.isnumeric(): main_config["EFlagDiscordWebhookUserId"] = d
-                        if main_config.get("EFlagDiscordWebhookUserId", "").isnumeric():
+                        if safeConvertNumber(d): main_config["EFlagDiscordWebhookUserId"] = d
+                        if safeConvertNumber(main_config.get("EFlagDiscordWebhookUserId", "")):
                             max_setti = 6
                             co = 1
                             if main_config.get("EFlagRobloxStudioEnabled") == True: max_setti += 2
@@ -2608,9 +2614,12 @@ if __name__ == "__main__":
                     printMainMessage("Python Installer should launch after a moment. Follow the prompts to install!")
                     pip_class.pythonInstall(latest_python_version, is_python_beta)
                 printMainMessage("Validating Python Installation..")
-                latest_pip_class = PyKits.pip()
-                latest_pip_class.ignore_same = True
-                current_latest_python = latest_pip_class.getCurrentPythonVersion()
+                if pip_class.getMajorMinorVersion(current_python_version) < pip_class.getMajorMinorVersion(latest_python_version):
+                    current_latest_python = latest_python_version
+                else:
+                    latest_pip_class = PyKits.pip()
+                    latest_pip_class.ignore_same = True
+                    current_latest_python = latest_pip_class.getCurrentPythonVersion()
                 if current_latest_python == latest_python_version:
                     printSuccessMessage(f"Python {latest_python_version} has been successfully installed! Would you like to restart Python? (y/n)")
                     co = input("> ")
@@ -3228,7 +3237,7 @@ if __name__ == "__main__":
                                     printYellowMessage("[Some avatar maps may not able to run on macOS due to missing objects that are expected in macOS than Windows.]")
                                     printYellowMessage("[Also, if you just added a new map folder into the AvatarEditorMaps folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
-                                if a.isnumeric():
+                                if safeConvertNumber(a):
                                     c = int(a)-1
                                     if c < len(got_backgrounds) and c >= 0:
                                         if got_backgrounds[c]:
@@ -3272,7 +3281,7 @@ if __name__ == "__main__":
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new cursor folder into the Cursors folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
-                                if a.isnumeric():
+                                if safeConvertNumber(a):
                                     c = int(a)-1
                                     if c < len(got_cursors) and c >= 0:
                                         if got_cursors[c]:
@@ -3316,7 +3325,7 @@ if __name__ == "__main__":
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new icon folder into the RobloxBrand folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
-                                if a.isnumeric():
+                                if safeConvertNumber(a):
                                     c = int(a)-1
                                     if c < len(got_icons) and c >= 0:
                                         if got_icons[c]:
@@ -3362,7 +3371,7 @@ if __name__ == "__main__":
                                         count += 1
                                     if main_os == "Darwin": printYellowMessage("[Also, if you just added a new icon folder into the RobloxStudioBrand folder, please rerun Install.py in order for it to seen.]")
                                     a = input("> ")
-                                    if a.isnumeric():
+                                    if safeConvertNumber(a):
                                         c = int(a)-1
                                         if c < len(got_icons) and c >= 0:
                                             if got_icons[c]:
@@ -3427,7 +3436,7 @@ if __name__ == "__main__":
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new sound pack into the PlayerSounds folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
-                                if a.isnumeric():
+                                if safeConvertNumber(a):
                                     c = int(a)-1
                                     if c < len(got_sounds) and c >= 0:
                                         if got_sounds[c]:
@@ -3468,7 +3477,10 @@ if __name__ == "__main__":
                                                 if not (e == f"Configuration_{user_folder_name}" or e == "__pycache__"): 
                                                     if os.path.isdir(os.path.join(installed_mod_path, e)): shutil.rmtree(os.path.join(installed_mod_path, e), ignore_errors=True)
                                                     else: os.remove(os.path.join(installed_mod_path, e))
-                                        pip_class.copyTreeWithMetadata(syncing_mod_path, installed_mod_path, dirs_exist_ok=True)
+                                        def ignore_files_func(dir, files): 
+                                            config_files = [fi for fi in os.listdir(dir) if fi.startswith("Configuration_")]
+                                            return set(["__pycache__"] + config_files)
+                                        pip_class.copyTreeWithMetadata(syncing_mod_path, installed_mod_path, dirs_exist_ok=True, ignore=ignore_files_func)
                                 printDebugMessage(f"Successfully synced mod type: {sync_folder_name}")
                             else: printDebugMessage(f"There was an issue trying to copy files for mod type: {sync_folder_name}")
                         printSuccessMessage("Successfully synced all mods from installation folder!")
@@ -5589,8 +5601,8 @@ if __name__ == "__main__":
                                                                                         if name == "Configuration": return
                                                                                         script_lock_key = generateFileKey(name, dire=os.path.join(mods_folder, "Mods", scri))
                                                                                         if os.path.exists(script_lock_key):
-                                                                                            with open(script_lock_key, "r") as f: pid_str = f.read()
-                                                                                            if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                                                                                            with open(script_lock_key, "r", encoding="utf-8") as f: pid_str = f.read()
+                                                                                            if safeConvertNumber(pid_str) and pip_class.getIfProcessIsOpened(pid=pid_str):
                                                                                                 return False
                                                                                             else:
                                                                                                 with open(script_lock_key, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
@@ -5818,7 +5830,7 @@ if __name__ == "__main__":
             alleged_path = generateFileKey("UnfriendCheckLoopLock")
             if os.path.exists(alleged_path):
                 with open(alleged_path, "r") as f: pid_str = f.read()
-                if pid_str.isnumeric() and pip_class.getIfProcessIsOpened(pid=pid_str):
+                if safeConvertNumber(pid_str) and pip_class.getIfProcessIsOpened(pid=pid_str):
                     while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
                     return unfriendCheckLoop()
                 else:
@@ -5977,7 +5989,7 @@ if __name__ == "__main__":
                     if sss.get("name") and sss.get("id"): connected_user_info = {"name": sss.get("name"), "id": sss.get("id"), "display": sss.get("displayName")}
                 if current_place_info:
                     if generated_location: current_place_info["server_location"] = generated_location
-                    if current_place_info.get('place_identifier') and current_place_info.get('place_identifier').isnumeric():
+                    if current_place_info.get('place_identifier') and safeConvertNumber(current_place_info.get('place_identifier')):
                         current_place_info["placeId"] = int(current_place_info.get('place_identifier'))
                         if main_config.get("EFlagUseEfazDevAPI") == True: 
                             generated_universe_id_res = requests.get(f"https://api.efaz.dev/api/roblox/universeId/{current_place_info.get('place_identifier')}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)

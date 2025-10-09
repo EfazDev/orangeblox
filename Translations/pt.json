@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Iniciantes",
  "[2] = Advanced (Skip)": "[2] = Avançado (Skip)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Devido a algumas atualizações do Roblox, muitas das bandeiras usadas abaixo não funcionarão mais porque o Roblox decidiu fazer uma lista de permissões nas bandeiras que você pode usar. (*)Se desejar, você ainda pode selecioná -las abaixo, caso elas sejam permitidas pelo Roblox..",
- "October 5th, 2025 - v2.4.5": "5 de outubro de 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 de outubro de 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Falha ao inicializar o pip (falha no download de get-pip.py)..",
+ "Installing PIP..": "Instalando PIP..",
+ "Successfully installed PIP with embedded Python!": "PIP instalado com sucesso com Python incorporado!",
+ "Successfully installed Python (*) into (Path: (*))!": "Python (*)instalado com sucesso em (Caminho: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Não foi possível baixar o instalador do Python. Tentando baixar no pacote incorporado do Python..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Não é possível instalar o PIP com pacote Python. Código de retorno: (*)",
+ "Unzipping Python (*) package..": "Descompactando o pacote Python (*)..",
+ "Adding to user path..": "Adicionando ao caminho do usuário..",
+ "Downloading Python package..": "Baixando o pacote Python..",
+ "Failed to find latest Python Installer Manager version.": "Falha ao encontrar a versão mais recente do Python Installer Manager..",
+ "Registering file extensions..": "Registrando extensões de arquivo..",
+ "Setting up python modules..": "Configurando módulos python..",
+ "Successfully installed PIP with Python!": "PIP instalado com sucesso com Python!",
+ "Successfully installed Python (*) into path: (*)": "Python instalado com sucesso (*)no caminho: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "O caminho \"(*)\" já estava na variável de ambiente PATH!"
 }

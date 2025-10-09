@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.0a"}
+    current_version = {"version": "2.4.0b"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -365,7 +365,7 @@ if __name__ == "__main__":
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
@@ -480,7 +480,7 @@ if __name__ == "__main__":
                             with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
                                 try:
                                     cont = f.read().replace(" ", "").replace("\n", "")
-                                    if cont.isnumeric() and not cont == "0":
+                                    if cont.isdigit() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                         activateTerminalWindow()
                                 except Exception as e: printDebugMessage(str(e))
@@ -1491,7 +1491,7 @@ if __name__ == "__main__":
                 if not main_config.get("EFlagDisableBootstrapCooldown") == True:
                     with open(os.path.join(app_path, "BootstrapCooldown"), "r", encoding="utf-8") as f:
                         te = f.read()
-                        if te.isnumeric():
+                        if te.isdigit():
                             if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
                                 printErrorMessage("You're starting the booldown too fast! Please wait 1 seconds!")
                                 printDebugMessage(f'If this message is still here after 1 seconds, delete the file "{app_path}/Resources/BootstrapCooldown"')
@@ -1553,7 +1553,7 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
                         printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
                     else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}")

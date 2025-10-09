@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Permulaan",
  "[2] = Advanced (Skip)": "[2] = Lanjutan (lewati)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Karena beberapa pembaruan oleh Roblox, banyak bendera yang digunakan di bawah ini tidak akan lagi berfungsi karena Roblox memutuskan untuk membuat daftar putih pada bendera yang dapat Anda gunakan. (*)Jika Anda mau, Anda masih dapat memilihnya di bawah ini jika mereka diizinkan kembali oleh Roblox..",
- "October 5th, 2025 - v2.4.5": "5 Oktober 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 Oktober 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Gagal melakukan bootstrap pip (unduh get-pip.py gagal)..",
+ "Installing PIP..": "Menginstal PIP..",
+ "Successfully installed PIP with embedded Python!": "Berhasil menginstal PIP dengan Python tertanam!",
+ "Successfully installed Python (*) into (Path: (*))!": "Berhasil menginstal Python (*)ke dalam (Path: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Tidak dapat mengunduh pemasang Python. Mencoba mengunduh paket penyematan Python..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Tidak dapat menginstal PIP dengan Paket Python. Kode Pengembalian: (*)",
+ "Unzipping Python (*) package..": "Membuka ritsleting paket Python (*)..",
+ "Adding to user path..": "Menambahkan ke jalur pengguna..",
+ "Downloading Python package..": "Mengunduh paket Python..",
+ "Failed to find latest Python Installer Manager version.": "Gagal menemukan versi terbaru Python Installer Manager..",
+ "Registering file extensions..": "Mendaftarkan ekstensi file..",
+ "Setting up python modules..": "Menyiapkan Modul python..",
+ "Successfully installed PIP with Python!": "Berhasil menginstal PIP dengan Python!",
+ "Successfully installed Python (*) into path: (*)": "Berhasil menginstal Python (*)ke jalur: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "Jalur \"(*)\" sudah ada di variabel lingkungan PATH!"
 }

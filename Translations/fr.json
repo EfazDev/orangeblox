@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = Débutants",
  "[2] = Advanced (Skip)": "[2] = Advanced (skip)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "En raison de certaines mises à jour de Roblox, une grande partie des drapeaux utilisés ci-dessous ne fonctionnera plus, car Roblox a décidé de faire une liste blanche sur les drapeaux que vous pouvez utiliser. (*)Si vous le souhaitez, vous pouvez toujours les sélectionner ci-dessous au cas où ils sont autorisés par Roblox..",
- "October 5th, 2025 - v2.4.5": "5 octobre 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 octobre 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Échec du démarrage de pip (échec du téléchargement de get-pip.py)..",
+ "Installing PIP..": "Installation de PIP..",
+ "Successfully installed PIP with embedded Python!": "PIP installé avec succès avec Python intégré !",
+ "Successfully installed Python (*) into (Path: (*))!": "Python (*)installé avec succès dans (Chemin : (*)) !",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Impossible de télécharger le programme d'installation de Python. Tentative de téléchargement sur le package intégré Python..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Impossible d'installer PIP avec le package Python. Code de retour : (*)",
+ "Unzipping Python (*) package..": "Décompression du package Python (*)..",
+ "Adding to user path..": "Ajout au chemin utilisateur..",
+ "Downloading Python package..": "Téléchargement du package Python..",
+ "Failed to find latest Python Installer Manager version.": "Impossible de trouver la dernière version de Python Installer Manager..",
+ "Registering file extensions..": "Enregistrement des extensions de fichiers..",
+ "Setting up python modules..": "Configuration des Modules Python..",
+ "Successfully installed PIP with Python!": "PIP installé avec succès avec Python !",
+ "Successfully installed Python (*) into path: (*)": "Python (*)installé avec succès dans le chemin : (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "Le chemin \"(*)\" était déjà sur la variable d'environnement PATH !"
 }

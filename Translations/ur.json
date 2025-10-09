@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] = شروعات",
  "[2] = Advanced (Skip)": "[2] = اعلی درجے کی (چھوڑیں)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "روبلوکس کے ذریعہ کچھ تازہ کاریوں کی وجہ سے ، بہت سارے جھنڈے جو ذیل میں استعمال ہوتے ہیں وہ اب کام نہیں کریں گے کیونکہ روبلوکس نے آپ کو استعمال کرنے والے جھنڈوں پر وائٹ لسٹ کرنے کا فیصلہ کیا ہے۔",
- "October 5th, 2025 - v2.4.5": "5 اکتوبر ، 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 اکتوبر ، 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "بوٹسٹریپ پائپ میں ناکام (get-pip.py ناکام) ڈاؤن لوڈ کریں۔",
+ "Installing PIP..": "پائپ انسٹال کرنا..",
+ "Successfully installed PIP with embedded Python!": "ایمبیڈڈ ازگر کے ساتھ کامیابی کے ساتھ انسٹال pip!",
+ "Successfully installed Python (*) into (Path: (*))!": "کامیابی کے ساتھ انسٹال (*)(راستہ: (*)) میں انسٹال ہوا!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "ازگر انسٹالر ڈاؤن لوڈ کرنے سے قاصر ہے۔ ازگر ایمبیڈ پیکیج پر ڈاؤن لوڈ کی کوشش کرنا..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "ازگر پیکیج کے ساتھ pip انسٹال کرنے سے قاصر ہے۔ واپسی کا کوڈ: (*)",
+ "Unzipping Python (*) package..": "انزپنگ ازگر (*)پیکیج..",
+ "Adding to user path..": "صارف کے راستے میں شامل کرنا..",
+ "Downloading Python package..": "ازگر پیکیج ڈاؤن لوڈ کرنا..",
+ "Failed to find latest Python Installer Manager version.": "تازہ ترین ازگر انسٹالر مینیجر ورژن تلاش کرنے میں ناکام۔",
+ "Registering file extensions..": "فائل ایکسٹینشن رجسٹر کرنا..",
+ "Setting up python modules..": "ازگر کے ماڈیولز مرتب کرنا..",
+ "Successfully installed PIP with Python!": "ازگر کے ساتھ کامیابی کے ساتھ pip انسٹال کیا!",
+ "Successfully installed Python (*) into path: (*)": "کامیابی کے ساتھ ازالہ (*)کو راستے میں انسٹال کیا: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "راستہ \"(*)\" پہلے ہی راستے کے ماحول کے متغیر پر تھا!"
 }

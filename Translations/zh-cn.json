@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[1] =起动器",
  "[2] = Advanced (Skip)": "[2] =高级(跳过)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "由于Roblox的一些更新,下面使用的许多标志将不再起作用,因为Roblox决定在可以使用的标志上做白名单.(*)如果您愿意,您仍然可以在下面选择它们,以防万一Roblox允许它们退回..",
- "October 5th, 2025 - v2.4.5": "2025年10月5日-v2.4.5"
+ "October 5th, 2025 - v2.4.5": "2025年10月5日-v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "无法引导 pip(下载 get-pip.py 失败)..",
+ "Installing PIP..": "正在安装画中画..",
+ "Successfully installed PIP with embedded Python!": "成功安装带有嵌入式Python的PIP!",
+ "Successfully installed Python (*) into (Path: (*))!": "已成功将 Python (*)安装到(路径:(*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "无法下载 Python 安装程序.正在尝试下载 Python 嵌入包..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "无法使用 Python 包安装 PIP.返回代码:(*)",
+ "Unzipping Python (*) package..": "解压 Python (*)包..",
+ "Adding to user path..": "添加到用户路径..",
+ "Downloading Python package..": "正在下载Python包..",
+ "Failed to find latest Python Installer Manager version.": "无法找到最新的 Python 安装程序管理器版本..",
+ "Registering file extensions..": "正在注册文件扩展名..",
+ "Setting up python modules..": "设置 python 模块..",
+ "Successfully installed PIP with Python!": "使用Python成功安装PIP!",
+ "Successfully installed Python (*) into path: (*)": "已成功将 Python (*)安装到路径:(*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "路径\"(*)\"已在 PATH 环境变量中!"
 }

@@ -2240,5 +2240,20 @@
  "[1] = Starters": "[1] =スターター",
  "[2] = Advanced (Skip)": "[2] = Advanced(SKIP)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Robloxによるいくつかの更新により,Robloxが使用できるフラグでホワイトリストを作成することを決定したため,以下で使用されるフラグの多くは機能しなくなります..",
- "October 5th, 2025 - v2.4.5": "2025年10月5日-v2.4.5"
+ "October 5th, 2025 - v2.4.5": "2025年10月5日-v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "Pip のブートストラップに失敗しました (get-pip.py のダウンロードに失敗しました)..",
+ "Installing PIP..": "Pip をインストールしています..",
+ "Successfully installed PIP with embedded Python!": "Python が埋め込まれた PIP が正常にインストールされました..",
+ "Successfully installed Python (*) into (Path: (*))!": "Python (*)を (パス: (*)) にインストールしました..",
+ "Unable to download Python installer. Attempting download on Python embed package..": "Python インストーラーをダウンロードできません. Python 埋め込みパッケージでダウンロードを試行しています..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "Python パッケージを使用して PIP をインストールできません.リターンコード: (*)",
+ "Unzipping Python (*) package..": "Python (*)パッケージを解凍しています..",
+ "Adding to user path..": "ユーザーパスに追加中..",
+ "Downloading Python package..": "Python パッケージをダウンロードしています..",
+ "Failed to find latest Python Installer Manager version.": "最新の Python インストーラー マネージャー バージョンが見つかりませんでした..",
+ "Registering file extensions..": "ファイル拡張子を登録しています..",
+ "Setting up python modules..": "Pythonモジュールのセットアップ..",
+ "Successfully installed PIP with Python!": "Python による PIP のインストールに成功しました..",
+ "Successfully installed Python (*) into path: (*)": "Python (*)がパスに正常にインストールされました: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "パス\"(*)\"はすでに PATH 環境変数にありました.."
 }

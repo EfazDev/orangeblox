@@ -50,7 +50,7 @@ def askForTask(func, *args, **kwargs):
     with open(path, "r", encoding="utf-8") as f: file_read = f.read().rstrip("🙂")
     os.remove(path)
     if file_read in ("True", "False", "None"): return eval(file_read)
-    if file_read.isnumeric(): return int(file_read)
+    if file_read.isdigit(): return int(file_read)
     try: return json.loads(file_read)
     except json.JSONDecodeError: return file_read
 

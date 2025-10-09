@@ -2239,5 +2239,20 @@
  "[1] = Starters": "[१] = शुरुआत",
  "[2] = Advanced (Skip)": "[२] = उन्नत (स्किप)",
  "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "Roblox द्वारा कुछ अपडेट के कारण, बहुत सारे झंडे जो नीचे उपयोग किए गए हैं, अब काम नहीं करेंगे क्योंकि Roblox ने आपके द्वारा उपयोग किए जा सकने वाले झंडों पर एक श्वेतसूची करने का फैसला किया। (*)यदि आप चाहते हैं, तो आप अभी भी उन्हें नीचे चुन सकते हैं, जब वे Roblox द्वारा वापस जाने की अनुमति देते हैं।",
- "October 5th, 2025 - v2.4.5": "5 अक्टूबर, 2025 - v2.4.5"
+ "October 5th, 2025 - v2.4.5": "5 अक्टूबर, 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "पिप को बूटस्ट्रैप करने में विफल (get-pip.py डाउनलोड विफल)।",
+ "Installing PIP..": "पीआईपी स्थापित करना..",
+ "Successfully installed PIP with embedded Python!": "एम्बेडेड पायथन के साथ पीआईपी सफलतापूर्वक स्थापित!",
+ "Successfully installed Python (*) into (Path: (*))!": "पायथन (*)को (पथ: (*)) में सफलतापूर्वक स्थापित किया गया!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "पायथॉन इंस्टॉलर डाउनलोड करने में असमर्थ. पायथन एंबेड पैकेज पर डाउनलोड का प्रयास किया जा रहा है..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "पायथन पैकेज के साथ पीआईपी स्थापित करने में असमर्थ। वापसी कोड: (*)",
+ "Unzipping Python (*) package..": "पायथन (*)पैकेज को अनज़िप करना..",
+ "Adding to user path..": "उपयोगकर्ता पथ में जोड़ा जा रहा है..",
+ "Downloading Python package..": "पायथन पैकेज डाउनलोड हो रहा है..",
+ "Failed to find latest Python Installer Manager version.": "नवीनतम पायथन इंस्टालर मैनेजर संस्करण ढूंढने में विफल।",
+ "Registering file extensions..": "फ़ाइल एक्सटेंशन पंजीकृत किया जा रहा है..",
+ "Setting up python modules..": "पायथन मॉड्यूल स्थापित करना..",
+ "Successfully installed PIP with Python!": "पायथन के साथ पीआईपी सफलतापूर्वक स्थापित!",
+ "Successfully installed Python (*) into path: (*)": "पायथन (*)को पथ में सफलतापूर्वक स्थापित किया गया: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "पथ \"(*)\" पहले से ही path पर्यावरण चर पर था!"
 }
