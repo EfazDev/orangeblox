@@ -60,20 +60,20 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > [!IMPORTANT]
 > OrangeBlox is a safe Windows/macOS program and won't harm your Roblox account. However, compilers like Nuitka and pyinstaller may have some issues where apps created contain false positives from anti-virus software. For example, Windows Defender may detect the bootstrap with Win32/Wacapew.C!ml. In order to prevent this, you may need to authorize the app through your anti-virus or build the app directly.
 
-## Python 3.14 Beta Support
+## Python 3.15 Beta Support
 > [!IMPORTANT]
-> OrangeBlox is compatible with beta versions of Python such as Python 3.14. However, Pypi packages such as pyobjc, Nuitka/pyinstaller, psutil and plyer will all need to support the Python beta in order to work with OrangeBlox. Using beta versions of Python is only recommended for developers that know what they're doing and is not recommended for public use.
+> OrangeBlox is compatible with beta versions of Python such as Python 3.15. However, Pypi packages such as pyobjc, Nuitka/pyinstaller, psutil and plyer will all need to support the Python beta in order to work with OrangeBlox. Using beta versions of Python is only recommended for developers that know what they're doing and is not recommended for public use.
 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `e94a2234a1beb838bfa782108e2c7c8e` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `5cf7e5efe88e48b9442204fb35054cf3` |
-| Installer (Install.py) | `f932b13f09082789cd53fce7594be4d2` |
-| Bootstrap API (OrangeAPI.py) | `aa49e9d2d860d328c12418f994a4d4b8` |
-| Bootstrap Loader (OrangeBlox.py) | `15ecdf331d6f5932091b3cc8ab5104e0` |
+| Main Bootstrap (Main.py) | `d057930312d158b41e9842ca0438bc95` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `d567885df9df9f89bcaaf62414de3da9` |
+| Installer (Install.py) | `051b24b629ecbe421584013749f9e453` |
+| Bootstrap API (OrangeAPI.py) | `884f338b95b84f727d2bbe9371892b49` |
+| Bootstrap Loader (OrangeBlox.py) | `7f245b9d1b38ce908eccf381a63d633a` |
 | Discord Presence Handler (DiscordPresenceHandler.py) | `87cc299f0ed36f415ff1a50730f6841e` |
-| PyKits API (PyKits.py) | `75593a883410b88d5fb595c20997591a` |
+| PyKits API (PyKits.py) | `6d0f469b3e8f08fbf01e31631e27a4c8` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

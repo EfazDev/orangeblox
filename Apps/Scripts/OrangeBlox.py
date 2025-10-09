@@ -6,6 +6,7 @@ import os
 import zlib
 import platform
 import time
+import shutil
 import traceback
 import datetime
 import textwrap
@@ -15,7 +16,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.0b"}
+    current_version = {"version": "2.4.0c"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -365,6 +366,8 @@ if __name__ == "__main__":
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                    shutil.rmtree(venv_path, ignore_errors=True)
                 generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
@@ -1553,6 +1556,8 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
+                    if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                        shutil.rmtree(venv_path, ignore_errors=True)
                     generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
                         printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")

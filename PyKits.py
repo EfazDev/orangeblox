@@ -1102,7 +1102,7 @@ class pip:
             else: return machine_var
     def getIfVirtualEnvironment(self):
         alleged_path = self._os.path.dirname(self.executable)
-        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
+        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe"))) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
         ma_os = self._main_os
         if ma_os == "Darwin":

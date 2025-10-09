@@ -1094,12 +1094,12 @@ class pip:
             if version < "3.11.0": self.printDebugMessage("PyKits is not normally made for versions less than 3.11.0.")
             if arch == "arm64":
                 ma_processor = "arm64"
-                ma_arch = ("64bit")
+                ma_arch = ["64bit"]
             elif arch == "x64":
                 ma_processor = "amd64"
-                ma_arch = ("64bit")
+                ma_arch = ["64bit"]
             elif arch == "x86":
-                ma_arch = ("32bit")
+                ma_arch = ["32bit"]
             if (manual == True and self.pythonSupportedStatic(version, 3, 5, 0)) or self.pythonSupportedStatic(version, 3, 15, 0):
                 self.printDebugMessage("Setting up python modules..")
                 if self._main_os == "Windows" and (not hasattr(self, "_win32api") or not hasattr(self, "_win32con")):
@@ -1230,7 +1230,7 @@ class pip:
             else: return machine_var
     def getIfVirtualEnvironment(self):
         alleged_path = self._os.path.dirname(self.executable)
-        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
+        return self._os.path.exists(self._os.path.join(alleged_path, "activate")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe"))) or self._os.path.exists(self._os.path.join(alleged_path, "activate.bat"))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
         ma_os = self._main_os
         if ma_os == "Darwin":
