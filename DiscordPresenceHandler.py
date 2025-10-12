@@ -1,30 +1,29 @@
+# 
+# OrangeBlox Discord Presence Handler 🍊
+# Made by Efaz from efaz.dev
+# v2.4.0d
+# 
+
 # Modules
 import sys
+import typing
+import threading
+import logging
+import warnings
+import time
+import platform
+import uuid
+import PyKits
+from enum import Enum
 
-try:
-    import pypresence
-    import logging
-    import warnings
-    import time
-    import platform
-    import uuid
-    import sys
-    import threading
-    import PyKits
-except Exception as e:
-    import PyKits
-    pypresence = PyKits.pip().importModule("pypresence", install_module_if_not_found=True)
-    import logging
-    import warnings
-    import time
-    import platform
-    import uuid
-    import sys
-    import threading
+try: import pypresence
+except Exception as e: pypresence = PyKits.pip().importModule("pypresence", install_module_if_not_found=True)
 
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
+current_version: typing.Dict[str, str] = {"version": "2.4.0d"}
+pypresence_version = pypresence.__version__
 
 def suppress_hook():
     logging.getLogger("asyncio").setLevel(logging.CRITICAL)
@@ -41,6 +40,19 @@ def printErrorMessage(mes): print(colors_class.wrap(ts(mes), 196))
 def printSuccessMessage(mes): print(colors_class.wrap(ts(mes), 82))
 def printWarnMessage(mes): print(colors_class.wrap(ts(mes), 202))
 def printYellowMessage(mes): print(colors_class.wrap(ts(mes), 226))
+
+class StatusDisplayType(Enum):
+    NAME = 0
+    STATE = 1
+    DETAILS = 2
+
+class ActivityType(Enum):
+    PLAYING = 0
+    STREAMING = 1
+    LISTENING = 2
+    WATCHING = 3
+    CUSTOM = 4
+    COMPETING = 5
 
 class Presence(pypresence.Presence):
     connected = False
@@ -125,13 +137,40 @@ class Presence(pypresence.Presence):
         self.printDebugMessage(f"[set_debug_mode()]: Debug Mode is enabled!")
     def update(self, *args, **kwargs):
         if self.connected == True:
+            kwargs = self.update_kwargs(kwargs)
             if self.current_loop_id:
                 if not (self.current_loop_id == kwargs.get("loop_key", "")): return {"success": False, "code": 2}
-                else:
-                    if kwargs.get("loop_key"): kwargs.pop("loop_key")
+                elif kwargs.get("loop_key"): kwargs.pop("loop_key")
             self.current_presence = kwargs
             return {"success": True, "code": 0}
         else: return {"success": False, "code": 1}
+    def update_kwargs(self, kwargs: dict):
+        # Support Older Versions of Pypresence while keeping up with updates
+        if (kwargs.get("status_display_type") != None or kwargs.get("activity_type") != None) and pypresence_version > "2.5.0":
+            try:
+                if not hasattr(self, "_pypresence_types"): 
+                    import pypresence.types as pyptypes
+                    self._pypresence_types = pyptypes
+                if kwargs.get("status_display_type") != None: 
+                    match kwargs.get("status_display_type").value:
+                        case 0: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.NAME
+                        case 1: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.STATE
+                        case 2: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.DETAILS
+                        case _: kwargs.pop("status_display_type")
+                if kwargs.get("activity_type") != None: 
+                    match kwargs.get("activity_type").value:
+                        case 0: kwargs["activity_type"] = self._pypresence_types.ActivityType.PLAYING
+                        case 1: kwargs["activity_type"] = ActivityType.STREAMING
+                        case 2: kwargs["activity_type"] = self._pypresence_types.ActivityType.LISTENING
+                        case 3: kwargs["activity_type"] = self._pypresence_types.ActivityType.WATCHING
+                        case 4: kwargs["activity_type"] = ActivityType.CUSTOM
+                        case 5: kwargs["activity_type"] = self._pypresence_types.ActivityType.COMPETING
+                        case _: kwargs.pop("activity_type")
+            except Exception as e:
+                if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
+                if kwargs.get("activity_type") != None: kwargs.pop("activity_type")
+                self.printDebugMessage(f"Unable to load pypresence v2.5.0+ features. Exception: {str(e)}")
+        return kwargs
     def close(self):
         if self.connected == True:
             self.connected = False
@@ -151,7 +190,7 @@ class Presence(pypresence.Presence):
     def clear(self, *args, **kwargs):
         if self.connected == True:
             if self.default_presence == None and self.discord_session_connected == True: super(Presence, self).clear(*args, **kwargs)
-            elif self.discord_session_connected == True: super(Presence, self).update(**(self.current_presence))
+            elif self.discord_session_connected == True: super(Presence, self).update(**(self.default_presence))
             self.current_presence = self.default_presence
             self.current_loop_id = None
             return {"success": True, "code": 0}

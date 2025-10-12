@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "Configurando módulos de Python...",
  "Successfully installed PIP with Python!": "¡PIP instalado exitosamente con Python!",
  "Successfully installed Python (*) into path: (*)": "Python instalado correctamente (*)en la ruta: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "¡La ruta \"(*)\" ya estaba en la variable de entorno PATH!"
+ "The path \"(*)\" was already on the PATH environment variable!": "¡La ruta \"(*)\" ya estaba en la variable de entorno PATH!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "No se pueden cargar las funciones de pypresence v2.5.0+. Excepción: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "¿Te gustaría habilitar la visualización del nombre del juego de Editing Studio en la barra de estado? (t/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "¿Te gustaría habilitar que se muestre el nombre del juego en la barra de estado? (t/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "Esta opción requiere que se instale pypresence v4.5.2+"
 }

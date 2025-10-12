@@ -33,7 +33,7 @@ variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
-current_version = {"version": "2.4.0c"}
+current_version = {"version": "2.4.0d"}
 
 split_vers = current_version["version"].split(".")
 letter_version = None

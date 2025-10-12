@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "पायथन मॉड्यूल स्थापित करना..",
  "Successfully installed PIP with Python!": "पायथन के साथ पीआईपी सफलतापूर्वक स्थापित!",
  "Successfully installed Python (*) into path: (*)": "पायथन (*)को पथ में सफलतापूर्वक स्थापित किया गया: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "पथ \"(*)\" पहले से ही path पर्यावरण चर पर था!"
+ "The path \"(*)\" was already on the PATH environment variable!": "पथ \"(*)\" पहले से ही path पर्यावरण चर पर था!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+सुविधाएँ लोड करने में असमर्थ। अपवाद: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "क्या आप स्टेटस बार में एडिटिंग स्टूडियो गेम का नाम दिखाना सक्षम करना चाहेंगे? (य/नहीं)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "क्या आप स्टेटस बार में खेल का नाम दिखाना सक्षम करना चाहेंगे? (य/नहीं)",
+ "This option requires pypresence v4.5.2+ to be installed": "इस विकल्प के लिए pypresence v4.5.2+स्थापित करना आवश्यक है"
 }

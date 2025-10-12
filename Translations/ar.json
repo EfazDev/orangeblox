@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "إعداد وحدات بايثون..",
  "Successfully installed PIP with Python!": "تم تثبيت PIP بنجاح مع بايثون!",
  "Successfully installed Python (*) into path: (*)": "تم بنجاح تثبيت Python (*)في المسار: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "المسار \"(*)\" كان موجودًا بالفعل في متغير بيئة path!"
+ "The path \"(*)\" was already on the PATH environment variable!": "المسار \"(*)\" كان موجودًا بالفعل في متغير بيئة path!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "غير قادر على تحميل ميزات pypresence v2.5.0+. استثناء: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم لعبة تحرير الاستوديو في شريط الحالة؟ (ص/ن)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم اللعبة في شريط الحالة؟ (ص/ن)",
+ "This option requires pypresence v4.5.2+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.5.2+"
 }

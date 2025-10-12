@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "Opsætning af Python -Moduler..",
  "Successfully installed PIP with Python!": "Med succes installeret PIP med Python!",
  "Successfully installed Python (*) into path: (*)": "Med succes installeret Python (*)i stien: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "Stien \"(*)\" var allerede på sti -miljøvariablen!"
+ "The path \"(*)\" was already on the PATH environment variable!": "Stien \"(*)\" var allerede på sti -miljøvariablen!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Kan ikke indlæse PyPresence v2.5.0+-funktioner. Undtagelse: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Vil du gerne aktivere at vise redigering af studio -spilnavn i statuslinjen? (y/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "Vil du aktivere at vise spillespilnavn i statuslinjen? (y/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "Denne mulighed kræver, at PyPresence v4.5.2+installeres"
 }

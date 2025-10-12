@@ -1,5 +1,5 @@
 """
-PyKits v1.6.1 | Made by Efaz from efaz.dev
+PyKits v1.6.2 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -24,7 +24,7 @@ However! Classes may depend on other classes. Use this resource list:
     pip: typing (module), request
     plist: typing (module)
     Translator: None
-    Colors: typing (module), pip (+ request)
+    Colors: typing (module)
     stdout: Translator?
     ProgressBar: None
     TimerBar: ProgressBar
@@ -1601,10 +1601,14 @@ class Colors:
         "Teal": [36, 96, 46, 106], 
         "White": [37, 97, 47, 107]
     }
-    def __init__(self): import os, platform; self._os = os; self._platform = platform
+    def __init__(self): import os, platform; self._os = os; self._platform = platform; self._main_os = platform.system()
     def fix_windows_ansi(self):
-        if not hasattr(self, "_pip"): self._pip = pip()
-        if self._pip.getIfRunningWindowsAdmin():
+        def getIfRunningWindowsAdmin():
+            if self._main_os == "Windows":
+                try: import ctypes; return ctypes.windll.shell32.IsUserAnAdmin()
+                except: return False
+            else: return False
+        if getIfRunningWindowsAdmin():
             if not hasattr(self, "_ctypes"): import ctypes; self._ctypes = ctypes
             kernel32 = self._ctypes.windll.kernel32
             handle = kernel32.GetStdHandle(-11)

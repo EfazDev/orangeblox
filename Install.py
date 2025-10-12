@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0c
+# v2.4.0d
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.0c"}
+    current_version = {"version": "2.4.0d"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -206,6 +206,8 @@ if __name__ == "__main__":
         "EFlagEnableChangeBrandIcons": "bool",
         "EFlagSelectedBrandLogo2": "str",
         "EFlagEnableChangeBrandIcons2": "bool",
+        "EFlagShowGameNameInStatusBar": "bool",
+        "EFlagShowStudioGameNameInStatusBar": "bool",
         "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
         "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
         "EFlagSelectedPlayerSounds": "str",

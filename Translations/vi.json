@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "Thiết lập mô-đun python..",
  "Successfully installed PIP with Python!": "Đã cài đặt thành công PIP với Python!",
  "Successfully installed Python (*) into path: (*)": "Đã cài đặt thành công Python (*)vào đường dẫn: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "Đường dẫn \"(*)\" đã có trên biến môi trường PATH!"
+ "The path \"(*)\" was already on the PATH environment variable!": "Đường dẫn \"(*)\" đã có trên biến môi trường PATH!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Không thể tải các tính năng của pypresence v2.5.0+. Ngoại lệ: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Bạn có muốn bật hiển thị Tên trò chơi trong Studio chỉnh sửa trên Thanh trạng thái không? (có/không)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "Bạn có muốn bật hiển thị tên trò chơi đang chơi trong Thanh trạng thái không? (có/không)",
+ "This option requires pypresence v4.5.2+ to be installed": "Tùy chọn này yêu cầu cài đặt pypresence v4.5.2+"
 }

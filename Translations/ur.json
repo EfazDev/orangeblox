@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "ازگر کے ماڈیولز مرتب کرنا..",
  "Successfully installed PIP with Python!": "ازگر کے ساتھ کامیابی کے ساتھ pip انسٹال کیا!",
  "Successfully installed Python (*) into path: (*)": "کامیابی کے ساتھ ازالہ (*)کو راستے میں انسٹال کیا: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "راستہ \"(*)\" پہلے ہی راستے کے ماحول کے متغیر پر تھا!"
+ "The path \"(*)\" was already on the PATH environment variable!": "راستہ \"(*)\" پہلے ہی راستے کے ماحول کے متغیر پر تھا!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+خصوصیات کو لوڈ کرنے سے قاصر ہے۔ استثناء: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "کیا آپ اسٹیٹس بار میں ایڈیٹنگ اسٹوڈیو گیم کا نام ظاہر کرنا چاہیں گے؟ (y/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "کیا آپ اسٹیٹس بار میں کھیل کے نام کا نام دکھانا چاہتے ہیں؟ (y/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "اس آپشن کے لئے انسٹال ہونے کے لئے پائپریسینس v4.5.2+کی ضرورت ہے"
 }

@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "Python Modüllerini ayarlama..",
  "Successfully installed PIP with Python!": "Python ile PIP başarıyla kuruldu!",
  "Successfully installed Python (*) into path: (*)": "Python (*)şu yola başarıyla yüklendi: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" yolu zaten PATH ortam değişkenindeydi!"
+ "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" yolu zaten PATH ortam değişkenindeydi!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+özellikleri yüklenemiyor. İstisna: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Durum Çubuğunda Studio Oyun Adını Düzenlemeyi göstermeyi etkinleştirmek ister misiniz? (y/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "Durum Çubuğunda oynanan oyun adının gösterilmesini etkinleştirmek ister misiniz? (y/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "Bu seçenek pypresence v4.5.2+sürümünün yüklenmesini gerektirir"
 }

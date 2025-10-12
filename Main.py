@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0c
+# v2.4.0d
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0c"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0d"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -147,6 +147,8 @@ if __name__ == "__main__":
         "EFlagEnableChangeBrandIcons": "bool",
         "EFlagSelectedBrandLogo2": "str",
         "EFlagEnableChangeBrandIcons2": "bool",
+        "EFlagShowGameNameInStatusBar": "bool",
+        "EFlagShowStudioGameNameInStatusBar": "bool",
         "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
         "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
         "EFlagSelectedPlayerSounds": "str",
@@ -799,7 +801,7 @@ if __name__ == "__main__":
     # Python Modules (PyPi Installed)
     try:
         import psutil
-        from DiscordPresenceHandler import Presence
+        from DiscordPresenceHandler import Presence, StatusDisplayType
         if main_os == "Darwin": import objc
         elif main_os == "Windows":
             import plyer # type: ignore
@@ -1975,6 +1977,16 @@ if __name__ == "__main__":
 
                         printMainMessage("Would you like to enable Idling Roblox RPC? (y/n)")
                         d = handleBasicSetting("EFlagEnableDefaultDiscordRPC", True)
+                        if d: return d
+
+                        printMainMessage("Would you like to enable showing playing game name in Status Bar? (y/n)")
+                        printYellowMessage("This option requires pypresence v4.5.2+ to be installed")
+                        d = handleBasicSetting("EFlagShowGameNameInStatusBar", False)
+                        if d: return d
+
+                        printMainMessage("Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)")
+                        printYellowMessage("This option requires pypresence v4.5.2+ to be installed")
+                        d = handleBasicSetting("EFlagShowStudioGameNameInStatusBar", False)
                         if d: return d
 
                         if main_config.get("EFlagRobloxStudioEnabled") == True:
@@ -6118,7 +6130,7 @@ if __name__ == "__main__":
                                                         else: creator_name = f"{creator_name}!"
                                                     if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                     formatted_info = {
-                                                        "details": rpc_info.get("details") if rpc_info.get("details") else f"Editing {playing_game_name}",
+                                                        "details": rpc_info.get("details") if rpc_info.get("details") else (playing_game_name if main_config.get("EFlagShowStudioGameNameInStatusBar") else f"Editing {playing_game_name}"),
                                                         "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
                                                         "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
                                                         "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
@@ -6153,6 +6165,7 @@ if __name__ == "__main__":
                                                                     instance=isInstance, 
                                                                     small_image=formatted_info["small_image"], 
                                                                     small_text=formatted_info["small_text"], 
+                                                                    status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
                                                                     buttons=[
                                                                         {
                                                                             "label": ts("Open Logged User Page 🌐"), 
@@ -6528,7 +6541,7 @@ if __name__ == "__main__":
                                                         else: creator_name = f"{creator_name}!"
                                                         if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                         formatted_info = {
-                                                            "details": rpc_info.get("details") if rpc_info.get("details") else f"Playing {playing_game_name}",
+                                                            "details": rpc_info.get("details") if rpc_info.get("details") else (playing_game_name if main_config.get("EFlagShowGameNameInStatusBar") else f"Playing {playing_game_name}"),
                                                             "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
                                                             "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
                                                             "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
@@ -6575,6 +6588,7 @@ if __name__ == "__main__":
                                                                                 instance=isInstance, 
                                                                                 small_image=formatted_info["small_image"], 
                                                                                 small_text=formatted_info["small_text"], 
+                                                                                status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
                                                                                 buttons=[
                                                                                     {
                                                                                         "label": ts("Join Server! 🚀"),
@@ -6598,6 +6612,7 @@ if __name__ == "__main__":
                                                                                 instance=isInstance, 
                                                                                 small_image=formatted_info["small_image"], 
                                                                                 small_text=formatted_info["small_text"], 
+                                                                                status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
                                                                                 buttons=[{
                                                                                     "label": ts("Open Game Page 🌐"), 
                                                                                     "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
@@ -6793,6 +6808,7 @@ if __name__ == "__main__":
                             large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
                             small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
                             small_text="OrangeBlox", 
+                            status_display_type=StatusDisplayType.NAME,
                             buttons=[
                                 {
                                     "label": ts("Go to Roblox! 🌐"), 

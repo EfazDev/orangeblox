@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "การตั้งค่าโมดูลหลาม..",
  "Successfully installed PIP with Python!": "ติดตั้ง PIP ด้วย Python สำเร็จแล้ว!",
  "Successfully installed Python (*) into path: (*)": "ติดตั้ง Python (*)สำเร็จแล้วในเส้นทาง: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "เส้นทาง \"(*)\" อยู่ในตัวแปรสภาพแวดล้อม path แล้ว!"
+ "The path \"(*)\" was already on the PATH environment variable!": "เส้นทาง \"(*)\" อยู่ในตัวแปรสภาพแวดล้อม path แล้ว!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "ไม่สามารถโหลดฟีเจอร์ pypresence v2.5.0+ได้ ข้อยกเว้น: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "คุณต้องการเปิดใช้งานการแสดงชื่อเกมแก้ไขสตูดิโอในแถบสถานะหรือไม่ (มี/ไม่มี)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "คุณต้องการเปิดใช้งานการแสดงชื่อเกมที่กำลังเล่นอยู่ในแถบสถานะหรือไม่? (มี/ไม่มี)",
+ "This option requires pypresence v4.5.2+ to be installed": "ตัวเลือกนี้จำเป็นต้องติดตั้ง pypresence v4.5.2+"
 }

@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "設置 python 模塊..",
  "Successfully installed PIP with Python!": "使用Python成功安裝PIP!",
  "Successfully installed Python (*) into path: (*)": "已成功將 Python (*)安裝到路徑:(*)",
- "The path \"(*)\" was already on the PATH environment variable!": "路徑\"(*)\"已在 PATH 環境變量中!"
+ "The path \"(*)\" was already on the PATH environment variable!": "路徑\"(*)\"已在 PATH 環境變量中!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "無法加載 pypresence v2.5.0+功能.例外: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "您想要在狀態欄中顯示編輯工作室遊戲名稱嗎? (是/否)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "您想在狀態欄中顯示正在玩的遊戲名稱嗎? (是/否)",
+ "This option requires pypresence v4.5.2+ to be installed": "此選項需要安裝 pypresence v4.5.2+"
 }

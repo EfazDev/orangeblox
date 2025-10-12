@@ -2255,5 +2255,9 @@
  "Setting up python modules..": "Pythonモジュールのセットアップ..",
  "Successfully installed PIP with Python!": "Python による PIP のインストールに成功しました..",
  "Successfully installed Python (*) into path: (*)": "Python (*)がパスに正常にインストールされました: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "パス\"(*)\"はすでに PATH 環境変数にありました.."
+ "The path \"(*)\" was already on the PATH environment variable!": "パス\"(*)\"はすでに PATH 環境変数にありました..",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0 以降の機能をロードできません.例外: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "ステータス バーに Editing Studio ゲーム名の表示を有効にしますか? (はい/いいえ)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "ステータスバーにプレイ中のゲーム名を表示できるようにしますか? (はい/いいえ)",
+ "This option requires pypresence v4.5.2+ to be installed": "このオプションを使用するには,pypresence v4.5.2+がインストールされている必要があります.."
 }

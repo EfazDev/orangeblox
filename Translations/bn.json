@@ -2254,5 +2254,9 @@
  "Setting up python modules..": "পাইথন মডিউল স্থাপন করা..",
  "Successfully installed PIP with Python!": "পাইথন সহ সফলভাবে পিআইপি ইনস্টল করা!",
  "Successfully installed Python (*) into path: (*)": "সাফল্যের সাথে পাইথন (*)পথে ইনস্টল করা হয়েছে: (*)",
- "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" পথটি ইতিমধ্যে পথ পরিবেশের পরিবর্তনশীল ছিল!"
+ "The path \"(*)\" was already on the PATH environment variable!": "\"(*)\" পথটি ইতিমধ্যে পথ পরিবেশের পরিবর্তনশীল ছিল!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "পাইপ্রেসেন্স v2.5.0+বৈশিষ্ট্যগুলি লোড করতে অক্ষম। ব্যতিক্রম: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "আপনি কি স্ট্যাটাস বারে স্টুডিও গেমের নাম সম্পাদনা দেখাতে সক্ষম করতে চান? (y/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "আপনি কি স্ট্যাটাস বারে গেমের নাম খেলতে দেখাতে সক্ষম করতে চান? (y/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "এই বিকল্পটির জন্য pysresence v4.5.2+ইনস্টল করা প্রয়োজন"
 }
