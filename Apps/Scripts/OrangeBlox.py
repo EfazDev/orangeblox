@@ -16,7 +16,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.0d"}
+    current_version = {"version": "2.4.0e"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -1549,7 +1549,6 @@ if __name__ == "__main__":
                     input("> ")
                     sys.exit(0)
 
-            sour_path = ""
             if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
                 printMainMessage("Checking Virtual Environments..")
                 user_folder_name = os.path.basename(PyKits.pip().getUserFolder())
@@ -1562,9 +1561,9 @@ if __name__ == "__main__":
                         shutil.rmtree(venv_path, ignore_errors=True)
                     generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
-                        printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                        printSuccessMessage("Generated Virtual Environment!"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
                     else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}")
-                else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                else: printSuccessMessage("Found Virtual Environment!"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
             printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
             try:
@@ -1608,7 +1607,6 @@ if __name__ == "__main__":
                         validated = True
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
-                        if not (sour_path == ""): os.system(f"\"{sour_path}\"")
                         if main_config.get("EFlagBuildPythonCacheOnStart") == True:
                             printMainMessage("Building Python Cache..")
                             build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.4.5
+# v2.4.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -30,7 +30,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.4.5"
+script_version = "2.4.6"
 def getLocalAppData():
     import platform
     import os
@@ -4740,9 +4740,15 @@ class Handler:
                                         for i in marked_install_files:
                                             per_step += 1
                                             if not i == "":
-                                                if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round((per_step/(len(marked_install_files)))*100, 2))
+                                                class download_stat:
+                                                    def submit(self, info):
+                                                        base = round(((per_step-1)/(len(marked_install_files)))*100, 2)
+                                                        top = round((per_step/(len(marked_install_files)))*100, 2)
+                                                        total = int(base+((top-base)*(info.percent/100)))
+                                                        if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", total)
+                                                if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round(((per_step-1)/(len(marked_install_files)))*100, 2))
                                                 if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
-                                                down_req = requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i))
+                                                down_req = requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i), submit_status=download_stat())
                                                 if down_req.ok: downloaded_zip_files.append(i)
                                                 else:
                                                     printErrorMessage(f"Unable to install Roblox due to a download error.")
