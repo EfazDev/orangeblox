@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0e
+# v2.4.0f
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0e"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0f"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -6439,9 +6439,10 @@ if __name__ == "__main__":
 
                     global current_place_info
                     global connected_user_info
+                    global connected_to_game
                     if current_place_info:
                         current_place_info["server_location"] = generated_location
-
+                        connected_to_game = True
                         if main_config.get("EFlagUseEfazDevAPI") == True: 
                             generated_universe_id_res = requests.get(f"https://api.efaz.dev/api/roblox/universeId/{current_place_info.get('placeId')}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
                             if generated_universe_id_res and generated_universe_id_res.json: generated_universe_id_res.json = generated_universe_id_res.json.get("response")
@@ -6677,10 +6678,12 @@ if __name__ == "__main__":
                             else: printDebugMessage(f"Place responses rejected by Roblox. [{generated_thumbnail_api_res.ok},{generated_thumbnail_api_res.status_code} | {generated_place_api_res.ok},{generated_place_api_res.status_code}]")
             def onGameDisconnected(info):
                 global current_place_info
+                global connected_to_game
                 global skip_disconnect_notification
                 global is_teleport
                 global connected_user_info
                 it_is_teleport = False
+                connected_to_game = False
                 synced_place_info = None
                 if skip_disconnect_notification == True: skip_disconnect_notification = False; return
                 if current_place_info: synced_place_info = dict(current_place_info); current_place_info = None

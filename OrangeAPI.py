@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0e
+# v2.4.0f
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.0e
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.0f
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.4.0e", "bootstrap_version": "2.4.0e"}
+current_version = {"version": "2.4.0f", "bootstrap_version": "2.4.0f"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
