@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Δεν είναι δυνατή η φόρτωση των χαρακτηριστικών Pypresence v2.5.0+. Εξαίρεση: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Θέλετε να ενεργοποιήσετε την εμφάνιση ονόματος παιχνιδιού στούντιο επεξεργασίας στη γραμμή κατάστασης; (y/n)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "Θέλετε να ενεργοποιήσετε την εμφάνιση του παιχνιδιού όνομα παιχνιδιού στη γραμμή κατάστασης; (y/n)",
- "This option requires pypresence v4.5.2+ to be installed": "Αυτή η επιλογή απαιτεί την εγκατάσταση Pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "Αυτή η επιλογή απαιτεί την εγκατάσταση Pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "Αναμονή δημιουργίας καταγραφής ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Εντολή: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Εντολή: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "Το αρχείο καταγραφής χρησιμοποιείται ήδη σε μια άλλη παρουσία Roblox ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "Βρέθηκε με επιτυχία αρχείο καταγραφής ((*)/30). Επιστρέφοντας με: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "Δεν είναι δυνατή η εύρεση ενός νέου αρχείου εντός 15 δευτερολέπτων ((*)/30). Επιστρέφοντας με: (*)"
 }

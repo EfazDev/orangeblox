@@ -118,11 +118,12 @@ def run_handling():
         time.sleep(0.05)
 def run_discord_proxy():
     printMainMessage("Starting discord.py proxy!")
-    s = subprocess.run([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id])
-    if s.returncode == 0:
+    s = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id])
+    returncode = s.wait()
+    if returncode == 0:
         printSuccessMessage("Discord Proxy ended with success!")
     else:
-        printErrorMessage(f"Discord Proxy ended with fail! Return code: {s.returncode}")
+        printErrorMessage(f"Discord Proxy ended with fail! Return code: {returncode}")
 
 # Start Discord Bot
 if OrangeAPI.getConfiguration("DiscordBotEnabled") == True:

@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.4.6
+# v2.4.7
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -30,7 +30,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.4.6"
+script_version = "2.4.7"
 def getLocalAppData():
     import platform
     import os
@@ -2249,27 +2249,27 @@ class Handler:
             if os.path.exists(os.path.join(logs_path, "RFFILogFiles.json")):
                 with open(os.path.join(logs_path, "RFFILogFiles.json"), "r", encoding="utf-8") as f: logs_attached = json.load(f)
             if self.await_log_creation == True:
-                if self.await_log_creation_attempts < 40:
+                if self.await_log_creation_attempts < 30:
                     if self.fileCreatedRecently(main_log):
                         if main_log in logs_attached:
                             time.sleep(0.5)
                             self.await_log_creation_attempts += 1
-                            if self.debug_mode == True: printDebugMessage(f"Log file is already used in an another Roblox Instance ({self.await_log_creation_attempts}/40)")
+                            if self.debug_mode == True: printDebugMessage(f"Log file is already used in an another Roblox Instance ({self.await_log_creation_attempts}/30)")
                             return self.getLatestLogFile()
                         else:
                             logs_attached.append(main_log)
                             with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f: json.dump(logs_attached, f, indent=4)
-                            if self.debug_mode == True: printDebugMessage(f"Successfully found log file ({self.await_log_creation_attempts}/40). Returning with: {main_log}")
+                            if self.debug_mode == True: printDebugMessage(f"Successfully found log file ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
                             return main_log
                     else:
                         time.sleep(0.5)
                         self.await_log_creation_attempts += 1
-                        if self.debug_mode == True: printDebugMessage(f"Awaiting Log Creation ({self.await_log_creation_attempts}/40)")
+                        if self.debug_mode == True: printDebugMessage(f"Awaiting Log Creation ({self.await_log_creation_attempts}/30)")
                         return self.getLatestLogFile()
                 else:
                     logs_attached.append(main_log)
                     with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f: json.dump(logs_attached, f, indent=4)
-                    if self.debug_mode == True: printDebugMessage(f"Unable to find a new file within 20 seconds ({self.await_log_creation_attempts}/40). Returning with: {main_log}")
+                    if self.debug_mode == True: printDebugMessage(f"Unable to find a new file within 15 seconds ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
                     return main_log
             else:
                 if self.debug_mode == True: printDebugMessage(f"Successfully found log file. Returning with: {main_log}")

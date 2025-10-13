@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Hindi ma -load ang pypresence v2.5.0+tampok. Pagbubukod: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Nais mo bang paganahin ang pagpapakita ng pag -edit ng pangalan ng laro sa studio sa Status Bar? (y/n)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "Nais mo bang paganahin ang pagpapakita ng paglalaro ng pangalan ng laro sa Status Bar? (y/n)",
- "This option requires pypresence v4.5.2+ to be installed": "Ang pagpipiliang ito ay nangangailangan ng pypresence v4.5.2+na mai -install"
+ "This option requires pypresence v4.5.2+ to be installed": "Ang pagpipiliang ito ay nangangailangan ng pypresence v4.5.2+na mai -install",
+ "Awaiting Log Creation ((*)/30)": "Naghihintay ng paglikha ng log ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Utos: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Utos: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "Ginagamit na ang log file sa isa pang halimbawa ng Roblox ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "Matagumpay na natagpuan ang log file ((*)/30). Pagbabalik kasama: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "Hindi makahanap ng isang bagong file sa loob ng 15 segundo ((*)/30). Pagbabalik kasama: (*)"
 }

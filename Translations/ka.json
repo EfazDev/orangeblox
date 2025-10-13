@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Შეუძლებელია pypresence v2.5.0+მახასიათებლების ჩატვირთვა. გამონაკლისი: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Გსურთ ჩართოთ სტუდიის თამაშის სახელის რედაქტირება სტატუსის ზოლში? (y/n)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "Გსურთ ჩართოთ სათამაშო თამაშის სახელის ჩვენება სტატუსის ზოლში? (y/n)",
- "This option requires pypresence v4.5.2+ to be installed": "Ეს ვარიანტი მოითხოვს Pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "Ეს ვარიანტი მოითხოვს Pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "Ჟურნალის შექმნის მოლოდინი ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Ბრძანება: \"(*)\" დააინსტალირეთ.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Ბრძანება: \"(*)\" დააინსტალირეთ.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "Ჟურნალის ფაილი უკვე გამოიყენება სხვა Roblox მაგალითად ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "Წარმატებით იპოვნეს ჟურნალის ფაილი ((*)/30). დაბრუნება: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "Ვერ იპოვნეთ ახალი ფაილი 15 წამში ((*)/30). დაბრუნება: (*)"
 }

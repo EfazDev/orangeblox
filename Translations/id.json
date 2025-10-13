@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Tidak dapat memuat fitur pypresence v2.5.0+. Pengecualian: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Apakah Anda ingin mengaktifkan tampilan Editing Studio Game Name di Status Bar? (y/n)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "Apakah Anda ingin mengaktifkan menampilkan nama game yang sedang dimainkan di Status Bar? (y/n)",
- "This option requires pypresence v4.5.2+ to be installed": "Opsi ini memerlukan instalasi pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "Opsi ini memerlukan instalasi pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "Menunggu Pembuatan Log ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Perintah: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Perintah: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "File log sudah digunakan di Instance Roblox lain ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "File log berhasil ditemukan ((*)/30). Kembali dengan: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "Tidak dapat menemukan file baru dalam waktu 15 detik ((*)/30). Kembali dengan: (*)"
 }

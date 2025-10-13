@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "غير قادر على تحميل ميزات pypresence v2.5.0+. استثناء: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم لعبة تحرير الاستوديو في شريط الحالة؟ (ص/ن)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم اللعبة في شريط الحالة؟ (ص/ن)",
- "This option requires pypresence v4.5.2+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "في انتظار إنشاء السجل ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "الأمر: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "الأمر: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "ملف السجل مستخدم بالفعل في مثيل Roblox آخر ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "تم العثور على ملف السجل بنجاح ((*)/30). العودة مع: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "غير قادر على العثور على ملف جديد خلال 15 ثانية ((*)/30). العودة مع: (*)"
 }

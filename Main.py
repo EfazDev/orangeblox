@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0f
+# v2.4.0g
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0f"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0g"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         "ur": "Urdu (اُردُو)",
         "vi": "Vietnamese (Tiếng Việt)"
     }
-    updating_mods = {
+    updating_mods: typing.Dict[str, typing.List[str]] = {
         "PlayerSounds": ["Old", "Outdated", "Current"], 
         "AvatarEditorMaps": ["Old.rbxl", "Original.rbxl", "BobTheBuilder.rbxl", "SubwaySurfers.rbxl", "Template.rbxl", "McDonaldsWar.rbxl", "MHA.rbxl", "Backrooms.rbxl"], 
         "RobloxBrand": ["Roblox2011", "Roblox2015Red", "Roblox2021", "OrangeBlox", "Original", "Roblox2015", "Roblox2025", "Roblox2008"], 
@@ -221,11 +221,11 @@ if __name__ == "__main__":
         "Mods": ["VoiceChatRecorder", "Original", "Template", "KlikoModTool", "OldFont", "OrangeBot"], 
         "Cursors": ["2013", "macOS", "Original", "2006"]
     }
-    special_logo_mods = {
+    special_logo_mods: typing.Dict[str, typing.List[str]] = {
         "reg": updating_mods["RobloxBrand"],
         "studio": updating_mods["RobloxStudioBrand"]
     }
-    main_host = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
+    main_host: str = ("https://obx.efaz.dev" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
 
     # Printing Functions
     def ts(mes: str):
@@ -2526,11 +2526,11 @@ if __name__ == "__main__":
         printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
         if main_os == "Darwin": 
             printMainMessage(f'8. macOS App was built using {colors_class.wrap("pyinstaller 📦", 39)} and {colors_class.wrap("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
-            printMainMessage(f"Command: {sys.executable} Install.py -r -rp -rc")
+            printMainMessage(f"Command: \"{sys.executable}\" Install.py -r -rp -rc")
             printYellowMessage(f"Nuitka requires a C compiler in order to use. For more information, use this manual: https://nuitka.net/user-documentation/user-manual.html")
         elif main_os == "Windows": 
             printMainMessage(f'8. Windows App was built using {colors_class.wrap("pyinstaller 📦", 39)}. You can recreate and deploy using the following command! Use the README.md for more information.')
-            printMainMessage(f"Command: {sys.executable} Install.py -r -rp")
+            printMainMessage(f"Command: \"{sys.executable}\" Install.py -r -rp")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
         printWarnMessage(f"--- Unfriended Friends ---")
@@ -3688,8 +3688,8 @@ if __name__ == "__main__":
             printDebugMessage("Update Check Response failed.")
             return ts("There was an issue while checking for updates.")
 
+    # Main Menu
     try:
-        # Main Menu
         def main_menu():
             global main_config
             global given_args
@@ -4425,6 +4425,7 @@ if __name__ == "__main__":
         input("> ")
         sys.exit(0 if main_os == "Darwin" else 1)
 
+    # Run Roblox
     try:
         # Check for Permissions
         if run_studio == True and not main_config.get("EFlagRobloxStudioEnabled") == True:
@@ -5234,8 +5235,8 @@ if __name__ == "__main__":
                         win32api.RegCloseKey(app_key)
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                         registry_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
-                        win32api.RegSetValueEx(registry_key, "UninstallString", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')} -un")
-                        win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(bootstrap_folder_path, 'Install.py')}")
+                        win32api.RegSetValueEx(registry_key, "UninstallString", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(bootstrap_folder_path, 'Install.py')}\" -un")
+                        win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(bootstrap_folder_path, 'Install.py')}\"")
                         win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                         win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
                         win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
@@ -5957,12 +5958,11 @@ if __name__ == "__main__":
         if main_config.get("EFlagRobloxUnfriendCheckEnabled") == True: threading.Thread(target=unfriendCheckLoop, daemon=True).start()
         if main_config.get("EFlagReplaceRobloxRuntimeIconWithModIcon") == True and main_os == "Windows": threading.Thread(target=setRuntimeIconLoop, daemon=True).start()
 
+        # Roblox Ready Message
         if run_studio == True:
-            # Roblox Studio Ready Message
             printSuccessMessage("Done! Roblox Studio is ready!")
             printWarnMessage("--- Running Roblox Studio ---")
         else:
-            # Roblox Ready Message
             printSuccessMessage("Done! Roblox is ready!")
             printWarnMessage("--- Running Roblox ---")
         if waitForInternet() == True: printWarnMessage("-----------")

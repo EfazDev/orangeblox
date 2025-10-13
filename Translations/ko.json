@@ -2259,5 +2259,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+기능을 로드할 수 없습니다. 예외: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "상태 표시줄에 Studio 게임 이름 편집 표시를 활성화하시겠습니까? (예/아니요)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "상태 표시줄에 플레이 중인 게임 이름 표시를 활성화하시겠습니까? (예/아니요)",
- "This option requires pypresence v4.5.2+ to be installed": "이 옵션을 사용하려면 pypresence v4.5.2+가 설치되어 있어야 합니다.."
+ "This option requires pypresence v4.5.2+ to be installed": "이 옵션을 사용하려면 pypresence v4.5.2+가 설치되어 있어야 합니다..",
+ "Awaiting Log Creation ((*)/30)": "로그 생성 대기 중 ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "명령: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "명령: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "로그 파일이 이미 다른 Roblox 인스턴스에서 사용되었습니다((*)/30)..",
+ "Successfully found log file ((*)/30). Returning with: (*)": "로그 파일((*)/30)을 찾았습니다. 반품 상품: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "15초((*)/30) 내에 새 파일을 찾을 수 없습니다. 반품 상품: (*)"
 }

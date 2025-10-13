@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "无法加载 pypresence v2.5.0+功能.例外: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "您想要在状态栏中显示编辑工作室游戏名称吗? (是/否)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "您想在状态栏中显示正在玩的游戏名称吗? (是/否)",
- "This option requires pypresence v4.5.2+ to be installed": "此选项需要安装 pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "此选项需要安装 pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "等待日志创建 ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "命令:\"(*)\"Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "命令:\"(*)\"Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "日志文件已在另一个 Roblox 实例中使用 ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "成功找到日志文件 ((*)/30).返回:(*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "15 秒内无法找到新文件 ((*)/30).返回:(*)"
 }

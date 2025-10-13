@@ -237,7 +237,7 @@ async def connectedgame(interaction: discord.Interaction):
                 else:
                     creator_link = f"https://www.roblox.com/groups/{place_info['creator'].get('id')}"
                 main_embed.set_thumbnail(url=thumbnail_url if thumbnail_url else user_thumbnail_url)
-                main_embed.add_field(name=ts("Joined Game"), value=f"[{place_name}](https://www.roblox.com/games/{place_id}) (By [{creator_name}]({creator_link}))")
+                main_embed.add_field(name=ts("Joined Game"), value=f"[{place_name}](https://www.roblox.com/games/{place_id}) ([{creator_name}]({creator_link}))")
                 main_embed.add_field(name=ts("Started"), value=f"<t:{int(start_time)}:R>")
                 main_embed.add_field(name=ts("User Connected"), value=user_connected_text)
                 main_embed.add_field(name=ts("Server Location"), value=server_location)

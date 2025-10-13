@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0f
+# v2.4.0g
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.0f"}
+    current_version = {"version": "2.4.0g"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -1468,8 +1468,8 @@ if __name__ == "__main__":
 
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                         key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
-                        win32api.RegSetValueEx(key, "UninstallString", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(sma[main_os][0], 'Install.py')} -un")
-                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(sma[main_os][0], 'Install.py')}")
+                        win32api.RegSetValueEx(key, "UninstallString", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\" -un")
+                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\"")
                         win32api.RegSetValueEx(key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                         win32api.RegSetValueEx(key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
                         win32api.RegSetValueEx(key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(sma[main_os][0], "Images", "AppIcon.ico"))

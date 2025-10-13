@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+सुविधाएँ लोड करने में असमर्थ। अपवाद: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "क्या आप स्टेटस बार में एडिटिंग स्टूडियो गेम का नाम दिखाना सक्षम करना चाहेंगे? (य/नहीं)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "क्या आप स्टेटस बार में खेल का नाम दिखाना सक्षम करना चाहेंगे? (य/नहीं)",
- "This option requires pypresence v4.5.2+ to be installed": "इस विकल्प के लिए pypresence v4.5.2+स्थापित करना आवश्यक है"
+ "This option requires pypresence v4.5.2+ to be installed": "इस विकल्प के लिए pypresence v4.5.2+स्थापित करना आवश्यक है",
+ "Awaiting Log Creation ((*)/30)": "लॉग निर्माण की प्रतीक्षा में ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "आदेश: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "आदेश: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "लॉग फ़ाइल पहले से ही किसी अन्य Roblox इंस्टेंस ((*)/30) में उपयोग की जा चुकी है",
+ "Successfully found log file ((*)/30). Returning with: (*)": "लॉग फ़ाइल सफलतापूर्वक मिल गई ((*)/30)। इसके साथ लौटना: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "15 सेकंड के भीतर नई फ़ाइल ढूंढने में असमर्थ ((*)/30)। इसके साथ लौटना: (*)"
 }

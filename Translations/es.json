@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "No se pueden cargar las funciones de pypresence v2.5.0+. Excepción: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "¿Te gustaría habilitar la visualización del nombre del juego de Editing Studio en la barra de estado? (t/n)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "¿Te gustaría habilitar que se muestre el nombre del juego en la barra de estado? (t/n)",
- "This option requires pypresence v4.5.2+ to be installed": "Esta opción requiere que se instale pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "Esta opción requiere que se instale pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "En espera de creación de registro ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Comando: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Comando: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "El archivo de registro ya se utiliza en otra instancia de Roblox ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "Archivo de registro encontrado correctamente ((*)/30). Regresando con: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "No se puede encontrar un archivo nuevo en 15 segundos ((*)/30). Regresando con: (*)"
 }

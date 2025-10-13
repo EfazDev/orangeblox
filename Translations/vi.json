@@ -2258,5 +2258,11 @@
  "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Không thể tải các tính năng của pypresence v2.5.0+. Ngoại lệ: (*)",
  "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "Bạn có muốn bật hiển thị Tên trò chơi trong Studio chỉnh sửa trên Thanh trạng thái không? (có/không)",
  "Would you like to enable showing playing game name in Status Bar? (y/n)": "Bạn có muốn bật hiển thị tên trò chơi đang chơi trong Thanh trạng thái không? (có/không)",
- "This option requires pypresence v4.5.2+ to be installed": "Tùy chọn này yêu cầu cài đặt pypresence v4.5.2+"
+ "This option requires pypresence v4.5.2+ to be installed": "Tùy chọn này yêu cầu cài đặt pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "Đang chờ tạo nhật ký ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "Lệnh: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "Lệnh: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "Tệp nhật ký đã được sử dụng trong một Phiên bản Roblox khác ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "Đã tìm thấy thành công tệp nhật ký ((*)/30). Trở về với: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "Không thể tìm thấy tệp mới trong vòng 15 giây ((*)/30). Trở về với: (*)"
 }
