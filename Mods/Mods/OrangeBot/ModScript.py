@@ -118,7 +118,7 @@ def run_handling():
         time.sleep(0.05)
 def run_discord_proxy():
     printMainMessage("Starting discord.py proxy!")
-    s = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id])
+    s = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
     returncode = s.wait()
     if returncode == 0:
         printSuccessMessage("Discord Proxy ended with success!")

@@ -190,7 +190,7 @@ if installed["success"] == True:
                                         if type(v) is str and os.path.exists(convert_relative(v)): 
                                             if not os.path.exists(os.path.dirname(generate_f(i))): os.makedirs(os.path.dirname(generate_f(i)),mode=511)
                                             shutil.copy(convert_relative(v), generate_f(i)); mod_style_json["advanced"][i] = generate_f(i)
-                                res = subprocess.Popen([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
+                                res = subprocess.Popen([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
                                 if res.wait() == 0: 
                                     OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
                                     OrangeAPI.setConfiguration(f"KlikoModVersion{'Studio' if studio else ''}", current_version)
@@ -263,7 +263,7 @@ if installed["success"] == True:
             if len(verified_mods) > 0:
                 try:
                     printMainMessage("Running Proxy using Python Executable..")
-                    res = subprocess.Popen([sys.executable, os.path.join(cur_path, "UpdaterProxy.py"), json.dumps(verified_mods), str(studio), json.dumps(installed)])
+                    res = subprocess.Popen([sys.executable, os.path.join(cur_path, "UpdaterProxy.py"), json.dumps(verified_mods), str(studio), json.dumps(installed)], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
                     if res.wait() == 0: 
                         OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
                         for i in enabled_mods:
