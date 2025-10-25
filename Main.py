@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0h
+# v2.4.0i
 # 
 
 # Python Modules
@@ -28,7 +28,7 @@ import re
 import OrangeAPI
 import PyKits; PyKits.BuiltinEditor(builtins)
 try: import RobloxFastFlagsInstaller as RFFI
-except Exception as e: PyKits.pip().restartScript("Main.py", sys.argv)
+except Exception as e: print("Restarting for module updates.."); PyKits.pip().restartScript("Main.py", sys.argv)
 from urllib.parse import unquote, urlparse
 
 if __name__ == "__main__":
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0h"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0i"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -182,6 +182,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
@@ -1803,6 +1804,12 @@ if __name__ == "__main__":
                 d = handleBasicSetting("EFlagRobloxUnfriendCheckEnabled", False)
                 if d: return d
 
+                printMainMessage("Would you like to enable install Fast Flags using the IXP Settings method? (y/n)")
+                printYellowMessage("Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.")
+                printYellowMessage("This is the only method that is found to be usable to add fast flags using files.")
+                d = handleBasicSetting("EFlagUseIXPFastFlagsMethod", False)
+                if d: return d
+
                 printMainMessage("Would you like to enable Roblox Security Cookie Usage? (y/n)")
                 printYellowMessage("This is used for authentication with Roblox APIs such as Beta Programs.")
                 printYellowMessage("Warning! This option will look for cookies automatically in your Roblox Data and may bring security issues.")
@@ -1980,12 +1987,12 @@ if __name__ == "__main__":
                         if d: return d
 
                         printMainMessage("Would you like to enable showing playing game name in Status Bar? (y/n)")
-                        printYellowMessage("This option requires pypresence v4.5.2+ to be installed")
+                        printYellowMessage("This option requires pypresence v4.7.0+ to be installed")
                         d = handleBasicSetting("EFlagShowGameNameInStatusBar", False)
                         if d: return d
 
                         printMainMessage("Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)")
-                        printYellowMessage("This option requires pypresence v4.5.2+ to be installed")
+                        printYellowMessage("This option requires pypresence v4.7.0+ to be installed")
                         d = handleBasicSetting("EFlagShowStudioGameNameInStatusBar", False)
                         if d: return d
 
@@ -4999,7 +5006,7 @@ if __name__ == "__main__":
                         for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                             if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
                     submit_status.start()
-                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
+                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, merge=True, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
                     submit_status.end()
                     printSuccessMessage("Successfully installed FFlags to the Roblox files!")
                 except Exception as e: printErrorMessage(f"Unable to install Fast Flags to the client! Recorded Error: \n{trace()}")
@@ -5432,7 +5439,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
                                                                                     def saveMainConf(scri: str, js: dict, full=False): 
                                                                                         if type(js) is dict:
                                                                                             global main_config
@@ -5475,7 +5482,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
                                                                                             saveSettings()
                                                                                     def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
                                                                                     def getDebugMode(scri: str): return (main_config.get("EFlagEnableDebugMode") == True)
@@ -6130,18 +6137,38 @@ if __name__ == "__main__":
                                                         else: creator_name = f"{creator_name}!"
                                                     if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                     formatted_info = {
-                                                        "details": rpc_info.get("details") if rpc_info.get("details") else (playing_game_name if main_config.get("EFlagShowStudioGameNameInStatusBar") else f"Editing {playing_game_name}"),
+                                                        "details": rpc_info.get("details") if rpc_info.get("details") else f"Editing {playing_game_name}",
                                                         "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
                                                         "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
                                                         "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
                                                         "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                         "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
+                                                        "large_image_url": f"https://www.roblox.com",
                                                         "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconRunStudioDiscord.png",
+                                                        "small_image_url": f"{main_host}/",
                                                         "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
+                                                        "buttons": [],
+                                                        "state_url": None,
                                                         "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                     }
-                                                    if formatted_info["small_image"] == f"{main_host}/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
-                                                    if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Opened Studio as {connected_user_info.get('display')} (@{connected_user_info.get('name')})!")
+                                                    if formatted_info["small_image"] == f"{main_host}/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): 
+                                                        formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                    if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
+                                                        formatted_info["small_text"] = ts(f"Opened Studio as {connected_user_info.get('display')} (@{connected_user_info.get('name')})!")
+                                                        formatted_info["buttons"].append({
+                                                            "label": ts("Open User Page 🌐"), 
+                                                            "url": f"https://www.roblox.com/users/{logged_in_user.get('id')}/profile"
+                                                        })
+                                                        formatted_info["smart_image_url"] = f"https://www.roblox.com/users/{logged_in_user.get('id')}/profile"
+                                                    if place_info.get("creator").get("id") != 0 and current_place_info:
+                                                        formatted_info["buttons"].append({
+                                                            "label": ts("Open Game Page 🕹️"), 
+                                                            "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
+                                                        })
+                                                        if formatted_info["state"] == creator_name and place_info and place_info['creator']['id'] > 0:
+                                                            if place_info['creator'].get('type') == 'User': formatted_info["state_url"] = f"https://www.roblox.com/users/{place_info['creator']['id']}/profile"
+                                                            else: formatted_info["state_url"] = f"https://www.roblox.com/groups/{place_info['creator']['id']}"
+                                                        formatted_info["large_image_url"] = f"https://www.roblox.com/games/{current_place_info['placeId']}"
                                                     cur_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                                     if formatted_info.get("stop") and formatted_info.get("stop") < cur_time:
                                                         formatted_info["stop"] = None
@@ -6161,22 +6188,15 @@ if __name__ == "__main__":
                                                                     start=formatted_info["start"], 
                                                                     end=formatted_info["stop"], 
                                                                     large_image=formatted_info["large_image"], 
+                                                                    large_url=formatted_info["large_image_url"],
                                                                     large_text=formatted_info["large_text"], 
+                                                                    state_url=formatted_info["state_url"],
                                                                     instance=isInstance, 
                                                                     small_image=formatted_info["small_image"], 
+                                                                    small_url=formatted_info["small_image_url"],
                                                                     small_text=formatted_info["small_text"], 
-                                                                    status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
-                                                                    buttons=[
-                                                                        {
-                                                                            "label": ts("Open Logged User Page 🌐"), 
-                                                                            "url": f"https://www.roblox.com/users/{logged_in_user.get('id')}/profile"
-                                                                        }
-                                                                    ] if place_info.get("creator").get("id") == 0 else [
-                                                                        {
-                                                                            "label": ts("Open Game Page 🌐"), 
-                                                                            "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
-                                                                        }
-                                                                    ]
+                                                                    name=playing_game_name if main_config.get("EFlagShowStudioGameNameInStatusBar") else "Roblox Studio 🔨",
+                                                                    buttons=formatted_info["buttons"]
                                                                 )
                                                                 if req.get("code") == 2: printDebugMessage("Invalid RPC Loop Information Detected! Broken Loop!"); break
                                                             except Exception as e:
@@ -6542,12 +6562,16 @@ if __name__ == "__main__":
                                                         else: creator_name = f"{creator_name}!"
                                                         if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                         formatted_info = {
-                                                            "details": rpc_info.get("details") if rpc_info.get("details") else (playing_game_name if main_config.get("EFlagShowGameNameInStatusBar") else f"Playing {playing_game_name}"),
+                                                            "details": rpc_info.get("details") if rpc_info.get("details") else f"Playing {playing_game_name}",
                                                             "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
                                                             "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
                                                             "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
+                                                            "large_image_url": f"https://www.roblox.com/",
                                                             "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
                                                             "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
+                                                            "small_image_url": f"{main_host}/",
+                                                            "state_url": None,
+                                                            "buttons": [],
                                                             "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconPlayRobloxDiscord.png",
                                                             "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
                                                             "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
@@ -6556,8 +6580,18 @@ if __name__ == "__main__":
                                                         add_exam = False
                                                         if not formatted_info["launch_data"] == "": formatted_info["launch_data"] = f"&launchData={formatted_info['launch_data']}"; add_exam = False
                                                         if formatted_info["small_image"] == f"{main_host}/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
-                                                        if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): formatted_info["small_text"] = ts(f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!")
+                                                        if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
+                                                            formatted_info["small_text"] = ts(f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!")
+                                                            formatted_info["smart_image_url"] = f"https://www.roblox.com/users/{logged_in_user.get('id')}/profile"
                                                         if current_place_info:
+                                                            formatted_info["buttons"] = [{
+                                                                "label": ts("Open Game Page 🕹️"), 
+                                                                "url": f"https://www.roblox.com/games/{current_place_info.get('placeId')}"
+                                                            }]
+                                                            formatted_info["large_image_url"] = f"https://www.roblox.com/games/{current_place_info.get('placeId')}"
+                                                            if formatted_info["state"] == creator_name and place_info and place_info['creator']['id'] > 0:
+                                                                if place_info['creator'].get('type') == 'User': formatted_info["state_url"] = f"https://www.roblox.com/users/{place_info['creator']['id']}/profile"
+                                                                else: formatted_info["state_url"] = f"https://www.roblox.com/groups/{place_info['creator']['id']}"
                                                             if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and main_config.get("EFlagAllowPrivateServerJoining") == True and set_current_private_server_key:
                                                                 if add_exam == True: launch_data = f'{launch_data}?gameInstanceId={current_place_info.get("jobId")}?accessCode={set_current_private_server_key}'
                                                                 else: launch_data = f'{launch_data}&gameInstanceId={current_place_info.get("jobId")}&accessCode={set_current_private_server_key}'
@@ -6575,50 +6609,30 @@ if __name__ == "__main__":
                                                             try:
                                                                 isInstance = False
                                                                 if formatted_info.get("start") and formatted_info.get("end"): isInstance = True
+                                                                if main_config.get("EFlagEnableDiscordRPCJoining") == True:
+                                                                    formatted_info["buttons"].append({
+                                                                        "label": ts("Join Server! 🚀"),
+                                                                        "url": f"roblox://experiences/start?placeId={current_place_info['placeId']}{formatted_info['launch_data']}"
+                                                                    })
                                                                 if rpc:
                                                                     try:
-                                                                        if main_config.get("EFlagEnableDiscordRPCJoining") == True:
-                                                                            req = rpc.update(
-                                                                                loop_key=loop_key, 
-                                                                                details=formatted_info["details"], 
-                                                                                state=formatted_info["state"], 
-                                                                                start=formatted_info["start"], 
-                                                                                end=formatted_info["stop"], 
-                                                                                large_image=formatted_info["large_image"], 
-                                                                                large_text=formatted_info["large_text"], 
-                                                                                instance=isInstance, 
-                                                                                small_image=formatted_info["small_image"], 
-                                                                                small_text=formatted_info["small_text"], 
-                                                                                status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
-                                                                                buttons=[
-                                                                                    {
-                                                                                        "label": ts("Join Server! 🚀"),
-                                                                                        "url": f"roblox://experiences/start?placeId={current_place_info['placeId']}{formatted_info['launch_data']}"
-                                                                                    }, 
-                                                                                    {
-                                                                                        "label": ts("Open Game Page 🌐"), 
-                                                                                        "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
-                                                                                    }
-                                                                                ]
-                                                                            )
-                                                                        else:
-                                                                            req = rpc.update(
-                                                                                loop_key=loop_key, 
-                                                                                details=formatted_info["details"], 
-                                                                                state=formatted_info["state"], 
-                                                                                start=formatted_info["start"], 
-                                                                                end=formatted_info["stop"], 
-                                                                                large_image=formatted_info["large_image"], 
-                                                                                large_text=formatted_info["large_text"], 
-                                                                                instance=isInstance, 
-                                                                                small_image=formatted_info["small_image"], 
-                                                                                small_text=formatted_info["small_text"], 
-                                                                                status_display_type=StatusDisplayType.DETAILS if not rpc_info.get("details") and main_config.get("EFlagShowGameNameInStatusBar") else StatusDisplayType.NAME,
-                                                                                buttons=[{
-                                                                                    "label": ts("Open Game Page 🌐"), 
-                                                                                    "url": f"https://www.roblox.com/games/{current_place_info['placeId']}"
-                                                                                }]
-                                                                            )
+                                                                        req = rpc.update(
+                                                                            loop_key=loop_key, 
+                                                                            details=formatted_info["details"], 
+                                                                            state=formatted_info["state"], 
+                                                                            start=formatted_info["start"], 
+                                                                            end=formatted_info["stop"], 
+                                                                            large_image=formatted_info["large_image"], 
+                                                                            large_text=formatted_info["large_text"], 
+                                                                            large_url=formatted_info["large_image_url"],
+                                                                            state_url=formatted_info["state_url"],
+                                                                            instance=isInstance, 
+                                                                            small_image=formatted_info["small_image"], 
+                                                                            small_text=formatted_info["small_text"], 
+                                                                            small_url=formatted_info["small_image_url"],
+                                                                            name=playing_game_name if main_config.get("EFlagShowGameNameInStatusBar") else "Roblox",
+                                                                            buttons=formatted_info["buttons"]
+                                                                        )
                                                                         if req.get("code") == 2: break
                                                                     except Exception as e:
                                                                         if err_count > 9:
@@ -6808,10 +6822,11 @@ if __name__ == "__main__":
                             details=f"Idling Roblox{' Studio' if run_studio == True else ''}",
                             start=start_time,
                             large_image=thumbnail_url, 
+                            large_url="https://www.roblox.com/",
                             large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
                             small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
+                            small_url=main_host,
                             small_text="OrangeBlox", 
-                            status_display_type=StatusDisplayType.NAME,
                             buttons=[
                                 {
                                     "label": ts("Go to Roblox! 🌐"), 

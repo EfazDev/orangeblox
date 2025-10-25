@@ -2264,5 +2264,54 @@
  "Command: \"(*)\" Install.py -r -rp -rc": "الأمر: \"(*)\" Install.py -r -rp -rc",
  "Log file is already used in an another Roblox Instance ((*)/30)": "ملف السجل مستخدم بالفعل في مثيل Roblox آخر ((*)/30)",
  "Successfully found log file ((*)/30). Returning with: (*)": "تم العثور على ملف السجل بنجاح ((*)/30). العودة مع: (*)",
- "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "غير قادر على العثور على ملف جديد خلال 15 ثانية ((*)/30). العودة مع: (*)"
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "غير قادر على العثور على ملف جديد خلال 15 ثانية ((*)/30). العودة مع: (*)",
+ "This option requires pypresence v4.6.0+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.6.0+",
+ "Unable to load pypresence v4.5.0+ features. Exception: (*)": "غير قادر على تحميل ميزات pypresence v4.5.0+. استثناء: (*)",
+ "Open Game Page 🕹️": "افتح صفحة اللعبة 🕹️",
+ "Open User Page 🌐": "افتح صفحة المستخدم 🌐",
+ "This option requires pypresence v4.7.0+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.7.0+",
+ "--- Add Manually ---": "--- إضافة يدويا ---",
+ "--- Adding Flag: (*) ---": "--- إضافة علامة : (*) ---",
+ "--- Current Fast Flags ---": "--- الأعلام السريعة الحالية ---",
+ "--- Editing Flag: (*) ---": "--- علامة التحرير : (*) ---",
+ "--- Exit without saving ---": "--- الخروج بدون حفظ ---",
+ "--- Reset Fast Flags ---": "--- إعادة تعيين الأعلام السريعة ---",
+ "--- Select Adding Method ---": "--- حدد طريقة الإضافة ---",
+ "Any flag that'll cause you to get banned is solely on your decisions.": "أي علم يؤدي إلى حظرك يعتمد فقط على قراراتك..",
+ "Are you sure you want to want to clear your fast flag configuration? (y/n)": "هل أنت متأكد أنك تريد مسح تكوين العلم السريع الخاص بك؟ (ص/ن)",
+ "Are you sure you want to want to exit Fast Flags Installer without saving? (y/n)": "هل أنت متأكد أنك تريد الخروج من Fast Flags Installer بدون حفظ؟ (ص/ن)",
+ "Are you sure you would like to use this fast flag JSON?": "هل أنت متأكد من أنك ترغب في استخدام هذا العلم السريع JSON؟",
+ "Current Value: (*) [(*)]": "القيمة الحالية: (*) [(*)]",
+ "Data can be recovered if chose not to save.": "يمكن استرداد البيانات إذا اخترت عدم الحفظ..",
+ "Data cannot be recovered after this.": "لا يمكن استعادة البيانات بعد ذلك..",
+ "Exiting garden..": "الخروج من الحديقة..",
+ "Fast Flag Configuration has been cleared!": "تم مسح تكوين العلم السريع!",
+ "Please check what the flags actually do!! You will be responsible for what flags are enabled through this option.": "يرجى التحقق مما تفعله الأعلام في الواقع!! ستكون مسؤولاً عن العلامات التي يتم تمكينها من خلال هذا الخيار..",
+ "Please enter the flag to add to the list:": "الرجاء إدخال العلم لإضافته إلى القائمة:",
+ "Please enter the new value for this flag! (Type \"delete\" to remove the flag, or type \"back\" to go back!)": "الرجاء إدخال القيمة الجديدة لهذه العلامة! (اكتب \"حذف\" لإزالة العلامة، أو اكتب \"رجوع\" للعودة!)",
+ "Please enter the value for this flag! (Type \"back\" to go back!)": "الرجاء إدخال قيمة هذه العلامة! (اكتب \"رجوع\" للعودة!)",
+ "Please know this only applies to Roblox Player and not Roblox Studio.": "يرجى العلم أن هذا ينطبق فقط على Roblox Player وليس Roblox Studio..",
+ "Returning to menu..": "العودة إلى القائمة..",
+ "Successfully added flag: (*) to value: (*) [(*)]!": "تمت إضافة العلامة بنجاح: (*)إلى القيمة: (*) [(*)]!",
+ "Successfully deleted flag: (*)!": "تم حذف العلامة بنجاح: (*)!",
+ "Successfully edited flag: (*) to value: (*) [(*)]!": "تم تعديل العلامة بنجاح: (*)إلى القيمة: (*) [(*)]!",
+ "Unable to add flag. Exception: (*)": "غير قادر على إضافة العلم. استثناء: (*)",
+ "Unable to edit value.. Exception: (*)": "غير قادر على تعديل القيمة.. الاستثناء: (*)",
+ "You may also format the value but separating the actual value using |. For example:": "يمكنك أيضًا تنسيق القيمة مع فصل القيمة الفعلية باستخدام |. على سبيل المثال:",
+ "[(*)] = (*) [(*)]": "[(*)] = (*) [(*)]",
+ "bool|true = Will set value to boolean true": "bool|true = سيتم تعيين القيمة إلى قيمة منطقية صحيحة",
+ "float|123.45 = Will set value to floating point number 123.45": "float|123.45 = سيتم تعيين القيمة على رقم النقطة العائمة 123.45",
+ "int|1234 = Will set value to integer 1234": "int|1234 = سيتم تعيين القيمة على عدد صحيح 1234",
+ "--- Clear Fast Flags ---": "--- مسح الأعلام السريعة ---",
+ "null| = Will set value to null or None": "خالية| = سيتم تعيين القيمة على لاغية أو لا شيء",
+ "Warning! This method may be patched in future updates.": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية..",
+ "Would you like to enable install Fast Flags using the IXP Settings method? (y/n)": "هل ترغب في تمكين تثبيت Fast Flags باستخدام طريقة إعدادات IXP؟ (ص/ن)",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية. أيضًا، قد تتعارض الأعلام مع Roblox Studio",
+ "--- Increase FPS #1 ---": "--- زيادة عدد الإطارات في الثانية رقم 1 ---",
+ "--- Increase FPS #2 ---": "--- زيادة عدد الإطارات في الثانية رقم 2 ---",
+ "Would you like to enable increasing FPS using pack 1? (y/n)": "هل ترغب في تمكين زيادة fps باستخدام الحزمة 1؟ (ص/ن)",
+ "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "هل ترغب في تمكين زيادة fps باستخدام الحزمة 2 (وضع الراحة)؟ (ص/ن)",
+ "Would you like to install the stutter animations fix? (y/n)": "هل ترغب في تثبيت إصلاح الرسوم المتحركة المتعثرة؟ (ص/ن)",
+ "This is the only method that is found to be usable to add fast flags using files.": "هذه هي الطريقة الوحيدة التي وجد أنها قابلة للاستخدام لإضافة علامات سريعة باستخدام الملفات..",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية. أيضًا، قد تتعارض الأعلام مع Roblox Studio.."
 }

@@ -22,7 +22,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox), [obxbeta.efaz.dev](https://obxbeta.efaz.dev) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
-1. Set FFlag and Global Setting Customizations on your Roblox installation!
+1. Set FFlag and Global Setting Customizations on your Roblox installation! (with IXP Method enabled)
 2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
 4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
@@ -33,11 +33,12 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
 10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts!
 11. Play Roblox/Run Studio app so you can run Roblox directly!
-12. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-13. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
-14. Way more features to be explored!
+12. Included Mods and Mod Scripts that could be used for free!
+13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
+14. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
+15. Way more features to be explored!
 > [!NOTE]
-> Features may need to be enabled in order to be used. Check the Settings from the main menu in order to enable.
+> Features may be needed to be enabled in order to be used. Check the Settings from the main menu in order to find and enable.
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
@@ -67,13 +68,13 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `0415cda953debb26773d9b8348e8be65` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `c06d908aea5679f2503fb5abcdc9d41f` |
-| Installer (Install.py) | `62c0cb7aae2c0ae6d7e4dc90be58ffcc` |
-| Bootstrap API (OrangeAPI.py) | `f802344caf28fedfc916fb26477d822a` |
-| Bootstrap Loader (OrangeBlox.py) | `c588885858d695a0150819d5957178c3` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `75baac2a0b6ee40f01920b3206da2d62` |
-| PyKits API (PyKits.py) | `25206f27d06f89058e6bbfb15bcc6716` |
+| Main Bootstrap (Main.py) | `be38c97ef6ece354a70102b33c25d6c4` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `3f35c393265f25bce29f9f6437022fe7` |
+| Installer (Install.py) | `1540023831ae5efa932002ab882ade24` |
+| Bootstrap API (OrangeAPI.py) | `e3cf8598e8887d9a2d92111bebfb5376` |
+| Bootstrap Loader (OrangeBlox.py) | `7f4cbd150273fd015f17a194cb05f195` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `9753b97b9ab45f7a1c41ad4de9d4030b` |
+| PyKits API (PyKits.py) | `9d8c3bb7779264c67fe00c7cd257f86f` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

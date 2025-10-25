@@ -1,5 +1,5 @@
 """
-PyKits v1.6.1 (MINI) | Made by Efaz from efaz.dev
+PyKits v1.6.3 (MINI) | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -20,8 +20,24 @@ However! Classes may depend on other classes. Use this resource list:
     PyKitsIsAModule: None
 """
 
+# Module Information
+__version__ = "1.6.3"
+__license__ = "MIT"
+__author__ = "EfazDev"
+__maintainer__ = "EfazDev"
+__email__ = "support@efaz.dev"
+__all__ = [
+    "Colors"
+]
+
+# Modules
 import typing
+
+# PyKits Classes
 class Colors:
+    """
+    A class that allows you to work with console colors with different formats of text and ANSI.
+    """
     class Color:
         def __init__(self, r: int, g: int, b: int):
             self.__colors_obj__ = Colors()
@@ -231,4 +247,6 @@ class Colors:
             result += f"{self.get_ansi_start(ansi_code)}{char}"
         return result + self.get_reset_color()
 class PyKitsIsAModule(Exception): pass
+
+# Throw Exception for Main
 if __name__ == "__main__": raise PyKitsIsAModule("PyKits is a module and not a runable instance!")

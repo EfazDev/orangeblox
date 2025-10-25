@@ -16,7 +16,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.0h"}
+    current_version = {"version": "2.4.0i"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -155,6 +155,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
@@ -361,7 +362,6 @@ if __name__ == "__main__":
                 input("> ")
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
-        sour_path = ""
         venv_path = ""
         if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
             printMainMessage("Checking Virtual Environments..")
@@ -371,10 +371,10 @@ if __name__ == "__main__":
                 if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
                     shutil.rmtree(venv_path, ignore_errors=True)
                 generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
+                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
-            else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+            else: printSuccessMessage("Found Virtual Environment!")
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:

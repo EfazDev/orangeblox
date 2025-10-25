@@ -116,6 +116,13 @@ def run_handling():
                 handled.append(file)
         except Exception: traceback.print_exc()
         time.sleep(0.05)
+def clean_up_tasks():
+    for file in os.listdir(current_path_location):
+        if file.startswith("OrangeBotTask_"):
+            try:
+                os.remove(os.path.join(current_path_location, file))
+            except Exception:
+                pass
 def run_discord_proxy():
     printMainMessage("Starting discord.py proxy!")
     s = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
@@ -124,20 +131,21 @@ def run_discord_proxy():
         printSuccessMessage("Discord Proxy ended with success!")
     else:
         printErrorMessage(f"Discord Proxy ended with fail! Return code: {returncode}")
+def full_start():
+    clean_up_tasks()
+    threading.Thread(target=run_discord_proxy, daemon=True).start()
+    run_handling()
 
 # Start Discord Bot
 if OrangeAPI.getConfiguration("DiscordBotEnabled") == True:
     def start():
         taken = OrangeAPI.createAppLock("BotLock")
-        if taken:
-            threading.Thread(target=run_discord_proxy, daemon=True).start()
-            run_handling()
+        if taken: full_start()
         else:
             while True:
                 taken = OrangeAPI.createAppLock("BotLock")
                 if taken:
-                    threading.Thread(target=run_discord_proxy, daemon=True).start()
-                    run_handling()
+                    full_start()
                     break
                 time.sleep(10)
     threading.Thread(target=start, daemon=True).start()

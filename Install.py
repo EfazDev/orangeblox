@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0h
+# v2.4.0i
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.0h"}
+    current_version = {"version": "2.4.0i"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -241,6 +241,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
@@ -688,7 +689,7 @@ if __name__ == "__main__":
                     if x64_python.pythonInstalled() and check(x64_python): raise Exception(f"Requesting install for x64 python!")
                     x86_python = PyKits.pip(arch="x86")
                     if x86_python.pythonInstalled() and check(x86_python): raise Exception(f"Requesting install for x86 python!")
-                else:
+                elif rebuild_from_source == 2:
                     intel_python = PyKits.pip(arch="intel")
                     if intel_python.pythonInstalled() and check(intel_python): raise Exception(f"Requesting install for Intel python!")
             elif pip_class.getArchitecture() == "x64":

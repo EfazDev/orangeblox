@@ -13,11 +13,11 @@
 	<key>CFBundleName</key>
 	<string>OrangeBlox</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.4.0h</string>
+	<string>2.4.0i</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.4.0h</string>
+	<string>2.4.0i</string>
     <key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>LSApplicationCategoryType</key>

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0h
+# v2.4.0i
 # 
 
 # Modules
@@ -22,7 +22,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.4.0h"}
+current_version: typing.Dict[str, str] = {"version": "2.4.0i"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -64,7 +64,7 @@ class Presence(pypresence.Presence):
     current_loop_id = None
     default_presence = None
 
-    def __init__(self, *args, **kwargs): super(Presence, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs): self.presence_class().__init__(*args, **kwargs)
     def get_if_discord_opened(self):
         if main_os == "Darwin":
             if pip_class.getIfProcessIsOpened("Discord Helper") or pip_class.getIfProcessIsOpened("Discord PTB Helper") or pip_class.getIfProcessIsOpened("Discord Canary Helper"): return True
@@ -77,7 +77,7 @@ class Presence(pypresence.Presence):
         if self.connected == False:
             def create_connection():
                 try:
-                    super(Presence, self).connect()
+                    self.presence_class().connect()
                     self.stop_event = threading.Event()
                     suppress_hook()
                     self.printDebugMessage(f"Started Discord Presence!")
@@ -92,7 +92,7 @@ class Presence(pypresence.Presence):
                                             try:
                                                 while True:
                                                     if self.get_if_discord_opened() == True:
-                                                        super(Presence, self).connect()
+                                                        self.presence_class().connect()
                                                         self.printDebugMessage(f"Reactivated Discord Presence!")
                                                         break
                                                     else: time.sleep(2)
@@ -104,8 +104,8 @@ class Presence(pypresence.Presence):
                                     self.discord_session_connected = True
                                     try:
                                         if self.connected == True:
-                                            if self.current_presence: super(Presence, self).update(**(self.current_presence))
-                                            else: super(Presence, self).clear()
+                                            if self.current_presence: self.presence_class().update(**(self.current_presence))
+                                            else: self.presence_class().clear()
                                     except Exception as e: pass
                                 else:
                                     if self.discord_session_connected == True: self.printDebugMessage(f"Deactivated Discord Presence!")
@@ -146,7 +146,7 @@ class Presence(pypresence.Presence):
         else: return {"success": False, "code": 1}
     def update_kwargs(self, kwargs: dict):
         # Support Older Versions of Pypresence while keeping up with updates
-        if (kwargs.get("status_display_type") != None or kwargs.get("activity_type") != None) and pypresence_version > "2.5.0":
+        if (kwargs.get("status_display_type") != None or kwargs.get("activity_type") != None) and pypresence_version >= "4.5.0":
             try:
                 if not hasattr(self, "_pypresence_types"): 
                     import pypresence.types as pyptypes
@@ -169,7 +169,17 @@ class Presence(pypresence.Presence):
             except Exception as e:
                 if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
                 if kwargs.get("activity_type") != None: kwargs.pop("activity_type")
-                self.printDebugMessage(f"Unable to load pypresence v2.5.0+ features. Exception: {str(e)}")
+                self.printDebugMessage(f"Unable to load pypresence v4.5.0+ features. Exception: {str(e)}")
+        else:
+            if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
+            if kwargs.get("activity_type") != None: kwargs.pop("activity_type")
+        if pypresence_version < "4.6.0":
+            if (kwargs.get("name") != None): kwargs.pop("name")
+        if pypresence_version < "4.7.0":
+            if (kwargs.get("state_url") != None): kwargs.pop("state_url")
+            if (kwargs.get("details_url") != None): kwargs.pop("details_url")
+            if (kwargs.get("large_url") != None): kwargs.pop("large_url")
+            if (kwargs.get("small_url") != None): kwargs.pop("small_url")
         return kwargs
     def close(self):
         if self.connected == True:
@@ -178,19 +188,18 @@ class Presence(pypresence.Presence):
             if self.main_thread: self.main_thread.join()
             if self.discord_session_connected == True: 
                 try:
-                    super(Presence, self).close()
+                    self.presence_class().close()
                     self.discord_session_connected = False
                     self.printDebugMessage(f"[close()]: Closed Discord Presence!")
                 except Exception as e: self.printDebugMessage(f"[close()]: Unable to close to Discord! Error: {str(e)}")
-                
             self.current_presence = None
             self.current_loop_id = None
             return {"success": True, "code": 0}
         else: return {"success": False, "code": 1}
     def clear(self, *args, **kwargs):
         if self.connected == True:
-            if self.default_presence == None and self.discord_session_connected == True: super(Presence, self).clear(*args, **kwargs)
-            elif self.discord_session_connected == True: super(Presence, self).update(**(self.default_presence))
+            if self.default_presence == None and self.discord_session_connected == True: self.presence_class().clear(*args, **kwargs)
+            elif self.discord_session_connected == True: self.presence_class().update(**(self.default_presence))
             self.current_presence = self.default_presence
             self.current_loop_id = None
             return {"success": True, "code": 0}

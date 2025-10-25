@@ -59,8 +59,6 @@ class OrangeAPI2:
         def method(*args, **kwargs): return askForTask(name, *args, **kwargs)
         return method
 OrangeAPI: orange.OrangeAPI = OrangeAPI2()    
-debugMode = OrangeAPI.getDebugMode()
-apiVersion = OrangeAPI.about()
     
 # Printing Functions
 def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
@@ -113,24 +111,24 @@ async def status_task():
         try:
             current_game_info = OrangeAPI.getCurrentPlaceInfo()
             connected_game_status = OrangeAPI.getIfConnectedToGame()
-            if connected_game_status == True:
+            if connected_game_status == True and current_game_info and current_game_info.get("place_info"):
                 place_info = current_game_info["place_info"]
                 if place_info['creator']['name'] == "Local File" and place_info['creator']['id'] == 0: creator_name = OrangeAPI.translate(f"Opened as Local File!")
                 else:
                     creator_name = OrangeAPI.translate(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}").replace("✅", "")
                     if place_info.get("creator").get("hasVerifiedBadge") == True: creator_name = f"{creator_name} ✅!"
                     else: creator_name = f"{creator_name}!"
-                await bot.change_presence(status=discord.Status.idle,
+                await bot.change_presence(status=discord.Status.online,
                     activity=discord.Activity(
                         type=discord.ActivityType.playing,
-                        name=f"Playing {place_info['name']} by {creator_name}"
+                        name=f"{place_info['name']} by {creator_name}"
                     )
                 )
             else:
                 await bot.change_presence(status=discord.Status.idle,
                     activity=discord.Activity(
                         type=discord.ActivityType.playing,
-                        name=f"Idling on Roblox {'Studio' if OrangeAPI.getStudioMode() else 'Player'}"
+                        name=f"Idling Roblox{' Studio' if OrangeAPI.getStudioMode() else ''}"
                     )
                 )
         except Exception as e:
