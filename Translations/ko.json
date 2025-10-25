@@ -2315,5 +2315,6 @@
  "Would you like to install the stutter animations fix? (y/n)": "끊김 애니메이션 수정 사항을 설치하시겠습니까? (예/아니요)",
  "This is the only method that is found to be usable to add fast flags using files.": "이는 파일을 사용하여 빠른 플래그를 추가하는 데 사용할 수 있는 유일한 방법입니다..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "경고! 이 방법은 향후 업데이트에서 패치될 수 있습니다. 또한 플래그가 Roblox Studio와 충돌할 수 있습니다..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "그러나 이를 우회하려고 하면 Roblox에서 금지할 수 있습니다.."
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "그러나 이를 우회하려고 하면 Roblox에서 금지할 수 있습니다..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "그러나 이를 우회하려고 하면 Roblox에서 금지할 수 있습니다. 이 시점 이후에는 우리는 책임을 지지 않습니다!"
 }

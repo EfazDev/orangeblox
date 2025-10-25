@@ -2314,5 +2314,6 @@
  "Would you like to install the stutter animations fix? (y/n)": "คุณต้องการติดตั้งการแก้ไขภาพเคลื่อนไหวที่พูดติดอ่างหรือไม่ (มี/ไม่มี)",
  "This is the only method that is found to be usable to add fast flags using files.": "นี่เป็นวิธีเดียวที่พบว่าสามารถใช้เพื่อเพิ่มแฟล็กด่วนโดยใช้ไฟล์ได้",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "คำเตือน! วิธีนี้อาจได้รับการแก้ไขในการอัพเดตในอนาคต นอกจากนี้ ธงอาจชนกับ Roblox Studio",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "อย่างไรก็ตาม Roblox สามารถแบนได้หากพยายามหลีกเลี่ยงสิ่งนี้"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "อย่างไรก็ตาม Roblox สามารถแบนได้หากพยายามหลีกเลี่ยงสิ่งนี้",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "อย่างไรก็ตาม Roblox สามารถแบนได้หากพยายามหลีกเลี่ยงสิ่งนี้ เราจะไม่รับผิดชอบหลังจากจุดนี้!"
 }

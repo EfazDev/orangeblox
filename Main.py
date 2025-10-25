@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0i
+# v2.4.0k
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0i"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.0k"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -1807,7 +1807,7 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to enable install Fast Flags using the IXP Settings method? (y/n)")
                 printYellowMessage("Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.")
                 printYellowMessage("This is the only method that is found to be usable to add fast flags using files.")
-                printErrorMessage("HOWEVER, it can be bannable by Roblox for trying to bypass this.")
+                printErrorMessage("HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!")
                 d = handleBasicSetting("EFlagUseIXPFastFlagsMethod2", False)
                 if d: return d
 

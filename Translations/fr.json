@@ -2314,5 +2314,6 @@
  "Would you like to install the stutter animations fix? (y/n)": "Souhaitez-vous installer le correctif des animations de bégaiement ? (y/n)",
  "This is the only method that is found to be usable to add fast flags using files.": "C'est la seule méthode qui s'avère utilisable pour ajouter des indicateurs rapides à l'aide de fichiers..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Avertissement! Cette méthode pourra être corrigée dans les futures mises à jour. De plus, les drapeaux peuvent entrer en collision avec Roblox Studio..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "CEPENDANT, Roblox peut l'interdire pour avoir tenté de contourner cela.."
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "CEPENDANT, Roblox peut l'interdire pour avoir tenté de contourner cela..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "CEPENDANT, Roblox peut l'interdire pour avoir tenté de contourner cela. NOUS NE SERONS PAS RESPONSABLES APRÈS CE POINT !"
 }

@@ -2314,5 +2314,6 @@
  "Would you like to install the stutter animations fix? (y/n)": "您想安裝卡頓動畫修復程序嗎? (是/否)",
  "This is the only method that is found to be usable to add fast flags using files.": "這是被發現可用於使用文件添加快速標誌的唯一方法..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "警告!此方法可能會在未來的更新中修補.此外,旗幟可能會與 Roblox Studio 發生衝突..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "然而,如果 Roblox 試圖繞過這個問題,它可能會被禁止.."
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "然而,如果 Roblox 試圖繞過這個問題,它可能會被禁止..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "然而,如果 Roblox 試圖繞過這個問題,它可能會被禁止.在此之後我們將不再承擔責任!"
 }
