@@ -2312,5 +2312,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "Bạn có muốn bật tăng FPS bằng gói 2 (chế độ thoải mái) không? (có/không)",
  "Would you like to install the stutter animations fix? (y/n)": "Bạn có muốn cài đặt bản sửa lỗi hoạt ảnh bị giật không? (có/không)",
  "This is the only method that is found to be usable to add fast flags using files.": "Đây là phương pháp duy nhất được cho là có thể sử dụng được để thêm cờ nhanh bằng tệp..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Cảnh báo! Phương pháp này có thể được vá trong các bản cập nhật trong tương lai. Ngoài ra, cờ có thể xung đột với Roblox Studio.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Cảnh báo! Phương pháp này có thể được vá trong các bản cập nhật trong tương lai. Ngoài ra, cờ có thể xung đột với Roblox Studio..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "TUY NHIÊN, Roblox có thể cấm nó nếu cố gắng vượt qua điều này.."
 }

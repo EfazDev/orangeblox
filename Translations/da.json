@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "Vil du aktivere øget FPS ved hjælp af pakke 2 (komforttilstand)? (å/n)",
  "Would you like to install the stutter animations fix? (y/n)": "Vil du installere rettelsen til stutter-animationer? (å/n)",
  "This is the only method that is found to be usable to add fast flags using files.": "Dette er den eneste metode, der viser sig at være brugbar til at tilføje hurtige flag ved hjælp af filer..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Advarsel! Denne metode kan blive rettet i fremtidige opdateringer. Desuden kan flag kollidere med Roblox Studio.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Advarsel! Denne metode kan blive rettet i fremtidige opdateringer. Desuden kan flag kollidere med Roblox Studio..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "DOG kan det forbydes af Roblox for at forsøge at omgå dette.."
 }

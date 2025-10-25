@@ -22,7 +22,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox), [obxbeta.efaz.dev](https://obxbeta.efaz.dev) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
-1. Set FFlag and Global Setting Customizations on your Roblox installation! (with IXP Method enabled in v2.4.0i+ or v2.4.0+)
+1. Set FFlag and Global Setting Customizations on your Roblox installation!
 2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
 4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
@@ -69,12 +69,12 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `be38c97ef6ece354a70102b33c25d6c4` |
+| Main Bootstrap (Main.py) | `5ff2365b46d508f72a2455db01126feb` |
 | Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `3f35c393265f25bce29f9f6437022fe7` |
-| Installer (Install.py) | `1540023831ae5efa932002ab882ade24` |
-| Bootstrap API (OrangeAPI.py) | `e3cf8598e8887d9a2d92111bebfb5376` |
-| Bootstrap Loader (OrangeBlox.py) | `7f4cbd150273fd015f17a194cb05f195` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `9753b97b9ab45f7a1c41ad4de9d4030b` |
+| Installer (Install.py) | `de97521e858c806787c290905b62c0c5` |
+| Bootstrap API (OrangeAPI.py) | `aba693396df6e0f80fe9d6c187c6d9c2` |
+| Bootstrap Loader (OrangeBlox.py) | `05face1ddfc0d877be2c41f85f7e533a` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `11538fc581e417dddb95e04b00f7fd7d` |
 | PyKits API (PyKits.py) | `9d8c3bb7779264c67fe00c7cd257f86f` |
 
 ## Credits

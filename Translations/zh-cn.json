@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "您想使用包 2(舒适模式)提高 fps 吗? (是/否)",
  "Would you like to install the stutter animations fix? (y/n)": "您想安装卡顿动画修复程序吗? (是/否)",
  "This is the only method that is found to be usable to add fast flags using files.": "这是被发现可用于使用文件添加快速标志的唯一方法..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "警告!此方法可能会在未来的更新中修补.此外,旗帜可能会与 Roblox Studio 发生冲突.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "警告!此方法可能会在未来的更新中修补.此外,旗帜可能会与 Roblox Studio 发生冲突..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "然而,如果 Roblox 试图绕过这个问题,它可能会被禁止.."
 }

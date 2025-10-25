@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "Desideri abilitare l'aumento degli FPS utilizzando il pack 2 (Modalità comfort)? (sì/no)",
  "Would you like to install the stutter animations fix? (y/n)": "Desideri installare la correzione delle animazioni stutter? (sì/no)",
  "This is the only method that is found to be usable to add fast flags using files.": "Questo è l'unico metodo che risulta utilizzabile per aggiungere flag veloci utilizzando i file..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Avvertimento! Questo metodo potrebbe essere corretto nei futuri aggiornamenti. Inoltre, le bandiere potrebbero entrare in collisione con Roblox Studio.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Avvertimento! Questo metodo potrebbe essere corretto nei futuri aggiornamenti. Inoltre, le bandiere potrebbero entrare in collisione con Roblox Studio..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "TUTTAVIA, può essere bannato da Roblox per aver tentato di aggirarlo.."
 }

@@ -182,7 +182,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
-        "EFlagUseIXPFastFlagsMethod": "bool",
+        "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
@@ -1807,7 +1807,8 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to enable install Fast Flags using the IXP Settings method? (y/n)")
                 printYellowMessage("Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.")
                 printYellowMessage("This is the only method that is found to be usable to add fast flags using files.")
-                d = handleBasicSetting("EFlagUseIXPFastFlagsMethod", False)
+                printErrorMessage("HOWEVER, it can be bannable by Roblox for trying to bypass this.")
+                d = handleBasicSetting("EFlagUseIXPFastFlagsMethod2", False)
                 if d: return d
 
                 printMainMessage("Would you like to enable Roblox Security Cookie Usage? (y/n)")
@@ -5006,7 +5007,7 @@ if __name__ == "__main__":
                         for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                             if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
                     submit_status.start()
-                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, merge=True, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
+                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, merge=True, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
                     submit_status.end()
                     printSuccessMessage("Successfully installed FFlags to the Roblox files!")
                 except Exception as e: printErrorMessage(f"Unable to install Fast Flags to the client! Recorded Error: \n{trace()}")
@@ -5439,7 +5440,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
                                                                                     def saveMainConf(scri: str, js: dict, full=False): 
                                                                                         if type(js) is dict:
                                                                                             global main_config
@@ -5482,7 +5483,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod")==True)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
                                                                                             saveSettings()
                                                                                     def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
                                                                                     def getDebugMode(scri: str): return (main_config.get("EFlagEnableDebugMode") == True)
@@ -6235,7 +6236,7 @@ if __name__ == "__main__":
                                                 buttons = [
                                                     generateEmbedField(ts("Is Local File"), f"False"),
                                                     generateEmbedField(ts("Connected Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
-                                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
                                                 ]
                                             generated_body = generateDiscordPayload(title, color, buttons + [
                                                 generateEmbedField(ts("Started"), f"<t:{int(start_time)}:R>"),
@@ -6263,7 +6264,7 @@ if __name__ == "__main__":
                     universeId = current_place_info and current_place_info.get('universeId')
                     if placeId and universeId:
                         connected_roblox_instance.endInstance()
-                        url = f"roblox-studio:1+launchmode:edit+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
+                        url = f"roblox-studio:1+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
                         if main_os == "Darwin": subprocess.run(["/usr/bin/open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                         else: subprocess.run(f"start {url}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
             def onClosingGame(info):
@@ -6312,7 +6313,7 @@ if __name__ == "__main__":
                                 buttons = [
                                     generateEmbedField(ts("Is Local File"), f"False"),
                                     generateEmbedField(ts("Disconnected Game"), f"[{place_info['name']}](https://www.roblox.com/games/{synced_place_info.get('placeId')})"),
-                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{synced_place_info.get('placeId')}+universeId:{synced_place_info.get('universeId')})")
+                                    generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+task:EditPlace+placeId:{synced_place_info.get('placeId')}+universeId:{synced_place_info.get('universeId')})")
                                 ]
 
                             generated_body = generateDiscordPayload(title, color, buttons + [
@@ -6359,7 +6360,7 @@ if __name__ == "__main__":
                             buttons = [
                                 generateEmbedField(ts("Is Local File"), f"False"),
                                 generateEmbedField(ts("Published Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
-                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
                             ]
 
                         generated_body = generateDiscordPayload(title, color, buttons + [
@@ -6398,7 +6399,7 @@ if __name__ == "__main__":
                             buttons = [
                                 generateEmbedField(ts("Is Local File"), f"False"),
                                 generateEmbedField(ts("Saved Game"), f"[{place_info['name']}](https://www.roblox.com/games/{current_place_info.get('placeId')})"),
-                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+launchmode:edit+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
+                                generateEmbedField(ts("Edit Link"), f"[{ts('Edit Now!')}](https://rbx.efaz.dev/studio?info=1+task:EditPlace+placeId:{current_place_info.get('placeId')}+universeId:{current_place_info.get('universeId')})")
                             ]
 
                         generated_body = generateDiscordPayload(title, color, buttons + [

@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "Paket 2'yi (konfor Modu) kullanarak FPS'yi artırmayı etkinleştirmek ister misiniz? (y/n)",
  "Would you like to install the stutter animations fix? (y/n)": "Kekemelik animasyonları düzeltmesini yüklemek ister misiniz? (y/n)",
  "This is the only method that is found to be usable to add fast flags using files.": "Dosyaları kullanarak hızlı bayraklar eklemek için kullanılabilecek tek yöntem budur..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Uyarı! Bu yönteme gelecekteki güncellemelerde yama yapılabilir. Ayrıca bayraklar Roblox Studio ile çarpışabilir.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Uyarı! Bu yönteme gelecekteki güncellemelerde yama yapılabilir. Ayrıca bayraklar Roblox Studio ile çarpışabilir..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "ANCAK, bunu atlamaya çalıştığı için Roblox tarafından yasaklanabilir.."
 }

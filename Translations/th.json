@@ -2298,7 +2298,7 @@
  "Unable to add flag. Exception: (*)": "ไม่สามารถเพิ่มธงได้ ข้อยกเว้น: (*)",
  "Unable to edit value.. Exception: (*)": "ไม่สามารถแก้ไขค่าได้.. ข้อยกเว้น: (*)",
  "You may also format the value but separating the actual value using |. For example:": "คุณอาจจัดรูปแบบค่าแต่แยกค่าจริงโดยใช้ | ตัวอย่างเช่น:",
- "[(*)] = (*) [(*)]": "-",
+ "[(*)] = (*) [(*)]": "[(*)] = (*) [(*)]",
  "bool|true = Will set value to boolean true": "bool|true = จะตั้งค่าเป็น boolean true",
  "float|123.45 = Will set value to floating point number 123.45": "float|123.45 = จะตั้งค่าเป็นจำนวนจุดลอยตัว 123.45",
  "int|1234 = Will set value to integer 1234": "int|1234 = จะตั้งค่าเป็นจำนวนเต็ม 1234",
@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "คุณต้องการเปิดใช้งานการเพิ่ม fps โดยใช้แพ็ค 2 (โหมดความสะดวกสบาย) หรือไม่? (มี/ไม่มี)",
  "Would you like to install the stutter animations fix? (y/n)": "คุณต้องการติดตั้งการแก้ไขภาพเคลื่อนไหวที่พูดติดอ่างหรือไม่ (มี/ไม่มี)",
  "This is the only method that is found to be usable to add fast flags using files.": "นี่เป็นวิธีเดียวที่พบว่าสามารถใช้เพื่อเพิ่มแฟล็กด่วนโดยใช้ไฟล์ได้",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "คำเตือน! วิธีนี้อาจได้รับการแก้ไขในการอัพเดตในอนาคต นอกจากนี้ ธงอาจชนกับ Roblox Studio"
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "คำเตือน! วิธีนี้อาจได้รับการแก้ไขในการอัพเดตในอนาคต นอกจากนี้ ธงอาจชนกับ Roblox Studio",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "อย่างไรก็ตาม Roblox สามารถแบนได้หากพยายามหลีกเลี่ยงสิ่งนี้"
 }

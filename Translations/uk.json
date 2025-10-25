@@ -2313,5 +2313,6 @@
  "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "Бажаєте ввімкнути підвищення FPS за допомогою пакета 2 (комфортний режим)? (да/не)",
  "Would you like to install the stutter animations fix? (y/n)": "Бажаєте встановити виправлення заїкання анімації? (да/не)",
  "This is the only method that is found to be usable to add fast flags using files.": "Це єдиний метод, який можна використовувати для додавання швидких позначок за допомогою файлів..",
- "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "УВАГА! Цей метод може бути виправлений у майбутніх оновленнях. Крім того, прапори можуть конфліктувати з Roblox Studio.."
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "УВАГА! Цей метод може бути виправлений у майбутніх оновленнях. Крім того, прапори можуть конфліктувати з Roblox Studio..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "ОДНАК Roblox може забанити його за спробу обійти це.."
 }
