@@ -35,7 +35,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Included Mods and Mod Scripts that could be used for free!
 13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-14. Early Program Support with Roblox Security Cookie Usage enabled (in v2.4.0i+ or v2.4.0+)
+14. Roblox Early Program Support with Roblox Security Cookie Usage enabled (in v2.4.0i+ or v2.4.0+)
 15. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
 16. Way more features to be explored!
 > [!NOTE]
