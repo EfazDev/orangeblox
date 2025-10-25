@@ -22,7 +22,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/orangeblox), [obxbeta.efaz.dev](https://obxbeta.efaz.dev) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
-1. Set FFlag and Global Setting Customizations on your Roblox installation! (with IXP Method enabled)
+1. Set FFlag and Global Setting Customizations on your Roblox installation! (with IXP Method enabled in v2.4.0i+ or v2.4.0+)
 2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
 4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
@@ -35,8 +35,9 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Included Mods and Mod Scripts that could be used for free!
 13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-14. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
-15. Way more features to be explored!
+14. Early Program Support with Roblox Security Cookie Usage enabled (in v2.4.0i+ or v2.4.0+)
+15. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
+16. Way more features to be explored!
 > [!NOTE]
 > Features may be needed to be enabled in order to be used. Check the Settings from the main menu in order to find and enable.
 
