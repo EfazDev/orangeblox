@@ -2314,5 +2314,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "یہ واحد طریقہ ہے جو فائلوں کا استعمال کرتے ہوئے تیز جھنڈوں کو شامل کرنے کے لئے قابل استعمال پایا جاتا ہے۔",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "انتباہ! مستقبل کی تازہ کاریوں میں یہ طریقہ پیچ کیا جاسکتا ہے۔ نیز ، جھنڈے روبلوکس اسٹوڈیو سے ٹکرا سکتے ہیں۔",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "تاہم ، روبلوکس کے ذریعہ اس کو نظرانداز کرنے کی کوشش کرنے پر پابندی عائد ہوسکتی ہے۔",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "تاہم ، روبلوکس کے ذریعہ اس کو نظرانداز کرنے کی کوشش کرنے پر پابندی عائد ہوسکتی ہے۔ ہم اس نکتے کے بعد ذمہ دار نہیں ہوں گے!"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "تاہم ، روبلوکس کے ذریعہ اس کو نظرانداز کرنے کی کوشش کرنے پر پابندی عائد ہوسکتی ہے۔ ہم اس نکتے کے بعد ذمہ دار نہیں ہوں گے!",
+ "Unable to delete IXP Settings due to method usage: (*)": "طریقہ کار کے استعمال کی وجہ سے ixp کی ترتیبات کو حذف کرنے سے قاصر: (*)"
 }

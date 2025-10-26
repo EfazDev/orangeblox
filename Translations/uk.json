@@ -2315,5 +2315,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "Це єдиний метод, який можна використовувати для додавання швидких позначок за допомогою файлів..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "УВАГА! Цей метод може бути виправлений у майбутніх оновленнях. Крім того, прапори можуть конфліктувати з Roblox Studio..",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "ОДНАК Roblox може забанити його за спробу обійти це..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "ОДНАК Roblox може забанити його за спробу обійти це. ПІСЛЯ ЦЬОГО ПУНКТУ МИ НЕ НЕСЕМЕ ВІДПОВІДАЛЬНОСТІ!"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "ОДНАК Roblox може забанити його за спробу обійти це. ПІСЛЯ ЦЬОГО ПУНКТУ МИ НЕ НЕСЕМЕ ВІДПОВІДАЛЬНОСТІ!",
+ "Unable to delete IXP Settings due to method usage: (*)": "Не вдалося видалити налаштування IXP через використання методу: (*)"
 }

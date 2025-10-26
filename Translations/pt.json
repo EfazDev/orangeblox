@@ -2315,5 +2315,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "Este é o único método que pode ser usado para adicionar sinalizadores rápidos usando arquivos..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Aviso! Este método pode ser corrigido em atualizações futuras. Além disso, as bandeiras podem colidir com o Roblox Studio..",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "NO ENTANTO, pode ser banido pelo Roblox por tentar contornar isso..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "NO ENTANTO, pode ser banido pelo Roblox por tentar contornar isso. NÃO SEREMOS RESPONSÁVEIS APÓS ESTE PONTO!"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "NO ENTANTO, pode ser banido pelo Roblox por tentar contornar isso. NÃO SEREMOS RESPONSÁVEIS APÓS ESTE PONTO!",
+ "Unable to delete IXP Settings due to method usage: (*)": "Não foi possível excluir as configurações IXP devido ao uso do método: (*)"
 }

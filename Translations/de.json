@@ -2315,5 +2315,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "Dies ist die einzige Methode, die sich als brauchbar erwiesen hat, um schnelle Flags mithilfe von Dateien hinzuzufügen..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "Warnung! Diese Methode wird möglicherweise in zukünftigen Updates gepatcht. Außerdem können Flaggen mit Roblox Studio kollidieren..",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "JEDOCH kann es von Roblox gesperrt werden, wenn versucht wird, dies zu umgehen..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "JEDOCH kann es von Roblox gesperrt werden, wenn versucht wird, dies zu umgehen. AB DIESEM PUNKT ÜBERNEHMEN WIR KEINE VERANTWORTUNG!"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "JEDOCH kann es von Roblox gesperrt werden, wenn versucht wird, dies zu umgehen. AB DIESEM PUNKT ÜBERNEHMEN WIR KEINE VERANTWORTUNG!",
+ "Unable to delete IXP Settings due to method usage: (*)": "IXP-Einstellungen können aufgrund der Methodenverwendung nicht gelöscht werden: (*)"
 }

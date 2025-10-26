@@ -35,7 +35,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 11. Play Roblox/Run Studio app so you can run Roblox directly!
 12. Included Mods and Mod Scripts that could be used for free!
 13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-14. Roblox Early Program Support with Roblox Security Cookie Usage enabled (in v2.4.0i+ or v2.4.0+)
+14. Roblox Early Program Support with Roblox Security Cookie Usage enabled
 15. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
 16. Way more features to be explored!
 > [!NOTE]
@@ -69,12 +69,12 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `1aef95af1698f7d598125422c7b5604e` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `c1033042505cb6aebadd9906487ffebd` |
-| Installer (Install.py) | `a46b005fc6376b57cf3de2e7603a9fb5` |
-| Bootstrap API (OrangeAPI.py) | `58d6bccbb716fd913c77e119dd99b6d7` |
-| Bootstrap Loader (OrangeBlox.py) | `c74d3b8e0558bf364d212405f6146e0f` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `3f288f813808f13ae3958abea59780cd` |
+| Main Bootstrap (Main.py) | `cf1371d615f4da8c9005cef62fd8d316` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `fc84f30d5da1146210f4f1260870eaa8` |
+| Installer (Install.py) | `93e8eb31263f5e6092b7af8af017cc2b` |
+| Bootstrap API (OrangeAPI.py) | `9319a291b2c90a93eaee2c11cc3c4814` |
+| Bootstrap Loader (OrangeBlox.py) | `814fb9da7133a1f48c77c21f7bf90b5f` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `024ac0f3388adf8f436959a39e2ea688` |
 | PyKits API (PyKits.py) | `f9a3e8c32ca0e9c0fa9975f0544843d4` |
 
 ## Credits
