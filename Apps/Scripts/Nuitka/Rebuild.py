@@ -33,7 +33,7 @@ variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
-current_version = {"version": "2.4.0l"}
+current_version = {"version": "2.4.1a"}
 
 split_vers = current_version["version"].split(".")
 letter_version = None
@@ -124,7 +124,6 @@ macos = {
     "intel": [
         [PRINT, "Removing Existing OrangeBloxMacIntel.zip.."],
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMacIntel.zip"]],
-        [PRINT, "Generating Script Hash.."],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Nuitka Package.."],
         [RUN, NUITKA, [
@@ -163,7 +162,6 @@ macos = {
     "arm": [
         [PRINT, "Removing Existing OrangeBloxMac.zip.."],
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMac.zip"]],
-        [PRINT, "Generating Script Hash.."],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Nuitka Package.."],
         [RUN, NUITKA, [

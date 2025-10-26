@@ -16,7 +16,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.0l"}
+    current_version = {"version": "2.4.1a"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -155,6 +155,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "EFlagUseIXPFastFlagsMethod2",
         "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",

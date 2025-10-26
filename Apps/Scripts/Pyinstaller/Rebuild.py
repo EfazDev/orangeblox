@@ -93,7 +93,6 @@ macos = {
     "intel": [
         [PRINT, "Removing Existing OrangeBloxMacIntel.zip.."],
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMacIntel.zip"]],
-        [PRINT, "Generating Script Hash.."],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
         [RUN, PYINSTALLER, ["./Apps/Scripts/Pyinstaller/OrangeBlox_macOSIntel.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
@@ -113,7 +112,6 @@ macos = {
     "arm": [
         [PRINT, "Removing Existing OrangeBloxMac.zip.."],
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMac.zip"]],
-        [PRINT, "Generating Script Hash.."],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
         [RUN, PYINSTALLER, ["./Apps/Scripts/Pyinstaller/OrangeBlox_macOS.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],

@@ -2315,5 +2315,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "这是被发现可用于使用文件添加快速标志的唯一方法..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "警告!此方法可能会在未来的更新中修补.此外,旗帜可能会与 Roblox Studio 发生冲突..",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "然而,如果 Roblox 试图绕过这个问题,它可能会被禁止..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "然而,如果 Roblox 试图绕过这个问题,它可能会被禁止.在此之后我们将不再承担责任!"
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "然而,如果 Roblox 试图绕过这个问题,它可能会被禁止.在此之后我们将不再承担责任!",
+ "Unable to delete IXP Settings due to method usage: (*)": "由于方法使用而无法删除 ixp 设置:(*)"
 }

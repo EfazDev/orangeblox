@@ -2316,5 +2316,6 @@
  "This is the only method that is found to be usable to add fast flags using files.": "これは,ファイルを使用して高速フラグを追加するために使用できることが判明している唯一の方法です..",
  "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "警告!このメソッドは将来のアップデートでパッチされる可能性があります.また,フラグが Roblox Studio と衝突する可能性があります..",
  "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "ただし,これを回避しようとした場合,Roblox によって禁止される可能性があります..",
- "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "ただし,これを回避しようとした場合,Roblox によって禁止される可能性があります.この時点以降は責任を負いません.."
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "ただし,これを回避しようとした場合,Roblox によって禁止される可能性があります.この時点以降は責任を負いません..",
+ "Unable to delete IXP Settings due to method usage: (*)": "メソッドの使用法が原因で ixp 設定を削除できません: (*)"
 }

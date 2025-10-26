@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0l
+# v2.4.1a
 # 
 
 # Python Modules
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.0l"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.1a"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -182,6 +182,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "EFlagUseIXPFastFlagsMethod2",
         "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
@@ -868,6 +869,13 @@ if __name__ == "__main__":
                 if os.path.exists(os.path.join(macos_app_path, "../", "Play Roblox.app")):
                     pip_class.copyTreeWithMetadata(os.path.join(macos_app_path, "../", "Play Roblox.app"), os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app"), dirs_exist_ok=True)
                     with open(os.path.join(RFFI.macOS_dir, "Contents", "MacOS", "RobloxPlayerInstaller.app", "Contents", "Resources", "RobloxPlayerBetaPlayRobloxRestart"), "w", encoding="utf-8") as f: f.write(cur_path)
+        if main_config.get("EFlagUseIXPFastFlagsMethod2") == True:
+            try:
+                location = os.path.join(RFFI.getLocalAppData(), "Roblox", "ClientSettings", "IxpSettings.json")
+                if os.path.exists(location): os.remove(location)
+                main_config["EFlagUseIXPFastFlagsMethod2"] = False
+                main_config.pop("EFlagUseIXPFastFlagsMethod2")
+            except Exception as e: printErrorMessage(f"Unable to delete IXP Settings due to method usage: {trace()}")
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
         printErrorMessage(f"Exception: \n{trace()}")
@@ -1802,13 +1810,6 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to enable Roblox Unfriend Checks? (y/n)")
                 printYellowMessage("Warning! This may take way too long time due to Roblox ratelimits.")
                 d = handleBasicSetting("EFlagRobloxUnfriendCheckEnabled", False)
-                if d: return d
-
-                printMainMessage("Would you like to enable install Fast Flags using the IXP Settings method? (y/n)")
-                printYellowMessage("Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.")
-                printYellowMessage("This is the only method that is found to be usable to add fast flags using files.")
-                printErrorMessage("HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!")
-                d = handleBasicSetting("EFlagUseIXPFastFlagsMethod2", False)
                 if d: return d
 
                 printMainMessage("Would you like to enable Roblox Security Cookie Usage? (y/n)")
@@ -5007,7 +5008,7 @@ if __name__ == "__main__":
                         for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                             if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
                     submit_status.start()
-                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, merge=True, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
+                    handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, merge=True)
                     submit_status.end()
                     printSuccessMessage("Successfully installed FFlags to the Roblox files!")
                 except Exception as e: printErrorMessage(f"Unable to install Fast Flags to the client! Recorded Error: \n{trace()}")
@@ -5440,7 +5441,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
                                                                                     def saveMainConf(scri: str, js: dict, full=False): 
                                                                                         if type(js) is dict:
                                                                                             global main_config
@@ -5483,7 +5484,7 @@ if __name__ == "__main__":
                                                                                             elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
                                                                                                 for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
                                                                                                     if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio, ixp=main_config.get("EFlagUseIXPFastFlagsMethod2")==True)
+                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
                                                                                             saveSettings()
                                                                                     def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
                                                                                     def getDebugMode(scri: str): return (main_config.get("EFlagEnableDebugMode") == True)

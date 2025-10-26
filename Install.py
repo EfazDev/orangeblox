@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.0l
+# v2.4.1a
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.0l"}
+    current_version = {"version": "2.4.1a"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -241,6 +241,7 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod": "EFlagUseIXPFastFlagsMethod2",
         "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
@@ -494,13 +495,8 @@ if __name__ == "__main__":
     def getPythonExecutables(python_instance: PyKits.pip, arch=None):
         exec_array = {1: []}
         if main_os == "Darwin":
-            exec_array[3] = [os.path.join(os.path.dirname(python_instance.executable), "pyinstaller")]
-            if not os.path.exists(exec_array[3][0]): 
-                if python_instance.getArchitecture() == "intel":
-                    s = getPythonExecutables(pip_class)
-                    if s.get(3): exec_array[3] = s.get(3)
-                    else: exec_array[3] = None
-                else: exec_array[3] = None
+            if shutil.which("pyinstaller"): 
+                exec_array[3] = [python_instance.executable, "-m", "PyInstaller"]
             if shutil.which("nuitka"):
                 if (arch == "intel" or python_instance.getArchitecture() == "intel") and platform.machine() == "arm64": 
                     exec_array[4] = ["/usr/bin/arch", "-x86_64", python_instance.executable, "-m", "nuitka"]

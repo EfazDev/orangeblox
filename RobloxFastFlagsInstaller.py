@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.1
+# v2.5.2
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -27,11 +27,14 @@ import xml.dom.minidom
 import concurrent.futures
 import xml.etree.ElementTree as ET
 
+# Variables
 main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.5.1"
+script_version = "2.5.2"
+
+# Base Functions 1
 def getLocalAppData():
     import platform
     import os
@@ -76,7 +79,6 @@ windows_versions_dir = os.path.join(windows_dir, "Versions") # This is the Roblo
 windows_player_folder_name = "" # This is the version folder name for Roblox Player
 windows_studio_folder_name = "" # This is the version folder name for Roblox Studio
 submit_status = None # This is a SubmitStatus handler class used for alerting status of functions.
-# Customizable Variables
 
 # Typing Literals
 if sys.version_info >= (3, 8, 0):
@@ -142,8 +144,8 @@ if sys.version_info >= (3, 8, 0):
         "onStudioInstallerLaunched"
     ]
 else: robloxInstanceTotalLiteralEventNames = typing.Union[str, bytes]
-# Typing Literals
 
+# Base Functions 2
 def ts(mes):
     mes = str(mes)
     if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
@@ -1890,8 +1892,8 @@ except Exception as e:
         win32con = pip_class.importModule("win32con")
         win32crypt = pip_class.importModule("win32crypt")
         win32api = pip_class.importModule("win32api")
-# Install Python Packages
 
+# Roblox Handling Class
 class Handler:
     # System Definitions
     roblox_player_event_names = [
@@ -3733,13 +3735,13 @@ class Handler:
         else: return {"success": False, "message": "Unable to find settings file."} 
     def getBestRobloxDownloadServer(self): return self.optimal_download_location
     def getLatestRobloxAppSettings(self, studio: bool=False, debug: bool=False, bootstrapper: bool=False, bucket: str=""):
-        # Mac: https://clientsettingscdn.roblox.com/v2/settings/application/MacDesktopPlayer | MacClientBootstrapper | MacStudioBootstrapper | MacStudioApp
+        # Mac: https://clientsettingscdn.roblox.com/v2/settings/application/MacDesktopClient | MacClientBootstrapper | MacStudioBootstrapper | MacStudioApp
         # Windows: https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient | PCClientBootstrapper | PCStudioBootstrapper | PCStudioApp
         try:    
             if bucket == "LIVE" or bucket == "production": bucket = ""
             if self.__main_os__ == "Darwin":
                 if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
-                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{('MacStudioBootstrapper' if bootstrapper == True else 'MacStudioApp') if studio == True else ('MacClientBootstrapper' if bootstrapper == True else 'MacDesktopPlayer')}{f'/bucket/{bucket}' if not bucket == '' else ''}")
+                res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{('MacStudioBootstrapper' if bootstrapper == True else 'MacStudioApp') if studio == True else ('MacClientBootstrapper' if bootstrapper == True else 'MacDesktopClient')}{f'/bucket/{bucket}' if not bucket == '' else ''}")
                 if res.ok:
                     jso = res.json
                     if jso.get("applicationSettings"):
@@ -4237,8 +4239,7 @@ class Handler:
             else:
                 if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")
         else: self.unsupportedFunction()
-    def installFastFlags(self, fflags: dict, studio: bool=False, askForPerms: bool=False, merge: bool=True, flat: bool=False, endRobloxInstances: bool=True, debug: bool=False, main: bool=False, ixp: bool=False):
-        if ixp == True: merge = True
+    def installFastFlags(self, fflags: dict, studio: bool=False, askForPerms: bool=False, merge: bool=True, flat: bool=False, endRobloxInstances: bool=True, debug: bool=False, main: bool=False):
         if __name__ == "__main__" or main == True:
             if self.__main_os__ == "Darwin":
                 if endRobloxInstances == True:
@@ -4249,7 +4250,6 @@ class Handler:
                         printMainMessage(f"Closing any open Roblox windows..")
                         self.endRoblox()
                 set_location = os.path.join(macOS_studioDir if studio == True else macOS_dir, macOS_beforeClientServices, "ClientSettings", f'ClientAppSettings.json')
-                if ixp == True: set_location = os.path.join(getLocalAppData(), "Roblox", "ClientSettings", "IxpSettings.json")
                 if orangeblox_mode == False:
                     printMainMessage(f"Generating ClientSettings Folder..")
                     if not os.path.exists(os.path.dirname(set_location)):
@@ -4288,11 +4288,9 @@ class Handler:
                     app_configuration["Configuration"] = fflags
                     plist_class.writePListFile(set_location, app_configuration, binary=True)
                 else:
-                    if ixp == True and os.path.exists(set_location): os.chmod(set_location, stat.S_IWUSR | stat.S_IREAD)
                     with open(set_location, "w", encoding="utf-8") as f:
                         if flat == True: json.dump(fflags, f)
                         else: json.dump(fflags, f, indent=4)
-                    if ixp == True: os.chmod(set_location, stat.S_IREAD)
                 printSuccessMessage("DONE!")
                 if orangeblox_mode == True:
                     printSuccessMessage("Your fast flags was successfully saved into your Fast Flag Settings!")
@@ -4321,7 +4319,6 @@ class Handler:
                 if most_recent_roblox_version_dir:
                     printMainMessage(f"Found version: {most_recent_roblox_version_dir}")
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
-                    if ixp == True: set_location = os.path.join(getLocalAppData(), "Roblox", "ClientSettings", f"IxpSettings.json")
                     if orangeblox_mode == False:
                         printMainMessage(f"Generating ClientSettings Folder..")
                         if not os.path.exists(os.path.dirname(set_location)):
@@ -4355,11 +4352,9 @@ class Handler:
                         data_in_string = zlib.compress(json.dumps(fflags).encode('utf-8'))
                         with open(os.path.join(cur_path, "Configuration.json"), "wb") as f: f.write(data_in_string)
                     else:
-                        if ixp == True and os.path.exists(set_location): os.chmod(set_location, stat.S_IWUSR | stat.S_IREAD)
                         with open(set_location, "w", encoding="utf-8") as f:
                             if flat == True: json.dump(fflags, f)
                             else: json.dump(fflags, f, indent=4)
-                        if ixp == True: os.chmod(set_location, stat.S_IREAD)
                     printSuccessMessage("DONE!")
                     if orangeblox_mode == True:
                         printSuccessMessage("Your fast flags was successfully saved into your Fast Flag Settings!")
@@ -4397,7 +4392,6 @@ class Handler:
                         self.endRoblox()
                 if submit_status: submit_status.submit("[FFLAGS] Creating ClientSettings Folder..", 25)
                 set_location = os.path.join(macOS_studioDir if studio == True else macOS_dir, macOS_beforeClientServices, "ClientSettings", f'ClientAppSettings.json')
-                if ixp == True: set_location = os.path.join(getLocalAppData(), "Roblox", "ClientSettings", "IxpSettings.json")
                 if not os.path.exists(os.path.dirname(set_location)):
                     if debug == True: printDebugMessage("Creating ClientSettings folder..")
                     makedirs(os.path.dirname(set_location))
@@ -4411,11 +4405,9 @@ class Handler:
                             if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                         except Exception as e: printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                 if submit_status: submit_status.submit("[FFLAGS] Saving Configuration..", 50)
-                if ixp == True and os.path.exists(set_location): os.chmod(set_location, stat.S_IWUSR | stat.S_IREAD)
                 with open(set_location, "w", encoding="utf-8") as f:
                     if flat == True: json.dump(fflags, f)
                     else: json.dump(fflags, f, indent=4)
-                if ixp == True: os.chmod(set_location, stat.S_IREAD)
                 if submit_status: submit_status.submit("[FFLAGS] Saved FFlags!", 100)
                 if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
             elif self.__main_os__ == "Windows":
@@ -4431,7 +4423,6 @@ class Handler:
                 if most_recent_roblox_version_dir or orangeblox_mode == True:
                     if submit_status: submit_status.submit("[FFLAGS] Creating ClientSettings Folder..", 25)
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
-                    if ixp == True: set_location = os.path.join(getLocalAppData(), "Roblox", "ClientSettings", f"IxpSettings.json")
                     if not os.path.exists(os.path.dirname(set_location)):
                         if debug == True: printDebugMessage("Creating ClientSettings folder..")
                         makedirs(os.path.dirname(set_location))
@@ -4445,11 +4436,9 @@ class Handler:
                                 if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
                             except Exception as e: printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                     if submit_status: submit_status.submit("[FFLAGS] Saving Configuration..", 50)
-                    if ixp == True and os.path.exists(set_location): os.chmod(set_location, stat.S_IWUSR | stat.S_IREAD)
                     with open(set_location, "w", encoding="utf-8") as f:
                         if flat == True: json.dump(fflags, f)
                         else: json.dump(fflags, f, indent=4)
-                    if ixp == True: os.chmod(set_location, stat.S_IREAD)
                     if submit_status: submit_status.submit("[FFLAGS] Saved FFlags!", 100)
                     if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
                 else:
@@ -5140,6 +5129,8 @@ class Handler:
     def reinstallRobloxStudio(self, *args, **kwargs): """This function has been deprecated for ```Handler.reinstallRoblox(studio=True)```"""; return self.reinstallRoblox(studio=True, *args, **kwargs)
     def unsupportedFunction(self): printLog("Roblox Fast Flags Installer is only supported for macOS and Windows.")
 Main = Handler
+
+# Main Script
 def main():
     handler = Handler()
     if orangeblox_mode == False:
