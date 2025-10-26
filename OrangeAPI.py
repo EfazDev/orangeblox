@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1
+# v2.4.0
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.3.1
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.0
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,11 +27,11 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.3.1", "bootstrap_version": "2.3.1"}
+current_version = {"version": "2.4.0", "bootstrap_version": "2.4.0"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
-translator = None
+translators = None
 debug_mode = False
 studio_mode = False
 launched_from_bootstrap = False
@@ -116,6 +116,7 @@ class OrangeAPI:
    
     **OrangeAPI is only supported on OrangeBlox v2.0.0+. Any other versions like Efaz's Roblox Bootstrap v1.5.9 or below is unable to use this API.**
     **Please use the Efaz's Roblox Bootstrap API in order to support Efaz's Roblox Bootstrap (EfazRobloxBootstrapAPI) v1.3.0-v1.5.9.**
+    **However, the API will no longer be supported by OrangeBlox in v2.4.0+ (in which mod scripts will automatically transform to OrangeAPI)**
 
     ```python
     import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
@@ -609,6 +610,19 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOpenedRobloxPids").generateResponse().response
+    def getCurrentRobloxPid(self) -> str | None: # Permission: getCurrentRobloxPid
+        """
+        Get the current connected Roblox Pid
+
+        Permission: getCurrentRobloxPid | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        roblox_pid = OrangeAPI.getCurrentRobloxPid() # -> "6969"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getCurrentRobloxPid").generateResponse().response
     def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int) -> Response | None: # Permission: changeRobloxWindowSizeAndPosition
         """
         Change the Roblox Window Size and Position
@@ -674,6 +688,46 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "reprepareRoblox").generateResponse()
+    def endRoblox(self, pid: str="") -> Response | None: # Permission: endRoblox
+        """
+        End Roblox instances using a pid. [Warning, this may end the mod script after]
+
+        Permission: endRoblox | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        ended_roblox = OrangeAPI.endRoblox() # -> Response
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "endRoblox", {"pid": pid}).generateResponse()
+    def endOppositeRoblox(self, pid: str="") -> Response | None: # Permission: endRoblox
+        """
+        End the opposite Roblox instances using a pid.
+
+        Permission: endOppositeRoblox | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        ended_opposite_roblox = OrangeAPI.endOppositeRoblox() # -> Response
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "endOppositeRoblox", {"pid": pid}).generateResponse()
+    def getRobloxThumbnailURL(self, studio: bool=None) -> str | None: # Permission: getRobloxThumbnailURL
+        """
+        Get the Roblox Tilt Logo based on the User's Special Mods Settings
+
+        Permission: getRobloxThumbnailURL | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        roblox_thumb_url = OrangeAPI.getRobloxThumbnailURL() # -> "https://obx.efaz.dev/Mods/RobloxBrand/Original/AppIcon.png"
+        ```
+        """
+        if studio == None: studio = self.getStudioMode()
+        return Request(self, self.__orangeapi_details__, "getRobloxThumbnailURL", {"studio": studio}).generateResponse().response
     def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/Images/DiscordIcon.png") -> Response | None: # Permission: sendDiscordWebhookMessage
         """
         Send a Discord Webhook message to the user's Discord webhook!
@@ -830,6 +884,58 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "deleteRequest", {"url": url, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
+    def getConnectedUserInfo(self) -> dict | None: # Permission: getConnectedUserInfo
+        """
+        Get game user information from OrangeBlox
+
+        Permission: getConnectedUserInfo | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        response = OrangeAPI.getConnectedUserInfo() # -> dict
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getConnectedUserInfo").generateResponse().response
+    def getIfConnectedToGame(self) -> bool | None: # Permission: getIfConnectedToGame
+        """
+        Get if you connected to a Roblox game
+
+        Permission: getIfConnectedToGame | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        response = OrangeAPI.getIfConnectedToGame() # -> bool
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getIfConnectedToGame").generateResponse().response
+    def getCurrentPlaceInfo(self) -> dict | None: # Permission: getCurrentPlaceInfo
+        """
+        Get game information from internal OrangeBlox
+
+        Permission: getCurrentPlaceInfo | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        response = OrangeAPI.getCurrentPlaceInfo() # -> dict
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getCurrentPlaceInfo").generateResponse().response
+    def createAppLock(self, name: str="ScriptLock") -> bool | None: # Permission: createAppLock
+        """
+        Create an app lock to use between mod script instances (where, if true, script take control, otherwise, other script instance takes control)
+
+        Permission: createAppLock | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.4.0+**
+
+        ```python
+        app_lock = OrangeAPI.createAppLock("MainScriptHandling") # -> bool
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "createAppLock", {"name": name}).generateResponse().response
     def getPlatform(self, static: bool=False) -> str: # No Permission Needed
         """
         Get the current running platform name. It may return Windows, macOS or Linux for when static is disabled. If it enabled, it will return platform.system()
@@ -1044,7 +1150,7 @@ class OrangeAPI:
         ```
         """
         mes = str(mes)
-        if translator: mes = translator.translate(mes)
+        if translators.get(self.__orangeapi_details__.mod_script_name): mes = translators.get(self.__orangeapi_details__.mod_script_name).translate(mes)
         return mes
     def getConfiguration(self, name: str="*") -> dict | typing.Any | None: # No Permission Needed
         """

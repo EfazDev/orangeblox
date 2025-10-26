@@ -6,7 +6,6 @@
 
 # Python Modules
 import subprocess
-import promptlib
 import shutil
 import json
 import sys
@@ -19,6 +18,9 @@ debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
 current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
+
+def getFilePrompt():
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
     
 # Printing Functions
 def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
@@ -65,7 +67,7 @@ if installed["success"] == True:
                         mod_name = OrangeAPI.requestInput("Alright then! Enter the name of the configuration below to get started!", "> ")
                         def getAngle():
                             angl = OrangeAPI.requestInput("Now, enter the angle number of the gradient image!", "> ")
-                            if angl.isnumeric() and int(angl) >= 0:
+                            if angl.isdigit() and int(angl) >= 0:
                                 printDebugMessage(f"Angle Number: {int(angl)}*")
                                 return int(angl)
                             else:
@@ -126,11 +128,8 @@ if installed["success"] == True:
                         printSuccessMessage("Successfully saved Configuration!")
                         printSuccessMessage(f"File Path: {selected_file}")
                     elif a and a == "2":
-                        if OrangeAPI.getPlatform() == "macOS": selected_file = OrangeAPI.requestInput("Please drag your Generative Mod Configuration file here! (or manually enter the file path of the configuration.)", "> ").strip().strip('"').strip("'")
-                        else:
-                            printMainMessage("Please select your Generative Mod Configuration file!")
-                            prompter = promptlib.Files()
-                            selected_file = prompter.file()
+                        printMainMessage("Please select your Generative Mod Configuration file!")
+                        selected_file = getFilePrompt()
                         if os.path.exists(selected_file) and os.path.isfile(selected_file):
                             mod_style_file = selected_file
                             OrangeAPI.setConfiguration("ModConfiguration", mod_style_file)
@@ -191,8 +190,8 @@ if installed["success"] == True:
                                         if type(v) is str and os.path.exists(convert_relative(v)): 
                                             if not os.path.exists(os.path.dirname(generate_f(i))): os.makedirs(os.path.dirname(generate_f(i)),mode=511)
                                             shutil.copy(convert_relative(v), generate_f(i)); mod_style_json["advanced"][i] = generate_f(i)
-                                res = subprocess.run([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
-                                if res.returncode == 0: 
+                                res = subprocess.Popen([sys.executable, os.path.join(cur_path, "GeneratorProxy.py"), json.dumps(installed), json.dumps(mod_style_json), str(studio)])
+                                if res.wait() == 0: 
                                     OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
                                     OrangeAPI.setConfiguration(f"KlikoModVersion{'Studio' if studio else ''}", current_version)
                                     if not OrangeAPI.getIfModIsEnabled(fold_name): OrangeAPI.enableMod(fold_name)
@@ -264,8 +263,8 @@ if installed["success"] == True:
             if len(verified_mods) > 0:
                 try:
                     printMainMessage("Running Proxy using Python Executable..")
-                    res = subprocess.run([sys.executable, os.path.join(cur_path, "UpdaterProxy.py"), json.dumps(verified_mods), str(studio), json.dumps(installed)])
-                    if res.returncode == 0: 
+                    res = subprocess.Popen([sys.executable, os.path.join(cur_path, "UpdaterProxy.py"), json.dumps(verified_mods), str(studio), json.dumps(installed)])
+                    if res.wait() == 0: 
                         OrangeAPI.setConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}", installed["version"])
                         for i in enabled_mods:
                             if not OrangeAPI.getIfModIsEnabled(i): OrangeAPI.enableMod(i)

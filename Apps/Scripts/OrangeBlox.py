@@ -6,6 +6,7 @@ import os
 import zlib
 import platform
 import time
+import shutil
 import traceback
 import datetime
 import textwrap
@@ -15,7 +16,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.3.1"}
+    current_version = {"version": "2.4.0"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -119,6 +120,8 @@ if __name__ == "__main__":
         "EFlagEnableChangeBrandIcons": "bool",
         "EFlagSelectedBrandLogo2": "str",
         "EFlagEnableChangeBrandIcons2": "bool",
+        "EFlagShowGameNameInStatusBar": "bool",
+        "EFlagShowStudioGameNameInStatusBar": "bool",
         "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
         "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
         "EFlagSelectedPlayerSounds": "str",
@@ -129,7 +132,6 @@ if __name__ == "__main__":
         "EFlagDisableLinkShortcutsAccess": "bool",
         "EFlagReturnToMainMenuInstant": "bool",
         "EFlagRemoveCodeSigningMacOS": "bool",
-        "EFlagDisableEfazRobloxBootstrapAPIReplication": "bool",
         "EFlagModScriptRequestTooFastMessage": "bool",
         "EFlagModScriptAPIRefreshTime": "float",
         "EFlagRobloxUnfriendCheckCooldown": "int",
@@ -153,7 +155,10 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
+        "EFlagRobloxChannelUpdateToken": "str",
+        "EFlagRobloxSecurityCookieUsage": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
@@ -357,18 +362,19 @@ if __name__ == "__main__":
                 input("> ")
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
-        sour_path = ""
         venv_path = ""
         if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
             printMainMessage("Checking Virtual Environments..")
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
+                if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                    shutil.rmtree(venv_path, ignore_errors=True)
+                generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
-            else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "bin", "activate")
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' {'' if sour_path == '' else f'&& source {sour_path} '}&& {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+            else: printSuccessMessage("Found Virtual Environment!")
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -479,7 +485,7 @@ if __name__ == "__main__":
                             with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
                                 try:
                                     cont = f.read().replace(" ", "").replace("\n", "")
-                                    if cont.isnumeric() and not cont == "0":
+                                    if cont.isdigit() and not cont == "0":
                                         associated_terminal_pid = int(cont)
                                         activateTerminalWindow()
                                 except Exception as e: printDebugMessage(str(e))
@@ -1490,7 +1496,7 @@ if __name__ == "__main__":
                 if not main_config.get("EFlagDisableBootstrapCooldown") == True:
                     with open(os.path.join(app_path, "BootstrapCooldown"), "r", encoding="utf-8") as f:
                         te = f.read()
-                        if te.isnumeric():
+                        if te.isdigit():
                             if datetime.datetime.now(tz=datetime.UTC).timestamp() < int(te):
                                 printErrorMessage("You're starting the booldown too fast! Please wait 1 seconds!")
                                 printDebugMessage(f'If this message is still here after 1 seconds, delete the file "{app_path}/Resources/BootstrapCooldown"')
@@ -1543,7 +1549,6 @@ if __name__ == "__main__":
                     input("> ")
                     sys.exit(0)
 
-            sour_path = ""
             if main_config.get("EFlagEnablePythonVirtualEnvironments") == True:
                 printMainMessage("Checking Virtual Environments..")
                 user_folder_name = os.path.basename(PyKits.pip().getUserFolder())
@@ -1552,11 +1557,13 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                        shutil.rmtree(venv_path, ignore_errors=True)
+                    generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
-                        printSuccessMessage("Generated Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                        printSuccessMessage("Generated Virtual Environment!"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
                     else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}")
-                else: printSuccessMessage("Found Virtual Environment!"); sour_path = os.path.join(venv_path, "Scripts", "activate"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
+                else: printSuccessMessage("Found Virtual Environment!"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")
             printMainMessage(f"Detected Python Executable: {pythonExecutable}")
 
             try:
@@ -1600,7 +1607,6 @@ if __name__ == "__main__":
                         validated = True
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
-                        if not (sour_path == ""): os.system(f"\"{sour_path}\"")
                         if main_config.get("EFlagBuildPythonCacheOnStart") == True:
                             printMainMessage("Building Python Cache..")
                             build_cache_process = subprocess.run([pythonExecutable, "-m", "compileall", app_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

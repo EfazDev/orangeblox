@@ -117,7 +117,7 @@ def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: st
         key = f"{'-'.join(colors)}-{angle}-{size[0]}-{size[1]}-{icon_name}"
     
     if key in IMAGE_CACHE: return IMAGE_CACHE[key]
-    if len(colors) == 1:
+    if type(colors) is list and len(colors) == 1:
         # Solid color
         mask = Image.new("RGBA", size, colors[0])
     elif type(colors) is dict:
@@ -727,6 +727,4 @@ def get_blacklist(authorized: list=[]) -> list[str]:
         "squircles/hollow",
         "squircles/hollowBold"
     ]
-    for i in authorized:
-        if i in blacklist: blacklist.remove(i)
-    return blacklist
+    return [i for i in blacklist if i not in authorized]

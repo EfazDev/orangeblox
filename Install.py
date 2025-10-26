@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.3.1
+# v2.4.0
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.3.1"}
+    current_version = {"version": "2.4.0"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -206,6 +206,8 @@ if __name__ == "__main__":
         "EFlagEnableChangeBrandIcons": "bool",
         "EFlagSelectedBrandLogo2": "str",
         "EFlagEnableChangeBrandIcons2": "bool",
+        "EFlagShowGameNameInStatusBar": "bool",
+        "EFlagShowStudioGameNameInStatusBar": "bool",
         "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
         "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
         "EFlagSelectedPlayerSounds": "str",
@@ -216,7 +218,6 @@ if __name__ == "__main__":
         "EFlagDisableLinkShortcutsAccess": "bool",
         "EFlagReturnToMainMenuInstant": "bool",
         "EFlagRemoveCodeSigningMacOS": "bool",
-        "EFlagDisableEfazRobloxBootstrapAPIReplication": "bool",
         "EFlagModScriptRequestTooFastMessage": "bool",
         "EFlagModScriptAPIRefreshTime": "float",
         "EFlagRobloxUnfriendCheckCooldown": "int",
@@ -240,7 +241,10 @@ if __name__ == "__main__":
         "EFlagBuildPythonCacheOnStart": "bool",
         "EFlagEnableSlientPythonInstalls": "bool",
         "EFlagEnableDefaultDiscordRPC": "bool",
+        "EFlagUseIXPFastFlagsMethod2": "bool",
         "EFlagLastModVersionMacOSCaching": "str",
+        "EFlagRobloxChannelUpdateToken": "str",
+        "EFlagRobloxSecurityCookieUsage": "bool",
         "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()
@@ -685,7 +689,7 @@ if __name__ == "__main__":
                     if x64_python.pythonInstalled() and check(x64_python): raise Exception(f"Requesting install for x64 python!")
                     x86_python = PyKits.pip(arch="x86")
                     if x86_python.pythonInstalled() and check(x86_python): raise Exception(f"Requesting install for x86 python!")
-                else:
+                elif rebuild_from_source == 2:
                     intel_python = PyKits.pip(arch="intel")
                     if intel_python.pythonInstalled() and check(intel_python): raise Exception(f"Requesting install for Intel python!")
             elif pip_class.getArchitecture() == "x64":
@@ -1465,8 +1469,8 @@ if __name__ == "__main__":
 
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                         key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
-                        win32api.RegSetValueEx(key, "UninstallString", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(sma[main_os][0], 'Install.py')} -un")
-                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"{sys.executable} {os.path.join(sma[main_os][0], 'Install.py')}")
+                        win32api.RegSetValueEx(key, "UninstallString", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\" -un")
+                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\"")
                         win32api.RegSetValueEx(key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                         win32api.RegSetValueEx(key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
                         win32api.RegSetValueEx(key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(sma[main_os][0], "Images", "AppIcon.ico"))
@@ -1576,7 +1580,7 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
                 a = input("> ")
                 if isYes(a) == True:
-                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isnumeric() else "https://obxbeta.efaz.dev")
+                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
                     if latest_vers_res.ok:
                         latest_vers = latest_vers_res.json
                         if current_version.get("version"):

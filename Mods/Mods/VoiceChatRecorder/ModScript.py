@@ -10,7 +10,8 @@ import threading
 import wave
 import datetime
 import struct
-import promptlib
+import subprocess
+import sys
 import os
 
 # Load Bootstrap API
@@ -33,16 +34,16 @@ received_audio = []
 is_muted = False
 is_started = False
 
+def getFolderPrompt():
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.dir())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
+
 alleged_path = OrangeAPI.getConfiguration("saveFolderPath")
 if alleged_path and os.path.isdir(alleged_path):
     recording_folder_path = alleged_path
 else:
     if OrangeAPI.getIfRobloxLaunched() == False:
-        if OrangeAPI.getPlatform() == "macOS": selected_dir = OrangeAPI.requestInput("Please drag the directory you want to use here! (or manually enter the folder path.)", "> ").strip().strip('"').strip("'")
-        else:
-            printMainMessage("Please select a directory to save voice chat recordings to!")
-            prompter = promptlib.Files()
-            selected_dir = prompter.dir()
+        printMainMessage("Please select a directory to save voice chat recordings to!")
+        selected_dir = getFolderPrompt()
         if os.path.exists(selected_dir) and os.path.isdir(selected_dir):
             recording_folder_path = selected_dir
             OrangeAPI.setConfiguration("saveFolderPath", recording_folder_path)

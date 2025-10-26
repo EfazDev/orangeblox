@@ -2169,5 +2169,150 @@
  "Get the current displayed name of itself.": "خود کا موجودہ ڈسپلے نام حاصل کریں۔",
  "Get the current mod script id of itself.": "خود کی موجودہ موڈ اسکرپٹ id حاصل کریں۔",
  "Get the current version of itself.": "خود کا موجودہ ورژن حاصل کریں۔",
- "Location Code: 10": "مقام کا کوڈ: 10"
+ "Location Code: 10": "مقام کا کوڈ: 10",
+ "This is disabled just in case for permission.": "یہ صرف اجازت کے معاملے میں غیر فعال ہے۔",
+ "Warning! This option will use your Roblox Security Cookie for Authentication with Roblox!": "انتباہ! یہ آپشن روبلوکس کے ساتھ توثیق کے لئے آپ کی روبلوکس سیکیورٹی کوکی کا استعمال کرے گا!",
+ "Would you like to enable Roblox User Channel Checking Usage? (y/n)": "کیا آپ Roblox صارف چینل کی جانچ پڑتال کے استعمال کو قابل بنانا چاہیں گے؟ (y/n)",
+ "This is used for authentication with Roblox APIs such as Beta Programs.": "یہ بیٹا پروگراموں جیسے Roblox APIs کے ساتھ توثیق کے لئے استعمال ہوتا ہے۔",
+ "Warning! This option will look for cookies automatically in your Roblox Data and may bring security issues.": "انتباہ! یہ آپشن آپ کے روبلوکس ڈیٹا میں خود بخود کوکیز کی تلاش کرے گا اور سیکیورٹی کے مسائل لاسکتا ہے۔",
+ "Would you like to enable Roblox Security Cookie Usage? (y/n)": "کیا آپ Roblox سیکیورٹی کوکی کے استعمال کو قابل بنانا چاہیں گے؟ (y/n)",
+ "--- OrangeBot Setup ---": "--- اورنج بوٹ سیٹ اپ ---",
+ "-----------------------": "-------------------------",
+ "Are you sure you want to reset this Mod Script's Configurations? This may cause damage to the scripts if run. (y/n)": "کیا آپ واقعی اس موڈ اسکرپٹ کی تشکیلات کو دوبارہ ترتیب دینا چاہتے ہیں؟ اگر چل رہا ہے تو اس سے اسکرپٹ کو نقصان ہوسکتا ہے۔ (y/n)",
+ "Debug Mode: (*)": "ڈیبگ موڈ: (*)",
+ "Discord API Version: (*)": "ڈسکارڈ API ورژن: (*)",
+ "Exit Option": "باہر نکلیں آپشن",
+ "Hello! It seems like it's your first time with setting up OrangeBot!": "ہیلو! ایسا لگتا ہے کہ اورنج بوٹ کو ترتیب دینے کے ساتھ یہ آپ کا پہلا موقع ہے!",
+ "If you want to reset this setup, please reset the configuration in Mod Script Settings.": "اگر آپ اس سیٹ اپ کو دوبارہ ترتیب دینا چاہتے ہیں تو ، براہ کرم موڈ اسکرپٹ کی ترتیبات میں ترتیب کو دوبارہ ترتیب دیں۔",
+ "OrangeAPI Version: (*)": "اورنجیپ ورژن: (*)",
+ "Reset One Mod Script Configuration": "ایک موڈ اسکرپٹ کنفیگریشن کو دوبارہ ترتیب دیں",
+ "Select the mod script you want to reset!": "موڈ اسکرپٹ کو منتخب کریں جس کو آپ دوبارہ ترتیب دینا چاہتے ہیں!",
+ "Successfully cleared (*)'s Mod Script Configurations!": "کامیابی کے ساتھ صاف (*)کی موڈ اسکرپٹ تشکیلات!",
+ "Successfully set Discord Bot Token in settings!": "ترتیبات میں کامیابی کے ساتھ ڈسکارڈ بوٹ ٹوکن سیٹ کریں!",
+ "And, for multiple users, separate by ONLY one comma between each id. (No spaces!!)": "اور ، متعدد صارفین کے لئے ، ہر id کے درمیان صرف ایک کوما سے الگ۔ (کوئی جگہ نہیں !!)",
+ "Called Discord API to sync all commands to servers!": "تمام احکامات کو سرورز کے ساتھ مطابقت پذیر کرنے کے لئے ڈسکارڈ api کہا جاتا ہے!",
+ "Called!": "کہا جاتا ہے!",
+ "Connected": "منسلک",
+ "Create an app lock to use between mod script instances": "موڈ اسکرپٹ مثالوں کے درمیان استعمال کرنے کے لئے ایک ایپ لاک بنائیں",
+ "Current Game Information!": "موجودہ کھیل کی معلومات!",
+ "End the Roblox Instance": "روبلوکس مثال کو ختم کریں",
+ "End the opposite of Roblox Instance (like Roblox Studio if running Roblox Player)": "روبلوکس مثال کے برعکس ختم کریں (جیسے روبلوکس اسٹوڈیو اگر چل رہا ہو تو روبلوکس پلیئر)",
+ "Error launching discord bot. Error: (*)": "ڈسکارڈ بوٹ کو لانچ کرنے میں غلطی۔ خرابی: (*)",
+ "Error while loading status text! Error: (*)": "حیثیت کے متن کو لوڈ کرتے وقت غلطی! خرابی: (*)",
+ "Failed": "ناکام",
+ "Get game information from internal OrangeBlox": "اندرونی اورنج بلوکس سے کھیل کی معلومات حاصل کریں",
+ "Get game user information from OrangeBlox": "اورنج بلوکس سے گیم صارف کی معلومات حاصل کریں",
+ "Get if you connected to a Roblox game": "اگر آپ کسی روبلوکس گیم سے منسلک ہوں تو حاصل کریں",
+ "Get the current Roblox PID connected": "موجودہ Roblox PID منسلک کریں",
+ "Get the special logo mod image URL": "خصوصی لوگو موڈ امیج یو آر ایل حاصل کریں",
+ "Instance PID": "مثال کے طور پر pid",
+ "Joined Game": "کھیل میں شامل ہوا",
+ "Let's now add what users to trust!": "آئیے اب شامل کریں کہ صارفین کو کس پر بھروسہ کریں!",
+ "Logged In User": "صارف میں لاگ ان",
+ "Please enable developer mode in your Discord Client and right click on the user to get a user id!": "براہ کرم اپنے ڈسکارڈ کلائنٹ میں ڈویلپر موڈ کو فعال کریں اور صارف کی شناخت حاصل کرنے کے لئے صارف پر دائیں کلک کریں!",
+ "Roblox Version": "روبلوکس ورژن",
+ "Something went wrong! Exception: (*)": "کچھ غلط ہو گیا! استثناء: (*)",
+ "Studio": "اسٹوڈیو",
+ "Success!": "کامیابی!",
+ "Successfully ended Roblox!": "کامیابی کے ساتھ روبلوکس کو ختم کیا!",
+ "Successfully saved tree to Discord API! It may take a moment to progress to all users!": "کامیابی کے ساتھ درخت کو ڈسکارڈ کرنے کے لئے بچایا گیا! تمام صارفین میں ترقی کرنے میں ایک لمحہ لگ سکتا ہے!",
+ "Successfully screenshotted screen!": "کامیابی کے ساتھ اسکرین شاٹ اسکرین!",
+ "System is ready!": "نظام تیار ہے!",
+ "Tree failed to be saved by the Discord API. (*)": "درخت ڈسکارڈ api کے ذریعہ بچانے میں ناکام رہا۔ (*)",
+ "Unable to find current Roblox instance!": "موجودہ روبلوکس مثال تلاش کرنے سے قاصر!",
+ "You are currently disconnected!": "آپ فی الحال منقطع ہیں!",
+ "You are currently inside of a game!": "آپ فی الحال کسی کھیل کے اندر ہیں!",
+ "You do not have access to this command!": "آپ کو اس کمانڈ تک رسائی نہیں ہے!",
+ "Discord Proxy ended with fail! Return code: (*)": "ڈسکارڈ پراکسی فیل کے ساتھ ختم ہوا! واپسی کا کوڈ: (*)",
+ "Discord Proxy ended with success!": "ڈسکارڈ پراکسی کامیابی کے ساتھ ختم ہوا!",
+ "Starting discord.py proxy!": "Discord.py پراکسی شروع کرنا!",
+ "Successfully called task for screenshotting your screen! Please wait a moment!": "اپنی اسکرین کو اسکرین شاٹ کرنے کے لئے کامیابی کے ساتھ ٹاسک کہا جاتا ہے! براہ کرم ایک لمحہ انتظار کریں!",
+ "Successfully focused Roblox!": "کامیابی کے ساتھ روبلوکس پر توجہ مرکوز!",
+ "Successfully moved and resized Roblox Window!": "کامیابی کے ساتھ منتقل اور روبلوکس ونڈو کا سائز تبدیل کیا!",
+ "Successfully called task for getting game information! Please wait a moment!": "کھیل کی معلومات حاصل کرنے کے لئے کامیابی کے ساتھ ٹاسک کہا جاتا ہے! براہ کرم ایک لمحہ انتظار کریں!",
+ "1. Alright, so, start with going to your browser!": "1. ٹھیک ہے ، لہذا ، اپنے براؤزر کے پاس جانے کے ساتھ شروع کریں!",
+ "Input tutorial mode:": "ان پٹ ٹیوٹوریل وضع:",
+ "Please input the Discord User IDs to trust:": "براہ کرم اعتماد کے لئے ڈسکارڈ صارف IDs کو ان پٹ کریں:",
+ "Please input your Discord Bot Token below (https://discord.com/developers/applications):": "براہ کرم نیچے اپنے ڈسکارڈ بوٹ ٹوکن کو ان پٹ کریں (https://discord.com/developers/applications):",
+ "Please select the tutorial mode you would like to use!": "براہ کرم ٹیوٹوریل وضع منتخب کریں جو آپ استعمال کرنا چاہتے ہیں!",
+ "This can be any browser such as Google Chrome, Firefox or Microsoft Edge.": "یہ کوئی بھی براؤزر ہوسکتا ہے جیسے گوگل کروم ، فائر فاکس یا مائیکروسافٹ ایج۔",
+ "[1] = Starters": "[1] = شروعات",
+ "[2] = Advanced (Skip)": "[2] = اعلی درجے کی (چھوڑیں)",
+ "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "روبلوکس کے ذریعہ کچھ تازہ کاریوں کی وجہ سے ، بہت سارے جھنڈے جو ذیل میں استعمال ہوتے ہیں وہ اب کام نہیں کریں گے کیونکہ روبلوکس نے آپ کو استعمال کرنے والے جھنڈوں پر وائٹ لسٹ کرنے کا فیصلہ کیا ہے۔",
+ "October 5th, 2025 - v2.4.5": "5 اکتوبر ، 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "بوٹسٹریپ پائپ میں ناکام (get-pip.py ناکام) ڈاؤن لوڈ کریں۔",
+ "Installing PIP..": "پائپ انسٹال کرنا..",
+ "Successfully installed PIP with embedded Python!": "ایمبیڈڈ ازگر کے ساتھ کامیابی کے ساتھ انسٹال pip!",
+ "Successfully installed Python (*) into (Path: (*))!": "کامیابی کے ساتھ انسٹال (*)(راستہ: (*)) میں انسٹال ہوا!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "ازگر انسٹالر ڈاؤن لوڈ کرنے سے قاصر ہے۔ ازگر ایمبیڈ پیکیج پر ڈاؤن لوڈ کی کوشش کرنا..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "ازگر پیکیج کے ساتھ pip انسٹال کرنے سے قاصر ہے۔ واپسی کا کوڈ: (*)",
+ "Unzipping Python (*) package..": "انزپنگ ازگر (*)پیکیج..",
+ "Adding to user path..": "صارف کے راستے میں شامل کرنا..",
+ "Downloading Python package..": "ازگر پیکیج ڈاؤن لوڈ کرنا..",
+ "Failed to find latest Python Installer Manager version.": "تازہ ترین ازگر انسٹالر مینیجر ورژن تلاش کرنے میں ناکام۔",
+ "Registering file extensions..": "فائل ایکسٹینشن رجسٹر کرنا..",
+ "Setting up python modules..": "ازگر کے ماڈیولز مرتب کرنا..",
+ "Successfully installed PIP with Python!": "ازگر کے ساتھ کامیابی کے ساتھ pip انسٹال کیا!",
+ "Successfully installed Python (*) into path: (*)": "کامیابی کے ساتھ ازالہ (*)کو راستے میں انسٹال کیا: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "راستہ \"(*)\" پہلے ہی راستے کے ماحول کے متغیر پر تھا!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "Pypresence v2.5.0+خصوصیات کو لوڈ کرنے سے قاصر ہے۔ استثناء: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "کیا آپ اسٹیٹس بار میں ایڈیٹنگ اسٹوڈیو گیم کا نام ظاہر کرنا چاہیں گے؟ (y/n)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "کیا آپ اسٹیٹس بار میں کھیل کے نام کا نام دکھانا چاہتے ہیں؟ (y/n)",
+ "This option requires pypresence v4.5.2+ to be installed": "اس آپشن کے لئے انسٹال ہونے کے لئے پائپریسینس v4.5.2+کی ضرورت ہے",
+ "Awaiting Log Creation ((*)/30)": "لاگ تخلیق کے منتظر ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "کمانڈ: \"(*)\" انسٹال کریں ۔پی -آر -آر پی",
+ "Command: \"(*)\" Install.py -r -rp -rc": "کمانڈ: \"(*)\" انسٹال کریں ۔پی -آر -آر پی -آر سی",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "لاگ فائل پہلے ہی کسی اور روبلوکس مثال ((*)/30) میں استعمال کی گئی ہے",
+ "Successfully found log file ((*)/30). Returning with: (*)": "کامیابی کے ساتھ لاگ فائل ((*)/30) ملا۔ کے ساتھ لوٹ رہا ہے: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "15 سیکنڈ ((*)/30) کے اندر ایک نئی فائل تلاش کرنے سے قاصر ہے۔ کے ساتھ لوٹ رہا ہے: (*)",
+ "This option requires pypresence v4.6.0+ to be installed": "اس آپشن کے لئے انسٹال ہونے کے لئے پائپریسینس v4.6.0+کی ضرورت ہے",
+ "Unable to load pypresence v4.5.0+ features. Exception: (*)": "Pypresence v4.5.0+خصوصیات کو لوڈ کرنے سے قاصر ہے۔ استثناء: (*)",
+ "Open Game Page 🕹️": "اوپن گیم پیج 🕹",
+ "Open User Page 🌐": "صارف کا صفحہ کھولیں 🌐",
+ "This option requires pypresence v4.7.0+ to be installed": "اس آپشن کے لئے انسٹال ہونے کے لئے پائپریسینس v4.7.0+کی ضرورت ہے",
+ "--- Add Manually ---": "--- دستی طور پر شامل کریں ---",
+ "--- Adding Flag: (*) ---": "--- پرچم شامل کرنا : (*) ---",
+ "--- Current Fast Flags ---": "--- موجودہ فاسٹ جھنڈے ---",
+ "--- Editing Flag: (*) ---": "--- ترمیم پرچم : (*) ---",
+ "--- Exit without saving ---": "--- بغیر بچت کے باہر نکلیں ---",
+ "--- Reset Fast Flags ---": "--- تیز رفتار جھنڈوں کو دوبارہ ترتیب دیں ---",
+ "--- Select Adding Method ---": "--- شامل کرنے کا طریقہ منتخب کریں ---",
+ "Any flag that'll cause you to get banned is solely on your decisions.": "کوئی بھی جھنڈا جس کی وجہ سے آپ پر پابندی عائد ہوگی وہ صرف آپ کے فیصلوں پر ہے۔",
+ "Are you sure you want to want to clear your fast flag configuration? (y/n)": "کیا آپ واقعی اپنی تیز پرچم کی تشکیل کو صاف کرنا چاہتے ہیں؟ (y/n)",
+ "Are you sure you want to want to exit Fast Flags Installer without saving? (y/n)": "کیا آپ کو یقین ہے کہ آپ بغیر بچت کے فاسٹ پرچم انسٹالر سے باہر نکلنا چاہتے ہیں؟ (y/n)",
+ "Are you sure you would like to use this fast flag JSON?": "کیا آپ کو یقین ہے کہ آپ اس فاسٹ پرچم json کو استعمال کرنا چاہیں گے؟",
+ "Current Value: (*) [(*)]": "موجودہ قیمت: (*) [(*)]",
+ "Data can be recovered if chose not to save.": "اگر محفوظ نہ کرنے کا انتخاب کیا گیا تو ڈیٹا کو بازیافت کیا جاسکتا ہے۔",
+ "Data cannot be recovered after this.": "اس کے بعد ڈیٹا کو بازیافت نہیں کیا جاسکتا۔",
+ "Exiting garden..": "باغ سے باہر نکلنا..",
+ "Fast Flag Configuration has been cleared!": "فاسٹ پرچم کی تشکیل کو صاف کردیا گیا ہے!",
+ "Please check what the flags actually do!! You will be responsible for what flags are enabled through this option.": "براہ کرم چیک کریں کہ جھنڈے اصل میں کیا کرتے ہیں !! آپ اس اختیار کے ذریعہ کون سے جھنڈوں کو قابل بناتے ہیں اس کے ذمہ دار ہوں گے۔",
+ "Please enter the flag to add to the list:": "براہ کرم فہرست میں شامل کرنے کے لئے پرچم درج کریں:",
+ "Please enter the new value for this flag! (Type \"delete\" to remove the flag, or type \"back\" to go back!)": "براہ کرم اس جھنڈے کے لئے نئی قیمت درج کریں! (پرچم کو ہٹانے کے لئے \"حذف کریں\" ٹائپ کریں ، یا واپس جانے کے لئے \"بیک\" ٹائپ کریں!)",
+ "Please enter the value for this flag! (Type \"back\" to go back!)": "براہ کرم اس جھنڈے کی قیمت درج کریں! (واپس جانے کے لئے \"بیک\" ٹائپ کریں!)",
+ "Please know this only applies to Roblox Player and not Roblox Studio.": "براہ کرم جانئے کہ یہ صرف روبلوکس پلیئر پر لاگو ہوتا ہے نہ کہ روبلوکس اسٹوڈیو پر۔",
+ "Returning to menu..": "مینو میں لوٹ رہا ہے..",
+ "Successfully added flag: (*) to value: (*) [(*)]!": "کامیابی کے ساتھ شامل پرچم: (*)قدر کرنے کے لئے: (*) [(*)]!",
+ "Successfully deleted flag: (*)!": "کامیابی کے ساتھ حذف شدہ پرچم: (*)!",
+ "Successfully edited flag: (*) to value: (*) [(*)]!": "کامیابی کے ساتھ ترمیم شدہ پرچم: (*)قدر کرنا: (*) [(*)]!",
+ "Unable to add flag. Exception: (*)": "پرچم شامل کرنے سے قاصر ہے۔ استثناء: (*)",
+ "Unable to edit value.. Exception: (*)": "قدر میں ترمیم کرنے سے قاصر.. استثناء: (*)",
+ "You may also format the value but separating the actual value using |. For example:": "آپ قیمت کو بھی فارمیٹ کرسکتے ہیں لیکن استعمال کرتے ہوئے اصل قدر کو الگ کرنا | مثال کے طور پر:",
+ "[(*)] = (*) [(*)]": "[(*)] = (*) [(*)]]",
+ "bool|true = Will set value to boolean true": "بول | سچ = بولین سچ کی قدر طے کرے گا",
+ "float|123.45 = Will set value to floating point number 123.45": "فلوٹ | 123.45 = فلوٹنگ پوائنٹ نمبر 123.45 پر قیمت طے کرے گی",
+ "int|1234 = Will set value to integer 1234": "iNT | 1234 = انٹیجر 1234 پر قیمت طے کرے گی",
+ "--- Clear Fast Flags ---": "--- تیز تیز جھنڈے ---",
+ "null| = Will set value to null or None": "null | = قیمت کو کالعدم قرار دے گا یا کوئی نہیں",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio": "انتباہ! مستقبل کی تازہ کاریوں میں یہ طریقہ پیچ کیا جاسکتا ہے۔ نیز ، جھنڈے روبلوکس اسٹوڈیو سے ٹکرا سکتے ہیں",
+ "Would you like to enable install Fast Flags using the IXP Settings method? (y/n)": "کیا آپ IXP ترتیبات کے طریقہ کار کا استعمال کرتے ہوئے فاسٹ جھنڈوں کو انسٹال کرنا چاہیں گے؟ (y/n)",
+ "--- Increase FPS #1 ---": "--- ایف پی ایس #1 میں اضافہ کریں ---",
+ "--- Increase FPS #2 ---": "--- ایف پی ایس #2 میں اضافہ کریں ---",
+ "Would you like to enable increasing FPS using pack 1? (y/n)": "کیا آپ پیک 1 کا استعمال کرتے ہوئے ایف پی ایس میں اضافہ کرنا چاہیں گے؟ (y/n)",
+ "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "کیا آپ پیک 2 (کمفرٹ موڈ) کا استعمال کرتے ہوئے ایف پی ایس میں اضافہ کرنا چاہیں گے؟ (y/n)",
+ "Would you like to install the stutter animations fix? (y/n)": "کیا آپ اسٹٹر متحرک تصاویر کو انسٹال کرنا چاہیں گے؟ (y/n)",
+ "This is the only method that is found to be usable to add fast flags using files.": "یہ واحد طریقہ ہے جو فائلوں کا استعمال کرتے ہوئے تیز جھنڈوں کو شامل کرنے کے لئے قابل استعمال پایا جاتا ہے۔",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "انتباہ! مستقبل کی تازہ کاریوں میں یہ طریقہ پیچ کیا جاسکتا ہے۔ نیز ، جھنڈے روبلوکس اسٹوڈیو سے ٹکرا سکتے ہیں۔",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "تاہم ، روبلوکس کے ذریعہ اس کو نظرانداز کرنے کی کوشش کرنے پر پابندی عائد ہوسکتی ہے۔",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "تاہم ، روبلوکس کے ذریعہ اس کو نظرانداز کرنے کی کوشش کرنے پر پابندی عائد ہوسکتی ہے۔ ہم اس نکتے کے بعد ذمہ دار نہیں ہوں گے!"
 }

@@ -71,10 +71,13 @@ class DeployHistory:
         for deployment in self.studio:
             if deployment.hash == hash and deployment.is_macos == macos: return deployment.version
         raise DeployHistoryError(f"Could not get version of {hash}")
-    def get_latest_studio_version(self, macos: bool=False) -> str:
+    def get_latest_studio_version(self, macos: bool=False, hash_majors: tuple=None) -> str:
         hash_pattern = re.compile(r'^\d+(?:\.\d+)*$')
         def _is_hash(ver): return bool(hash_pattern.fullmatch(ver))
-        candidates = [d for d in self.studio if d.is_macos == macos and _is_hash(d.hash)]
+        if hash_majors:
+            candidates = [d for d in self.studio if d.is_macos == macos and _is_hash(d.hash) and d.hash.split()[0] == hash_majors[0] and d.hash.split()[1] == hash_majors[1]]
+        else:
+            candidates = [d for d in self.studio if d.is_macos == macos and _is_hash(d.hash)]
         s = max(candidates, key=lambda d: tuple(int(part) for part in d.hash.split('.')))
         return s.version
     def is_macos_version(self, version: str) -> str:

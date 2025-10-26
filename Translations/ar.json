@@ -2169,5 +2169,151 @@
  "Get the current displayed name of itself.": "احصل على الاسم الحالي المعروض لنفسه..",
  "Get the current mod script id of itself.": "احصل على معرف البرنامج النصي الحالي لنفسه..",
  "Get the current version of itself.": "الحصول على النسخة الحالية من نفسها..",
- "Location Code: 10": "رمز الموقع: 10"
+ "Location Code: 10": "رمز الموقع: 10",
+ "This is disabled just in case for permission.": "تم تعطيل هذا فقط في حالة الإذن..",
+ "Warning! This option will use your Roblox Security Cookie for Authentication with Roblox!": "تحذير! سيستخدم هذا الخيار ملف تعريف الارتباط الخاص بـ Roblox للأمان للمصادقة مع Roblox!",
+ "Would you like to enable Roblox User Channel Checking Usage? (y/n)": "هل ترغب في تمكين استخدام قناة مستخدم Roblox؟ (y/n)",
+ "This is used for authentication with Roblox APIs such as Beta Programs.": "يستخدم هذا للمصادقة مع واجهات برمجة التطبيقات Roblox مثل برامج بيتا..",
+ "Warning! This option will look for cookies automatically in your Roblox Data and may bring security issues.": "تحذير! سيبحث هذا الخيار عن ملفات تعريف الارتباط تلقائيًا في بيانات Roblox وقد يجلب مشكلات الأمان..",
+ "Would you like to enable Roblox Security Cookie Usage? (y/n)": "هل ترغب في تمكين استخدام ملفات تعريف الارتباط لأمن Roblox؟ (y/n)",
+ "--- OrangeBot Setup ---": "--- إعداد Orangebot ---",
+ "-----------------------": "---------------------",
+ "Are you sure you want to reset this Mod Script's Configurations? This may cause damage to the scripts if run. (y/n)": "هل أنت متأكد من أنك تريد إعادة تعيين تكوينات البرنامج النصي هذا؟ قد يتسبب هذا في تلف البرامج النصية إذا تم تشغيله. (y/n)",
+ "Debug Mode: (*)": "وضع التصحيح: (*)",
+ "Discord API Version: (*)": "نسخة API Discord: (*)",
+ "Exit Option": "خيار الخروج",
+ "Hello! It seems like it's your first time with setting up OrangeBot!": "مرحبًا! يبدو أنها المرة الأولى لك مع إعداد Orangebot!",
+ "If you want to reset this setup, please reset the configuration in Mod Script Settings.": "إذا كنت ترغب في إعادة تعيين هذا الإعداد ، فيرجى إعادة تعيين التكوين في إعدادات برنامج Mod..",
+ "OrangeAPI Version: (*)": "نسخة OrangeAPI: (*)",
+ "Reset One Mod Script Configuration": "إعادة تعيين تكوين برنامج Mod واحد",
+ "Select the mod script you want to reset!": "حدد البرنامج النصي Mod الذي تريد إعادة تعيينه!",
+ "Successfully cleared (*)'s Mod Script Configurations!": "تم مسح تكوينات البرنامج النصي Mod بنجاح (*)!",
+ "Successfully set Discord Bot Token in settings!": "نجح في تعيين رمز الروبوت في الإعدادات!",
+ "And, for multiple users, separate by ONLY one comma between each id. (No spaces!!)": "وبالنسبة للعديد من المستخدمين ، انفصل عن طريق فاصلة واحدة فقط بين كل معرف. (لا توجد مسافات !!)",
+ "Called Discord API to sync all commands to servers!": "يسمى Discord API لمزامنة جميع الأوامر مع الخوادم!",
+ "Called!": "مُسَمًّى!",
+ "Connected": "متصل",
+ "Create an app lock to use between mod script instances": "قم بإنشاء قفل تطبيق لاستخدامه بين مثيلات البرنامج النصي Mod",
+ "Current Game Information!": "معلومات اللعبة الحالية!",
+ "End the Roblox Instance": "إنهاء مثيل Roblox",
+ "End the opposite of Roblox Instance (like Roblox Studio if running Roblox Player)": "قم بإنهاء عكس مثيل Roblox (مثل Roblox Studio إذا كان تشغيل Roblox Player)",
+ "Error launching discord bot. Error: (*)": "خطأ في إطلاق روبوت الخلاف. خطأ: (*)",
+ "Error while loading status text! Error: (*)": "خطأ أثناء تحميل نص الحالة! خطأ: (*)",
+ "Failed": "فشل",
+ "Get game information from internal OrangeBlox": "احصل على معلومات اللعبة من OrangeBlox الداخلي",
+ "Get game user information from OrangeBlox": "احصل على معلومات مستخدم اللعبة من OrangeBlox",
+ "Get if you connected to a Roblox game": "احصل إذا كنت متصلاً بلعبة Roblox",
+ "Get the current Roblox PID connected": "احصل على مصلحة Roblox الحالية",
+ "Get the special logo mod image URL": "احصل على عنوان url الخاص بشعار الشعار",
+ "Instance PID": "مثيل PID",
+ "Joined Game": "انضم إلى اللعبة",
+ "Let's now add what users to trust!": "دعنا الآن نضيف ما يثق به المستخدمون!",
+ "Logged In User": "تسجيل الدخول في المستخدم",
+ "Please enable developer mode in your Discord Client and right click on the user to get a user id!": "يرجى تمكين وضع المطور في عميل Discord الخاص بك والنقر بزر الماوس الأيمن على المستخدم للحصول على معرف المستخدم!",
+ "Roblox Version": "نسخة Roblox",
+ "Something went wrong! Exception: (*)": "حدث خطأ ما! استثناء: (*)",
+ "Studio": "الاستوديو",
+ "Success!": "نجاح!",
+ "Successfully ended Roblox!": "انتهى بنجاح روبوكس!",
+ "Successfully saved tree to Discord API! It may take a moment to progress to all users!": "أنقذت الشجرة بنجاح لخلاف واجهة برمجة التطبيقات! قد يستغرق الأمر بعض الوقت للتقدم إلى جميع المستخدمين!",
+ "Successfully screenshotted screen!": "شاشة لقطة الشاشة بنجاح!",
+ "System is ready!": "النظام جاهز!",
+ "Tree failed to be saved by the Discord API. (*)": "فشلت الشجرة في حفظها من قبل API Discord. (*)",
+ "Unable to find current Roblox instance!": "غير قادر على العثور على مثيل Roblox الحالي!",
+ "You are currently disconnected!": "أنت حاليا منفصلين!",
+ "You are currently inside of a game!": "أنت حاليا داخل لعبة!",
+ "You do not have access to this command!": "ليس لديك حق الوصول إلى هذا الأمر!",
+ "Discord Proxy ended with fail! Return code: (*)": "انتهى الوكيل Discord بالفشل! رمز الإرجاع: (*)",
+ "Discord Proxy ended with success!": "انتهى الوكيل بالخلاف بالنجاح!",
+ "Starting discord.py proxy!": "بدء discord.py الوكيل!",
+ "Successfully called task for screenshotting your screen! Please wait a moment!": "دعا بنجاح مهمة لقطات الشاشة! من فضلك انتظر لحظة!",
+ "Successfully focused Roblox!": "ركز بنجاح روبوكس!",
+ "Successfully moved and resized Roblox Window!": "نقل بنجاح وتغيير حجم نافذة Roblox!",
+ "Successfully called task for getting game information! Please wait a moment!": "دعا بنجاح مهمة الحصول على معلومات اللعبة! من فضلك انتظر لحظة!",
+ "1. Alright, so, start with going to your browser!": "1. حسنا ، لذلك ، ابدأ بالذهاب إلى متصفحك!",
+ "Input tutorial mode:": "وضع إدخال البرنامج التعليمي:",
+ "Please input the Discord User IDs to trust:": "يرجى إدخال معرفات مستخدم Discord للثقة:",
+ "Please input your Discord Bot Token below (https://discord.com/developers/applications):": "يرجى إدخال رمز الربع المميز الخاص بك أدناه (https://discord.com/developers/applications):",
+ "Please select the tutorial mode you would like to use!": "يرجى تحديد وضع البرنامج التعليمي الذي ترغب في استخدامه!",
+ "This can be any browser such as Google Chrome, Firefox or Microsoft Edge.": "يمكن أن يكون هذا أي متصفح مثل Google Chrome أو Firefox أو Microsoft Edge..",
+ "[1] = Starters": "[1] = مبتدئين",
+ "[2] = Advanced (Skip)": "[2] = متقدم (تخطي)",
+ "Due to some updates by Roblox, a lot of the flags that are used below will no longer work because Roblox decided to do a whitelist on the flags you can use.(*)If you want to, you can still select them below just in case they're allowed back by Roblox.": "نظرًا لبعض التحديثات التي أجرتها Roblox ، لن تعمل الكثير من الأعلام المستخدمة أدناه لأن Roblox قرر القيام بقائمة بيضاء على الأعلام التي يمكنك استخدامها. (*)إذا كنت ترغب في ذلك ، فلا يزال بإمكانك تحديدها أدناه فقط في حالة السماح بها مرة أخرى بواسطة Roblox..",
+ "October 5th, 2025 - v2.4.5": "5 أكتوبر ، 2025 - v2.4.5",
+ "Failed to bootstrap pip (download get-pip.py failed).": "فشل في bootstrap pip (فشل تنزيل get-pip.py)..",
+ "Installing PIP..": "تثبيت بيب..",
+ "Successfully installed PIP with embedded Python!": "تم تثبيت PIP بنجاح مع Python المضمن!",
+ "Successfully installed Python (*) into (Path: (*))!": "تم بنجاح تثبيت بايثون (*)في (المسار: (*))!",
+ "Unable to download Python installer. Attempting download on Python embed package..": "غير قادر على تنزيل مثبت بايثون. محاولة التنزيل على حزمة تضمين بايثون..",
+ "Unable to install PIP with Python Package. Return Code: (*)": "غير قادر على تثبيت PIP مع حزمة Python. رمز الإرجاع: (*)",
+ "Unzipping Python (*) package..": "فك ضغط حزمة بايثون (*)..",
+ "Adding to user path..": "إضافة إلى مسار المستخدم..",
+ "Downloading Python package..": "تحميل حزمة بايثون..",
+ "Failed to find latest Python Installer Manager version.": "فشل في العثور على أحدث إصدار من Python Installer Manager..",
+ "Registering file extensions..": "تسجيل امتدادات الملفات..",
+ "Setting up python modules..": "إعداد وحدات بايثون..",
+ "Successfully installed PIP with Python!": "تم تثبيت PIP بنجاح مع بايثون!",
+ "Successfully installed Python (*) into path: (*)": "تم بنجاح تثبيت Python (*)في المسار: (*)",
+ "The path \"(*)\" was already on the PATH environment variable!": "المسار \"(*)\" كان موجودًا بالفعل في متغير بيئة path!",
+ "Unable to load pypresence v2.5.0+ features. Exception: (*)": "غير قادر على تحميل ميزات pypresence v2.5.0+. استثناء: (*)",
+ "Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم لعبة تحرير الاستوديو في شريط الحالة؟ (ص/ن)",
+ "Would you like to enable showing playing game name in Status Bar? (y/n)": "هل ترغب في تمكين إظهار اسم اللعبة في شريط الحالة؟ (ص/ن)",
+ "This option requires pypresence v4.5.2+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.5.2+",
+ "Awaiting Log Creation ((*)/30)": "في انتظار إنشاء السجل ((*)/30)",
+ "Command: \"(*)\" Install.py -r -rp": "الأمر: \"(*)\" Install.py -r -rp",
+ "Command: \"(*)\" Install.py -r -rp -rc": "الأمر: \"(*)\" Install.py -r -rp -rc",
+ "Log file is already used in an another Roblox Instance ((*)/30)": "ملف السجل مستخدم بالفعل في مثيل Roblox آخر ((*)/30)",
+ "Successfully found log file ((*)/30). Returning with: (*)": "تم العثور على ملف السجل بنجاح ((*)/30). العودة مع: (*)",
+ "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "غير قادر على العثور على ملف جديد خلال 15 ثانية ((*)/30). العودة مع: (*)",
+ "This option requires pypresence v4.6.0+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.6.0+",
+ "Unable to load pypresence v4.5.0+ features. Exception: (*)": "غير قادر على تحميل ميزات pypresence v4.5.0+. استثناء: (*)",
+ "Open Game Page 🕹️": "افتح صفحة اللعبة 🕹️",
+ "Open User Page 🌐": "افتح صفحة المستخدم 🌐",
+ "This option requires pypresence v4.7.0+ to be installed": "يتطلب هذا الخيار تثبيت pypresence v4.7.0+",
+ "--- Add Manually ---": "--- إضافة يدويا ---",
+ "--- Adding Flag: (*) ---": "--- إضافة علامة : (*) ---",
+ "--- Current Fast Flags ---": "--- الأعلام السريعة الحالية ---",
+ "--- Editing Flag: (*) ---": "--- علامة التحرير : (*) ---",
+ "--- Exit without saving ---": "--- الخروج بدون حفظ ---",
+ "--- Reset Fast Flags ---": "--- إعادة تعيين الأعلام السريعة ---",
+ "--- Select Adding Method ---": "--- حدد طريقة الإضافة ---",
+ "Any flag that'll cause you to get banned is solely on your decisions.": "أي علم يؤدي إلى حظرك يعتمد فقط على قراراتك..",
+ "Are you sure you want to want to clear your fast flag configuration? (y/n)": "هل أنت متأكد أنك تريد مسح تكوين العلم السريع الخاص بك؟ (ص/ن)",
+ "Are you sure you want to want to exit Fast Flags Installer without saving? (y/n)": "هل أنت متأكد أنك تريد الخروج من Fast Flags Installer بدون حفظ؟ (ص/ن)",
+ "Are you sure you would like to use this fast flag JSON?": "هل أنت متأكد من أنك ترغب في استخدام هذا العلم السريع JSON؟",
+ "Current Value: (*) [(*)]": "القيمة الحالية: (*) [(*)]",
+ "Data can be recovered if chose not to save.": "يمكن استرداد البيانات إذا اخترت عدم الحفظ..",
+ "Data cannot be recovered after this.": "لا يمكن استعادة البيانات بعد ذلك..",
+ "Exiting garden..": "الخروج من الحديقة..",
+ "Fast Flag Configuration has been cleared!": "تم مسح تكوين العلم السريع!",
+ "Please check what the flags actually do!! You will be responsible for what flags are enabled through this option.": "يرجى التحقق مما تفعله الأعلام في الواقع!! ستكون مسؤولاً عن العلامات التي يتم تمكينها من خلال هذا الخيار..",
+ "Please enter the flag to add to the list:": "الرجاء إدخال العلم لإضافته إلى القائمة:",
+ "Please enter the new value for this flag! (Type \"delete\" to remove the flag, or type \"back\" to go back!)": "الرجاء إدخال القيمة الجديدة لهذه العلامة! (اكتب \"حذف\" لإزالة العلامة، أو اكتب \"رجوع\" للعودة!)",
+ "Please enter the value for this flag! (Type \"back\" to go back!)": "الرجاء إدخال قيمة هذه العلامة! (اكتب \"رجوع\" للعودة!)",
+ "Please know this only applies to Roblox Player and not Roblox Studio.": "يرجى العلم أن هذا ينطبق فقط على Roblox Player وليس Roblox Studio..",
+ "Returning to menu..": "العودة إلى القائمة..",
+ "Successfully added flag: (*) to value: (*) [(*)]!": "تمت إضافة العلامة بنجاح: (*)إلى القيمة: (*) [(*)]!",
+ "Successfully deleted flag: (*)!": "تم حذف العلامة بنجاح: (*)!",
+ "Successfully edited flag: (*) to value: (*) [(*)]!": "تم تعديل العلامة بنجاح: (*)إلى القيمة: (*) [(*)]!",
+ "Unable to add flag. Exception: (*)": "غير قادر على إضافة العلم. استثناء: (*)",
+ "Unable to edit value.. Exception: (*)": "غير قادر على تعديل القيمة.. الاستثناء: (*)",
+ "You may also format the value but separating the actual value using |. For example:": "يمكنك أيضًا تنسيق القيمة مع فصل القيمة الفعلية باستخدام |. على سبيل المثال:",
+ "[(*)] = (*) [(*)]": "[(*)] = (*) [(*)]",
+ "bool|true = Will set value to boolean true": "bool|true = سيتم تعيين القيمة إلى قيمة منطقية صحيحة",
+ "float|123.45 = Will set value to floating point number 123.45": "float|123.45 = سيتم تعيين القيمة على رقم النقطة العائمة 123.45",
+ "int|1234 = Will set value to integer 1234": "int|1234 = سيتم تعيين القيمة على عدد صحيح 1234",
+ "--- Clear Fast Flags ---": "--- مسح الأعلام السريعة ---",
+ "null| = Will set value to null or None": "خالية| = سيتم تعيين القيمة على لاغية أو لا شيء",
+ "Warning! This method may be patched in future updates.": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية..",
+ "Would you like to enable install Fast Flags using the IXP Settings method? (y/n)": "هل ترغب في تمكين تثبيت Fast Flags باستخدام طريقة إعدادات IXP؟ (ص/ن)",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية. أيضًا، قد تتعارض الأعلام مع Roblox Studio",
+ "--- Increase FPS #1 ---": "--- زيادة عدد الإطارات في الثانية رقم 1 ---",
+ "--- Increase FPS #2 ---": "--- زيادة عدد الإطارات في الثانية رقم 2 ---",
+ "Would you like to enable increasing FPS using pack 1? (y/n)": "هل ترغب في تمكين زيادة fps باستخدام الحزمة 1؟ (ص/ن)",
+ "Would you like to enable increasing FPS using pack 2 (comfort mode)? (y/n)": "هل ترغب في تمكين زيادة fps باستخدام الحزمة 2 (وضع الراحة)؟ (ص/ن)",
+ "Would you like to install the stutter animations fix? (y/n)": "هل ترغب في تثبيت إصلاح الرسوم المتحركة المتعثرة؟ (ص/ن)",
+ "This is the only method that is found to be usable to add fast flags using files.": "هذه هي الطريقة الوحيدة التي وجد أنها قابلة للاستخدام لإضافة علامات سريعة باستخدام الملفات..",
+ "Warning! This method may be patched in future updates. Also, flags may collide with Roblox Studio.": "تحذير! قد يتم تصحيح هذه الطريقة في التحديثات المستقبلية. أيضًا، قد تتعارض الأعلام مع Roblox Studio..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this.": "ومع ذلك، يمكن حظره بواسطة Roblox لمحاولته تجاوز هذا..",
+ "HOWEVER, it can be bannable by Roblox for trying to bypass this. WE WONT BE RESPONSIBLE AFTER THIS POINT!": "ومع ذلك، يمكن حظره بواسطة Roblox لمحاولته تجاوز هذا. لن نكون مسؤولين بعد هذه النقطة!"
 }

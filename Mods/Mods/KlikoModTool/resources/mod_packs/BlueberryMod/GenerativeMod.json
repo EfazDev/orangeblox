@@ -13,6 +13,7 @@
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
         "_all_optional": true,
+        "_voice_chat": true,
         "_loading": true,
         "_leaderboard": false
     }

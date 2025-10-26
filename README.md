@@ -13,7 +13,7 @@
 </p>
 
 > [!IMPORTANT]
-> Hello! If you were an user of Efaz's Roblox Bootstrap on v1.5.9 or lower, you might have noticed we have rebranded to OrangeBlox! Any mods and data are transferred as of this change and your mod scripts are able to still work under the EfazRobloxBootstrapAPI. For more information, [click here.](https://github.com/efazdev/orangeblox/wiki/Rebranding-to-OrangeBlox)
+> Hello! If you were an user of Efaz's Roblox Bootstrap on v1.5.9 or lower, you might have noticed we have rebranded to OrangeBlox! Any mods and data are transferred as of this change. For more information, [click here.](https://github.com/efazdev/orangeblox/wiki/Rebranding-to-OrangeBlox)
 
 ## What is OrangeBlox?
 OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+console+terminal&udm=2) program heavily inspired by Bloxstrap made for macOS and Windows that applies modifications onto the Roblox Client using files! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
@@ -33,16 +33,18 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
 10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts!
 11. Play Roblox/Run Studio app so you can run Roblox directly!
-12. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-13. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
-14. Way more features to be explored!
+12. Included Mods and Mod Scripts that could be used for free!
+13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
+14. Roblox Early Program Support with Roblox Security Cookie Usage enabled (in v2.4.0i+ or v2.4.0+)
+15. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
+16. Way more features to be explored!
 > [!NOTE]
-> Features may need to be enabled in order to be used. Check the Settings from the main menu in order to enable.
+> Features may be needed to be enabled in order to be used. Check the Settings from the main menu in order to find and enable.
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
 2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.13.7 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.0 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
 4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc psutil <br>
    Windows: pip install pypresence pywin32 plyer psutil
@@ -60,21 +62,20 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > [!IMPORTANT]
 > OrangeBlox is a safe Windows/macOS program and won't harm your Roblox account. However, compilers like Nuitka and pyinstaller may have some issues where apps created contain false positives from anti-virus software. For example, Windows Defender may detect the bootstrap with Win32/Wacapew.C!ml. In order to prevent this, you may need to authorize the app through your anti-virus or build the app directly.
 
-## Python 3.14 Beta Support
+## Python 3.15 Beta Support
 > [!IMPORTANT]
-> OrangeBlox is compatible with beta versions of Python such as Python 3.14. However, Pypi packages such as pyobjc, Nuitka/pyinstaller, psutil and plyer will all need to support the Python beta in order to work with OrangeBlox. Using beta versions of Python is only recommended for developers that know what they're doing and is not recommended for public use.
+> OrangeBlox is compatible with beta versions of Python such as Python 3.15. However, Pypi packages such as pyobjc, Nuitka/pyinstaller, psutil and plyer will all need to support the Python beta in order to work with OrangeBlox. Using beta versions of Python is only recommended for developers that know what they're doing and is not recommended for public use.
 
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `19183b2017368148b3080ad52bf944c4` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `ee2814e89a7f9195e3bab41a6e5db0db` |
-| Installer (Install.py) | `5114e8a3f064ab2eed2bc1a0ac3d2c25` |
-| Bootstrap API (OrangeAPI.py) | `62184347a8d2729d664dd2dbe8020c03` |
-| Bootstrap API (Efaz's Roblox Bootstrap) (EfazRobloxBootstrapAPI.py) | `aa903206df044505bc89c21505381421` |
-| Bootstrap Loader (OrangeBlox.py) | `161d3b88fc68d1eee0874a2b082a5974` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `87cc299f0ed36f415ff1a50730f6841e` |
-| PyKits API (PyKits.py) | `c7068bd2b5023e9378ceb9774b5e5676` |
+| Main Bootstrap (Main.py) | `1aef95af1698f7d598125422c7b5604e` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `c1033042505cb6aebadd9906487ffebd` |
+| Installer (Install.py) | `a46b005fc6376b57cf3de2e7603a9fb5` |
+| Bootstrap API (OrangeAPI.py) | `58d6bccbb716fd913c77e119dd99b6d7` |
+| Bootstrap Loader (OrangeBlox.py) | `c74d3b8e0558bf364d212405f6146e0f` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `3f288f813808f13ae3958abea59780cd` |
+| PyKits API (PyKits.py) | `f9a3e8c32ca0e9c0fa9975f0544843d4` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
