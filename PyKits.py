@@ -370,7 +370,7 @@ class request:
     def open(self, *k, **s) -> OpenContext:
         mai = self.get(*k, **s)
         return self.OpenContext(mai)
-    def download(self, path: str, output: str, check: bool=False, delete_existing: bool=True, submit_status=None) -> FileDownload:
+    def download(self, path: str, output: str, check: bool=False, delete_existing: bool=True, submit_status=None, gradual: bool=True) -> FileDownload:
         if not self.get_if_connected():
             while not self.get_if_connected(): self._time.sleep(0.5)
         if self._os.path.exists(output) and delete_existing == False: raise FileExistsError(f"This file already exists in {output}!")
@@ -389,31 +389,35 @@ class request:
                 if stripped_line and stripped_line[0].isdigit():
                     progress = self.process_download_status(line)
                     if progress:
-                        if progress.percent < 100:
-                            def pro(tar_prog, before_bytes, target_t):
-                                for i in range(100):
-                                    byte_target = int(before_bytes+((tar_prog.downloaded_bytes-before_bytes)*((i+1)/100)))
-                                    total_size_bytes = self.format_size_to_bytes(tar_prog.total_size)
+                        if gradual == True:
+                            if progress.percent < 100:
+                                def pro(tar_prog, before_bytes, target_t):
+                                    for i in range(100):
+                                        byte_target = int(before_bytes+((tar_prog.downloaded_bytes-before_bytes)*((i+1)/100)))
+                                        total_size_bytes = self.format_size_to_bytes(tar_prog.total_size)
+                                        perc_target = int((byte_target/total_size_bytes)*100) if not (byte_target == 0 and total_size_bytes == 0) else 0
+                                        if not (new_t == target_t): return
+                                        submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=tar_prog.total_size, speed=tar_prog.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
+                                        if not (new_t == target_t): return
+                                        self._time.sleep(0.01)
+                                new_t += 1
+                                self._threading.Thread(target=pro, args=[progress, before_bytes, new_t], daemon=True).start()
+                                before_bytes = progress.downloaded_bytes
+                            elif before_bytes < self.format_size_to_bytes(progress.total_size):
+                                new_t += 1
+                                next_tar = self.format_size_to_bytes(progress.total_size)
+                                for i in range(10):
+                                    byte_target = int(before_bytes+((next_tar-before_bytes)*((i+1)/10)))
+                                    total_size_bytes = self.format_size_to_bytes(progress.total_size)
                                     perc_target = int((byte_target/total_size_bytes)*100) if not (byte_target == 0 and total_size_bytes == 0) else 0
-                                    if not (new_t == target_t): return
-                                    submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=tar_prog.total_size, speed=tar_prog.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
-                                    if not (new_t == target_t): return
+                                    submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=progress.total_size, speed=progress.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
                                     self._time.sleep(0.01)
-                            new_t += 1
-                            self._threading.Thread(target=pro, args=[progress, before_bytes, new_t], daemon=True).start()
-                            before_bytes = progress.downloaded_bytes
-                        elif before_bytes < self.format_size_to_bytes(progress.total_size):
-                            new_t += 1
-                            next_tar = self.format_size_to_bytes(progress.total_size)
-                            for i in range(10):
-                                byte_target = int(before_bytes+((next_tar-before_bytes)*((i+1)/10)))
-                                total_size_bytes = self.format_size_to_bytes(progress.total_size)
-                                perc_target = int((byte_target/total_size_bytes)*100) if not (byte_target == 0 and total_size_bytes == 0) else 0
-                                submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=progress.total_size, speed=progress.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
-                                self._time.sleep(0.01)
-                            before_bytes = next_tar
+                                before_bytes = next_tar
+                            else:
+                                new_t += 1
+                                before_bytes = progress.downloaded_bytes
+                                submit_status.submit(progress)
                         else:
-                            new_t += 1
                             before_bytes = progress.downloaded_bytes
                             submit_status.submit(progress)
         download_proc.wait() 
