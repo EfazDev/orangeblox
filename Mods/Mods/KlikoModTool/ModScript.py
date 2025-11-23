@@ -20,7 +20,7 @@ current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 
 def getFilePrompt():
-    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode(errors="ignore").strip()
     
 # Printing Functions
 def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
@@ -42,6 +42,15 @@ if installed["success"] == False:
     installed = {"success": installed["success"], "channel": installed.get("attempted_channel"), "version": installed.get("client_version"), "hash": installed.get("hash")}
 if installed["success"] == True:
     OrangeAPI.printColoredMessage(f"Roblox Version Used: {installed['version']} (Channel: {installed['channel']} 🍎)", 197)
+
+    # Major Update About Mod Generation..
+    printYellowMessage("--- Major Update about Mod Generation and Updating! ---")
+    printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!")
+    if not (type(OrangeAPI.getConfiguration("ReadDisclaimer2025")) is bool):
+        n = OrangeAPI.requestInput("Press enter to continue.")
+        if n != None: OrangeAPI.setConfiguration("ReadDisclaimer2025", True)
+
+    # Actual Modding
     if not (type(OrangeAPI.getConfiguration("KlikoHandlingModType")) is int):
         printMainMessage("[1] = Generate New Mods")
         printMainMessage("[2] = Update Old Mods")

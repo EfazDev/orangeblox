@@ -15,7 +15,7 @@ a = Analysis(
     pathex=[],
     binaries=collect_dynamic_libs("ssl"),
     datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
-    hiddenimports=["plyer.platforms.win.notification"],
+    hiddenimports=["plyer.platforms.win.notification", "truststore"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -24,7 +24,9 @@ a = Analysis(
         "urllib3", 
         "requests",
         "numpy",
-        "site"
+        "site", 
+        "certifi", 
+        "setuptools"
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,

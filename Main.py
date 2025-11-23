@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.1a
+# v2.4.5a
 # 
 
 # Python Modules
@@ -14,7 +14,6 @@ import datetime
 import importlib.util
 import importlib.machinery
 import subprocess
-import threading
 import traceback
 import logging
 import hashlib
@@ -53,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.1a"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.5a"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -98,6 +97,7 @@ if __name__ == "__main__":
         "EFlagEnableMultiAutoReconnect": "bool",
         "EFlagNotifyServerLocation": "bool",
         "EFlagEnableDiscordRPC": "bool",
+        "EFlagEnableDiscordRPCStudio": "bool",
         "EFlagEnableDiscordRPCJoining": "bool",
         "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
         "EFlagShowUsernameInSmallImage": "bool",
@@ -489,7 +489,7 @@ if __name__ == "__main__":
         else:
             with open(os.path.join(cur_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
             try: obfuscated_json = json.loads(obfuscated_json)
-            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
             main_config = obfuscated_json
         if updating == False and main_config.get("EFlagUseConfigurationWebServer") == True and main_config.get("EFlagConfigurationWebServerURL"):
             try:
@@ -582,12 +582,10 @@ if __name__ == "__main__":
         elif not (main_config.get("EFlagRobloxSecurityCookieUsage") == True) and main_config.get("EFlagRobloxChannelUpdateToken"):
             main_config.pop("EFlagRobloxChannelUpdateToken")
         return None
-    def createCookieHeader():
+    def createCookieHeader(studio: bool=None):
+        if studio == None: studio = run_studio
         if main_config.get("EFlagRobloxSecurityCookieUsage") == True:
-            cookie_path = handler.getRobloxCookieFileLocation()
-            if not cookie_path: return {}
-            founded_roblosecurity = handler.parseRobloxCookieFile(cookie_path)
-            return {".ROBLOSECURITY": founded_roblosecurity}
+            return handler.getRobloxCookieHeader(studio=studio)
         return {}
     def generateFileKey(id: str, ext: str="", dire: str=""): 
         if dire: return os.path.join(dire, f"{id}_{user_folder_name}{ext}")
@@ -602,9 +600,9 @@ if __name__ == "__main__":
         for i in options:
             count += 1
             if main_config.get("EFlagEnableSeeMoreAwaiting") == True and count % 13 == 0: input("[press enter to see more]")
-            printMainMessage(f"[{str(count)}] = {i['message']}"); main_ui_options[str(count)] = i
+            printMainMessage(f"[{str(count)}] {i['message']}"); main_ui_options[str(count)] = i
             main_ui_options[str(count)] = i
-        if not (star_option == ""): printMainMessage(f"[*] = {star_option}")
+        if not (star_option == ""): printMainMessage(f"[*] {star_option}")
         if not (before_input == ""): printMainMessage(before_input)
         
         res = input("> ")
@@ -786,6 +784,7 @@ if __name__ == "__main__":
     try:
         pypresence = pip_class.importModule("pypresence")
         psutil = pip_class.importModule("psutil")
+        truststore = pip_class.importModule("truststore")
         if main_os == "Darwin":
             posix_ipc = pip_class.importModule("posix_ipc")
             objc = pip_class.importModule("objc")
@@ -794,16 +793,17 @@ if __name__ == "__main__":
             plyer = pip_class.importModule("plyer")
     except Exception as e:
         printWarnMessage("--- Installing Python Modules ---")
-        pip_class.install(["pypresence", "psutil"])
-        if main_os == "Darwin": pip_class.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz"])
-        elif main_os == "Windows": pip_class.install(["pywin32", "plyer"])
-        pip_class.restartScript("Main.py", sys.argv)
+        pkg_list = ["pypresence", "psutil", "truststore"]
+        if main_os == "Darwin": pkg_list.extend(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz"])
+        elif main_os == "Windows": pkg_list.extend(["pywin32", "plyer"])
+        pip_class.install(pkg_list)
+        # pip_class.restartScript("Main.py", sys.argv)
         printSuccessMessage("Successfully installed modules!")
 
     # Python Modules (PyPi Installed)
     try:
         import psutil
-        from DiscordPresenceHandler import Presence, StatusDisplayType
+        from DiscordPresenceHandler import Presence
         if main_os == "Darwin": import objc
         elif main_os == "Windows":
             import plyer # type: ignore
@@ -1425,7 +1425,6 @@ if __name__ == "__main__":
             "message": ts(f"Clear All Unneeded Files"), 
             "func": continueToClearAllUnneededFiles,
         })
-        printMainMessage("[*] = Exit Storage Management")
         d = generateMenuSelection(generated_ui_options, star_option=ts("Exit Storage Management"))
         if d: d["func"](); return continueToClearTemporaryStorage()
         else: return ts("Temporary storage has been cleared!")
@@ -1627,59 +1626,59 @@ if __name__ == "__main__":
             printWarnMessage("--- Roblox Installer Options ---")
             li = {}
             co = 1
-            printMainMessage(f"[{co}] = Reinstall Roblox")
+            printMainMessage(f"[{co}] Reinstall Roblox")
             li[str(co)] = [goToReinstall, 1]
             co += 1
-            printMainMessage(f"[{co}] = Full Reinstall Roblox [No Resetting]")
+            printMainMessage(f"[{co}] Full Reinstall Roblox [No Resetting]")
             li[str(co)] = [goToReinstall, 2]
             co += 1
-            printMainMessage(f"[{co}] = Full Reinstall Roblox [Removes User Data]")
+            printMainMessage(f"[{co}] Full Reinstall Roblox [Removes User Data]")
             li[str(co)] = [goToReinstall, 3]
             co += 1
-            printMainMessage(f"[{co}] = Install Vanilla Roblox")
+            printMainMessage(f"[{co}] Install Vanilla Roblox")
             li[str(co)] = [goToReinstall, 7]
             if main_config.get("EFlagRobloxStudioEnabled"):
                 co += 1
-                printMainMessage(f"[{co}] = Reinstall Roblox Studio")
+                printMainMessage(f"[{co}] Reinstall Roblox Studio")
                 li[str(co)] = [goToReinstall, 6]
                 if main_os == "Darwin":
                     co += 1
-                    printMainMessage(f"[{co}] = Install Vanilla Roblox Studio")
+                    printMainMessage(f"[{co}] Install Vanilla Roblox Studio")
                     li[str(co)] = [goToReinstall, 8]
                     if os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), "RobloxStudio.app")): 
                         co += 1
-                        printMainMessage(f"[{co}] = Uninstall Vanilla Roblox Studio")
+                        printMainMessage(f"[{co}] Uninstall Vanilla Roblox Studio")
                         li[str(co)] = [goToUninstall, 8]
                 elif main_os == "Windows":
                     co += 1
-                    printMainMessage(f"[{co}] = Install Vanilla Roblox Studio")
+                    printMainMessage(f"[{co}] Install Vanilla Roblox Studio")
                     li[str(co)] = [goToReinstall, 8]
                     if handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True): 
                         co += 1
-                        printMainMessage(f"[{co}] = Uninstall Vanilla Roblox Studio")
+                        printMainMessage(f"[{co}] Uninstall Vanilla Roblox Studio")
                         li[str(co)] = [goToUninstall, 8]
             co += 1
-            printMainMessage(f"[{co}] = Uninstall Roblox")
+            printMainMessage(f"[{co}] Uninstall Roblox")
             li[str(co)] = [goToUninstall, 4]
             co += 1
-            printMainMessage(f"[{co}] = Uninstall Roblox [Removes User Data]")
+            printMainMessage(f"[{co}] Uninstall Roblox [Removes User Data]")
             li[str(co)] = [goToUninstall, 5]
             current_studio_version = handler.getCurrentClientVersion(studio=True)
             if current_studio_version["success"] == True:
                 co += 1
-                printMainMessage(f"[{co}] = Uninstall Roblox Studio")
+                printMainMessage(f"[{co}] Uninstall Roblox Studio")
                 li[str(co)] = [goToUninstall, 6]
             if main_os == "Darwin":
                 if os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), "Roblox.app")): 
                     co += 1
-                    printMainMessage(f"[{co}] = Uninstall Vanilla Roblox")
+                    printMainMessage(f"[{co}] Uninstall Vanilla Roblox")
                     li[str(co)] = [goToUninstall, 7]
             elif main_os == "Windows":
                 if handler.getRobloxInstallFolder(directory=os.path.join(pip_class.getLocalAppData(), "Roblox", "Versions")): 
                     co += 1
-                    printMainMessage(f"[{co}] = Uninstall Vanilla Roblox")
+                    printMainMessage(f"[{co}] Uninstall Vanilla Roblox")
                     li[str(co)] = [goToUninstall, 7]
-            printMainMessage("[*] = Exit Options Menu")
+            printMainMessage("[*] Exit Options Menu")
             a = input("> ")
             if li.get(a): return li.get(a)[0](li.get(a)[1])
             else: return ts("Option invalid!")
@@ -1967,7 +1966,12 @@ if __name__ == "__main__":
                     d = handleBasicSetting("EFlagEnableDiscordRPC", False)
                     if d: return d
 
-                    if main_config.get("EFlagEnableDiscordRPC") == True:
+                    if main_config.get("EFlagRobloxStudioEnabled") == True:
+                        printMainMessage("Would you like to enable Discord RPC for Roblox Studio? (y/n)")
+                        d = handleBasicSetting("EFlagEnableDiscordRPCStudio", False)
+                        if d: return d
+
+                    if main_config.get("EFlagEnableDiscordRPC") == True or main_config.get("EFlagEnableDiscordRPCStudio") == True:
                         printMainMessage("Would you like to enable joining from your Discord profile? (Everyone will be allowed to join depending on type of server.)")
                         d = handleBasicSetting("EFlagEnableDiscordRPCJoining", False)
                         if d: return d
@@ -1989,12 +1993,12 @@ if __name__ == "__main__":
                         if d: return d
 
                         printMainMessage("Would you like to enable showing playing game name in Status Bar? (y/n)")
-                        printYellowMessage("This option requires pypresence v4.7.0+ to be installed")
+                        printYellowMessage("This option requires pypresence v4.6.0+ to be installed")
                         d = handleBasicSetting("EFlagShowGameNameInStatusBar", False)
                         if d: return d
 
                         printMainMessage("Would you like to enable showing Editing Studio Game Name in Status Bar? (y/n)")
-                        printYellowMessage("This option requires pypresence v4.7.0+ to be installed")
+                        printYellowMessage("This option requires pypresence v4.6.0+ to be installed")
                         d = handleBasicSetting("EFlagShowStudioGameNameInStatusBar", False)
                         if d: return d
 
@@ -2495,8 +2499,8 @@ if __name__ == "__main__":
                 if opt.get("go_to_rbx") == True: 
                     saveSettings()
                     printWarnMessage(f"{re} Would you like to return to settings or exit it?")
-                    printMainMessage("[1] = Return to Settings")
-                    printMainMessage("[*] = Exit Settings")
+                    printMainMessage("[1] Return to Settings")
+                    printMainMessage("[*] Exit Settings")
                     a = input("> ")
                     if a == "1": return mainSettings()
                     else: return ts("Successfully saved settings!")
@@ -2530,6 +2534,7 @@ if __name__ == "__main__":
         printMainMessage(f" • {colors_class.wrap('Mark Hammond (pywin32) 🪟 (https://github.com/mhammond/pywin32)', 129)}")
         printMainMessage(f" • {colors_class.wrap('Kivy (plyer) 🧰 (https://github.com/kivy/plyer)', 214)}")
         printMainMessage(f" • {colors_class.wrap('Giampaolo Rodola (psutil) 🔌 (https://github.com/giampaolo/psutil)', 97)}")
+        printMainMessage(f" • {colors_class.wrap('sethmlarson (truststore) 🔌 (https://github.com/sethmlarson/truststore)', 226)}")
         printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
         printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap('@CabledRblx 🦆', 226)}. Thanks :)")
         printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
@@ -2649,7 +2654,7 @@ if __name__ == "__main__":
                 else: printErrorMessage("Python Installation was may be canceled or Python was not installed!")
     def continueToUpdatePythonModules(): # Update Python Modules
         printWarnMessage(f"--- Update Python Modules ---")
-        can_be_updated_modules = ["pypresence", "psutil"]
+        can_be_updated_modules = ["pypresence", "psutil", "pip", "truststore"]
         if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
         elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
         for mod_info in generateModsManifest().values():
@@ -2939,7 +2944,7 @@ if __name__ == "__main__":
                             key = generateMenuSelection(generated_ui_options, star_option=ts("Exit Selection"))
                             if key:
                                 key = key["id"]
-                                if main_os == "Darwin": subprocess.run(["/usr/bin/open", f"orangeblox://shortcuts/{key}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
+                                if main_os == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/open"), f"orangeblox://shortcuts/{key}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                                 else: subprocess.run(["start", f"orangeblox://shortcuts/{key}"], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                                 printSuccessMessage("Successfully called to open a new instance! Please wait for Roblox to open and run a game before continuing the next account!")
                             else: printErrorMessage("Shortcut not found!")
@@ -3252,7 +3257,7 @@ if __name__ == "__main__":
                                 got_backgrounds = sorted(got_backgrounds)
                                 count = 1
                                 for i in got_backgrounds:
-                                    printMainMessage(f"[{str(count)}] = {i}")
+                                    printMainMessage(f"[{str(count)}] {i}")
                                     count += 1
                                 if main_os == "Darwin":
                                     printYellowMessage("[Some avatar maps may not able to run on macOS due to missing objects that are expected in macOS than Windows.]")
@@ -3298,7 +3303,7 @@ if __name__ == "__main__":
                                 printWarnMessage("Select the number that is associated with the cursor you want to use.")
                                 count = 1
                                 for i in got_cursors:
-                                    printMainMessage(f"[{str(count)}] = {i}")
+                                    printMainMessage(f"[{str(count)}] {i}")
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new cursor folder into the Cursors folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
@@ -3342,7 +3347,7 @@ if __name__ == "__main__":
                                 printWarnMessage("Select the number that is associated with the icon you want to use.")
                                 count = 1
                                 for i in got_icons:
-                                    printMainMessage(f"[{str(count)}] = {i}")
+                                    printMainMessage(f"[{str(count)}] {i}")
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new icon folder into the RobloxBrand folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
@@ -3388,7 +3393,7 @@ if __name__ == "__main__":
                                     printWarnMessage("Select the number that is associated with the icon you want to use.")
                                     count = 1
                                     for i in got_icons:
-                                        printMainMessage(f"[{str(count)}] = {i}")
+                                        printMainMessage(f"[{str(count)}] {i}")
                                         count += 1
                                     if main_os == "Darwin": printYellowMessage("[Also, if you just added a new icon folder into the RobloxStudioBrand folder, please rerun Install.py in order for it to seen.]")
                                     a = input("> ")
@@ -3453,7 +3458,7 @@ if __name__ == "__main__":
                                 printWarnMessage("Select the number that is associated with the player sounds you want to use.")
                                 count = 1
                                 for i in got_sounds:
-                                    printMainMessage(f"[{str(count)}] = {i}")
+                                    printMainMessage(f"[{str(count)}] {i}")
                                     count += 1
                                 if main_os == "Darwin": printYellowMessage("[Also, if you just added a new sound pack into the PlayerSounds folder, please rerun Install.py in order for it to seen.]")
                                 a = input("> ")
@@ -3507,7 +3512,7 @@ if __name__ == "__main__":
                         printSuccessMessage("Successfully synced all mods from installation folder!")
                     elif opt["index"] == 1000000:
                         printMainMessage("Opening Mods Folder..")
-                        if main_os == "Darwin": re = subprocess.run(["/usr/bin/open", os.path.join(mods_folder)])
+                        if main_os == "Darwin": re = subprocess.run([pip_class.getPathFile("/usr/bin/open"), os.path.join(mods_folder)])
                         else: re = subprocess.run(f"start {os.path.join(mods_folder)}", shell=True)
                         if re.returncode == 0: printSuccessMessage("Successfully opened Mods folder!")
                         else: printErrorMessage("Unable to open Mods folder!")
@@ -3727,7 +3732,7 @@ if __name__ == "__main__":
                                 else:
                                     with open(os.path.join(backup_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                                     try: obfuscated_json = json.loads(obfuscated_json)
-                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
                                     main_config = obfuscated_json
                                 saveSettings()
                                 printMainMessage("Copying AvatarEditorMaps..")
@@ -3873,7 +3878,7 @@ if __name__ == "__main__":
                     printWarnMessage("--- Select Option ---")
                     count = 1
                     for i in generated_ui_options:
-                        printMainMessage(f"[{str(count)}] = {i['message']}")
+                        printMainMessage(f"[{str(count)}] {i['message']}")
                         main_ui_options[str(count)] = i
                         count += 1
                     def a():
@@ -4018,7 +4023,7 @@ if __name__ == "__main__":
                                     if ss == latest_python_version: return
                                 with open(generateFileKey("PythonUpdate"), "w", encoding="utf-8") as f: f.write(latest_python_version)
                             elif latest_python_version and os.path.exists(generateFileKey("PythonUpdate")): os.remove(generateFileKey("PythonUpdate"))
-                        threading.Thread(target=python_update_check, daemon=True).start()
+                        pip_class.startThread(func=python_update_check, daemon=True)
                         if os.path.exists(generateFileKey("PythonUpdate")):
                             with open(generateFileKey("PythonUpdate"), "r") as f: latest_python_version = f.read()
                             if (not (current_python_version == latest_python_version)) and latest_python_version:
@@ -4033,7 +4038,7 @@ if __name__ == "__main__":
                                 displayNotification(ts("Python Update Available!"), ts(f'Python {latest_python_version} is now available for download! Install the update by opening the main menu, checking for Python updates and then install!'))
                             else: os.remove(generateFileKey("PythonUpdate"))
                     if not (main_config.get("EFlagDisablePythonModuleUpdateChecks") == True):
-                        can_be_updated_modules = ["pypresence", "psutil"]
+                        can_be_updated_modules = ["pypresence", "psutil", "pip", "truststore"]
                         if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
                         elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
                         for mod_info in generateModsManifest().values():
@@ -4049,7 +4054,7 @@ if __name__ == "__main__":
                                     with open(generateFileKey("PythonModuleUpdate"), "w", encoding="utf-8") as f: f.write(dumped)
                                     displayNotification(ts("Python Module Updates Available!"), ts(f'{len(updating_python_modules["packages"])} Python module{"" if len(updating_python_modules["packages"]) == 1 else "s"} are now available to be updated! Install the update by opening the main menu, checking for Python Module updates and then install!'))
                                 elif os.path.exists(generateFileKey("PythonModuleUpdate")): os.remove(generateFileKey("PythonModuleUpdate"))
-                        threading.Thread(target=python_module_update_check, daemon=True).start()
+                        pip_class.startThread(func=python_module_update_check, daemon=True)
                         if os.path.exists(generateFileKey("PythonModuleUpdate")):
                             with open(generateFileKey("PythonModuleUpdate"), "r") as f: modules_updating = json.load(f)
                             if len(modules_updating) > 0:
@@ -4088,7 +4093,7 @@ if __name__ == "__main__":
                                             displayNotification(ts("OrangeBlox Update Available!"), ts(f'OrangeBlox v{latest_vers.get("latest_version", "1.0.0")} is now available for download! Install the update by opening the main menu, checking for updates and then install!'))
                                         else:
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")): os.remove(generateFileKey("OrangeBloxUpdate"))
-                        threading.Thread(target=bootstrap_update_check, daemon=True).start()
+                        pip_class.startThread(func=bootstrap_update_check, daemon=True)
                     if os.path.exists(generateFileKey("OrangeBloxUpdate")):
                         with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: versio_name = f.read()
                         generated_ui_options.append({
@@ -4235,9 +4240,9 @@ if __name__ == "__main__":
                                 printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                                 printDebugMessage(f"URL Scheme Requested: {url}")
                                 printDebugMessage(f"Arguments Received: {given_args}")
-                                printMainMessage("[1] = Return to Main Menu")
-                                printMainMessage("[2] = Continue to Roblox")
-                                printMainMessage("[*] = End Process")
+                                printMainMessage("[1] Return to Main Menu")
+                                printMainMessage("[2] Continue to Roblox")
+                                printMainMessage("[*] End Process")
                                 res = input("> ")
                                 if res == "1":
                                     given_args = ["Main.py"]
@@ -4317,7 +4322,7 @@ if __name__ == "__main__":
                                                 else:
                                                     with open(os.path.join(backup_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                                                     try: obfuscated_json = json.loads(obfuscated_json)
-                                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+                                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
                                                     main_config = obfuscated_json
                                                 saveSettings()
                                                 printMainMessage("Copying AvatarEditorMaps..")
@@ -4379,9 +4384,9 @@ if __name__ == "__main__":
                         printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                         printDebugMessage(f"URL Scheme Requested: {url}")
                         printDebugMessage(f"Arguments Received: {given_args}")
-                        printMainMessage("[1] = Return to Main Menu")
-                        printMainMessage("[2] = Continue to Roblox")
-                        printMainMessage("[*] = End Process")
+                        printMainMessage("[1] Return to Main Menu")
+                        printMainMessage("[2] Continue to Roblox")
+                        printMainMessage("[*] End Process")
                         res = input("> ")
                         if res == "1":
                             given_args = []
@@ -4403,19 +4408,19 @@ if __name__ == "__main__":
                 if not (main_config.get("EFlagReturnToMainMenuInstant") == True):
                     if isRedirectedFromApp == False:
                         printWarnMessage(mes)
-                        printMainMessage("[1] = Return to Main Menu")
-                        printMainMessage("[2] = Exit Bootstrap")
-                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] = Continue to Roblox Studio")
-                        printMainMessage("[*] = Continue to Roblox")
+                        printMainMessage("[1] Return to Main Menu")
+                        printMainMessage("[2] Exit Bootstrap")
+                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] Continue to Roblox Studio")
+                        printMainMessage("[*] Continue to Roblox")
                         a = input("> ")
                         if a == "1": main_menu()
                         elif a == "2": sys.exit(0)
                         elif a == "3" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
                     else:
                         printWarnMessage(mes)
-                        printMainMessage("[1] = Continue to Roblox")
-                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] = Continue to Roblox Studio")
-                        printMainMessage("[*] = Exit Bootstrap")
+                        printMainMessage("[1] Continue to Roblox")
+                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] Continue to Roblox Studio")
+                        printMainMessage("[*] Exit Bootstrap")
                         a = input("> ")
                         if a == "1": continueToRoblox()
                         elif a == "2" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
@@ -4895,7 +4900,7 @@ if __name__ == "__main__":
                         copyFile(os.path.join(brand_fold, "AppIcon.icns"), os.path.join(content_folder_paths[main_os], "../", "MacOS", "RobloxStudio.app" if run_studio == True else "Roblox.app", "Contents", "Resources", "AppIcon.icns"))
                         targ_app = os.path.join(content_folder_paths[main_os], '../', '../')
                         try:
-                            subprocess.run(["/usr/bin/touch", targ_app], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                            subprocess.run([pip_class.getPathFile("/usr/bin/touch"), targ_app], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
                             subprocess.run(["/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", targ_app], stdout=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
                         except Exception as e: printDebugMessage("Something went wrong trying to set icon fully!")
                         printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
@@ -5164,8 +5169,8 @@ if __name__ == "__main__":
                             if shortcut_replaced == True:
                                 plist_class.writePListFile(dock_path, dock_data)
                                 time.sleep(1)
-                                subprocess.run(["/usr/bin/killall", "cfprefsd"], cwd=cur_path)
-                                subprocess.run(["/usr/bin/killall", "Dock"], cwd=cur_path)
+                                subprocess.run([pip_class.getPathFile("/usr/bin/killall"), "cfprefsd"], cwd=cur_path)
+                                subprocess.run([pip_class.getPathFile("/usr/bin/killall"), "Dock"], cwd=cur_path)
                                 printSuccessMessage("Successfully removed RobloxStudio.app Dock Shortcut!" if run_studio == True else "Successfully removed Roblox.app Dock Shortcut!")
                             else: printSuccessMessage("No changes were made to the dock!")
                     except Exception as e: printErrorMessage(f"Unable to make changes to the dock: \n{trace()}")
@@ -5265,7 +5270,7 @@ if __name__ == "__main__":
             except Exception as e: printErrorMessage(f"There was an error preparing Roblox: \n{trace()}")
         if main_config.get("EFlagEnableSkipModificationMode") == True and main_os == "Darwin" and handler.getIfRobloxIsOpen(studio=run_studio): skip_modification_mode = True
         if skip_modification_mode == False: prepareRobloxClientWithErrorCatcher()
-        else: threading.Thread(target=prepareRobloxClientWithErrorCatcher, daemon=True).start()
+        else: pip_class.startThread(func=prepareRobloxClientWithErrorCatcher, daemon=True)
 
         # Event Variables
         rpc = None
@@ -5603,7 +5608,7 @@ if __name__ == "__main__":
                                                                                                         if req.ok: printDebugMessage("Successfully sent webhook! Event: onModScript")
                                                                                                         else: printErrorMessage(f"There was an issue sending your webhook message. Status Code: {req.status_code}")
                                                                                                     if pip_class.getIfConnectedToInternet() == True: sen()
-                                                                                                    else: threading.Thread(target=sen, daemon=True).start()
+                                                                                                    else: pip_class.startThread(func=sen, daemon=True)
                                                                                                 except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
                                                                                     def startPrepareRoblox(scri: str): 
                                                                                         if not (roblox_launched_affect_mod_script == True): prepareRobloxClient()
@@ -5814,9 +5819,9 @@ if __name__ == "__main__":
                                                             setattr(mod_script_modules[selected_mod_scripttt], "__import__", empty)
 
                                                     # Launch API
-                                                    threading.Thread(target=checkGeneratedInstances, daemon=True, args=[sel_mod, "OrangeAPI"]).start()
-                                                    threading.Thread(target=setPythonAPIs, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
-                                                    threading.Thread(target=handleRequests, daemon=True, args=[sel_mod, list(approved_items_list)]).start()
+                                                    pip_class.startThread(checkGeneratedInstances, True, sel_mod, "OrangeAPI")
+                                                    pip_class.startThread(setPythonAPIs, True, sel_mod, list(approved_items_list))
+                                                    pip_class.startThread(handleRequests, True, sel_mod, list(approved_items_list))
                                                     printDebugMessage(f"Launched OrangeAPI v{OrangeAPI.current_version['version']}!")
                                                     
                                                     # Launch Script
@@ -5843,8 +5848,7 @@ if __name__ == "__main__":
                                             printYellowMessage(mod_manifest["mod_script_end_support_reasoning"])
                                 else: printErrorMessage("Unable to find mod script under manifest.")
         if not (main_config.get("EFlagDisableModScriptsAccess", False) == True):
-            mod_script_thread = threading.Thread(target=loadModScripts, daemon=True)
-            mod_script_thread.start()
+            mod_script_thread = pip_class.startThread(func=loadModScripts, daemon=True)
             if skip_modification_mode == False: mod_script_thread.join()
 
         # Extra Functions
@@ -5954,8 +5958,6 @@ if __name__ == "__main__":
             if selected_brand in special_logo_mods["studio" if studio == True else "reg"]:
                 thumbnail_url = f"{main_host}/Mods/Roblox{'Studio' if studio == True else ''}Brand/{selected_brand}/{'AppIcon' if studio == True else 'RobloxTilt'}.png"
             return thumbnail_url
-        def clearDiscordRPC():
-            if main_config.get("EFlagEnableDiscordRPC") == True: pass
         def sendDiscordWebhook(webhook_json, name):
             def sen():
                 waitForInternet()
@@ -5963,9 +5965,9 @@ if __name__ == "__main__":
                 if req.ok: printDebugMessage(f"Successfully sent webhook! Event: {name}")
                 else: printErrorMessage(f"There was an issue sending your webhook message. Status Code: {req.status_code}")
             if pip_class.getIfConnectedToInternet() == True: sen()
-            else: threading.Thread(target=sen, daemon=True).start()
-        if main_config.get("EFlagRobloxUnfriendCheckEnabled") == True: threading.Thread(target=unfriendCheckLoop, daemon=True).start()
-        if main_config.get("EFlagReplaceRobloxRuntimeIconWithModIcon") == True and main_os == "Windows": threading.Thread(target=setRuntimeIconLoop, daemon=True).start()
+            else: pip_class.startThread(func=sen, daemon=True)
+        if main_config.get("EFlagRobloxUnfriendCheckEnabled") == True: pip_class.startThread(func=unfriendCheckLoop, daemon=True)
+        if main_config.get("EFlagReplaceRobloxRuntimeIconWithModIcon") == True and main_os == "Windows": pip_class.startThread(func=setRuntimeIconLoop, daemon=True)
 
         # Roblox Ready Message
         if run_studio == True:
@@ -6005,9 +6007,10 @@ if __name__ == "__main__":
 
                 global current_place_info
                 global connected_user_info
-                if not connected_user_info:
-                    sss = handler.getRobloxAppSettings()
-                    if sss.get("name") and sss.get("id"): connected_user_info = {"name": sss.get("name"), "id": sss.get("id"), "display": sss.get("displayName")}
+                app_settings = handler.getRobloxAppSettings()
+                logged_in_user: dict = app_settings.get("loggedInUser")
+                if logged_in_user.get("name") and logged_in_user.get("id"):
+                    connected_user_info = {"name": logged_in_user.get("name"), "id": logged_in_user.get("id"), "display": logged_in_user.get("displayName")}
                 if current_place_info:
                     if generated_location: current_place_info["server_location"] = generated_location
                     if current_place_info.get('place_identifier') and safeConvertNumber(current_place_info.get('place_identifier')):
@@ -6099,27 +6102,23 @@ if __name__ == "__main__":
                                     start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                                     if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
                                     if current_place_info: current_place_info["start_time"] = start_time
-                                    if main_config.get("EFlagEnableDiscordRPC") == True:
+                                    if main_config.get("EFlagEnableDiscordRPCStudio") == True:
                                         # Handle User Thumbnail
-                                        app_settings = handler.getRobloxAppSettings()
-                                        logged_in_user: dict = app_settings.get("loggedInUser")
-                                        if logged_in_user.get("name") and logged_in_user.get("id"):
-                                            connected_user_info = {"name": logged_in_user.get("name"), "id": logged_in_user.get("id"), "display": logged_in_user.get("displayName")}
-                                            if main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True:
-                                                thumbnail_res = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={logged_in_user.get('id')}&size=100x100&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True, cookies=createCookieHeader())
-                                                if thumbnail_res.ok:
-                                                    thumbnail_json = thumbnail_res.json
-                                                    if thumbnail_json and len(thumbnail_json.get("data", [])) > 0:
-                                                        user_thumbnail = thumbnail_json["data"][0].get("imageUrl")
-                                                        if user_thumbnail:
-                                                            if connected_user_info:
-                                                                connected_user_info["thumbnail"] = user_thumbnail
-                                                                printSuccessMessage(f"Successfully loaded user thumbnail of @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]!")
-                                                                printDebugMessage(f"Loaded thumbnail: {user_thumbnail}")
-                                                        else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                                    else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                                else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                        
+                                        if connected_user_info and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True:
+                                            thumbnail_res = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={connected_user_info.get('id')}&size=100x100&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True, cookies=createCookieHeader())
+                                            if thumbnail_res.ok:
+                                                thumbnail_json = thumbnail_res.json
+                                                if thumbnail_json and len(thumbnail_json.get("data", [])) > 0:
+                                                    user_thumbnail = thumbnail_json["data"][0].get("imageUrl")
+                                                    if user_thumbnail:
+                                                        if connected_user_info:
+                                                            connected_user_info["thumbnail"] = user_thumbnail
+                                                            printSuccessMessage(f"Successfully loaded user thumbnail of @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]!")
+                                                            printDebugMessage(f"Loaded thumbnail: {user_thumbnail}")
+                                                    else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                                else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                            else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                    
                                         def embed():
                                             try:
                                                 global rpc
@@ -6215,9 +6214,7 @@ if __name__ == "__main__":
                                                             printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
                                                     time.sleep(0.1)
                                             except Exception as e: printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
-                                        embed_thread = threading.Thread(target=embed, daemon=True)
-                                        embed_thread.daemon = True
-                                        embed_thread.start()
+                                        pip_class.startThread(func=embed, daemon=True)
                                         printDebugMessage("Successfully attached Discord RPC!")
                                 except Exception as e: printDebugMessage("Unable to insert Discord Rich Presence. Please make sure Discord is open.")
                                 try:
@@ -6266,7 +6263,7 @@ if __name__ == "__main__":
                     if placeId and universeId:
                         connected_roblox_instance.endInstance()
                         url = f"roblox-studio:1+task:EditPlace+placeId:{placeId}+universeId:{universeId}"
-                        if main_os == "Darwin": subprocess.run(["/usr/bin/open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
+                        if main_os == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/open"), url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                         else: subprocess.run(f"start {url}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
             def onClosingGame(info):
                 global connected_to_game
@@ -6324,7 +6321,7 @@ if __name__ == "__main__":
                             ], thumbnail_url)
                             try: sendDiscordWebhook(generated_body, "onGameDisconnected")
                             except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
-                if main_config.get("EFlagEnableDiscordRPC") == True:
+                if main_config.get("EFlagEnableDiscordRPCStudio") == True:
                     global rpc
                     global rpc_info
                     try: 
@@ -6416,7 +6413,7 @@ if __name__ == "__main__":
                 elif info.get("placeId") and info.get("jobId"): 
                     for i, v in info.items(): current_place_info[i] = v
             def onNewRobloxStudio(info):
-                if main_os == "Darwin": subprocess.run(["/usr/bin/open", "orangeblox://reconnect-studio"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
+                if main_os == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/open"), "orangeblox://reconnect-studio"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
                 else: subprocess.run("start orangeblox://reconnect-studio", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=cur_path)
             def onStudioInstallerLaunched(info): connected_roblox_instance.endInstance()
             def onPlayTestDisconnected(info): pass
@@ -6462,6 +6459,10 @@ if __name__ == "__main__":
                     global current_place_info
                     global connected_user_info
                     global connected_to_game
+                    app_settings = handler.getRobloxAppSettings()
+                    logged_in_user: dict = app_settings.get("loggedInUser")
+                    if logged_in_user.get("name") and logged_in_user.get("id"):
+                        connected_user_info = {"name": logged_in_user.get("name"), "id": logged_in_user.get("id"), "display": logged_in_user.get("displayName")}
                     if current_place_info:
                         current_place_info["server_location"] = generated_location
                         connected_to_game = True
@@ -6527,25 +6528,21 @@ if __name__ == "__main__":
                                         if current_place_info: current_place_info["start_time"] = start_time
                                         if main_config.get("EFlagEnableDiscordRPC") == True:
                                             # Handle User Thumbnail
-                                            app_settings = handler.getRobloxAppSettings()
-                                            logged_in_user: dict = app_settings.get("loggedInUser")
-                                            if logged_in_user.get("name") and logged_in_user.get("id"):
-                                                connected_user_info = {"name": logged_in_user.get("name"), "id": logged_in_user.get("id"), "display": logged_in_user.get("displayName")}
-                                                if main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True:
-                                                    thumbnail_res = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={logged_in_user.get('id')}&size=100x100&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True, cookies=createCookieHeader())
-                                                    if thumbnail_res.ok:
-                                                        thumbnail_json = thumbnail_res.json
-                                                        if thumbnail_json and len(thumbnail_json.get("data", [])) > 0:
-                                                            user_thumbnail = thumbnail_json["data"][0].get("imageUrl")
-                                                            if user_thumbnail:
-                                                                if connected_user_info:
-                                                                    connected_user_info["thumbnail"] = user_thumbnail
-                                                                    printSuccessMessage(f"Successfully loaded user thumbnail of @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]!")
-                                                                    printDebugMessage(f"Loaded thumbnail: {user_thumbnail}")
-                                                            else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                                        else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                                    else: printDebugMessage(f"Failed to load thumbnail for @{logged_in_user.get('name')} [User ID: {logged_in_user.get('id')}]! Status Code: {thumbnail_res.status_code}")
-                                            
+                                            if connected_user_info and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True:
+                                                thumbnail_res = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={connected_user_info.get('id')}&size=100x100&format=Png&isCircular=false", loop_429=main_config.get("EFlagEnableLoop429Requests")==True, cookies=createCookieHeader())
+                                                if thumbnail_res.ok:
+                                                    thumbnail_json = thumbnail_res.json
+                                                    if thumbnail_json and len(thumbnail_json.get("data", [])) > 0:
+                                                        user_thumbnail = thumbnail_json["data"][0].get("imageUrl")
+                                                        if user_thumbnail:
+                                                            if connected_user_info:
+                                                                connected_user_info["thumbnail"] = user_thumbnail
+                                                                printSuccessMessage(f"Successfully loaded user thumbnail of @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]!")
+                                                                printDebugMessage(f"Loaded thumbnail: {user_thumbnail}")
+                                                        else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                                    else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                                else: printDebugMessage(f"Failed to load thumbnail for @{connected_user_info.get('name')} [User ID: {connected_user_info.get('id')}]! Status Code: {thumbnail_res.status_code}")
+                                        
                                             def embed():
                                                 try:
                                                     global rpc
@@ -6651,9 +6648,7 @@ if __name__ == "__main__":
                                                         else: break
                                                         time.sleep(0.1)
                                                 except Exception as e: printDebugMessage(f"There was an error updating Discord RPC: \n{trace()}")
-                                            embed_thread = threading.Thread(target=embed, daemon=True)
-                                            embed_thread.daemon = True
-                                            embed_thread.start()
+                                            pip_class.startThread(func=embed, daemon=True)
                                             printDebugMessage("Successfully attached Discord RPC!")
                                     except Exception as e: printDebugMessage("Unable to insert Discord Rich Presence. Please make sure Discord is open.")
                                     try:
@@ -6808,7 +6803,7 @@ if __name__ == "__main__":
         def onRobloxAppStart(consoleLine):
             global rpc
             thumbnail_url = getRobloxThumbnailURL()
-            if main_config.get("EFlagEnableDiscordRPC") == True:
+            if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
                 need_new_rpc = True
                 try: 
                     if rpc and rpc.connected == True: need_new_rpc = False
@@ -6873,7 +6868,7 @@ if __name__ == "__main__":
             else: printDebugMessage(f"User has closed the Roblox{' Studio' if run_studio == True else ''} window!")
             if connected_roblox_instance and connected_roblox_instance.created_mutex == True: printYellowMessage("This process is handling multi-instance for all open Roblox windows. If you close this window, all Roblox windows may close.")
             else: printErrorMessage(f"Roblox{' Studio' if run_studio == True else ''} window was closed! Closing Bootstrap App..")
-            if main_config.get("EFlagEnableDiscordRPC") == True:
+            if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
                 global rpc
                 global rpc_info
                 try: 
@@ -7046,8 +7041,8 @@ if __name__ == "__main__":
                         if mods_manifest[s].get("mod_script") == True:
                             try:
                                 allowed_permissions = mods_manifest[s].get("permissions")
-                                if "onRobloxLog" in allowed_permissions and hasattr(mod_script_modules[s], "onRobloxLog"): threading.Thread(target=getattr(mod_script_modules[s], "onRobloxLog"), args=[data], daemon=True).start()
-                                if data.get("eventName") in allowed_permissions and hasattr(mod_script_modules[s], data.get("eventName")): threading.Thread(target=getattr(mod_script_modules[s], data.get("eventName")), args=[data["data"]], daemon=True).start()
+                                if "onRobloxLog" in allowed_permissions and hasattr(mod_script_modules[s], "onRobloxLog"): pip_class.startThread(getattr(mod_script_modules[s], "onRobloxLog"), True, data).start()
+                                if data.get("eventName") in allowed_permissions and hasattr(mod_script_modules[s], data.get("eventName")): pip_class.startThread(getattr(mod_script_modules[s], data.get("eventName")), True, data["data"]).start()
                             except Exception as e: printDebugMessage(f"Something went wrong with pinging the Mod Script script: \n{trace()}")
         def onRobloxChannel(data):
             if data["channel"] == "production" or data["channel"] == "LIVE": url_channel = ""
@@ -7161,8 +7156,7 @@ if __name__ == "__main__":
                             printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                             if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                         else: printDebugMessage("No RobloxInstance class was registered")
-                        check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
-                        check_update_thread.start()
+                        if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                     else: printDebugMessage(f"Unable to format url scheme due to an issue.")
                 else:
                     for i, v in custom_cookies.items():
@@ -7223,8 +7217,7 @@ if __name__ == "__main__":
                             printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                             if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                         else: printDebugMessage("No RobloxInstance class was registered")
-                        check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
-                        check_update_thread.start()
+                        if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                     else: printDebugMessage(f"Unable to format url scheme due to an issue.")
                 elif multi_instance_enabled == True:
                     printDebugMessage(f"Opening extra Roblox window..")
@@ -7243,8 +7236,7 @@ if __name__ == "__main__":
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                         if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                     else: printDebugMessage("No RobloxInstance class was registered")
-                    check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
-                    check_update_thread.start()
+                    if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                 else:
                     if handler.getIfRobloxIsOpen():
                         printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect? (y/n)")
@@ -7265,10 +7257,8 @@ if __name__ == "__main__":
                         connectCallEvents(connected_roblox_instance)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                     else: printDebugMessage("No RobloxInstance class was registered")
-                    check_update_thread = threading.Thread(target=checkIfUpdateWasNeeded)
-                    check_update_thread.start()
+                    if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
         def checkIfUpdateWasNeeded():
-            if main_config.get("EFlagDisableRobloxReinstallNeededChecks") == True: return
             global updated_count
             global skip_modification_mode
             global installed_update

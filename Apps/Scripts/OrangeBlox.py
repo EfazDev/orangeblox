@@ -1,7 +1,6 @@
 import sys
 import subprocess
 import json
-import threading
 import os
 import zlib
 import platform
@@ -16,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.1a"}
+    current_version = {"version": "2.4.5a"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -71,6 +70,7 @@ if __name__ == "__main__":
         "EFlagEnableMultiAutoReconnect": "bool",
         "EFlagNotifyServerLocation": "bool",
         "EFlagEnableDiscordRPC": "bool",
+        "EFlagEnableDiscordRPCStudio": "bool",
         "EFlagEnableDiscordRPCJoining": "bool",
         "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
         "EFlagShowUsernameInSmallImage": "bool",
@@ -268,7 +268,7 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(app_path, "Main.py")):
             with open(os.path.join(app_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
             try: obfuscated_json = json.loads(obfuscated_json)
-            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
             main_config = obfuscated_json
             loaded_json = True
         
@@ -369,7 +369,7 @@ if __name__ == "__main__":
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
                     shutil.rmtree(venv_path, ignore_errors=True)
                 generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
@@ -793,7 +793,7 @@ if __name__ == "__main__":
                                         printDebugMessage(f"Received Terminal ID from Receiver: {associated_terminal_pid}")
                                         self.terminal_window = associated_terminal_pid
                                         self.activate_terminal_window()
-                                    threading.Thread(target=awaitTerminal, daemon=True).start()
+                                    pip_class.startThread(func=awaitTerminal, daemon=True)
 
                                     self.generate_top_menu()
                                     if not (main_config.get("EFlagEnableGUIOptionMenus") == False): self.generate_dock_menu()
@@ -808,8 +808,8 @@ if __name__ == "__main__":
                                     else:
                                         try:
                                             if ended == False:
-                                                threading.Thread(target=self.reset_button_click, daemon=True).start()
-                                                threading.Thread(target=self.config_reload_period_func, daemon=True).start()
+                                                pip_class.startThread(func=self.reset_button_click, daemon=True)
+                                                pip_class.startThread(func=self.config_reload_period_func, daemon=True)
                                                 if validated == False: self.show_validation_failed_menu()
                                                 self.master.setDocumentEdited_(True)
                                                 self.threadingloop_(None)
@@ -884,7 +884,7 @@ if __name__ == "__main__":
                                         self.config_reload_period = False
                                     if not ended and not (obj == "oranges"):
                                         def delayed_loop(): time.sleep(0.1); self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
-                                        threading.Thread(target=delayed_loop, daemon=True).start()
+                                        pip_class.startThread(func=delayed_loop, daemon=True)
                                 except Exception as e: printErrorMessage(f"There was an error loading loop! Error: \n{trace()}")
                             def scrollingLogs_(self, notification):
                                 content_view = self.output_scroll_view.contentView()
@@ -1151,8 +1151,8 @@ if __name__ == "__main__":
                                     global associated_terminal_pid
                                     global ended
                                     ended = False
-                                    threading.Thread(target=startBootstrap, daemon=False).start()
-                                threading.Thread(target=sta, daemon=True).start()
+                                    pip_class.startThread(func=startBootstrap, daemon=False)
+                                pip_class.startThread(func=sta, daemon=True)
                             def activate_terminal_window(self, event=""): activateTerminalWindow(event)
                             def show_help_menu(self): webbrowser.open("https://github.com/EfazDev/orangeblox/wiki")
                             def show_github_issues_menu(self): webbrowser.open("https://github.com/EfazDev/orangeblox/issues")
@@ -1468,9 +1468,9 @@ if __name__ == "__main__":
                         except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                     except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                 except Exception as e: printErrorMessage(str(e))
-            threading.Thread(target=notificationLoop, daemon=False).start()
-            threading.Thread(target=terminalAwaitLoop, daemon=True).start()
-            threading.Thread(target=startBootstrap, daemon=False).start()
+            pip_class.startThread(func=notificationLoop, daemon=False)
+            pip_class.startThread(func=terminalAwaitLoop, daemon=True)
+            pip_class.startThread(func=startBootstrap, daemon=False)
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
             if app_count < 1: 
                 with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
@@ -1507,7 +1507,7 @@ if __name__ == "__main__":
                     with open(os.path.join(app_path, "BootstrapCooldown"), "w", encoding="utf-8") as f: f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 1))
                     time.sleep(main_config.get("EFlagBootstrapCooldownAmount", 1))
                     if os.path.exists(os.path.join(app_path, "BootstrapCooldown")): os.remove(os.path.join(app_path, "BootstrapCooldown"))
-                threading.Thread(target=cool, daemon=True).start()
+                pip_class.startThread(func=cool, daemon=True)
 
             if len(args) > 1:
                 if certain_player: 
@@ -1558,7 +1558,7 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                    if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                    if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
                         shutil.rmtree(venv_path, ignore_errors=True)
                     generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
@@ -1628,7 +1628,7 @@ if __name__ == "__main__":
                     except Exception as e:
                         printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
                         sys.exit(0)
-                threading.Thread(target=awake, daemon=True).start()
+                pip_class.startThread(func=awake, daemon=True)
                 startBootstrap()
             except Exception as e:
                 traceback.print_exc()

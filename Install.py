@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.1a
+# v2.4.5a
 # 
 
 # Modules
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     requests = PyKits.request()
     plist_class = PyKits.plist()
     sma = {
-        "OverallInstall": main_os == "Darwin" and pip_class.getInstallableApplicationsFolder() or f"{pip_class.getLocalAppData()}",
+        "OverallInstall": pip_class.getInstallableApplicationsFolder() if main_os == "Darwin" else pip_class.getLocalAppData(),
         "Darwin": [
             os.path.join(pip_class.getInstallableApplicationsFolder(), "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox.app"), 
             os.path.join(pip_class.getInstallableApplicationsFolder(), "OrangeBlox.app"),
@@ -39,10 +39,10 @@ if __name__ == "__main__":
             os.path.join(pip_class.getInstallableApplicationsFolder(), "Run Studio.app")
         ],
         "Windows": [
-            os.path.join(f"{pip_class.getLocalAppData()}", "OrangeBlox"), 
-            os.path.join(f"{pip_class.getLocalAppData()}", "OrangeBlox", "OrangeBlox.exe"), 
-            os.path.join(f"{pip_class.getLocalAppData()}", "OrangeBlox"), 
-            os.path.join(f"{pip_class.getLocalAppData()}", "OrangeBlox")
+            os.path.join(pip_class.getLocalAppData(), "OrangeBlox"), 
+            os.path.join(pip_class.getLocalAppData(), "OrangeBlox", "OrangeBlox.exe"), 
+            os.path.join(pip_class.getLocalAppData(), "OrangeBlox"), 
+            os.path.join(pip_class.getLocalAppData(), "OrangeBlox")
         ]
     }
     ignore_files = [
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.1a"}
+    current_version = {"version": "2.4.5a"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -157,6 +157,7 @@ if __name__ == "__main__":
         "EFlagEnableMultiAutoReconnect": "bool",
         "EFlagNotifyServerLocation": "bool",
         "EFlagEnableDiscordRPC": "bool",
+        "EFlagEnableDiscordRPCStudio": "bool",
         "EFlagEnableDiscordRPCJoining": "bool",
         "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
         "EFlagShowUsernameInSmallImage": "bool",
@@ -330,7 +331,7 @@ if __name__ == "__main__":
             try:
                 with open(directory, "rb") as f: obfuscated_json = f.read()
                 try: obfuscated_json = json.loads(obfuscated_json)
-                except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+                except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
                 main_config = obfuscated_json
             except Exception as e:
                 with open(os.path.join(cur_path, "Configuration.json")) as f: main_config = json.load(f)
@@ -668,6 +669,7 @@ if __name__ == "__main__":
     try:
         pypresence = pip_class.importModule("pypresence")
         psutil = pip_class.importModule("psutil")
+        truststore = pip_class.importModule("truststore")
         if main_os == "Darwin":
             posix_ipc = pip_class.importModule("posix_ipc")
             objc = pip_class.importModule("objc")
@@ -695,7 +697,7 @@ if __name__ == "__main__":
         pip_class.debug = True
         if rebuild_from_source == 1: rebuild_target = ["pyinstaller"]
         if rebuild_from_source == 2: rebuild_target = ["Nuitka"]
-        pip_class.install(["pypresence", "psutil"] + rebuild_target)
+        pip_class.install(["pypresence", "psutil", "truststore"] + rebuild_target)
         if main_os == "Darwin": pip_class.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
         elif main_os == "Windows": pip_class.install(["pywin32", "plyer"])
         if len(rebuild_target) > 0 and full_rebuild_mode == True: 
@@ -704,27 +706,27 @@ if __name__ == "__main__":
                     x64_python = PyKits.pip(arch="x64")
                     if x64_python.pythonInstalled():
                         x64_python.debug = True
-                        x64_python.install(["pypresence", "psutil"] + rebuild_target)
+                        x64_python.install(["pypresence", "psutil", "truststore"] + rebuild_target)
                         if main_os == "Darwin": x64_python.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
                         elif main_os == "Windows": x64_python.install(["pywin32", "plyer"])
                     x86_python = PyKits.pip(arch="x86")
                     if x86_python.pythonInstalled():
                         x86_python.debug = True
-                        x86_python.install(["pypresence", "psutil"] + rebuild_target)
+                        x86_python.install(["pypresence", "psutil", "truststore"] + rebuild_target)
                         if main_os == "Darwin": x86_python.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
                         elif main_os == "Windows": x86_python.install(["pywin32", "plyer"])
                 else:
                     intel_python = PyKits.pip(arch="intel")
                     if intel_python.pythonInstalled():
                         intel_python.debug = True
-                        intel_python.install(["pypresence", "psutil"] + rebuild_target)
+                        intel_python.install(["pypresence", "psutil", "truststore"] + rebuild_target)
                         if main_os == "Darwin": intel_python.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
                         elif main_os == "Windows": intel_python.install(["pywin32", "plyer"])
             elif pip_class.getArchitecture() == "x64":
                 x86_python = PyKits.pip(arch="x86")
                 if x86_python.pythonInstalled():
                     x86_python.debug = True
-                    x86_python.install(["pypresence", "psutil"] + rebuild_target)
+                    x86_python.install(["pypresence", "psutil", "truststore"] + rebuild_target)
                     if main_os == "Darwin": x86_python.install(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"])
                     elif main_os == "Windows": x86_python.install(["pywin32", "plyer"])
         colors_class.clear_console()
@@ -981,11 +983,11 @@ if __name__ == "__main__":
                     if install_certificates == True or (main_config.get("EFlagInstallEfazDevECCCertificates") == True and update_mode == True):
                         printMainMessage("Installing Certificates..")
                         if main_os == "Darwin": 
-                            install_cert_proc = subprocess.run(["/usr/bin/security", "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            install_cert_proc = subprocess.run([pip_class.getPathFile("/usr/bin/security"), "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
                             if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
                             else: printErrorMessage("Unable to install certificates!")
                         elif main_os == "Windows":
-                            install_cert_proc = subprocess.run(["C:\\Windows\\System32\\certutil.exe", "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            install_cert_proc = subprocess.run([pip_class.getPathFile("C:\\Windows\\System32\\certutil.exe"), "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
                             if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
                             else: printErrorMessage("Unable to install certificates!")
                     
@@ -1024,9 +1026,9 @@ if __name__ == "__main__":
                         # Reduce Download Safety Measures
                         # This can prevent messages like: Apple could not verify “OrangeBlox.app” is free of malware that may harm your Mac or compromise your privacy.
                         printMainMessage("Reducing Download Safety Measures..")
-                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(sma[main_os][1])], stdout=subprocess.DEVNULL)
-                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(sma[main_os][2])], stdout=subprocess.DEVNULL)
-                        subprocess.run(["/usr/bin/xattr", "-rd", "com.apple.quarantine", os.path.join(sma[main_os][3])], stdout=subprocess.DEVNULL)
+                        subprocess.run([pip_class.getPathFile("/usr/bin/xattr"), "-rd", "com.apple.quarantine", os.path.join(sma[main_os][1])], stdout=subprocess.DEVNULL)
+                        subprocess.run([pip_class.getPathFile("/usr/bin/xattr"), "-rd", "com.apple.quarantine", os.path.join(sma[main_os][2])], stdout=subprocess.DEVNULL)
+                        subprocess.run([pip_class.getPathFile("/usr/bin/xattr"), "-rd", "com.apple.quarantine", os.path.join(sma[main_os][3])], stdout=subprocess.DEVNULL)
                         
                         # Remove Apps Folder in /Contents/Resources/
                         printMainMessage("Cleaning App..")
@@ -1201,11 +1203,11 @@ if __name__ == "__main__":
                     if install_certificates == True or (main_config.get("EFlagInstallEfazDevECCCertificates") == True and update_mode == True):
                         printMainMessage("Installing Certificates..")
                         if main_os == "Darwin": 
-                            install_cert_proc = subprocess.run(["/usr/bin/security", "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            install_cert_proc = subprocess.run([pip_class.getPathFile("/usr/bin/security"), "add-trusted-cert", "-d", "-r", "trustRoot", "-k", "~/Library/Keychains/login.keychain-db", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
                             if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
                             else: printErrorMessage("Unable to install certificates!")
                         elif main_os == "Windows":
-                            install_cert_proc = subprocess.run(["C:\\Windows\\System32\\certutil.exe", "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
+                            install_cert_proc = subprocess.run([pip_class.getPathFile("C:\\Windows\\System32\\certutil.exe"), "-user", "-addstore", "TrustedPublisher", os.path.join(cur_path, "Apps", "Storage", "EfazDevECCSecurityCA.cer")])
                             if install_cert_proc.returncode == 0: printSuccessMessage("Successfully installed EfazDev Code-signing Certificates!")
                             else: printErrorMessage("Unable to install certificates!")
 
@@ -1559,7 +1561,7 @@ if __name__ == "__main__":
                 printWarnMessage("--- Select Option ---")
                 count = 1
                 for i in generated_ui_options:
-                    printMainMessage(f"[{str(count)}] = {i['message']}")
+                    printMainMessage(f"[{str(count)}] {i['message']}")
                     main_ui_options[str(count)] = i
                     count += 1
                 def a():
@@ -1970,7 +1972,7 @@ if __name__ == "__main__":
                                 else:
                                     with open(os.path.join(repair_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                                     try: obfuscated_json = json.loads(obfuscated_json)
-                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
                                     main_config = obfuscated_json
                                 saveSettings(main_config, directory=os.path.join(app_location, "Configuration.json"))
                                 shutil.copy(os.path.join(repair_path, "Configuration.json"), os.path.join(app_location, "Configuration.json"))
@@ -2063,7 +2065,7 @@ if __name__ == "__main__":
                         file_dir = ""
                         for i in os.listdir(backup_path): 
                             file_dir = file_dir + f' "{i}"'
-                        if main_os == "Darwin": subprocess.run(["/usr/bin/zip", "-r", "-y", os.path.join(cur_path, "Backup.zip")+file_dir], cwd=backup_path)
+                        if main_os == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/zip"), "-r", "-y", os.path.join(cur_path, "Backup.zip")+file_dir], cwd=backup_path)
                         elif main_os == "Windows": 
                             s = subprocess.run(f'powershell Compress-Archive -Path * -Update -DestinationPath "{os.path.join(cur_path, "Backup.zip")}"', cwd=backup_path, shell=True)
                             if s.returncode == 0: os.rename(os.path.join(cur_path, "Backup.zip"), os.path.join(cur_path, 'Backup.obx'))
@@ -2078,11 +2080,11 @@ if __name__ == "__main__":
                 elif backup_mode == True: requestBackup()
                 else:
                     printMainMessage("Please select an installer option you want to do!")
-                    printMainMessage("[1] = Update Bootstrap")
-                    printMainMessage("[2] = Uninstall Bootstrap")
-                    printMainMessage("[3] = Repair Bootstrap")
-                    printMainMessage("[4] = Backup Bootstrap")
-                    printMainMessage("[*] = Exit Installer")
+                    printMainMessage("[1] Update Bootstrap")
+                    printMainMessage("[2] Uninstall Bootstrap")
+                    printMainMessage("[3] Repair Bootstrap")
+                    printMainMessage("[4] Backup Bootstrap")
+                    printMainMessage("[*] Exit Installer")
                     res = input("> ")
                     if res == "1": requestUpdate()
                     elif res == "2": requestUninstall()

@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../Images/AppIcon.icns"
-current_version = {"version": "2.4.1a"}
+current_version = {"version": "2.4.5a"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -37,11 +37,11 @@ main_analysis = Analysis(
     pathex=[],
     binaries=[],
     datas=collect_data_files("OrangeBlox") + [("../../../Version.json", ".")],
-    hiddenimports=["Quartz", "AppKit", "Foundation"],
+    hiddenimports=["Quartz", "AppKit", "Foundation", "truststore"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["cryptography", "OpenSSL", "urllib3", "requests", "plyer", "site"],
+    excludes=["cryptography", "OpenSSL", "urllib3", "requests", "plyer", "site", "certifi", "setuptools"],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

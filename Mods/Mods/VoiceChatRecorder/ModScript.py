@@ -35,7 +35,7 @@ is_muted = False
 is_started = False
 
 def getFolderPrompt():
-    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.dir())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.dir())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode(errors="ignore").strip()
 
 alleged_path = OrangeAPI.getConfiguration("saveFolderPath")
 if alleged_path and os.path.isdir(alleged_path):
