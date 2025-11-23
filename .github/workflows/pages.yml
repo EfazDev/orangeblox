@@ -26,6 +26,9 @@ jobs:
           cp .github/404.html 404.html
           cp .github/index.html index.html
           cp .github/discord.svg discord.svg
+          rm -rf Apps/OrangeBloxWindows.zip
+          rm -rf Apps/OrangeBloxMac.zip
+          rm -rf Apps/OrangeBloxMacIntel.zip
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

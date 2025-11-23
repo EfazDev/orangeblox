@@ -25,6 +25,9 @@ jobs:
           cp .github/404.html 404.html
           cp .github/beta.html index.html
           cp .github/discord.svg discord.svg
+          rm -rf Apps/OrangeBloxWindows.zip
+          rm -rf Apps/OrangeBloxMac.zip
+          rm -rf Apps/OrangeBloxMacIntel.zip
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
