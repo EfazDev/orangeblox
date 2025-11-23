@@ -744,7 +744,8 @@ class request:
     include_ips = True
     handle_compression = True
     opener_processors = []
-    def __init__(self, include_ips: bool=True, handle_compression: bool=True, opener_processors: list=[]):
+    automatic_redirect = True
+    def __init__(self, include_ips: bool=True, handle_compression: bool=True, automatic_redirect: bool=True, opener_processors: list=[]):
         import json, os, ssl, sys, stat, shutil, time, socket, base64, subprocess, urllib.request, urllib.parse, urllib.error, importlib.metadata, importlib, http.client, platform, gzip, uuid, zlib
         from http.cookiejar import CookieJar
         from functools import lru_cache
@@ -773,6 +774,7 @@ class request:
         self.cookie_jar = CookieJar()
         self.include_ips = include_ips==True
         self.handle_compression = handle_compression==True
+        self.automatic_redirect = automatic_redirect==True
         self.opener_processors = opener_processors
         if not hasattr(self, "_cached_functions"):
             def cache_method(name):
@@ -875,8 +877,10 @@ class request:
             if not auth.lower().startswith(("basic ", "bearer ")): auth = f"Bearer {auth}"
             headers["Authorization"] = auth
         return headers
-    def _make_request(self, url: str, method: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1):
+    def _make_request(self, url: str, method: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1):
         # Prepare to make the request
+        if not follow_redirects:
+            follow_redirects = self.automatic_redirect
         url, opener, method, data, headers, cookies, auth, files = self._handle_data(url, method=method, data=data, headers=headers, cookies=cookies, auth=auth, files=files)
         redirected_urls = []
 
@@ -988,24 +992,24 @@ class request:
             else: data = None
             return url, opener, method, data, headers, cookies, auth, files
         except Exception as e: raise self.UnknownResponse(url, e)
-    def get(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def get(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="GET", data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def post(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def post(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="POST", data=data, headers=headers, cookies=cookies, auth=auth, files=files, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def patch(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def patch(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="PATCH", data=data, headers=headers, cookies=cookies, auth=auth, files=files, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def put(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def put(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="PUT", data=data, headers=headers, cookies=cookies, auth=auth, files=files, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def delete(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def delete(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="DELETE", data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def head(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def head(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="HEAD", data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def custom(self, url: str, method: str, data: __DATA__=None, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
+    def custom(self, url: str, method: str, data: __DATA__=None, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method=method, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
     def open(self, *k, **s) -> OpenContext:
         mai = self._make_request(*k, **s)
         return self.OpenContext(mai)
-    def download(self, url: str, output: str, method: str="GET", data: __DATA__=None, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, check: bool=False, follow_redirects: bool=False, delete_existing: bool=True, submit_status=None, chunk_size: int=65535) -> FileDownload:
+    def download(self, url: str, output: str, method: str="GET", data: __DATA__=None, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, check: bool=False, follow_redirects: bool=None, delete_existing: bool=True, submit_status=None, chunk_size: int=65535) -> FileDownload:
         try:
             # Assurance
             self.ensure_python_certs()
