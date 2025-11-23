@@ -879,7 +879,7 @@ class request:
         return headers
     def _make_request(self, url: str, method: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1):
         # Prepare to make the request
-        if not follow_redirects:
+        if follow_redirects == None:
             follow_redirects = self.automatic_redirect
         url, opener, method, data, headers, cookies, auth, files = self._handle_data(url, method=method, data=data, headers=headers, cookies=cookies, auth=auth, files=files)
         redirected_urls = []
@@ -1026,6 +1026,8 @@ class request:
             start_download = self._time.perf_counter()
 
             # Let's download the request!
+            if follow_redirects == None:
+                follow_redirects = self.automatic_redirect
             with opener.open(req) as resp:
                 ssl_handshake = (self._time.perf_counter()-start_download)*1000
                 start_download = self._time.perf_counter()
