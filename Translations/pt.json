@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Continue para Roblox Studio",
  "[3] Repair Bootstrap": "[3] Reparar inicialização",
  "[4] Backup Bootstrap": "[4] Inicialização de backup",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "A partir das versões 0.698 ou superior do Roblox, o Roblox implementou ícones baseados em fontes, evitando formas de Modificar a cor dos ícones. Por causa disso, esta extensão pode não funcionar mais. Obrigado por usar a extensão!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "A partir das versões 0.698 ou superior do Roblox, o Roblox implementou ícones baseados em fontes, evitando formas de Modificar a cor dos ícones. Por causa disso, esta extensão pode não funcionar mais. Obrigado por usar a extensão!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "A partir das versões 0.698 ou superior do Roblox, o Roblox implementou ícones baseados em fontes, evitando formas de Modificar a cor dos ícones. Por causa disso, este script perdeu a funcionalidade com coloração gradiente e mudou para coloração estática para arquivos de fonte..",
+ "5. Please use this on your own risk!": "5. Use isso por sua própria conta e risco!",
+ "Roblox Fast Flags": "Bandeiras rápidas Roblox",
+ "Roblox Fast Flags Configuration": "Configuração de bandeiras rápidas Roblox",
+ "Roblox Fast Flag Configurations": "Configurações do Roblox Fast Flag",
+ "--- Final Results! ---": "--- Resultados finais! ---",
+ "The following shortcuts no longer have valid cookies:": "Os seguintes atalhos não possuem mais cookies válidos:",
+ "Unable to validate due to an Python exception: (*)(*)": "Não foi possível validar devido a uma exceção do Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Não foi possível validar o atalho (*)devido a uma exceção do Python: (*)(*)",
+ "Validate cookie shortcuts": "Validar atalhos de cookies",
+ "Validating cookies of cookie user shortcuts..": "Validando cookies de atalhos de usuário de cookies..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Seus atalhos são válidos e não contêm cookies inválidos.:D"
 }

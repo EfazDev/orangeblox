@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5e
+# v2.4.5f
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.5e"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.5f"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -1753,16 +1753,17 @@ if __name__ == "__main__":
                 if d: return d
 
                 printMainMessage("Would you like to allow duplication of Roblox Clients? (y/n)")
+                printYellowMessage("Notes to keep track of:")
+                printYellowMessage("1. Make sure all currently open instances are fully loaded in a game before going to an another account.")
+                printYellowMessage("2. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
+                printYellowMessage("3. After Roblox versions 0.677+, Roblox has issued a new patch on multi-instancing that closes Roblox after a certain unknown time.")
+                printYellowMessage("4. Multi-Instances may be deflicted depending if one of your accounts are assigned to a different Roblox version.")
+                printYellowMessage("5. Please use this on your own risk!")
                 printMainMessage(f'Current Setting: {main_config.get("EFlagEnableDuplicationOfClients", False)==True}')
                 c = input("> ")
                 if isYes(c) == True:
                     main_config["EFlagEnableDuplicationOfClients"] = True
                     printDebugMessage("User selected: True")
-                    printYellowMessage("Notes to keep track of:")
-                    printYellowMessage("1. Make sure all currently open instances are fully loaded in a game before going to an another account.")
-                    printYellowMessage("2. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
-                    printYellowMessage("3. After Roblox versions 0.677+, Roblox has issued a new patch on multi-instancing that closes Roblox after a certain unknown time.")
-                    printYellowMessage("4. Multi-Instances may be deflicted depending if one of your accounts are assigned to a different Roblox version.")
                 elif isRequestClose(c) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
                 elif isNo(c) == True:
                     main_config["EFlagEnableDuplicationOfClients"] = False
@@ -2428,6 +2429,12 @@ if __name__ == "__main__":
                 "clear_console": True
             })
             generated_ui_options.append({
+                "index": 1.5, 
+                "message": ts("Roblox Fast Flag Configurations"), 
+                "func": continueToFFlagInstaller,
+                "clear_console": True
+            })
+            generated_ui_options.append({
                 "index": 2, 
                 "message": ts("Global Setting Modifications"), 
                 "func": globalSettings,
@@ -2727,6 +2734,7 @@ if __name__ == "__main__":
                 global run_studio
                 global custom_cookies
                 generated_ui_options = []
+                has_cookies = False
                 if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                         if v and v.get("name") and v.get("id"): 
@@ -2734,12 +2742,14 @@ if __name__ == "__main__":
                             cookie_added_str = ""
                             if v.get("cookie_paths"):
                                 for c, k in v.get("cookie_paths").items():
-                                    if os.path.exists(k): approved = True; cookie_added_str = f" [User: @{v.get('cookie_user')}]"
+                                    if os.path.exists(k): approved = True; cookie_added_str = f" [User: @{v.get('cookie_user')}]"; has_cookies = True
                             if v.get("url") or approved == True: generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]{cookie_added_str}", "shortcut_info": v})
                 generated_ui_options.append({"index": 999999, "message": ts("Create a new shortcut")})
                 generated_ui_options.append({"index": 999999.5, "message": ts("Create a new user shortcut")})
                 generated_ui_options.append({"index": 1000000, "message": ts("Generate a new shortcut app")})
                 generated_ui_options.append({"index": 1000000.5, "message": ts("Run a shortcut in a new instance")})
+                if has_cookies == True and main_config.get("EFlagRobloxSecurityCookieUsage") == True:
+                    generated_ui_options.append({"index": 1000000.75, "message": ts("Validate cookie shortcuts")})
                 generated_ui_options.append({"index": 1000001, "message": ts("Delete a shortcut")})
                 generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
                 opt = generateMenuSelection(generated_ui_options)
@@ -2949,6 +2959,43 @@ if __name__ == "__main__":
                                 printSuccessMessage("Successfully called to open a new instance! Please wait for Roblox to open and run a game before continuing the next account!")
                             else: printErrorMessage("Shortcut not found!")
                         else: printErrorMessage("You have no shortcuts created!")
+                        linkLoop()
+                    elif opt["index"] == 1000000.75 and main_config.get("EFlagRobloxSecurityCookieUsage") == True:
+                        printMainMessage("Validating cookies of cookie user shortcuts..")
+                        failed = []
+                        try:
+                            if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
+                                    if v and v.get("name") and v.get("id"): 
+                                        approved = False
+                                        if v.get("cookie_paths"):
+                                            parsed_cookie = None
+                                            parsed_studio_cookie = None
+                                            for path, k in v.get("cookie_paths").items():
+                                                if main_os == "Windows" and "RobloxCookies.dat" in k:
+                                                    parsed_cookie = handler.parseRobloxCookieFile(k)
+                                                    parsed_studio_cookie = handler.parseRobloxCookieFile(k)
+                                                elif main_os == "Darwin" and "RobloxStudio.binarycookies" in path:
+                                                    parsed_studio_cookie = handler.parseRobloxCookieFile(k)
+                                                elif main_os == "Darwin" and "RobloxPlayer.binarycookies" in path:
+                                                    parsed_cookie = handler.parseRobloxCookieFile(k)
+                                            try:
+                                                if parsed_cookie:
+                                                    cookie_req = requests.get("https://users.roblox.com/v1/users/authenticated", cookies={".ROBLOSECURITY": parsed_cookie})
+                                                    if cookie_req.status_code == 403:
+                                                        failed.append((1, v.get("id"), v.get("name"), v.get('cookie_user')))
+                                                if parsed_studio_cookie:
+                                                    cookie_req = requests.get("https://users.roblox.com/v1/users/authenticated", cookies={".ROBLOSECURITY": parsed_studio_cookie})
+                                                    if cookie_req.status_code == 403:
+                                                        failed.append((2, v.get("id"), v.get("name"), v.get('cookie_user')))
+                                            except Exception as e: printErrorMessage(f"Unable to validate shortcut {v.get('name')} due to an Python exception: \n{trace()}")
+                            printWarnMessage("--- Final Results! ---")
+                            if len(failed) > 0:
+                                printYellowMessage("The following shortcuts no longer have valid cookies:")
+                                printMainMessage(", ".join([f"{shortcut_name} [{shortcut_id}] [@{cookie_user}]{'' if client == 1 else ' [STUDIO]'}" for client, shortcut_id, shortcut_name, cookie_user in failed]))
+                            else: printMainMessage("Your shortcuts are valid and don't contain invalid cookies. :D")
+                        except Exception as e: printErrorMessage(f"Unable to validate due to an Python exception: \n{trace()}")
+                        printWarnMessage("--- Roblox Link Shortcuts ---")
                         linkLoop()
                     elif opt["index"] == 1000001:
                         if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
@@ -3248,7 +3295,7 @@ if __name__ == "__main__":
                         c = input("> ")
                         if isYes(c) == True:
                             main_config["EFlagEnableChangeAvatarEditorBackground"] = True
-                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "AvatarEditorMaps", f"{a}.rbxl"))
+                            def scan_name(a): return os.path.exists(os.path.join(mods_folder, "AvatarEditorMaps", a))
                             def getName():
                                 got_backgrounds = []
                                 for i in os.listdir(os.path.join(mods_folder, "AvatarEditorMaps")):
@@ -3283,7 +3330,7 @@ if __name__ == "__main__":
                                     printDebugMessage("User gave a response which is not a number.")
                                     return "Original"
                             set_avatar_editor_location = getName()
-                            main_config["EFlagAvatarEditorBackground"] = set_avatar_editor_location
+                            main_config["EFlagAvatarEditorBackground"] = set_avatar_editor_location[:set_avatar_editor_location.rfind(".rbxl")]
                             printSuccessMessage(f"Set avatar background: {set_avatar_editor_location}")
                         elif isNo(c) == True:
                             main_config["EFlagEnableChangeAvatarEditorBackground"] = False
@@ -3976,15 +4023,6 @@ if __name__ == "__main__":
                                 "go_to_rbx": False,
                                 "studio": True
                             })
-                    if not (main_config.get("EFlagDisableFastFlagInstallAccess") == True):
-                        generated_ui_options.append({
-                            "index": 5, 
-                            "message": ts("Run Fast Flag Installer"), 
-                            "func": continueToFFlagInstaller, 
-                            "go_to_rbx": True,
-                            "end_mes": ts("FFlag Installer has finished!"),
-                            "clear_console": True
-                        })
                     if not (main_config.get("EFlagDisableModsManagerAccess") == True):
                         generated_ui_options.append({
                             "index": 6, 
@@ -4396,41 +4434,33 @@ if __name__ == "__main__":
                             continueToRoblox()
                         else: sys.exit(0)
         def handleOptionSelect(mes=None, isRedirectedFromApp=False): # Handle Continue to Roblox
-            new_menu_mode = False
             if mes == None:
                 mes = ts("Option finished! Would you like to return to the main menu or would you like to continue to Roblox?")
-                new_menu_mode = True
             else:
                 if mes == "": mes = ts(f"Would you like to return to the main menu or would you like to continue to Roblox?")
                 else: mes = ts(f"{mes} Would you like to return to the main menu or would you like to continue to Roblox?")
-                new_menu_mode = True
-            if new_menu_mode == True:
-                if not (main_config.get("EFlagReturnToMainMenuInstant") == True):
-                    if isRedirectedFromApp == False:
-                        printWarnMessage(mes)
-                        printMainMessage("[1] Return to Main Menu")
-                        printMainMessage("[2] Exit Bootstrap")
-                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] Continue to Roblox Studio")
-                        printMainMessage("[*] Continue to Roblox")
-                        a = input("> ")
-                        if a == "1": main_menu()
-                        elif a == "2": sys.exit(0)
-                        elif a == "3" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
-                    else:
-                        printWarnMessage(mes)
-                        printMainMessage("[1] Continue to Roblox")
-                        if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] Continue to Roblox Studio")
-                        printMainMessage("[*] Exit Bootstrap")
-                        a = input("> ")
-                        if a == "1": continueToRoblox()
-                        elif a == "2" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
-                        else: sys.exit(0)
-                elif isRedirectedFromApp == False: main_menu()
-                else: global given_args; given_args = ["Main.py"]; main_menu()
-            else:
-                printWarnMessage(mes)
-                a = input("> ")
-                if isYes(a) == False: sys.exit(0)
+            if not (main_config.get("EFlagReturnToMainMenuInstant") == True):
+                if isRedirectedFromApp == False:
+                    printWarnMessage(mes)
+                    printMainMessage("[1] Return to Main Menu")
+                    printMainMessage("[2] Exit Bootstrap")
+                    if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] Continue to Roblox Studio")
+                    printMainMessage("[*] Continue to Roblox")
+                    a = input("> ")
+                    if a == "1": main_menu()
+                    elif a == "2": sys.exit(0)
+                    elif a == "3" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
+                else:
+                    printWarnMessage(mes)
+                    printMainMessage("[1] Continue to Roblox")
+                    if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] Continue to Roblox Studio")
+                    printMainMessage("[*] Exit Bootstrap")
+                    a = input("> ")
+                    if a == "1": continueToRoblox()
+                    elif a == "2" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
+                    else: sys.exit(0)
+            elif isRedirectedFromApp == False: main_menu()
+            else: global given_args; given_args = ["Main.py"]; main_menu()
         main_menu()
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
@@ -4823,10 +4853,12 @@ if __name__ == "__main__":
                 if main_config.get("EFlagEnableChangeAvatarEditorBackground") == True:
                     printMainMessage("Changing Current Avatar Editor to Set Avatar Background..")
                     copyFile(os.path.join(mods_folder, "AvatarEditorMaps", f"{main_config.get('EFlagAvatarEditorBackground')}.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
+                    copyFile(os.path.join(mods_folder, "AvatarEditorMaps", f"{main_config.get('EFlagAvatarEditorBackground')}.rbxl"), os.path.join(content_folder_paths[main_os], "content", "places", "AvatarEditor.rbxl"))
                     printSuccessMessage("Successfully changed current avatar editor with a set background!")
                 else:
                     printMainMessage("Changing Current Avatar Editor to Original Avatar Background..")
                     copyFile(os.path.join(mods_folder, "AvatarEditorMaps", "Original.rbxl"), os.path.join(content_folder_paths[main_os], "ExtraContent", "places", "Mobile.rbxl"))
+                    copyFile(os.path.join(mods_folder, "AvatarEditorMaps", "Original.rbxl"), os.path.join(content_folder_paths[main_os], "content", "places", "AvatarEditor.rbxl"))
                     printSuccessMessage("Successfully changed current avatar editor to original background!")
                 
                 # Cursors
@@ -7199,6 +7231,15 @@ if __name__ == "__main__":
                                 makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True), 
                                 startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{main_config.get('EFlagRobloxPlayerArguments', '')}",
+                                attachInstance=(not (main_config.get("EFlagAllowActivityTracking") == False)), 
+                                allowRobloxOtherLogDebug=(main_config.get("EFlagAllowFullDebugMode") == True)
+                            )
+                        elif url.startswith("-"):
+                            connected_roblox_instance = handler.openRoblox(
+                                forceQuit=(not (main_config.get("EFlagEnableDuplicationOfClients") == True)), 
+                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
+                                debug=(main_config.get("EFlagEnableDebugMode") == True),
+                                startData=f"{'--args' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''} {url}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=(not (main_config.get("EFlagAllowActivityTracking") == False)), 
                                 allowRobloxOtherLogDebug=(main_config.get("EFlagAllowFullDebugMode") == True)
                             )

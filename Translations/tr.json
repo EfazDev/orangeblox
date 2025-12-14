@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Roblox Studio'ya devam edin",
  "[3] Repair Bootstrap": "[3] Önyüklemeyi Onar",
  "[4] Backup Bootstrap": "[4] Yedek Önyükleme",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox Sürüm 0.698 veya üzeri itibarıyla, Roblox yazı tipi tabanlı simgeler uygulayarak simgelerin rengini değiştirme yollarını engelledi. Bu nedenle bu uzantı artık çalışmayabilir. Uzantıyı kullandığınız için teşekkür ederiz!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox Sürüm 0.698 veya üzeri itibarıyla, Roblox yazı tipi tabanlı simgeler uygulayarak simgelerin rengini değiştirme yollarını engelledi. Bu nedenle bu uzantı artık çalışmayabilir. Uzantıyı kullandığınız için teşekkür ederiz!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Roblox Sürüm 0.698 veya üzeri itibarıyla, Roblox yazı tipi tabanlı simgeler uygulayarak simgelerin rengini değiştirme yollarını engelledi. Bu nedenle, bu komut dosyası degrade renklendirme ile işlevselliğini kaybetmiş ve yazı tipi dosyaları için statik renklendirmeye dönüşmüştür..",
+ "5. Please use this on your own risk!": "5. Lütfen bunu kendi sorumluluğunuzda kullanın!",
+ "Roblox Fast Flags": "Roblox Hızlı Bayraklar",
+ "Roblox Fast Flags Configuration": "Roblox Hızlı Bayraklar Yapılandırması",
+ "Roblox Fast Flag Configurations": "Roblox Hızlı Bayrak Yapılandırmaları",
+ "--- Final Results! ---": "--- Nihai Sonuçlar! ---",
+ "The following shortcuts no longer have valid cookies:": "Aşağıdaki kısayollar artık geçerli çerezlere sahip değil:",
+ "Unable to validate due to an Python exception: (*)(*)": "Python istisnası nedeniyle doğrulanamıyor: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Python istisnası nedeniyle kısayol (*)doğrulanamıyor: (*)(*)",
+ "Validate cookie shortcuts": "Çerez kısayollarını doğrulayın",
+ "Validating cookies of cookie user shortcuts..": "Çerez kullanıcı kısayollarının çerezleri doğrulanıyor..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Kısayollarınız geçerlidir ve geçersiz çerezler içermemektedir.:D"
 }

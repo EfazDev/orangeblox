@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3]繼續前往Roblox工作室",
  "[3] Repair Bootstrap": "[3] 修復引導程序",
  "[4] Backup Bootstrap": "[4] 備份引導程序",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "從 Roblox 版本 0.698 或更高版本開始,Roblox 已經實現了基於字體的圖標,從而阻止了修改圖標顏色的方法.因此,此擴展可能不再有效.感謝您使用該擴展程序!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "從 Roblox 版本 0.698 或更高版本開始,Roblox 已經實現了基於字體的圖標,從而阻止了修改圖標顏色的方法.因此,此擴展可能不再有效.感謝您使用該擴展程序!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "從 Roblox 版本 0.698 或更高版本開始,Roblox 已經實現了基於字體的圖標,從而阻止了修改圖標顏色的方法.因此,該腳本失去了漸變著色功能,並更改為字體文件的靜態著色..",
+ "5. Please use this on your own risk!": "5.請自行承擔使用風險!",
+ "Roblox Fast Flags": "Roblox 快速旗幟",
+ "Roblox Fast Flags Configuration": "Roblox 快速標誌配置",
+ "Roblox Fast Flag Configurations": "Roblox 快速標誌配置",
+ "--- Final Results! ---": "--- 最終結果！ ---",
+ "The following shortcuts no longer have valid cookies:": "以下快捷方式不再具有有效的 cookie:",
+ "Unable to validate due to an Python exception: (*)(*)": "由於 Python 異常而無法驗證:(*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "由於 Python 異常,無法驗證快捷方式 (*):(*)(*)",
+ "Validate cookie shortcuts": "驗證 cookie 快捷方式",
+ "Validating cookies of cookie user shortcuts..": "驗證 cookie 用戶快捷方式的 cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "您的快捷方式有效並且不包含無效的 cookie.:D"
 }

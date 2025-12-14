@@ -23,9 +23,12 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Create Pages
         run: |
+          mkdir Website
           cp .github/404.html 404.html
           cp .github/index.html index.html
-          cp .github/discord.svg discord.svg
+          cp .github/discord.svg Website/discord.svg
+          cp .github/product_page.css Website/product_page.css
+          cp .github/product_page.js Website/product_page.js
           rm -rf Apps/OrangeBloxWindows.zip
           rm -rf Apps/OrangeBloxMac.zip
           rm -rf Apps/OrangeBloxMacIntel.zip

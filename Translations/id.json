@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Lanjutkan ke Roblox Studio",
  "[3] Repair Bootstrap": "[3] Perbaiki Bootstrap",
  "[4] Backup Bootstrap": "[4] Bootstrap Cadangan",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Pada Roblox Versi 0.698 atau lebih tinggi, Roblox telah menerapkan ikon berbasis font, mencegah cara mengubah warna pada ikon. Oleh karena itu, ekstensi ini mungkin tidak berfungsi lagi. Terima kasih telah menggunakan ekstensi ini!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Pada Roblox Versi 0.698 atau lebih tinggi, Roblox telah menerapkan ikon berbasis font, mencegah cara mengubah warna pada ikon. Oleh karena itu, ekstensi ini mungkin tidak berfungsi lagi. Terima kasih telah menggunakan ekstensi ini!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Pada Roblox Versi 0.698 atau lebih tinggi, Roblox telah menerapkan ikon berbasis font, mencegah cara mengubah warna pada ikon. Oleh karena itu, skrip ini kehilangan fungsionalitas dengan pewarnaan gradien dan telah berubah menjadi pewarnaan statis untuk file font..",
+ "5. Please use this on your own risk!": "5. Silakan gunakan ini dengan risiko Anda sendiri!",
+ "Roblox Fast Flags": "Bendera Cepat Roblox",
+ "Roblox Fast Flags Configuration": "Konfigurasi Bendera Cepat Roblox",
+ "Roblox Fast Flag Configurations": "Konfigurasi Bendera Cepat Roblox",
+ "--- Final Results! ---": "--- Hasil Akhir! ---",
+ "The following shortcuts no longer have valid cookies:": "Pintasan berikut tidak lagi memiliki cookie yang valid:",
+ "Unable to validate due to an Python exception: (*)(*)": "Tidak dapat memvalidasi karena pengecualian Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Tidak dapat memvalidasi pintasan (*)karena pengecualian Python: (*)(*)",
+ "Validate cookie shortcuts": "Validasi pintasan cookie",
+ "Validating cookies of cookie user shortcuts..": "Memvalidasi cookie dari pintasan pengguna cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Pintasan Anda valid dan tidak berisi cookie yang tidak valid.:D"
 }

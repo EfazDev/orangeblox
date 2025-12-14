@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Roblox স্টুডিওতে চালিয়ে যান",
  "[3] Repair Bootstrap": "[৩] বুটস্ট্র্যাপ মেরামত করুন",
  "[4] Backup Bootstrap": "[৪] ব্যাকআপ বুটস্ট্র্যাপ",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox সংস্করণ 0.698 বা উচ্চতর হিসাবে, Roblox ফন্ট ভিত্তিক আইকন প্রয়োগ করেছে, আইকনগুলিতে রঙ পরিবর্তন করার উপায়গুলিকে বাধা দেয়। এই কারণে, এই এক্সটেনশনটি আর কাজ করতে পারে না। এক্সটেনশন ব্যবহার করার জন্য ধন্যবাদ!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox সংস্করণ 0.698 বা উচ্চতর হিসাবে, Roblox ফন্ট ভিত্তিক আইকন প্রয়োগ করেছে, আইকনগুলিতে রঙ পরিবর্তন করার উপায়গুলিকে বাধা দেয়। এই কারণে, এই এক্সটেনশনটি আর কাজ করতে পারে না। এক্সটেনশন ব্যবহার করার জন্য ধন্যবাদ!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Roblox সংস্করণ 0.698 বা উচ্চতর হিসাবে, Roblox ফন্ট ভিত্তিক আইকন প্রয়োগ করেছে, আইকনগুলিতে রঙ পরিবর্তন করার উপায়গুলিকে বাধা দেয়। এই কারণে, এই স্ক্রিপ্টটি গ্রেডিয়েন্ট রঙের সাথে কার্যকারিতা হারিয়েছে এবং ফন্ট ফাইলগুলির জন্য স্ট্যাটিক রঙে পরিবর্তিত হয়েছে।",
+ "5. Please use this on your own risk!": "5. আপনার নিজের ঝুঁকিতে এটি ব্যবহার করুন!",
+ "Roblox Fast Flags": "রোবলক্স ফাস্ট ফ্ল্যাগ",
+ "Roblox Fast Flags Configuration": "রোবলক্স ফাস্ট ফ্ল্যাগ কনফিগারেশন",
+ "Roblox Fast Flag Configurations": "রোবলক্স ফাস্ট ফ্ল্যাগ কনফিগারেশন",
+ "--- Final Results! ---": "--- চূড়ান্ত ফলাফল! ---",
+ "The following shortcuts no longer have valid cookies:": "নিম্নলিখিত শর্টকাটগুলির আর বৈধ কুকিজ নেই:",
+ "Unable to validate due to an Python exception: (*)(*)": "পাইথন ব্যতিক্রমের কারণে যাচাই করতে অক্ষম: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "পাইথন ব্যতিক্রমের কারণে শর্টকাট (*)যাচাই করতে অক্ষম: (*)(*)",
+ "Validate cookie shortcuts": "কুকি শর্টকাট যাচাই করুন",
+ "Validating cookies of cookie user shortcuts..": "কুকি ব্যবহারকারী শর্টকাটের কুকিজ যাচাই করা হচ্ছে..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "আপনার শর্টকাটগুলি বৈধ এবং এতে অবৈধ কুকি নেই৷:d"
 }

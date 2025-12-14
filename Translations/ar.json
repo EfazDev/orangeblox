@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] تابع إلى Roblox Studio",
  "[3] Repair Bootstrap": "[3] إصلاح التمهيد",
  "[4] Backup Bootstrap": "[4] نسخة احتياطية من التمهيد",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "اعتبارًا من إصدارات Roblox 0.698 أو أعلى، طبقت Roblox أيقونات تعتمد على الخطوط، مما يمنع طرق تعديل الألوان على الأيقونات. ولهذا السبب، قد لا يعمل هذا الامتداد بعد الآن. شكرا لاستخدام الامتداد!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "اعتبارًا من إصدارات Roblox 0.698 أو أعلى، طبقت Roblox أيقونات تعتمد على الخطوط، مما يمنع طرق تعديل الألوان على الأيقونات. ولهذا السبب، قد لا يعمل هذا الامتداد بعد الآن. شكرا لاستخدام الامتداد!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "اعتبارًا من إصدارات Roblox 0.698 أو أعلى، طبقت Roblox أيقونات تعتمد على الخطوط، مما يمنع طرق تعديل الألوان على الأيقونات. ولهذا السبب، فقد هذا البرنامج النصي وظائفه مع التلوين المتدرج وتم تغييره إلى التلوين الثابت لملفات الخطوط..",
+ "5. Please use this on your own risk!": "5. الرجاء استخدام هذا على مسؤوليتك الخاصة!",
+ "Roblox Fast Flags": "أعلام Roblox السريعة",
+ "Roblox Fast Flags Configuration": "Roblox تكوين الأعلام السريعة",
+ "Roblox Fast Flag Configurations": "Roblox تكوينات العلم السريع",
+ "--- Final Results! ---": "--- النتائج النهائية! ---",
+ "The following shortcuts no longer have valid cookies:": "لم تعد الاختصارات التالية تحتوي على ملفات تعريف ارتباط صالحة:",
+ "Unable to validate due to an Python exception: (*)(*)": "غير قادر على التحقق بسبب استثناء بايثون: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "غير قادر على التحقق من صحة الاختصار (*)بسبب استثناء Python: (*)(*)",
+ "Validate cookie shortcuts": "التحقق من صحة اختصارات ملفات تعريف الارتباط",
+ "Validating cookies of cookie user shortcuts..": "التحقق من صحة ملفات تعريف الارتباط لاختصارات مستخدم ملفات تعريف الارتباط..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "اختصاراتك صالحة ولا تحتوي على ملفات تعريف ارتباط غير صالحة.:د"
 }

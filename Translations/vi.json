@@ -2350,5 +2350,17 @@
  "[3] Continue to Roblox Studio": "[3] Tiếp tục đến Roblox Studio",
  "[3] Repair Bootstrap": "[3] Sửa chữa Bootstrap",
  "[4] Backup Bootstrap": "[4] Sao lưu Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Kể từ Phiên bản Roblox 0.698 trở lên, Roblox đã triển khai các biểu tượng dựa trên phông chữ, ngăn chặn các cách sửa đổi màu sắc trên biểu tượng. Vì lý do này, tiện ích mở rộng này có thể không còn hoạt động. Cảm ơn bạn đã sử dụng tiện ích mở rộng!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Kể từ Phiên bản Roblox 0.698 trở lên, Roblox đã triển khai các biểu tượng dựa trên phông chữ, ngăn chặn các cách sửa đổi màu sắc trên biểu tượng. Vì lý do này, tiện ích mở rộng này có thể không còn hoạt động. Cảm ơn bạn đã sử dụng tiện ích mở rộng!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Kể từ Phiên bản Roblox 0.698 trở lên, Roblox đã triển khai các biểu tượng dựa trên phông chữ, ngăn chặn các cách sửa đổi màu sắc trên biểu tượng. Vì lý do này, tập lệnh này đã mất chức năng tô màu chuyển màu và chuyển sang màu tĩnh cho các tệp phông chữ..",
+ "5. Please use this on your own risk!": "5. Vui lòng tự chịu rủi ro khi sử dụng điều này!",
+ "Roblox Fast Flags": "Cờ nhanh Roblox",
+ "Roblox Fast Flags Configuration": "Cấu hình cờ nhanh Roblox",
+ "Roblox Fast Flag Configurations": "Cấu hình cờ nhanh Roblox",
+ "--- Final Results! ---": "--- Kết quả cuối cùng! ---",
+ "The following shortcuts no longer have valid cookies:": "Các phím tắt sau không còn có cookie hợp lệ:",
+ "Unable to validate due to an Python exception: (*)(*)": "Không thể xác thực do ngoại lệ Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Không thể xác thực phím tắt (*)do ngoại lệ Python: (*)(*)",
+ "Validate cookie shortcuts": "Xác thực các phím tắt cookie",
+ "Validating cookies of cookie user shortcuts..": "Xác thực cookie của các phím tắt người dùng cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Phím tắt của bạn hợp lệ và không chứa cookie không hợp lệ.:D"
 }

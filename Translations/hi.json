@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] रोबोक्स स्टूडियो जारी रखें",
  "[3] Repair Bootstrap": "[3] बूटस्ट्रैप की मरम्मत करें",
  "[4] Backup Bootstrap": "[4] बैकअप बूटस्ट्रैप",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox संस्करण 0.698 या उच्चतर के अनुसार, Roblox ने फ़ॉन्ट आधारित आइकन लागू किए हैं, जिससे आइकन पर रंग संशोधित करने के तरीकों को रोका जा सके। इस वजह से, यह एक्सटेंशन अब काम नहीं कर सकता है. एक्सटेंशन का उपयोग करने के लिए धन्यवाद!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox संस्करण 0.698 या उच्चतर के अनुसार, Roblox ने फ़ॉन्ट आधारित आइकन लागू किए हैं, जिससे आइकन पर रंग संशोधित करने के तरीकों को रोका जा सके। इस वजह से, यह एक्सटेंशन अब काम नहीं कर सकता है. एक्सटेंशन का उपयोग करने के लिए धन्यवाद!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Roblox संस्करण 0.698 या उच्चतर के अनुसार, Roblox ने फ़ॉन्ट आधारित आइकन लागू किए हैं, जिससे आइकन पर रंग संशोधित करने के तरीकों को रोका जा सके। इसके कारण, इस स्क्रिप्ट ने ग्रेडिएंट कलरिंग के साथ कार्यक्षमता खो दी है और फ़ॉन्ट फ़ाइलों के लिए स्थिर रंग में बदल गया है।",
+ "5. Please use this on your own risk!": "5. कृपया इसका उपयोग अपने जोखिम पर करें!",
+ "Roblox Fast Flags": "रोबोक्स फ़ास्ट फ़्लैग्स",
+ "Roblox Fast Flags Configuration": "रोबोक्स फ़ास्ट फ़्लैग कॉन्फ़िगरेशन",
+ "Roblox Fast Flag Configurations": "रोबोक्स फ़ास्ट फ़्लैग कॉन्फ़िगरेशन",
+ "--- Final Results! ---": "--- अंतिम परिणाम! ---",
+ "The following shortcuts no longer have valid cookies:": "निम्नलिखित शॉर्टकट में अब मान्य कुकीज़ नहीं हैं:",
+ "Unable to validate due to an Python exception: (*)(*)": "पायथन अपवाद के कारण सत्यापित करने में असमर्थ: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "पायथन अपवाद के कारण शॉर्टकट (*)को सत्यापित करने में असमर्थ: (*)(*)",
+ "Validate cookie shortcuts": "कुकी शॉर्टकट मान्य करें",
+ "Validating cookies of cookie user shortcuts..": "कुकी उपयोगकर्ता शॉर्टकट की कुकीज़ को मान्य किया जा रहा है..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "आपके शॉर्टकट मान्य हैं और उनमें अमान्य कुकीज़ नहीं हैं।:डी"
 }

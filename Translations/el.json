@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Συνεχίστε στο Roblox Studio",
  "[3] Repair Bootstrap": "[3] Επισκευή Bootstrap",
  "[4] Backup Bootstrap": "[4] Αντίγραφο Ασφαλείας Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Από τις εκδόσεις Roblox 0.698 ή νεότερες, το Roblox έχει εφαρμόσει εικονίδια που βασίζονται σε γραμματοσειρές, αποτρέποντας τρόπους τροποποίησης του χρώματος στα εικονίδια. Εξαιτίας αυτού, αυτή η επέκταση ενδέχεται να μην λειτουργεί πλέον. Ευχαριστούμε που χρησιμοποιήσατε την επέκταση!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Από τις εκδόσεις Roblox 0.698 ή νεότερες, το Roblox έχει εφαρμόσει εικονίδια που βασίζονται σε γραμματοσειρές, αποτρέποντας τρόπους τροποποίησης του χρώματος στα εικονίδια. Εξαιτίας αυτού, αυτή η επέκταση ενδέχεται να μην λειτουργεί πλέον. Ευχαριστούμε που χρησιμοποιήσατε την επέκταση!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Από τις εκδόσεις Roblox 0.698 ή νεότερες, το Roblox έχει εφαρμόσει εικονίδια που βασίζονται σε γραμματοσειρές, αποτρέποντας τρόπους τροποποίησης του χρώματος στα εικονίδια. Εξαιτίας αυτού, αυτό το σενάριο έχει χάσει τη λειτουργικότητα με το χρωματισμό με διαβάθμιση και έχει αλλάξει σε στατικό χρωματισμό για αρχεία γραμματοσειρών..",
+ "5. Please use this on your own risk!": "5. Χρησιμοποιήστε το με δική σας ευθύνη!",
+ "Roblox Fast Flags": "Roblox Fast Flags",
+ "Roblox Fast Flags Configuration": "Διαμόρφωση Roblox Fast Flags",
+ "Roblox Fast Flag Configurations": "Ρυθμίσεις γρήγορης σημαίας Roblox",
+ "--- Final Results! ---": "--- Τελικά αποτελέσματα! ---",
+ "The following shortcuts no longer have valid cookies:": "Οι ακόλουθες συντομεύσεις δεν έχουν πλέον έγκυρα cookie:",
+ "Unable to validate due to an Python exception: (*)(*)": "Δεν είναι δυνατή η επικύρωση λόγω εξαίρεσης Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Δεν είναι δυνατή η επικύρωση της συντόμευσης (*)λόγω εξαίρεσης Python: (*)(*)",
+ "Validate cookie shortcuts": "Επικύρωση συντομεύσεων cookie",
+ "Validating cookies of cookie user shortcuts..": "Επικύρωση cookie συντομεύσεων χρήστη cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Οι συντομεύσεις σας είναι έγκυρες και δεν περιέχουν μη έγκυρα cookie.:ΡΕ"
 }

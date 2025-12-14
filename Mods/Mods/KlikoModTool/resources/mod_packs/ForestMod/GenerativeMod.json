@@ -6,6 +6,11 @@
     "angle": 135,
     "advanced": {
         "*": ["#00d11f", "#00d11f", "#00590d"],
+        "_font": ["#00d11f"],
+        "play-small": ["#ffffff"],
+        "play-large": ["#ffffff"],
+        "tilt": "{main}/Logo.png",
+        "studio": "{main}/Logo.png",
         "icons/logo/block": "{main}/Logo.png",
         "icons/logo/studiologo": "{main}/Logo.png",
         "icons/logo/studiologo_small": "{main}/Logo.png",
@@ -15,6 +20,7 @@
         "_all_optional": true,
         "_voice_chat": true,
         "_loading": true,
-        "_leaderboard": false
+        "_leaderboard": false,
+        "_old_icons": true
     }
 }

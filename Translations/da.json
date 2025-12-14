@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Fortsæt til Roblox Studio",
  "[3] Repair Bootstrap": "[3] Reparer Bootstrap",
  "[4] Backup Bootstrap": "[4] Sikkerhedskopi Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Fra og med Roblox version 0.698 eller nyere har Roblox implementeret skrifttypebaserede ikoner, der forhindrer måder at ændre farve på ikonerne på. På grund af dette fungerer denne udvidelse muligvis ikke længere. Tak, fordi du brugte udvidelsen!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Fra og med Roblox version 0.698 eller nyere har Roblox implementeret skrifttypebaserede ikoner, der forhindrer måder at ændre farve på ikonerne på. På grund af dette fungerer denne udvidelse muligvis ikke længere. Tak, fordi du brugte udvidelsen!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Fra og med Roblox version 0.698 eller nyere har Roblox implementeret skrifttypebaserede ikoner, der forhindrer måder at ændre farve på ikonerne på. På grund af dette har dette script mistet funktionalitet med gradientfarvning og er ændret til statisk farvelægning for skrifttypefiler..",
+ "5. Please use this on your own risk!": "5. Brug venligst dette på egen risiko!",
+ "Roblox Fast Flags": "Roblox Fast Flags",
+ "Roblox Fast Flags Configuration": "Roblox Fast Flags-konfiguration",
+ "Roblox Fast Flag Configurations": "Roblox Fast Flag-konfigurationer",
+ "--- Final Results! ---": "--- Endelige resultater! ---",
+ "The following shortcuts no longer have valid cookies:": "Følgende genveje har ikke længere gyldige cookies:",
+ "Unable to validate due to an Python exception: (*)(*)": "Kan ikke valideres på grund af en Python-undtagelse: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Kan ikke validere genvej (*)på grund af en Python-undtagelse: (*)(*)",
+ "Validate cookie shortcuts": "Valider cookie-genveje",
+ "Validating cookies of cookie user shortcuts..": "Validerer cookies af cookiebrugergenveje..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Dine genveje er gyldige og indeholder ikke ugyldige cookies.:D"
 }

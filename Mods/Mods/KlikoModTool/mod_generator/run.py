@@ -80,6 +80,9 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         for imageset_path in imageset_paths: shutil.copytree((temporary_directory / studio_version / imageset_path), (temp_target / imageset_path), dirs_exist_ok=True)
         progress_bar.submit("[MOD_GEN] Locating Image Set Data..", 60)
         imagesetdata_paths: list[Path] = img_sets.locate_imagesetdata_files(temporary_directory / studio_version)
+        progress_bar.submit("[MOD_GEN] Locating Builder Fonts..", 65)
+        builderfont_paths: list[Path] = img_sets.locate_builderfont(temporary_directory / studio_version)
+        for builderfont_path in builderfont_paths: shutil.copytree((temporary_directory / studio_version / builderfont_path).parent, (temp_target / builderfont_path).parent, dirs_exist_ok=True)
         progress_bar.submit("[MOD_GEN] Fetching Icon Map..", 70)
         icon_maps: list[str, dict[str, dict[str, str | int]]] = []
         for icon_map in imagesetdata_paths: icon_maps.append(img_sets.get_icon_map(temporary_directory / studio_version / icon_map))
@@ -88,6 +91,8 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         for imageset_path in imageset_paths: 
             if s == 0: img_sets.generate_imagesets((temp_target / imageset_path), icon_maps[0], colors, angle); s += 1
             elif s == 1: img_sets.generate_imagesets((temp_target / "ExtraContent" / "textures" / "ui" / "ImageSet"), icon_maps[1], colors, angle); s += 1
+        progress_bar.submit("[MOD_GEN] Generating Font Files..", 85)
+        img_sets.generate_fonts_with_color(temp_target, builderfont_paths, colors, angle, studio)
         progress_bar.submit("[MOD_GEN] Generating Additional Files..", 90)
         img_sets.generate_additional_files(temp_target, colors, angle, studio)
         if user_selected_files: 

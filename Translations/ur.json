@@ -2350,5 +2350,17 @@
  "[3] Continue to Roblox Studio": "[3] روبلوکس اسٹوڈیو کو جاری رکھیں",
  "[3] Repair Bootstrap": "[3] مرمت بوٹسٹریپ",
  "[4] Backup Bootstrap": "[4] بیک اپ بوٹسٹریپ",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "روبلوکس ورژن 0.698 یا اس سے زیادہ کے طور پر ، روبلوکس نے فونٹ پر مبنی شبیہیں نافذ کیں ، جس سے شبیہیں پر رنگ میں ترمیم کرنے کے طریقوں کو روکا گیا۔ اس کی وجہ سے ، یہ توسیع اب کام نہیں کرسکتی ہے۔ توسیع کے استعمال کے لئے شکریہ!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "روبلوکس ورژن 0.698 یا اس سے زیادہ کے طور پر ، روبلوکس نے فونٹ پر مبنی شبیہیں نافذ کیں ، جس سے شبیہیں پر رنگ میں ترمیم کرنے کے طریقوں کو روکا گیا۔ اس کی وجہ سے ، یہ توسیع اب کام نہیں کرسکتی ہے۔ توسیع کے استعمال کے لئے شکریہ!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "روبلوکس ورژن 0.698 یا اس سے زیادہ کے طور پر ، روبلوکس نے فونٹ پر مبنی شبیہیں نافذ کیں ، جس سے شبیہیں پر رنگ میں ترمیم کرنے کے طریقوں کو روکا گیا۔ اس کی وجہ سے ، اس اسکرپٹ نے تدریجی رنگت کے ساتھ فعالیت کو کھو دیا ہے اور فونٹ فائلوں کے لئے جامد رنگنے میں بدل گیا ہے۔",
+ "5. Please use this on your own risk!": "5. براہ کرم اسے اپنے خطرے پر استعمال کریں!",
+ "Roblox Fast Flags": "روبلوکس فاسٹ جھنڈے",
+ "Roblox Fast Flags Configuration": "روبلوکس فاسٹ جھنڈے کی تشکیل",
+ "Roblox Fast Flag Configurations": "روبلوکس فاسٹ پرچم کنفیگریشنز",
+ "--- Final Results! ---": "--- حتمی نتائج! ---",
+ "The following shortcuts no longer have valid cookies:": "مندرجہ ذیل شارٹ کٹ میں اب درست کوکیز نہیں ہیں:",
+ "Unable to validate due to an Python exception: (*)(*)": "ازگر کی رعایت کی وجہ سے توثیق کرنے سے قاصر: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "ازگر استثنا کی وجہ سے شارٹ کٹ (*)کو درست کرنے سے قاصر: (*)(*)",
+ "Validate cookie shortcuts": "کوکی شارٹ کٹ کی توثیق کریں",
+ "Validating cookies of cookie user shortcuts..": "کوکی صارف شارٹ کٹ کی کوکیز کی توثیق کرنا..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "آپ کے شارٹ کٹ درست ہیں اور ان میں غلط کوکیز نہیں ہیں۔: d"
 }

@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Continua su Roblox Studio",
  "[3] Repair Bootstrap": "[3] Riparare Bootstrap",
  "[4] Backup Bootstrap": "[4] Backup Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "A partire dalle versioni Roblox 0.698 o successive, Roblox ha implementato icone basate su caratteri, impedendo Modi per Modificare il colore sulle icone. Per questo motivo, questa estensione potrebbe non funzionare più. Grazie per aver utilizzato l'estensione!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "A partire dalle versioni Roblox 0.698 o successive, Roblox ha implementato icone basate su caratteri, impedendo Modi per Modificare il colore sulle icone. Per questo motivo, questa estensione potrebbe non funzionare più. Grazie per aver utilizzato l'estensione!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "A partire dalle versioni Roblox 0.698 o successive, Roblox ha implementato icone basate su caratteri, impedendo Modi per Modificare il colore sulle icone. Per questo motivo, questo script ha perso funzionalità con la colorazione sfumata ed è passato alla colorazione statica per i file di caratteri..",
+ "5. Please use this on your own risk!": "5. Utilizzalo a tuo rischio e pericolo!",
+ "Roblox Fast Flags": "Roblox Bandiere veloci",
+ "Roblox Fast Flags Configuration": "Configurazione dei flag veloci Roblox",
+ "Roblox Fast Flag Configurations": "Configurazioni di flag veloci Roblox",
+ "--- Final Results! ---": "--- Risultati finali! ---",
+ "The following shortcuts no longer have valid cookies:": "Le seguenti scorciatoie non hanno più cookie validi:",
+ "Unable to validate due to an Python exception: (*)(*)": "Impossibile convalidare a causa di un'eccezione Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Impossibile convalidare la scorciatoia (*)a causa di un'eccezione Python: (*)(*)",
+ "Validate cookie shortcuts": "Convalida i collegamenti ai cookie",
+ "Validating cookies of cookie user shortcuts..": "Convalida dei cookie dei collegamenti utente dei cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "I tuoi collegamenti sono validi e non contengono cookie non validi.:D"
 }

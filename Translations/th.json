@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] ไปต่อที่ Roblox Studio",
  "[3] Repair Bootstrap": "[3] ซ่อมแซม Bootstrap",
  "[4] Backup Bootstrap": "[4] Bootstrap สำรอง",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "ตั้งแต่ Roblox เวอร์ชัน 0.698 ขึ้นไป Roblox ได้ใช้ไอคอนแบบอักษร เพื่อป้องกันการแก้ไขสีบนไอคอน ด้วยเหตุนี้ ส่วนขยายนี้อาจใช้งานไม่ได้อีกต่อไป ขอขอบคุณที่ใช้ส่วนขยาย!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "ตั้งแต่ Roblox เวอร์ชัน 0.698 ขึ้นไป Roblox ได้ใช้ไอคอนแบบอักษร เพื่อป้องกันการแก้ไขสีบนไอคอน ด้วยเหตุนี้ ส่วนขยายนี้อาจใช้งานไม่ได้อีกต่อไป ขอขอบคุณที่ใช้ส่วนขยาย!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "ตั้งแต่ Roblox เวอร์ชัน 0.698 ขึ้นไป Roblox ได้ใช้ไอคอนแบบอักษร เพื่อป้องกันการแก้ไขสีบนไอคอน ด้วยเหตุนี้ สคริปต์นี้จึงสูญเสียฟังก์ชันการไล่ระดับสีแบบไล่ระดับสี และได้เปลี่ยนเป็นการระบายสีแบบคงที่สำหรับไฟล์ฟอนต์",
+ "5. Please use this on your own risk!": "5. โปรดใช้สิ่งนี้ด้วยความเสี่ยงของคุณเอง!",
+ "Roblox Fast Flags": "Roblox แฟล็กด่วน",
+ "Roblox Fast Flags Configuration": "การกำหนดค่า Roblox Fast Flags",
+ "Roblox Fast Flag Configurations": "การกำหนดค่าแฟล็กด่วนของ Roblox",
+ "--- Final Results! ---": "--- ผลลัพธ์สุดท้าย! ---",
+ "The following shortcuts no longer have valid cookies:": "ทางลัดต่อไปนี้ไม่มีคุกกี้ที่ถูกต้องอีกต่อไป:",
+ "Unable to validate due to an Python exception: (*)(*)": "ไม่สามารถตรวจสอบได้เนื่องจากข้อยกเว้นของ Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "ไม่สามารถตรวจสอบทางลัด (*)ได้เนื่องจากข้อยกเว้นของ Python: (*)(*)",
+ "Validate cookie shortcuts": "ตรวจสอบทางลัดคุกกี้",
+ "Validating cookies of cookie user shortcuts..": "กำลังตรวจสอบคุกกี้ของทางลัดผู้ใช้คุกกี้",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "ทางลัดของคุณถูกต้องและไม่มีคุกกี้ที่ไม่ถูกต้อง:d"
 }

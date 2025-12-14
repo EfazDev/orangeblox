@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] განაგრძეთ Roblox Studio-ზე",
  "[3] Repair Bootstrap": "[3] ჩამტვირთველის შეკეთება",
  "[4] Backup Bootstrap": "[4] სარეზერვო Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox-ის 0.698 ან უფრო მაღალი ვერსიების მიხედვით, Roblox-მა დანერგა შრიფტზე დაფუძნებული ხატები, რაც ხელს უშლის ხატებზე ფერის შეცვლის გზებს. ამის გამო, ეს გაფართოება შესაძლოა აღარ იმუშაოს. გმადლობთ გაფართოების გამოყენებისთვის!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox-ის 0.698 ან უფრო მაღალი ვერსიების მიხედვით, Roblox-მა დანერგა შრიფტზე დაფუძნებული ხატები, რაც ხელს უშლის ხატებზე ფერის შეცვლის გზებს. ამის გამო, ეს გაფართოება შესაძლოა აღარ იმუშაოს. გმადლობთ გაფართოების გამოყენებისთვის!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Roblox-ის 0.698 ან უფრო მაღალი ვერსიების მიხედვით, Roblox-მა დანერგა შრიფტზე დაფუძნებული ხატები, რაც ხელს უშლის ხატებზე ფერის შეცვლის გზებს. ამის გამო, ამ სკრიპტმა დაკარგა ფუნქციონირება გრადიენტური შეღებვით და შეიცვალა სტატიკური შეღებვით შრიფტის ფაილებისთვის..",
+ "5. Please use this on your own risk!": "5. გთხოვთ გამოიყენოთ ეს თქვენი რისკის ქვეშ!",
+ "Roblox Fast Flags": "Roblox სწრაფი დროშები",
+ "Roblox Fast Flags Configuration": "Roblox Fast Flags კონფიგურაცია",
+ "Roblox Fast Flag Configurations": "Roblox სწრაფი დროშის კონფიგურაციები",
+ "--- Final Results! ---": "--- Საბოლოო შედეგები! ---",
+ "The following shortcuts no longer have valid cookies:": "Შემდეგ მალსახმობებს აღარ აქვთ მოქმედი ქუქიები:",
+ "Unable to validate due to an Python exception: (*)(*)": "Ვერ ხერხდება პითონის გამონაკლისის გამო დამოწმება: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Მალსახმობის (*)ვალიდაცია ვერ ხერხდება პითონის გამონაკლისის გამო: (*)(*)",
+ "Validate cookie shortcuts": "Ქუქიების მალსახმობების დადასტურება",
+ "Validating cookies of cookie user shortcuts..": "Მიმდინარეობს ქუქიების მომხმარებლის მალსახმობების ვალიდაცია..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Თქვენი მალსახმობები მოქმედებს და არ შეიცავს არასწორ ქუქი-ფაილებს.:დ"
 }

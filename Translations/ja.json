@@ -2352,5 +2352,17 @@
  "[3] Continue to Roblox Studio": "[3] Roblox Studio に進む",
  "[3] Repair Bootstrap": "[3] ブートストラップの修復",
  "[4] Backup Bootstrap": "[4] バックアップブートストラップ",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox バージョン 0.698 以降では,Roblox はフォント ベースのアイコンを実装し,アイコンの色を変更する方法を妨げています.このため,この拡張機能は機能しなくなる可能性があります.拡張機能をご利用いただきありがとうございます.."
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Roblox バージョン 0.698 以降では,Roblox はフォント ベースのアイコンを実装し,アイコンの色を変更する方法を妨げています.このため,この拡張機能は機能しなくなる可能性があります.拡張機能をご利用いただきありがとうございます..",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Roblox バージョン 0.698 以降では,Roblox はフォント ベースのアイコンを実装し,アイコンの色を変更する方法を妨げています.このため,このスクリプトはグラデーション カラーリングの機能を失い,フォント ファイルの静的なカラーリングに変更されました..",
+ "5. Please use this on your own risk!": "5. ご使用は自己責任でお願いします!",
+ "Roblox Fast Flags": "Roblox ファーストフラグ",
+ "Roblox Fast Flags Configuration": "Roblox 高速フラグ設定",
+ "Roblox Fast Flag Configurations": "Roblox 高速フラグ構成",
+ "--- Final Results! ---": "--- 最終結果！ ---",
+ "The following shortcuts no longer have valid cookies:": "次のショートカットには有効な Cookie がありません..",
+ "Unable to validate due to an Python exception: (*)(*)": "Python 例外のため検証できません: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Python 例外のためショートカット (*)を検証できません: (*)(*)",
+ "Validate cookie shortcuts": "Cookie のショートカットを検証する",
+ "Validating cookies of cookie user shortcuts..": "Cookie ユーザー ショートカットの Cookie を検証しています..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "ショートカットは有効であり,無効な Cookie は含まれていません.:D"
 }

@@ -2351,5 +2351,17 @@
  "[3] Continue to Roblox Studio": "[3] Перейдіть до Roblox Studio",
  "[3] Repair Bootstrap": "[3] Відновлення Bootstrap",
  "[4] Backup Bootstrap": "[4] Резервне копіювання Bootstrap",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Починаючи з версії Roblox 0.698 або новішої, Roblox реалізував піктограми на основі шрифтів, що запобігає зміні кольорів на піктограмах. Через це це розширення може більше не працювати. Дякуємо за використання розширення!"
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this extension may no longer work. Thanks for using the extension!": "Починаючи з версії Roblox 0.698 або новішої, Roblox реалізував піктограми на основі шрифтів, що запобігає зміні кольорів на піктограмах. Через це це розширення може більше не працювати. Дякуємо за використання розширення!",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.": "Починаючи з версії Roblox 0.698 або новішої, Roblox реалізував піктограми на основі шрифтів, що запобігає зміні кольорів на піктограмах. Через це цей скрипт втратив функціональність із градієнтним забарвленням і змінився на статичне забарвлення файлів шрифтів..",
+ "5. Please use this on your own risk!": "5. Будь ласка, використовуйте це на свій страх і ризик!",
+ "Roblox Fast Flags": "Швидкі прапори Roblox",
+ "Roblox Fast Flags Configuration": "Конфігурація швидких прапорів Roblox",
+ "Roblox Fast Flag Configurations": "Конфігурації швидкого прапора Roblox",
+ "--- Final Results! ---": "--- Кінцеві результати! ---",
+ "The following shortcuts no longer have valid cookies:": "Наступні ярлики більше не мають дійсних файлів cookie:",
+ "Unable to validate due to an Python exception: (*)(*)": "Неможливо перевірити через виняткову ситуацію Python: (*)(*)",
+ "Unable to validate shortcut (*) due to an Python exception: (*)(*)": "Неможливо перевірити ярлик (*)через виняткову ситуацію Python: (*)(*)",
+ "Validate cookie shortcuts": "Перевірте ярлики файлів cookie",
+ "Validating cookies of cookie user shortcuts..": "Перевірка файлів cookie ярликів користувачів файлів cookie..",
+ "Your shortcuts are valid and don't contain invalid cookies. :D": "Ваші ярлики дійсні та не містять недійсних файлів cookie.:D"
 }
