@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5h
+# v2.4.5i
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.5h
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.5i
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.4.5h", "bootstrap_version": "2.4.5h"}
+current_version = {"version": "2.4.5i", "bootstrap_version": "2.4.5i"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
@@ -382,7 +382,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.4.5h+**
+        **This function is only available in OrangeAPI v2.4.5i+**
 
         ```python
         orangeblox_name = OrangeAPI.getOrangeBloxName() # -> "OrangeBlox"
@@ -395,7 +395,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.4.5h+**
+        **This function is only available in OrangeAPI v2.4.5i+**
 
         ```python
         orangeblox_emoji = OrangeAPI.getOrangeBloxEmoji() # -> "🍊"
@@ -408,7 +408,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.4.5h+**
+        **This function is only available in OrangeAPI v2.4.5i+**
 
         ```python
         orangeblox_color_ansi = OrangeAPI.getOrangeBloxColorAnsi() # -> 202
@@ -421,7 +421,7 @@ class OrangeAPI:
         
         Permission: No Permission Needed | Level: 0 [Normal]
 
-        **This function is only available in OrangeAPI v2.4.5h+**
+        **This function is only available in OrangeAPI v2.4.5i+**
 
         ```python
         orangeblox_color_hex = OrangeAPI.getOrangeBloxColorHex() # -> "#ff4b00"

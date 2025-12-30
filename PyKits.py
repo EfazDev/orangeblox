@@ -1066,9 +1066,9 @@ class request:
 
                         # Update status
                         downloaded += downloaded_chunk_size
-                        if downloaded > total: downloaded = total
-                        if total and submit_status:
-                            percent = downloaded * 100 / total
+                        if submit_status:
+                            if total: percent = downloaded * 100 / total
+                            else: percent = (99.9 if downloaded_chunk_size > 0 else 100.0)
                             progress = self.DownloadStatus(speed=speed, downloaded=self.format_bytes_to_size(downloaded), downloaded_bytes=downloaded, percent=percent, total_size=total)
                             submit_status.submit(progress)
                     download_info.downloaded = downloaded
