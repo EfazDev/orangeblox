@@ -1,14 +1,14 @@
 {
-    "version": "2.4.5i",
-    "latest_version": "2.4.5i",
+    "version": "2.4.5j",
+    "latest_version": "2.4.5j",
     "hashes": {
-        "OrangeAPI.py": "960773391c46b0b415ff49afc07df920",
+        "OrangeAPI.py": "58ed7b61fee54235cc3d24bd267649aa",
         "RobloxFastFlagsInstaller.py": "a5232d621dd180d461ae4b46401385ab",
         "PyKits.py": "f63e80beedab5494a865a74e7bfc1a97",
-        "DiscordPresenceHandler.py": "d37d0ef727040c618c007f9d6a310f0d",
-        "Install.py": "5140de47bae93b94786a0f4eeaf83029",
-        "Main.py": "7bfbc2906113051d18be27b2e8eab12f",
-        "OrangeBlox.py": "99ed30c7c4ce25ebbbb27815a6a3a377"
+        "DiscordPresenceHandler.py": "5a19b953bf43bf0d773e97ea8d45ca3b",
+        "Install.py": "d7092318c20bbe1a19dda3b97bbd4d84",
+        "Main.py": "7399410ac48e66495215d6a0bd5f0def",
+        "OrangeBlox.py": "c62ab35abb19d6fd5ced41110d4b549c"
     },
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip"
 }

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5i
+# v2.4.5j
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.5i"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.5j"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -378,7 +378,7 @@ if __name__ == "__main__":
                         plyer.notification.notify(
                             title = title,
                             message = message,
-                            app_icon = main_config.get("EFlagCustomBootstrapIconPath", "Images/AppIcon.ico"),
+                            app_icon = "Images/AppIcon.ico",
                             timeout = 30,
                         )
                     except Exception as e: printErrorMessage(f"There was an error sending a notification. Error: \n{trace()}")
@@ -5380,7 +5380,7 @@ if __name__ == "__main__":
                         win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(bootstrap_folder_path, 'Install.py')}\" -dm")
                         win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, obName0())
                         win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
-                        win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, main_config.get("EFlagCustomBootstrapIconPath", os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico")))
+                        win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
                         win32api.RegSetValueEx(registry_key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(registry_key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(registry_key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")

@@ -15,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.5i"}
+    current_version = {"version": "2.4.5j"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -328,7 +328,7 @@ if __name__ == "__main__":
                     title=title,
                     message=message,
                     app_name=obName0(),
-                    app_icon=main_config.get("EFlagCustomBootstrapIconPath", os.path.join(app_path, "Images", "AppIcon.ico")),
+                    app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
                     toast=True
                 )
             except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
