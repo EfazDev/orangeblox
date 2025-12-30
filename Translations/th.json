@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)ธีมที่กำหนดเองของ OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "ธีมที่กำหนดเองของ OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "โปรดป้อนชื่อที่กำหนดเองสำหรับ OrangeBlox (OrangeBlox จะรีเซ็ตเป็นค่าเริ่มต้น):",
- "Theme has been reset. Ignore this error.": "รีเซ็ตธีมแล้ว ละเว้นข้อผิดพลาดนี้"
+ "Theme has been reset. Ignore this error.": "รีเซ็ตธีมแล้ว ละเว้นข้อผิดพลาดนี้",
+ "--- Bootstrap Media ---": "--- บูตสแตรปมีเดีย ---",
+ "Extracted successfully! Running Installer!": "สกัดสำเร็จ! กำลังรันโปรแกรมติดตั้ง!",
+ "Latest Version: v(*)": "เวอร์ชันล่าสุด: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "คุณต้องการดาวน์โหลด OrangeBlox Installer ลงในโฟลเดอร์ใหม่ชั่วคราวหรือไม่ (มี/ไม่มี)"
 }

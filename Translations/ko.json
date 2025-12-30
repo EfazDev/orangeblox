@@ -2454,5 +2454,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)OrangeBlox의 맞춤 테마 🍊",
  "Custom Theme of OrangeBlox": "OrangeBlox의 맞춤 테마",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "OrangeBlox의 사용자 정의 이름을 입력하십시오(OrangeBlox는 기본값으로 재설정됩니다)..",
- "Theme has been reset. Ignore this error.": "테마가 재설정되었습니다. 이 오류를 무시하십시오.."
+ "Theme has been reset. Ignore this error.": "테마가 재설정되었습니다. 이 오류를 무시하십시오..",
+ "--- Bootstrap Media ---": "--- 부트스트랩 미디어 ---",
+ "Extracted successfully! Running Installer!": "성공적으로 추출되었습니다! 설치 프로그램을 실행 중입니다!",
+ "Latest Version: v(*)": "최신 버전: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox 설치 프로그램을 새 폴더에 임시로 다운로드하시겠습니까? (예/아니요)"
 }

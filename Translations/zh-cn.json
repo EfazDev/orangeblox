@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)OrangeBlox 的自定义主题🍊",
  "Custom Theme of OrangeBlox": "OrangeBlox 自定义主题",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "请输入 OrangeBlox 的自定义名称(OrangeBlox 将重置为默认值):",
- "Theme has been reset. Ignore this error.": "主题已重置.忽略这个错误.."
+ "Theme has been reset. Ignore this error.": "主题已重置.忽略这个错误..",
+ "--- Bootstrap Media ---": "--- 引导媒体 ---",
+ "Extracted successfully! Running Installer!": "提取成功!运行安装程序!",
+ "Latest Version: v(*)": "最新版本:v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "您想将 OrangeBlox 安装程序暂时下载到新文件夹中吗? (是/否)"
 }

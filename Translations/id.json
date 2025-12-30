@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Tema Khusus OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Tema Kustom OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Silakan masukkan nama khusus untuk OrangeBlox (OrangeBlox akan diatur ulang ke default):",
- "Theme has been reset. Ignore this error.": "Tema telah diatur ulang. Abaikan kesalahan ini.."
+ "Theme has been reset. Ignore this error.": "Tema telah diatur ulang. Abaikan kesalahan ini..",
+ "--- Bootstrap Media ---": "--- Media Bootstrap ---",
+ "Extracted successfully! Running Installer!": "Berhasil diekstraksi! Menjalankan Pemasang!",
+ "Latest Version: v(*)": "Versi Terbaru: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Apakah Anda ingin mengunduh sementara Penginstal OrangeBlox ke folder baru? (y/n)"
 }

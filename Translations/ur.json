@@ -2452,5 +2452,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)اورنج بلوکس کا کسٹم تھیم 🍊",
  "Custom Theme of OrangeBlox": "اورنج بلوکس کا کسٹم تھیم",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "براہ کرم اورنج بلوکس کے لئے کسٹم کا نام درج کریں (اورنج بلوکس پہلے سے طے شدہ طور پر دوبارہ ترتیب دے گا):",
- "Theme has been reset. Ignore this error.": "تھیم کو دوبارہ ترتیب دیا گیا ہے۔ اس غلطی کو نظرانداز کریں۔"
+ "Theme has been reset. Ignore this error.": "تھیم کو دوبارہ ترتیب دیا گیا ہے۔ اس غلطی کو نظرانداز کریں۔",
+ "--- Bootstrap Media ---": "--- بوٹسٹریپ میڈیا ---",
+ "Extracted successfully! Running Installer!": "کامیابی کے ساتھ نکالا! چلانے والا انسٹالر!",
+ "Latest Version: v(*)": "تازہ ترین ورژن: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "کیا آپ اورنج بلوکس انسٹالر کو عارضی طور پر کسی نئے فولڈر میں ڈاؤن لوڈ کرنا چاہیں گے؟ (y/n)"
 }

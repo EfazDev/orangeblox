@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)OrangeBlox'un Özel Teması 🍊",
  "Custom Theme of OrangeBlox": "OrangeBlox'un Özel Teması",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Lütfen OrangeBlox için özel adı girin (OrangeBlox varsayılana sıfırlanacaktır):",
- "Theme has been reset. Ignore this error.": "Tema sıfırlandı. Bu hatayı dikkate almayın.."
+ "Theme has been reset. Ignore this error.": "Tema sıfırlandı. Bu hatayı dikkate almayın..",
+ "--- Bootstrap Media ---": "--- Önyükleme Medyası ---",
+ "Extracted successfully! Running Installer!": "Başarıyla çıkarıldı! Yükleyici çalıştırılıyor!",
+ "Latest Version: v(*)": "Son Sürüm: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox Yükleyicisini geçici olarak yeni bir klasöre indirmek ister misiniz? (y/n)"
 }

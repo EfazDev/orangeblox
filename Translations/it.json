@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Tema personalizzato di OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Tema personalizzato di OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Inserisci il nome personalizzato per OrangeBlox (OrangeBlox verrà ripristinato ai valori predefiniti):",
- "Theme has been reset. Ignore this error.": "Il tema è stato reimpostato. Ignora questo errore.."
+ "Theme has been reset. Ignore this error.": "Il tema è stato reimpostato. Ignora questo errore..",
+ "--- Bootstrap Media ---": "--- Supporti Bootstrap ---",
+ "Extracted successfully! Running Installer!": "Estratto con successo! Programma di installazione in esecuzione!",
+ "Latest Version: v(*)": "Ultima versione: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Desideri scaricare temporaneamente il programma di installazione OrangeBlox in una nuova cartella? (sì/no)"
 }

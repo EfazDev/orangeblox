@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Пользовательская тема OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Пользовательская тема OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Пожалуйста, введите собственное имя для OrangeBlox (OrangeBlox будет сброшен до значения по умолчанию):",
- "Theme has been reset. Ignore this error.": "Тема сброшена. Игнорируйте эту ошибку.."
+ "Theme has been reset. Ignore this error.": "Тема сброшена. Игнорируйте эту ошибку..",
+ "--- Bootstrap Media ---": "--- Загрузочный носитель ---",
+ "Extracted successfully! Running Installer!": "Извлечено успешно! Запуск установщика!",
+ "Latest Version: v(*)": "Последняя версия: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Хотите временно загрузить установщик OrangeBlox в новую папку? (да/нет)"
 }

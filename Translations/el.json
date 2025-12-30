@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Προσαρμοσμένο θέμα του OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Προσαρμοσμένο θέμα του OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Εισαγάγετε το προσαρμοσμένο όνομα για το OrangeBlox (το OrangeBlox θα επαναφερθεί στις προεπιλογές):",
- "Theme has been reset. Ignore this error.": "Έχει γίνει επαναφορά του θέματος. Αγνοήστε αυτό το σφάλμα.."
+ "Theme has been reset. Ignore this error.": "Έχει γίνει επαναφορά του θέματος. Αγνοήστε αυτό το σφάλμα..",
+ "--- Bootstrap Media ---": "--- Bootstrap Media ---",
+ "Extracted successfully! Running Installer!": "Εξήχθη με επιτυχία! Εκτελούμενο πρόγραμμα εγκατάστασης!",
+ "Latest Version: v(*)": "Τελευταία έκδοση: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Θέλετε να κάνετε προσωρινή λήψη του προγράμματος εγκατάστασης OrangeBlox σε έναν νέο φάκελο; (y/n)"
 }

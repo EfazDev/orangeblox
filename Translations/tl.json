@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Custom na Tema ng OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Custom na Tema ng OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Pakipasok ang custom na pangalan para sa OrangeBlox (Ire-reset ang OrangeBlox sa default):",
- "Theme has been reset. Ignore this error.": "Na-reset ang tema. Huwag pansinin ang error na ito.."
+ "Theme has been reset. Ignore this error.": "Na-reset ang tema. Huwag pansinin ang error na ito..",
+ "--- Bootstrap Media ---": "--- Bootstrap Media ---",
+ "Extracted successfully! Running Installer!": "Matagumpay na na-extract! Tumatakbong Installer!",
+ "Latest Version: v(*)": "Pinakabagong Bersyon: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Gusto mo bang pansamantalang i-download ang OrangeBlox Installer sa isang bagong folder? (y/n)"
 }

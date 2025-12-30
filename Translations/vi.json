@@ -2452,5 +2452,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)Theme tùy chỉnh của OrangeBlox 🍊",
  "Custom Theme of OrangeBlox": "Chủ đề tùy chỉnh của OrangeBlox",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Vui lòng nhập tên tùy chỉnh cho OrangeBlox (OrangeBlox sẽ đặt lại về mặc định):",
- "Theme has been reset. Ignore this error.": "Chủ đề đã được thiết lập lại. Bỏ qua lỗi này.."
+ "Theme has been reset. Ignore this error.": "Chủ đề đã được thiết lập lại. Bỏ qua lỗi này..",
+ "--- Bootstrap Media ---": "--- Phương tiện Bootstrap ---",
+ "Extracted successfully! Running Installer!": "Đã giải nén thành công! Đang chạy trình cài đặt!",
+ "Latest Version: v(*)": "Phiên bản mới nhất: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Bạn có muốn tạm thời tải xuống Trình cài đặt OrangeBlox vào một thư mục mới không? (có/không)"
 }

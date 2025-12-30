@@ -2454,5 +2454,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)OrangeBloxのカスタムテーマ🍊",
  "Custom Theme of OrangeBlox": "OrangeBloxのカスタムテーマ",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "OrangeBlox のカスタム名を入力してください (OrangeBlox はデフォルトにリセットされます):",
- "Theme has been reset. Ignore this error.": "テーマがリセットされました.このエラーは無視してください.."
+ "Theme has been reset. Ignore this error.": "テーマがリセットされました.このエラーは無視してください..",
+ "--- Bootstrap Media ---": "--- ブートストラップメディア ---",
+ "Extracted successfully! Running Installer!": "無事抽出されました!インストーラーを実行しています!",
+ "Latest Version: v(*)": "最新バージョン: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox インストーラーを新しいフォルダーに一時的にダウンロードしますか? (はい/いいえ)"
 }

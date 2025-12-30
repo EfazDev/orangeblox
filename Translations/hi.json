@@ -2453,5 +2453,9 @@
  "(*)Custom Theme of OrangeBlox 🍊": "(*)ऑरेंजब्लॉक्स की कस्टम थीम 🍊",
  "Custom Theme of OrangeBlox": "ऑरेंजब्लॉक्स की कस्टम थीम",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "कृपया OrangeBlox के लिए कस्टम नाम दर्ज करें (OrangeBlox डिफ़ॉल्ट पर रीसेट हो जाएगा):",
- "Theme has been reset. Ignore this error.": "थीम रीसेट कर दी गई है. इस त्रुटि पर ध्यान न दें.."
+ "Theme has been reset. Ignore this error.": "थीम रीसेट कर दी गई है. इस त्रुटि पर ध्यान न दें..",
+ "--- Bootstrap Media ---": "--- बूटस्ट्रैप मीडिया ---",
+ "Extracted successfully! Running Installer!": "सफलतापूर्वक निकाला गया! इंस्टॉलर चल रहा है!",
+ "Latest Version: v(*)": "नवीनतम संस्करण: v(*)",
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "क्या आप ऑरेंजब्लॉक्स इंस्टॉलर को अस्थायी रूप से एक नए फ़ोल्डर में डाउनलोड करना चाहेंगे? (य/नहीं)"
 }

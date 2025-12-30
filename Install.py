@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5g
+# v2.4.5h
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.5g"}
+    current_version = {"version": "2.4.5h"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -105,6 +105,7 @@ if __name__ == "__main__":
     update_mode = False
     backup_mode = False
     rebuild_mode = False
+    download_mode = False
     uninstall_mode = False
     instant_install = False
     use_x86_windows = False
@@ -629,6 +630,7 @@ if __name__ == "__main__":
     if "--use-sudo-for-codesign" in sys.argv or "-s" in sys.argv: use_sudo_for_codesign = True
     if "--rebuild-clang" in sys.argv or "-rc" in sys.argv: rebuild_from_source_clang = True
     if "--use-x86-windows" in sys.argv or "-x86" in sys.argv: use_x86_windows = True
+    if "--download-media" in sys.argv or "-dm" in sys.argv: download_mode = True
 
     def startMessage():
         printSystemMessage("-----------")
@@ -1475,7 +1477,7 @@ if __name__ == "__main__":
                         registry_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\OrangeBlox"
                         key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
                         win32api.RegSetValueEx(key, "UninstallString", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\" -un")
-                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\"")
+                        win32api.RegSetValueEx(key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(sma[main_os][0], 'Install.py')}\" -dm")
                         win32api.RegSetValueEx(key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
                         win32api.RegSetValueEx(key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
                         win32api.RegSetValueEx(key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(sma[main_os][0], "Images", "AppIcon.ico"))
@@ -1530,6 +1532,58 @@ if __name__ == "__main__":
         else:
             printMainMessage("Welcome to OrangeBlox Installer 🍊!")
             printMainMessage("OrangeBlox is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
+            if download_mode == True or not os.path.exists(os.path.join(cur_path, "Apps")):
+                waitForInternet()
+                latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev/Version.json")
+                if latest_vers_res.ok:
+                    latest_vers = latest_vers_res.json
+                    download_location = latest_vers.get("download_location", "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip")
+                    printSystemMessage("--- Bootstrap Media ---")
+                    printMainMessage(f"Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)")
+                    if download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
+                        printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
+                        printSuccessMessage("✅ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
+                        printSuccessMessage(f"✅ Download Location: {download_location}")
+                    elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
+                        download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
+                        printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
+                        printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
+                        printSuccessMessage(f"⚠️ Download Location: {download_location}")
+                    elif not (main_config.get("EFlagRobloxBootstrapUpdatesAuthorizationKey", "") == ""):
+                        printYellowMessage("🔨 This version is an update configured from an organization (this may still be a modified and an unofficial OrangeBlox version.)")
+                        printYellowMessage("🔨 For information about this update, contact your administrator!")
+                        printSuccessMessage(f"🔨 Download Location: {download_location}")
+                    else:
+                        printErrorMessage("❌ The download location is different from the official GitHub link!")
+                        printErrorMessage("❌ You may be downloading an unofficial OrangeBlox version! Download a copy from https://github.com/EfazDev/orangeblox!")
+                        printSuccessMessage(f"❌ Download Location: {download_location}")
+                    printSuccessMessage(f"Latest Version: v{latest_vers['latest_version']}")
+                    if isYes(input("> ")) == True:
+                        printMainMessage("Downloading latest version..")
+                        download_update = requests.download(download_location, os.path.join(cur_path, 'Installer.zip'))
+                        if download_update.ok:
+                            printMainMessage("Download Success! Extracting ZIP now!")
+                            temp_installer_path = os.path.abspath(os.path.join(cur_path, "..", "OrangeBloxInstaller"))
+                            makedirs(temp_installer_path)
+                            zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Installer.zip"), temp_installer_path, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                            if zip_extract.returncode == 0:
+                                printMainMessage("Extracted successfully! Running Installer!")
+                                subprocess.run(args=[sys.executable, os.path.join(temp_installer_path, "Install.py")], check=False)
+                                os.remove("Installer.zip")
+                                shutil.rmtree(temp_installer_path)
+                                printSuccessMessage(f"Success!")
+                                sys.exit(0)
+                            else:
+                                printMainMessage("Cleaning up files..")
+                                os.remove("Installer.zip")
+                                shutil.rmtree(temp_installer_path)
+                                printErrorMessage("Extracting ZIP File failed. Would you like to continue without updating? (y/n)")
+                                if isYes(input("> ")) == False: sys.exit(0)
+                        else:
+                            printErrorMessage("Downloading ZIP File failed. Would you like to continue without updating? (y/n)")
+                            if isYes(input("> ")) == False: sys.exit(0)
+                else: printErrorMessage("There was an issue while checking for updates.")
             if overwrited == False:
                 printMainMessage("Before we continue to installing, you must follow this guide on how to navigate, so you can use for when you're using the bootstrap!")
                 printSystemMessage("--- Step 1 ---")
@@ -1585,7 +1639,7 @@ if __name__ == "__main__":
                 printMainMessage("Would you like to check for any new bootstrap updates right now? (y/n)")
                 a = input("> ")
                 if isYes(a) == True:
-                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev")
+                    latest_vers_res = requests.get("https://obx.efaz.dev/Version.json" if current_version["version"].split(".")[2].isdigit() else "https://obxbeta.efaz.dev/Version.json")
                     if latest_vers_res.ok:
                         latest_vers = latest_vers_res.json
                         if current_version.get("version"):
@@ -1905,7 +1959,6 @@ if __name__ == "__main__":
                     printMainMessage("Are you sure you want to repair/reinstall the bootstrap? (y/n)")
                     res = input("> ")
                     if isYes(res) == True:
-                        repair_mode = True
                         if not os.path.exists(f"{cur_path}/Apps/"):
                             printErrorMessage("Please use an installation folder to install a new version from before continuing to repair!")
                             input("> ")
@@ -1920,6 +1973,7 @@ if __name__ == "__main__":
                                 printErrorMessage("Please close OrangeBlox.exe first before continuing to repair!")
                                 input("> ")
                                 sys.exit(0)
+                        repair_mode = True
                         app_location = f"{cur_path}/"
                         repair_path = f"{cur_path}/RepairData/"
                         if os.path.exists(repair_path):
