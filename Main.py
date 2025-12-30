@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5f
+# v2.4.5g
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
     custom_cookies: typing.Dict[str, str] = {}
     stdout: PyKits.stdout = None
-    current_version: typing.Dict[str, str] = {"version": "2.4.5f"}
+    current_version: typing.Dict[str, str] = {"version": "2.4.5g"}
     given_args: typing.List[str] = list(filter(None, sys.argv))
     user_folder_name: str = os.path.basename(pip_class.getUserFolder())
     mods_folder: str = os.path.join(cur_path, "Mods")
@@ -187,6 +187,11 @@ if __name__ == "__main__":
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
+        "EFlagCustomBootstrapName": "str",
+        "EFlagCustomBootstrapEmoji": "str",
+        "EFlagCustomBootstrapColor": "str",
+        "EFlagCustomBootstrapInternetURL": "str",
+        "EFlagCustomBootstrapIconPath": "path",
         "EFlagUseEfazDevAPI": "bool"
     }
     language_names: typing.Dict[str, str] = {
@@ -246,10 +251,15 @@ if __name__ == "__main__":
         exc_m = str(tb_v)
         lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
+    def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").strip()
+    def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
+    def obColorA(): return colors_class.hex_to_ansi2(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
+    def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
     def printMainMessage(mes): colors_class.print(ts(mes), 255)
     def printErrorMessage(mes): colors_class.print(ts(mes), 196)
     def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
     def printWarnMessage(mes): colors_class.print(ts(mes), 202)
+    def printSystemMessage(mes): colors_class.print(ts(mes), obColorA())
     def printYellowMessage(mes): colors_class.print(ts(mes), 226)
     def printDebugMessage(mes): 
         if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logging.debug(mes)
@@ -368,7 +378,7 @@ if __name__ == "__main__":
                         plyer.notification.notify(
                             title = title,
                             message = message,
-                            app_icon = "Images/AppIcon.ico",
+                            app_icon = main_config.get("EFlagCustomBootstrapIconPath", "Images/AppIcon.ico"),
                             timeout = 30,
                         )
                     except Exception as e: printErrorMessage(f"There was an error sending a notification. Error: \n{trace()}")
@@ -561,7 +571,7 @@ if __name__ == "__main__":
         return respo
     def waitForInternet():
         if pip_class.getIfConnectedToInternet() == False:
-            printWarnMessage("--- Waiting for Internet ---")
+            printSystemMessage("--- Waiting for Internet ---")
             printMainMessage("Please connect to your internet in order to continue! If you're connecting to a VPN, try reconnecting.")
             while pip_class.getIfConnectedToInternet() == False:
                 time.sleep(0.05)
@@ -633,23 +643,25 @@ if __name__ == "__main__":
             except Exception as e: printErrorMessage("There was an error saving the assigned installed path!")
     def startMessage(first: bool=False, ignore_support: bool=False):
         stdout.clear()
-        printWarnMessage("-----------")
-        printWarnMessage("Welcome to OrangeBlox 🍊!")
-        printWarnMessage("Made by Efaz from efaz.dev!")
-        printWarnMessage(f"v{current_version['version']}")
-        printWarnMessage("-----------")
+        printSystemMessage("-----------")
+        printSystemMessage(f"Welcome to {obName0()} {obName1()}!")
+        if obName0() != "OrangeBlox" or obName1() != "🍊":
+            printSystemMessage("Custom Theme of OrangeBlox 🍊")
+        printSystemMessage("Made by Efaz from efaz.dev!")
+        printSystemMessage(f"v{current_version['version']}")
+        printSystemMessage("-----------")
 
         # Requirement Checks
         if main_os == "Windows": printMainMessage(f"System OS: {main_os} ({platform.version()}) | Python Version: {pythonVersionStr()}")
         elif main_os == "Darwin": printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]}) | Python Version: {pythonVersionStr()}")
         else:
-            printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+            printErrorMessage(f"{obName0()} is only supported for macOS and Windows.")
             input("> ")
             sys.exit(0)
         if ignore_support == False:
             if not pip_class.osSupported(windows_build=17763, macos_version=(10,13,0)):
-                if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
-                elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+                if main_os == "Windows": printErrorMessage(f"{obName0()} is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
+                elif main_os == "Darwin": printErrorMessage(f"{obName0()} is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
                 input("> ")
                 sys.exit(0)
             if first == False:
@@ -663,8 +675,8 @@ if __name__ == "__main__":
                     sys.exit(0)
                 else:
                     latest_python = pip_class.getLatestPythonVersion()
-                    printWarnMessage("--- Python Update Required ---")
-                    printMainMessage("Hello! In order to use OrangeBlox, you'll need to install Python 3.11 or higher in order to continue. ")
+                    printSystemMessage("--- Python Update Required ---")
+                    printMainMessage(f"Hello! In order to use {obName0()}, you'll need to install Python 3.11 or higher in order to continue. ")
                     printMainMessage(f"If you wish, you may install Python {latest_python} by typing \"y\" and continue.")
                     printMainMessage("Otherwise, you may close the app by just continuing without typing.")
                     if isYes(input("> ")) == True:
@@ -678,12 +690,12 @@ if __name__ == "__main__":
                 content_folder_paths["Windows"] = handler.getRobloxInstallFolder()
                 font_folder_paths["Windows"] = os.path.join(content_folder_paths['Windows'], "content", "fonts")
                 if not os.path.exists(font_folder_paths["Windows"]):
-                    printErrorMessage("Please restart OrangeBlox in order to reinstall Roblox!")
+                    printErrorMessage(f"Please restart {obName0()} in order to reinstall Roblox!")
                     input("> ")
                     sys.exit(0)
             elif main_os == "Darwin":
                 if not os.path.exists(RFFI.macOS_dir):
-                    printErrorMessage("Please restart OrangeBlox in order to reinstall Roblox!")
+                    printErrorMessage(f"Please restart {obName0()} in order to reinstall Roblox!")
                     input("> ")
                     sys.exit(0)
             installed_roblox_version = handler.getCurrentClientVersion()
@@ -727,12 +739,12 @@ if __name__ == "__main__":
     # First Actions
     getSettings()
     setLoggingHandler("Main")
-    if main_os == "Darwin": colors_class.set_console_title("OrangeBlox 🍊")
+    if main_os == "Darwin": colors_class.set_console_title(f"{obName0()} {obName1()}")
 
     # Requirement Checks
     try:
         if main_config and main_config.get("EFlagEnableDebugMode") == True: pip_class.debug = True
-        if waitForInternet() == True: printWarnMessage("-----------")
+        if waitForInternet() == True: printSystemMessage("-----------")
         versions_folder = os.path.join(cur_path, "Versions")
         if main_os == "Darwin": 
             makedirs(orangeblox_library)
@@ -741,25 +753,25 @@ if __name__ == "__main__":
             makedirs(versions_folder)
             mods_folder = os.path.join(orangeblox_library, "Mods")
         if not (main_os == "Windows" or main_os == "Darwin"):
-            printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+            printErrorMessage(f"{obName0()} is only supported for macOS and Windows.")
             input("> ")
             sys.exit(0)
         if not pip_class.osSupported(windows_build=17763, macos_version=(10,13,0)):
-            if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
-            elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+            if main_os == "Windows": printErrorMessage(f"{obName0()} is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
+            elif main_os == "Darwin": printErrorMessage(f"{obName0()} is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
             input("> ")
             sys.exit(0)
         if not pip_class.pythonSupported(3, 11, 0):
             startMessage(first=True, ignore_support=True)
             if not pip_class.pythonSupported(3, 6, 0):
-                printWarnMessage("--- Python Update Required ---")
+                printSystemMessage("--- Python Update Required ---")
                 printErrorMessage("Please update your current installation of Python above 3.11.0")
                 input("> ")
                 sys.exit(0)
             else:
                 latest_python = pip_class.getLatestPythonVersion()
-                printWarnMessage("--- Python Update Required ---")
-                printMainMessage("Hello! In order to use OrangeBlox, you'll need to install Python 3.11 or higher in order to continue. ")
+                printSystemMessage("--- Python Update Required ---")
+                printMainMessage(f"Hello! In order to use {obName0()}, you'll need to install Python 3.11 or higher in order to continue. ")
                 printMainMessage(f"If you wish, you may install Python {latest_python} by typing \"y\" and continue.")
                 printMainMessage("Otherwise, you may close the app by just continuing without typing.")
                 if isYes(input("> ")) == True:
@@ -769,8 +781,8 @@ if __name__ == "__main__":
                     input("> ")
                 sys.exit(0)
         if pip_class.getIfRunningWindowsAdmin():
-            printWarnMessage("--- Admin Permissions Not Required ---")
-            printErrorMessage("Please run OrangeBlox under user permissions instead of running administrator!")
+            printSystemMessage("--- Admin Permissions Not Required ---")
+            printErrorMessage(f"Please run {obName0()} under user permissions instead of running administrator!")
             input("> ")
             sys.exit(0)
     except (KeyboardInterrupt, Exception) as e:
@@ -792,7 +804,7 @@ if __name__ == "__main__":
             win32com = pip_class.importModule("win32com")
             plyer = pip_class.importModule("plyer")
     except Exception as e:
-        printWarnMessage("--- Installing Python Modules ---")
+        printSystemMessage("--- Installing Python Modules ---")
         pkg_list = ["pypresence", "psutil", "truststore"]
         if main_os == "Darwin": pkg_list.extend(["posix-ipc", "pyobjc-core", "pyobjc-framework-Quartz"])
         elif main_os == "Windows": pkg_list.extend(["pywin32", "plyer"])
@@ -822,18 +834,18 @@ if __name__ == "__main__":
         RFFI.submit_status = submit_status
         RFFI.orangeblox_mode = True
         if not validateInstallation():
-            printWarnMessage("--- Install Required! ---")
-            printMainMessage("Please install OrangeBlox from running Install.py in order to continue!")
+            printSystemMessage("--- Install Required! ---")
+            printMainMessage(f"Please install {obName0()} from running Install.py in order to continue!")
             input("> ")
             sys.exit(0)
         if (not os.path.exists(versions_folder)) and main_config.get("EFlagCompletedTutorial") == True:
-            printWarnMessage("--- Hello Bootstrap User! ---")
+            printSystemMessage("--- Hello Bootstrap User! ---")
             printMainMessage("We have updated Efaz's Roblox Bootstrap to feature a new brand (OrangeBlox) and also download Roblox into a separate folder and doesn't need vanilla Roblox to be installed!")
             printMainMessage("Your previous installation data was transferred and deleted after installation.")
-            printYellowMessage("Once you continue, we will start reinstalling vanilla Roblox and then install a new separate Roblox into OrangeBlox!")
+            printYellowMessage(f"Once you continue, we will start reinstalling vanilla Roblox and then install a new separate Roblox into {obName0()}!")
             con = input("> ")
             if isNo(con): sys.exit(0)
-            printWarnMessage("--- Reinstalling Roblox ---")
+            printSystemMessage("--- Reinstalling Roblox ---")
             submit_status.start()
             res = handler.reinstallRoblox(debug=main_config.get("EFlagEnableDebugMode"), clearUserData=False, copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadInstaller=True, disableRobloxAutoOpen=True, downloadToken=createDownloadToken(studio=False))
             submit_status.end()
@@ -851,8 +863,8 @@ if __name__ == "__main__":
         font_folder_paths["Darwin"] = os.path.join(content_folder_paths['Darwin'], "content", "fonts")
         if not (os.path.exists(RFFI.macOS_dir) or os.path.exists(os.path.join(versions_folder, RFFI.windows_player_folder_name))):
             startMessage(first=True)
-            printWarnMessage("--- Installing Roblox to Bootstrap ---")
-            printMainMessage("Please wait while we install Roblox into OrangeBlox!")
+            printSystemMessage("--- Installing Roblox to Bootstrap ---")
+            printMainMessage(f"Please wait while we install Roblox into {obName0()}!")
             makedirs(os.path.join(versions_folder))
             submit_status.start()
             res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"))
@@ -944,9 +956,9 @@ if __name__ == "__main__":
             "getIfPythonSupported": {"message": ts("Get if your Python executable is supported."), "level": 0},
             "getIfConnectedToInternet": {"message": ts("Get if your computer is connected to the internet."), "level": 1},
             "getIf32BitWindows": {"message": ts("Get if your computer is 32 bit of Windows."), "level": 0, "free": True},
-            "getConnectedUserInfo": {"message": ts("Get game user information from OrangeBlox"), "level": 1},
+            "getConnectedUserInfo": {"message": ts(f"Get game user information from {obName0()}"), "level": 1},
             "getIfConnectedToGame": {"message": ts("Get if you connected to a Roblox game"), "level": 0},
-            "getCurrentPlaceInfo": {"message": ts("Get game information from internal OrangeBlox"), "level": 1},
+            "getCurrentPlaceInfo": {"message": ts(f"Get game information from internal {obName0()}"), "level": 1},
             "createAppLock": {"message": ts("Create an app lock to use between mod script instances"), "level": 1},
             "unzipFile": {"message": ts("Gain access to unzip files that it may have access to."), "level": 2},
             "getRequest": {"message": ts("Make a GET request to any website."), "level": 1},
@@ -959,6 +971,10 @@ if __name__ == "__main__":
             "getVersion": {"message": ts("Get the current version of itself."), "level": 0, "free": True},
             "getName": {"message": ts("Get the current displayed name of itself."), "level": 0, "free": True},
             "getModScriptId": {"message": ts("Get the current mod script id of itself."), "level": 0, "free": True},
+            "getOrangeBloxName": {"message": ts("Get the name of OrangeBlox."), "level": 0, "free": True},
+            "getOrangeBloxEmoji": {"message": ts("Get the emoji set for OrangeBlox."), "level": 0, "free": True},
+            "getOrangeBloxColorAnsi": {"message": ts("Get the color set for OrangeBlox. (1)"), "level": 0, "free": True},
+            "getOrangeBloxColorHex": {"message": ts("Get the color set for OrangeBlox. (2)"), "level": 0, "free": True},
             "printSuccessMessage": {"message": ts("Print a console in green (indicates success)"), "level": 0, "free": True},
             "printMainMessage": {"message": ts("Print a console in the standard white color"), "level": 0, "free": True},
             "printColoredMessage": {"message": ts("Print a message on the python console using an ANSI 256 bit color number."), "level": 0, "free": True},
@@ -1015,8 +1031,8 @@ if __name__ == "__main__":
                 font_folder_paths["Windows"] = os.path.join(content_folder_paths['Windows'], "content", "fonts")
                 if not os.path.exists(font_folder_paths["Windows"]):
                     startMessage(first=True)
-                    printWarnMessage("--- Installing Roblox ---")
-                    printMainMessage("Please wait while we install Roblox into OrangeBlox!")
+                    printSystemMessage("--- Installing Roblox ---")
+                    printMainMessage(f"Please wait while we install Roblox into {obName0()}!")
                     submit_status.start()
                     res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"), copyRobloxInstallerPath=os.path.join(cur_path, "RobloxPlayerInstaller.exe"), downloadInstaller=True, verifyInstall=not (main_config.get("EFlagVerifyRobloxHashAfterInstall")==False))
                     submit_status.end()
@@ -1026,8 +1042,8 @@ if __name__ == "__main__":
                         sys.exit(0)
             else:
                 startMessage(first=True)
-                printWarnMessage("--- Installing Roblox ---")
-                printMainMessage("Please wait while we install Roblox into OrangeBlox!")
+                printSystemMessage("--- Installing Roblox ---")
+                printMainMessage(f"Please wait while we install Roblox into {obName0()}!")
                 submit_status.start()
                 res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"), copyRobloxInstallerPath=os.path.join(cur_path, "RobloxPlayerInstaller.exe"), downloadInstaller=True, verifyInstall=not (main_config.get("EFlagVerifyRobloxHashAfterInstall")==False))
                 submit_status.end()
@@ -1038,8 +1054,8 @@ if __name__ == "__main__":
         elif main_os == "Darwin":
             if not os.path.exists(RFFI.macOS_dir):
                 startMessage(first=True)
-                printWarnMessage("--- Installing Roblox ---")
-                printMainMessage("Please wait while we install Roblox into OrangeBlox!")
+                printSystemMessage("--- Installing Roblox ---")
+                printMainMessage(f"Please wait while we install Roblox into {obName0()}!")
                 submit_status.start()
                 res = handler.installRoblox(debug=main_config.get("EFlagEnableDebugMode"), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadInstaller=True, verifyInstall=not (main_config.get("EFlagVerifyRobloxHashAfterInstall")==False))
                 submit_status.end()
@@ -1078,17 +1094,17 @@ if __name__ == "__main__":
         global multi_instance_enabled
         global run_studio
         if studio == True:
-            printWarnMessage("--- Continue to Roblox Studio ---")
+            printSystemMessage("--- Continue to Roblox Studio ---")
             printMainMessage("Continuing to next stage!")
             run_studio = True
         else:
-            printWarnMessage("--- Continue to Roblox ---")
+            printSystemMessage("--- Continue to Roblox ---")
             if main_config.get("EFlagEnableDuplicationOfClients") == True: printMainMessage("Running Roblox with Multiple Instances!"); multi_instance_enabled = True
             else: printMainMessage("Continuing to next stage!")
     def connectExistingRobloxWindow(studio=False): # Connect to Existing Roblox
         global connect_instead
         global run_studio
-        printWarnMessage("--- Connect to Existing Roblox ---" if studio == False else "--- Connect to Existing Roblox Studio ---")
+        printSystemMessage(ts("--- Connect to Existing Roblox ---") if studio == False else ts("--- Connect to Existing Roblox Studio ---"))
         if not (main_config.get("EFlagAllowActivityTracking") == False):
             if handler.getIfRobloxIsOpen(studio=studio):
                 connect_instead = True
@@ -1105,24 +1121,24 @@ if __name__ == "__main__":
     def continueToFFlagInstaller(): # Run Fast Flag Installer
         global main_config
         if main_config.get("EFlagDisableFastFlagInstallAccess") == True:
-            printWarnMessage("--- Fast Flags Installer ---")
+            printSystemMessage("--- Fast Flags Installer ---")
             printErrorMessage("Access to editing FFlags settings was disabled by file. Please try again later!")
             input("> ")
             return ts("FFlag Settings was not saved!")
-        printWarnMessage("--------------------")
+        printSystemMessage("--------------------")
         RFFI.main()
         getSettings(updating=True)
         saveSettings()
     def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         global main_config
-        printWarnMessage("--- Run OrangeBlox Installer ---")
+        printSystemMessage(f"--- Run {obName0()} Installer ---")
         if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
-            printMainMessage("Are you sure you want to run OrangeBlox installer from installation folder?")
+            printMainMessage(f"Are you sure you want to run {obName0()} installer from installation folder?")
             printMainMessage("[y/t] = Yes")
             printMainMessage("[r] = Download & Run")
             printMainMessage("[n/*] = No")
         else:
-            printMainMessage("Are you sure you want to run OrangeBlox installer?")
+            printMainMessage(f"Are you sure you want to run {obName0()} installer?")
             printMainMessage("[y/t] = Yes")
             printMainMessage("[n/*] = No")
         def download_option():
@@ -1146,7 +1162,7 @@ if __name__ == "__main__":
                         printSuccessMessage(f"✅ Download location: {download_location} => {possible_download_path}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
-                        printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
+                        printYellowMessage(f"⚠️ This version is a beta version of {obName0()} and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printYellowMessage(f"⚠️ Download location: {download_location} => {possible_download_path}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
@@ -1155,14 +1171,14 @@ if __name__ == "__main__":
                         printYellowMessage(f"🔨 Download location: {download_location} => {possible_download_path}")
                     else:
                         printErrorMessage("❌ The download location is different from the official GitHub link!")
-                        printErrorMessage("❌ You may be downloading an unofficial OrangeBlox version! Download a copy from https://github.com/EfazDev/orangeblox!")
+                        printErrorMessage(f"❌ You may be downloading an unofficial {obName0()} version! Download a copy from https://github.com/EfazDev/orangeblox!")
                         printErrorMessage(f"❌ Download location: {download_location} => {possible_download_path}")
-                    printMainMessage("Are you sure you would like to continue through downloading OrangeBlox installer? (y/n)")
+                    printMainMessage(f"Are you sure you would like to continue through downloading {obName0()} installer? (y/n)")
                     a = input("> ")
                     if (isYes(a) == True):
                         printDebugMessage(f"Saving Settings..")
                         saveSettings()
-                        printMainMessage("Downloading Latest Version of OrangeBlox..")
+                        printMainMessage(f"Downloading Latest Version of {obName0()}..")
                         late_v = latest_vers.get("latest_version")
                         download_update = requests.download(download_location, os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
                         if download_update.ok:
@@ -1182,7 +1198,7 @@ if __name__ == "__main__":
                                 printMainMessage("Running Installer..")
                                 stdout.clear()
                                 e = stdout.run_process(args=[sys.executable, os.path.join(dow_tar, "Install.py")], cwd=dow_tar)
-                                if e.returncode == 0: printSuccessMessage("OrangeBlox Installer has succeeded successfully! Once you continue, this script will reload.")
+                                if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has succeeded successfully! Once you continue, this script will reload.")
                                 else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
                                 if temp_sync == False and os.path.exists(dow_tar): 
                                     if os.path.exists(os.path.join(dow_tar, "Backup.obx")): shutil.move(os.path.join(dow_tar, "Backup.obx"), os.path.join(user_folder, "Documents", "OrangeBlox_Backup.obx"))
@@ -1192,25 +1208,25 @@ if __name__ == "__main__":
                                 sys.exit(0)
                                 return
                             else:
-                                printErrorMessage("There was an issue trying to unpack the OrangeBlox installation folder!")
-                                return ts("OrangeBlox Installer task was canceled!")
+                                printErrorMessage(f"There was an issue trying to unpack the {obName0()} installation folder!")
+                                return ts(f"{obName0()} Installer task was canceled!")
                         else:
-                            printErrorMessage("There was an issue trying to download OrangeBlox from the download server!")
-                            return ts("OrangeBlox Installer task was canceled!")
-                    else: return ts("OrangeBlox Installer task was canceled!")
+                            printErrorMessage(f"There was an issue trying to download {obName0()} from the download server!")
+                            return ts(f"{obName0()} Installer task was canceled!")
+                    else: return ts(f"{obName0()} Installer task was canceled!")
                 else:
-                    printErrorMessage("There was an issue trying to fetch OrangeBlox information!")
-                    return ts("OrangeBlox Installer task was canceled!")
+                    printErrorMessage(f"There was an issue trying to fetch {obName0()} information!")
+                    return ts(f"{obName0()} Installer task was canceled!")
             else:
                 printErrorMessage("Please connect to your internet in order to use this action!")
-                return ts("OrangeBlox Installer task was canceled!")
+                return ts(f"{obName0()} Installer task was canceled!")
         a = input("> ")
         if isYes(a) == True:
             if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
                 printMainMessage("Running Installer..")
                 stdout.clear()
                 e = stdout.run_process(args=[sys.executable, os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Install.py")], cwd=main_config.get("EFlagOrangeBloxSyncDir"))
-                if e.returncode == 0: printSuccessMessage("OrangeBlox Installer has succeeded successfully! Once you continue, this script will reload.")
+                if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has succeeded successfully! Once you continue, this script will reload.")
                 else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
                 input("> ")
                 pip_class.restartScript("Main.py", sys.argv)
@@ -1218,7 +1234,7 @@ if __name__ == "__main__":
                 return
             else: return download_option()
         elif a == "r": return download_option()
-        else: return ts("OrangeBlox Installer task was canceled!")
+        else: return ts(f"{obName0()} Installer task was canceled!")
     def continueToClearTemporaryStorage(): # Clear Temporary Storage
         installer_paths = [os.path.join(cur_path, 'RobloxPlayerInstaller.exe'), os.path.join(cur_path, 'RobloxStudioInstaller.exe'), os.path.join(cur_path, 'RobloxPlayerInstaller.app'), os.path.join(cur_path, 'RobloxStudioInstaller.app')]
         bootstrap_image_needed_files = ["AppIcon.icns", "AppIcon.ico", "AppIcon.png", "OrangeBlox.terminal", "AppIconPlayRoblox.icns", "AppIconPlayRoblox.ico", "AppIconRunStudio.icns", "AppIconRunStudio.ico", "AppIcon64.png"]
@@ -1259,7 +1275,7 @@ if __name__ == "__main__":
             return files
         def getTotalClearableSize(): return getRobloxLogFolderSize(static=True) + getFolderSize(orangeblox_log_path, formatWithAbbreviation=False) + getFileSize(installer_paths, formatWithAbbreviation=False) + getFileSize(pythonCacheAvailableToClear(), formatWithAbbreviation=False) + getFileSize(bootstrapImagesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(unneededModsAvailableToClear(), formatWithAbbreviation=False) + getFileSize(robloxFilesAvailableToClear(), formatWithAbbreviation=False) + getFileSize(appLocksAvailableToClear(), formatWithAbbreviation=False)
         def continueToClearLogs(clearAll=False): # Clear All Roblox Logs
-            printWarnMessage("--- Clear All Roblox Logs ---")
+            printSystemMessage("--- Clear All Roblox Logs ---")
             if handler.getIfRobloxIsOpen() == True:
                 printErrorMessage("We can't clear logs if Roblox is currently open! Please close it before trying again!")
                 input("> ")
@@ -1297,17 +1313,17 @@ if __name__ == "__main__":
                         else: return ts("Clearing Logs failed.")
                 else: return ts("Clearing Logs canceled.")
         def continueToClearBootstrapLogs(clearAll=False): # Clear All OrangeBlox Logs
-            printWarnMessage("--- Clear All OrangeBlox Logs ---")
-            printMainMessage(f"Are you sure you want to clear all OrangeBlox logs ({getFolderSize(orangeblox_log_path)}) (y/n)?")
+            printSystemMessage(f"--- Clear All {obName0()} Logs ---")
+            printMainMessage(f"Are you sure you want to clear all {obName0()} logs ({getFolderSize(orangeblox_log_path)}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in os.listdir(orangeblox_log_path):
                     try:
                         if os.path.isfile(os.path.join(orangeblox_log_path, i)): os.remove(os.path.join(orangeblox_log_path, i))
                     except Exception as e: printDebugMessage(f"Unable to remove log: {i}")
-                return ts("Successfully cleared OrangeBlox logs!")
+                return ts(f"Successfully cleared {obName0()} logs!")
             else: return ts("Clearing Logs canceled.")
         def continueToClearPyCache(clearAll=False): # Clear Python Cache
-            printWarnMessage("--- Clear Python Cache ---")
+            printSystemMessage("--- Clear Python Cache ---")
             printMainMessage(f"Are you sure you want to clear Python cache ({getFileSize(pythonCacheAvailableToClear())}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in pythonCacheAvailableToClear():
@@ -1317,7 +1333,7 @@ if __name__ == "__main__":
                 return ts("Successfully cleared Python cache!")
             else: return ts("Clearing cache canceled.")
         def continueToClearRobloxInstallers(clearAll=False): # Clear Roblox Installers
-            printWarnMessage("--- Clear Roblox Installers ---")
+            printSystemMessage("--- Clear Roblox Installers ---")
             printMainMessage(f"Are you sure you want to clear Roblox Installers ({getFileSize(installer_paths)}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in installer_paths:
@@ -1325,7 +1341,7 @@ if __name__ == "__main__":
                 return ts("Successfully cleared Roblox Installers!")
             else: return ts("Clearing installers canceled.")
         def continueToClearBootstrapImages(clearAll=False): # Clear Bootstrap Images
-            printWarnMessage("--- Clear Bootstrap Images ---")
+            printSystemMessage("--- Clear Bootstrap Images ---")
             printMainMessage(f"Are you sure you want to clear Bootstrap images ({getFileSize(bootstrapImagesAvailableToClear())}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in bootstrapImagesAvailableToClear():
@@ -1335,17 +1351,17 @@ if __name__ == "__main__":
                 return ts("Successfully cleared Bootstrap Images!")
             else: return ts("Clearing bootstrap images canceled.")
         def continueToClearDownloadedRobloxFiles(clearAll=False): # Clear Downloaded Roblox Files
-            printWarnMessage("--- Clear Downloaded Roblox Files ---")
-            printMainMessage(f"Are you sure you want to clear downloaded Roblox files from OrangeBlox ({getFileSize(robloxFilesAvailableToClear())}) (y/n)?")
+            printSystemMessage("--- Clear Downloaded Roblox Files ---")
+            printMainMessage(f"Are you sure you want to clear downloaded Roblox files from {obName0()} ({getFileSize(robloxFilesAvailableToClear())}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in robloxFilesAvailableToClear():
                     if os.path.exists(i): 
                         if os.path.isdir(i): printDebugMessage(f"Removing {i}.."); shutil.rmtree(i, ignore_errors=True)
                         else: printDebugMessage(f"Removing {i}.."); os.remove(i)
-                return ts("Successfully cleared Downloaded Roblox Files from OrangeBlox!")
+                return ts(f"Successfully cleared Downloaded Roblox Files from {obName0()}!")
             else: return ts("Clearing files canceled.")
         def continueToClearUnneededMods(clearAll=False): # Clear Unneeded Mods
-            printWarnMessage("--- Clear Unneeded Mods ---")
+            printSystemMessage("--- Clear Unneeded Mods ---")
             printMainMessage(f"Are you sure you want to clear unneeded mods ({getFileSize(unneededModsAvailableToClear())}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in unneededModsAvailableToClear():
@@ -1355,7 +1371,7 @@ if __name__ == "__main__":
                 return ts("Successfully cleared unneeded mods!")
             else: return ts("Clearing mods canceled.")
         def continueToClearAppLocks(clearAll=False): # Clear App Locks
-            printWarnMessage("--- Clear App Locks ---")
+            printSystemMessage("--- Clear App Locks ---")
             printMainMessage(f"Are you sure you want to clear app locks ({getFileSize(appLocksAvailableToClear())}) (y/n)?")
             if clearAll == True or isYes(input("> ")) == True:
                 for i in appLocksAvailableToClear():
@@ -1365,7 +1381,7 @@ if __name__ == "__main__":
                 return ts("Successfully cleared app locks!")
             else: return ts("Clearing app locks canceled.")
         def continueToClearAllUnneededFiles():
-            printWarnMessage("--- Clear All Unneeded Files ---")
+            printSystemMessage("--- Clear All Unneeded Files ---")
             printMainMessage(f"Are you sure you want to clear all unneeded files ({formatSize(getTotalClearableSize())}) (y/n)?")
             printYellowMessage("This just runs all the clear options at once.")
             if isYes(input("> ")) == True:
@@ -1377,7 +1393,7 @@ if __name__ == "__main__":
                 continueToClearAppLocks(clearAll=True)
                 continueToClearUnneededMods(clearAll=True)
                 continueToClearBootstrapImages(clearAll=True)
-        printWarnMessage("--- Clear Temporary Storage ---")
+        printSystemMessage("--- Clear Temporary Storage ---")
         printMainMessage(f"Select which option you would like to do! (Total Size of Clearable Files: {formatSize(getTotalClearableSize())})")
         generated_ui_options = []
         generated_ui_options.append({
@@ -1387,7 +1403,7 @@ if __name__ == "__main__":
         })
         generated_ui_options.append({
             "index": 2, 
-            "message": ts(f"Clear OrangeBlox Logs ({getFolderSize(orangeblox_log_path)})"), 
+            "message": ts(f"Clear {obName0()} Logs ({getFolderSize(orangeblox_log_path)})"), 
             "func": continueToClearBootstrapLogs,
         })
         generated_ui_options.append({
@@ -1429,7 +1445,7 @@ if __name__ == "__main__":
         if d: d["func"](); return continueToClearTemporaryStorage()
         else: return ts("Temporary storage has been cleared!")
     def continueToEndRobloxInstances(studio=False): # End All Roblox Instances
-        printWarnMessage("--- End All Roblox Instances ---" if studio == False else "--- End All Roblox Studio Instances ---")
+        printSystemMessage(ts("--- End All Roblox Instances ---") if studio == False else ts("--- End All Roblox Studio Instances ---"))
         printMainMessage("Are you sure you want to end all currently open Roblox instances? (y/n)"if studio == False else "Are you sure you want to end all currently open Roblox Studio instances? (y/n)")
         a = input("> ")
         if isYes(a) == True:
@@ -1438,7 +1454,7 @@ if __name__ == "__main__":
         else: return ts("Roblox closing task has been canceled!")  
     def continueToInstallRobloxOptions(reinstall=False): # Roblox Installer Options
         def goToReinstall(fullReset=0):
-            printWarnMessage("--- Reinstall Roblox ---")
+            printSystemMessage("--- Reinstall Roblox ---")
             if fullReset == 8: printMainMessage("Are you sure you want to reinstall Vanilla Roblox Studio? (y/n)")
             elif fullReset == 7: printMainMessage("Are you sure you want to reinstall Vanilla Roblox? (y/n)")
             elif fullReset == 6: printMainMessage("Are you sure you want to reinstall Roblox Studio? (y/n)")
@@ -1486,7 +1502,7 @@ if __name__ == "__main__":
                     return (ts("Roblox has been reinstalled!") if res and res["success"] == True else ts("Roblox has not been installed!"))
             else: return ts("Roblox reinstallation has been canceled!")
         def goToUninstall(fullReset=0):
-            printWarnMessage("--- Uninstall Roblox ---")
+            printSystemMessage("--- Uninstall Roblox ---")
             if main_os == "Darwin":
                 if not (os.path.exists(os.path.join(pip_class.getInstallableApplicationsFolder(), "Roblox.app"))) and fullReset == 7:
                     printErrorMessage("Vanilla Roblox is not installed right now! Please install it from the Roblox website to get it back!")
@@ -1504,7 +1520,7 @@ if __name__ == "__main__":
                 
             if fullReset == 4: printMainMessage("Are you sure you want to uninstall Roblox? (y/n)")
             elif fullReset == 5: printMainMessage("Are you sure you want to uninstall Roblox and REMOVE your user data? (y/n)")
-            elif fullReset == 6: printMainMessage("Are you sure you want to uninstall Roblox Studio from OrangeBlox? (y/n)")
+            elif fullReset == 6: printMainMessage(f"Are you sure you want to uninstall Roblox Studio from {obName0()}? (y/n)")
             elif fullReset == 7: printMainMessage("Are you sure you want to uninstall Vanilla Roblox from your system? (y/n)")
             elif fullReset == 8: printMainMessage("Are you sure you want to uninstall Vanilla Roblox Studio from your system? (y/n)")
             else: printMainMessage("Are you sure you want to uninstall Roblox? (y/n)")
@@ -1515,7 +1531,7 @@ if __name__ == "__main__":
                     submit_status.start()
                     handler.uninstallRoblox(debug=(main_config.get("EFlagEnableDebugMode") == True), clearUserData=True)
                     submit_status.end()
-                    printSuccessMessage("Roblox has been uninstalled successfully! However, if you don't have vanilla Roblox installed, then you won't be able to play Roblox until you reopen OrangeBlox. Keep a mind at that!")
+                    printSuccessMessage(f"Roblox has been uninstalled successfully! However, if you don't have vanilla Roblox installed, then you won't be able to play Roblox until you reopen {obName0()}. Keep a mind at that!")
                     input("> ")
                     sys.exit(0)
                     return ts("Roblox has been uninstalled with user data removed!")
@@ -1616,14 +1632,14 @@ if __name__ == "__main__":
                     submit_status.start()
                     handler.uninstallRoblox(debug=(main_config.get("EFlagEnableDebugMode") == True), clearUserData=False)
                     submit_status.end()
-                    printSuccessMessage("Roblox has been uninstalled successfully! However, if you don't have vanilla Roblox installed, then you won't be able to play Roblox until you reopen OrangeBlox. Keep a mind at that!")
+                    printSuccessMessage(f"Roblox has been uninstalled successfully! However, if you don't have vanilla Roblox installed, then you won't be able to play Roblox until you reopen {obName0()}. Keep a mind at that!")
                     input("> ")
                     sys.exit(0)
                     return ts("Roblox has been uninstalled!")
             else: return ts("Roblox reinstallation has been canceled!")
         if reinstall == True: return goToReinstall()
         else:
-            printWarnMessage("--- Roblox Installer Options ---")
+            printSystemMessage("--- Roblox Installer Options ---")
             li = {}
             co = 1
             printMainMessage(f"[{co}] Reinstall Roblox")
@@ -1683,7 +1699,7 @@ if __name__ == "__main__":
             if li.get(a): return li.get(a)[0](li.get(a)[1])
             else: return ts("Option invalid!")
     def syncToFFlagConfiguration(): # Sync to Configuration
-        printWarnMessage("--- Sync to Configuration ---")
+        printSystemMessage("--- Sync to Configuration ---")
         printMainMessage(f"Are you sure you want to save your Configuration into the Configuration.json file in your installation folder (y/n)?")
         a = input("> ")
         if isYes(a) == True:
@@ -1704,7 +1720,7 @@ if __name__ == "__main__":
             printDebugMessage("Syncing was rejected by the user!")
             return ts("Syncing was rejected!")
     def syncFromFFlagConfiguration(): # Sync from Fast Flag Configuration
-        printWarnMessage("--- Sync from Configuration ---")
+        printSystemMessage("--- Sync from Configuration ---")
         printMainMessage(f"Are you sure you want to load your Configuration from the Configuration.json file in your installation folder (y/n)?")
         printErrorMessage("This will override any configuration changes inside this state to this file.")
         a = input("> ")
@@ -1746,9 +1762,9 @@ if __name__ == "__main__":
                     main_config[fflag] = False
                     printDebugMessage("User selected: False")
             def robloxSettings():
-                printWarnMessage("--- Roblox Settings ---")
+                printSystemMessage("--- Roblox Settings ---")
                 global main_config
-                printMainMessage("Would you like to enable using Roblox Studio with OrangeBlox? (y/n)")
+                printMainMessage(f"Would you like to enable using Roblox Studio with {obName0()}? (y/n)")
                 d = handleBasicSetting("EFlagRobloxStudioEnabled", False)
                 if d: return d
 
@@ -1778,7 +1794,7 @@ if __name__ == "__main__":
                 d = handleBasicSetting("EFlagFreshCopyRoblox", False)
                 if d: return d
 
-                printMainMessage("Would you like to set the URL Schemes for the Roblox Client and OrangeBlox? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
+                printMainMessage(f"Would you like to set the URL Schemes for the Roblox Client and {obName0()}? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
                 d = handleBasicSetting("EFlagDisableURLSchemeInstall", False, False)
                 if d: return d
 
@@ -1885,7 +1901,7 @@ if __name__ == "__main__":
             def globalSettings():
                 global main_config
                 global current_global_setting_type
-                printWarnMessage("--- Global Setting Modifications ---")
+                printSystemMessage("--- Global Setting Modifications ---")
                 printMainMessage("Welcome to the Roblox Global Settings menu! Select a setting to modify.")
                 printYellowMessage("WARNING! There may be issues when setting this and values set may get reset by the client.")
                 basic_settings = handler.getRobloxGlobalBasicSettings(studio=current_global_setting_type)
@@ -1946,7 +1962,7 @@ if __name__ == "__main__":
                         return
                 else: printErrorMessage(f"Unable to load current global settings.")
             def activityTracking():
-                printWarnMessage("--- Activity Tracking ---")
+                printSystemMessage("--- Activity Tracking ---")
                 global main_config
                 printMainMessage("Would you like to allow Activity Tracking on the Roblox client? (y/n)")
                 printMainMessage("This will allow features like:")
@@ -2156,7 +2172,7 @@ if __name__ == "__main__":
                             d = handleBasicSetting("EFlagShowDisplayNameInTitle", False)
                             if d: return d
             def bootstrapSettings():
-                printWarnMessage("--- Bootstrap Settings ---")
+                printSystemMessage("--- Bootstrap Settings ---")
                 global main_config
                 if os.path.exists(os.path.join(cur_path, "Translations")):
                     printMainMessage("Select your bootstrap language:")
@@ -2177,7 +2193,7 @@ if __name__ == "__main__":
                 current_rebuilder = None
                 if main_config.get("EFlagRebuildPyinstallerAppFromSourceDuringUpdates")==True: current_rebuilder = "Pyinstaller"
                 elif main_config.get("EFlagRebuildNuitkaAppFromSourceDuringUpdates")==True: current_rebuilder = "Nuitka"
-                printMainMessage("Would you like to enable rebuilding the OrangeBlox main loader? If so, what builder should it use? (y/n)")
+                printMainMessage(f"Would you like to enable rebuilding the {obName0()} main loader? If so, what builder should it use? (y/n)")
                 printMainMessage("[1] = Pyinstaller")
                 printMainMessage("[2] = Nuitka [CAN TAKE A WHILE]")
                 printMainMessage("[n] = None")
@@ -2250,7 +2266,86 @@ if __name__ == "__main__":
                     d = handleBasicSetting("EFlagEnableSlientPythonInstalls", False)
                     if d: return d
 
-                printMainMessage("Would you like to enable OrangeBlox Beta? (y/n)")
+                printMainMessage(f"Would you like to customize OrangeBlox bootstrap theme? (y/n)")
+                printMainMessage(f'Current Setting: {main_config.get("EFlagCustomBootstrapName", "OrangeBlox")}')
+                d = input("> ")
+                if isYes(d) == True:
+                    try:
+                        printMainMessage("Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):")
+                        printMainMessage(f'Current Name: {main_config.get("EFlagCustomBootstrapName", "OrangeBlox")}')
+                        k = input("> ")
+                        if k == "OrangeBlox": raise Exception("reset_theme")
+                        if k: main_config["EFlagCustomBootstrapName"] = k
+                        if len(main_config["EFlagCustomBootstrapName"].strip()) < 2: raise Exception(ts("Name is too short."))
+                        printMainMessage(f"Please enter the emoji for {main_config["EFlagCustomBootstrapName"]}:")
+                        printMainMessage(f'Current Emoji: {main_config.get("EFlagCustomBootstrapEmoji", "🍊")}')
+                        k = input("> ")
+                        if k: main_config["EFlagCustomBootstrapEmoji"] = k
+                        if len(main_config["EFlagCustomBootstrapEmoji"].strip()) != 1: raise Exception(ts("Invalid Emoji format."))
+                        printMainMessage(f"Please enter the HEX color for {main_config["EFlagCustomBootstrapName"]}:")
+                        printMainMessage("For selecting your color, use this Google link and use the Hex value.")
+                        printMainMessage("https://www.google.com/search?q=color+picker")
+                        printMainMessage(f'Current Color: {main_config.get("EFlagCustomBootstrapColor", "#ff4b00")}')
+                        k = input("> ")
+                        if k: main_config["EFlagCustomBootstrapColor"] = k
+                        import re as regex
+                        if not bool(regex.fullmatch(r'#(?:[0-9a-fA-F]{3}){1,2}$', main_config["EFlagCustomBootstrapColor"].strip())): raise Exception(ts("Invalid HEX color format."))
+                        colors_class.hex_to_rgb(main_config["EFlagCustomBootstrapColor"])
+                        printMainMessage(f"Please enter the internet url of the image file:")
+                        printYellowMessage("This will be used for places on the internet such as Discord Webhooks. However, the file must be a direct downloadable image link, not a webpage.")
+                        printMainMessage(f'Current URL: {main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/AppIcon.png")}')
+                        k = input("> ")
+                        if k: main_config["EFlagCustomBootstrapInternetURL"] = k
+                        if not main_config["EFlagCustomBootstrapInternetURL"].startswith("https") and not main_config["EFlagCustomBootstrapInternetURL"].startswith("ftp"): raise Exception(ts("The internet URL should be https or ftp."))
+                        printMainMessage("Would you like to use a local image file or would you like to download this file?")
+                        printMainMessage(f'Current Image: {main_config.get("EFlagCustomBootstrapIconPath", os.path.join(cur_path, "Images", "AppIcon.png"))}')
+                        printMainMessage("[1] = Local File")
+                        printMainMessage("[*] = Download File")
+                        d = input("> ")
+                        if d == "1":
+                            printMainMessage(f"Please enter the path (or the image file you want to use):")
+                            printYellowMessage("Please note that it will have to be a working file in order to be used!")
+                            k = input("> ")
+                            if k: main_config["EFlagCustomBootstrapIconPath"] = k
+                            if not os.path.exists(main_config["EFlagCustomBootstrapIconPath"]): raise Exception(ts("Unable to find local image file."))
+                        else:
+                            printMainMessage("Downloading image file..")
+                            path_to_download = generateFileKey("AppIcon", ext=".png")
+                            img_download_res = requests.download(main_config["EFlagCustomBootstrapInternetURL"], path_to_download)
+                            if img_download_res.ok:
+                                main_config["EFlagCustomBootstrapIconPath"] = path_to_download
+                                printMainMessage("Successfully downloaded image file!")
+                            else:
+                                printErrorMessage("Unable to download image file from the internet URL provided.")
+                                printMainMessage(f"Please enter the path (or the image file you want to use):")
+                                printYellowMessage("Please note that it will have to be a working file in order to be used!")
+                                k = input("> ")
+                                if k: main_config["EFlagCustomBootstrapIconPath"] = k
+                                if not os.path.exists(main_config["EFlagCustomBootstrapIconPath"]): raise Exception(ts("Unable to find local image file."))
+                        printDebugMessage("User selected: Custom")
+                        printSuccessMessage(f"Successfully set the theme of OrangeBlox to {main_config['EFlagCustomBootstrapName']}!")
+                        if main_os == "Darwin":
+                            printYellowMessage("Colors that are outside OrangeBlox such as the terminal may be needed to changed manually.")
+                            printYellowMessage("This can be done by modifying the OrangeBlox terminal profile.")
+                            printYellowMessage("Also, for local files, there may be popups to allow access to the folder those files are in. Allow those popups for the Terminal and OrangeBlox app.")
+                    except Exception as e:
+                        if str(e) != "reset_theme": printErrorMessage(f"An error occurred while setting customizations: {str(e)}")
+                        main_config["EFlagCustomBootstrapName"] = "OrangeBlox"
+                        main_config["EFlagCustomBootstrapEmoji"] = "🍊"
+                        main_config["EFlagCustomBootstrapColor"] = "#ff4b00"
+                        main_config["EFlagCustomBootstrapInternetURL"] = f"{main_host}/Images/AppIcon.png"
+                        main_config["EFlagCustomBootstrapIconPath"] = os.path.join(cur_path, "Images", "AppIcon.png")
+                        printDebugMessage("User selected: Default")
+                elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
+                elif isNo(d) == True:
+                    main_config["EFlagCustomBootstrapName"] = "OrangeBlox"
+                    main_config["EFlagCustomBootstrapEmoji"] = "🍊"
+                    main_config["EFlagCustomBootstrapColor"] = "#ff4b00"
+                    main_config["EFlagCustomBootstrapInternetURL"] = f"{main_host}/Images/AppIcon.png"
+                    main_config["EFlagCustomBootstrapIconPath"] = os.path.join(cur_path, "Images", "AppIcon.png")
+                    printDebugMessage("User selected: Default")
+
+                printMainMessage(f"Would you like to enable {obName0()} Beta? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagBootstrapUpdateServer")=="https://raw.githubusercontent.com/EfazDev/orangeblox/refs/heads/beta/Version.json" or main_config.get("EFlagBootstrapUpdateServer")=="https://obxbeta.efaz.dev/Version.json")}')
                 printYellowMessage("Betas could contain bugs that could break your Roblox installation!")
                 d = input("> ")
@@ -2262,7 +2357,7 @@ if __name__ == "__main__":
                     main_config["EFlagBootstrapUpdateServer"] = "https://obx.efaz.dev/Version.json"
                     printDebugMessage("User selected: False")
 
-                printMainMessage("Would you like to disable automatically saving your OrangeBlox Configuration to your installation folder? (y/n)")
+                printMainMessage(f"Would you like to disable automatically saving your {obName0()} Configuration to your installation folder? (y/n)")
                 d = handleBasicSetting("EFlagDisableAutosaveToInstallation", False)
                 if d: return d
 
@@ -2279,7 +2374,7 @@ if __name__ == "__main__":
                         main_config["EFlagDisableBootstrapCooldown"] = False
                         printDebugMessage("User selected: False")
 
-                printMainMessage("Would you like to use Python Virtual Environments for OrangeBlox? (y/n)")
+                printMainMessage(f"Would you like to use Python Virtual Environments for {obName0()}? (y/n)")
                 d = handleBasicSetting("EFlagEnablePythonVirtualEnvironments", False)
                 if d: return d
 
@@ -2288,7 +2383,7 @@ if __name__ == "__main__":
                 if d: return d
                     
                 if main_os == "Windows":
-                    printMainMessage("Would you like to make shortcuts for OrangeBlox? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
+                    printMainMessage(f"Would you like to make shortcuts for {obName0()}? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
                     d = handleBasicSetting("EFlagDisableShortcutsInstall", False, False)
                     if d: return d
                 elif main_os == "Darwin":
@@ -2296,7 +2391,7 @@ if __name__ == "__main__":
                     d = handleBasicSetting("EFlagEnableGUIOptionMenus", True)
                     if d: return d
             def debugging():
-                printWarnMessage("--- Debugging ---")
+                printSystemMessage("--- Debugging ---")
                 global main_config
                 printMainMessage("Would you like to enable Debug Mode? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagEnableDebugMode")==True)}')
@@ -2338,7 +2433,7 @@ if __name__ == "__main__":
                         elif channel_inp == "D":
                             main_config["EFlagRobloxClientChannel"] = "LIVE"
                             main_config["EFlagDisableRobloxUpdateChecks"] = True
-                            printSuccessMessage("Successfully disabled Roblox Update Checks for launching from OrangeBlox. Roblox may still check for updates though.")
+                            printSuccessMessage(f"Successfully disabled Roblox Update Checks for launching from {obName0()}. Roblox may still check for updates though.")
                         else:
                             try:
                                 a = handler.getLatestClientVersion(studio=False, debug=main_config.get("EFlagEnableDebugMode"), channel=channel_inp, token=createDownloadToken(False))
@@ -2377,7 +2472,7 @@ if __name__ == "__main__":
                             elif channel_inp == "D":
                                 main_config["EFlagRobloxStudioClientChannel"] = "LIVE"
                                 main_config["EFlagDisableRobloxUpdateChecks"] = True
-                                printSuccessMessage("Successfully disabled Roblox Studio Update Checks for launching from OrangeBlox. Roblox may still check for updates though.")
+                                printSuccessMessage(f"Successfully disabled Roblox Studio Update Checks for launching from {obName0()}. Roblox may still check for updates though.")
                             else:
                                 try:
                                     a = handler.getLatestClientVersion(studio=True, debug=main_config.get("EFlagEnableDebugMode"), channel=channel_inp, token=createDownloadToken(True))
@@ -2421,7 +2516,7 @@ if __name__ == "__main__":
                 elif isNo(d) == True:
                     main_config["EFlagVerifyRobloxHashAfterInstall"] = False
                     printDebugMessage("User selected: False")
-            printWarnMessage("--- Settings ---")
+            printSystemMessage("--- Settings ---")
             generated_ui_options.append({
                 "index": 1, 
                 "message": ts("Roblox Modifications & Settings"), 
@@ -2470,10 +2565,10 @@ if __name__ == "__main__":
             })
             generated_ui_options.append({
                 "index": 8, 
-                "message": ts("OrangeBlox Installer Options"), 
+                "message": ts(f"{obName0()} Installer Options"), 
                 "func": continueToOrangeBloxInstaller, 
                 "go_to_rbx": True,  
-                "end_mes": ts("OrangeBlox has been modified!"),
+                "end_mes": ts(f"{obName0()} has been modified!"),
                 "clear_console": True
             })
             generated_ui_options.append({
@@ -2505,7 +2600,7 @@ if __name__ == "__main__":
                 re = opt["func"]()
                 if opt.get("go_to_rbx") == True: 
                     saveSettings()
-                    printWarnMessage(f"{re} Would you like to return to settings or exit it?")
+                    printSystemMessage(f"{re} Would you like to return to settings or exit it?")
                     printMainMessage("[1] Return to Settings")
                     printMainMessage("[*] Exit Settings")
                     a = input("> ")
@@ -2522,14 +2617,14 @@ if __name__ == "__main__":
                 printSuccessMessage("Successfully saved Bootstrap Settings!")
                 return ts("Successfully saved settings!")
         if main_config.get("EFlagDisableSettingsAccess") == True:
-            printWarnMessage("--- Settings ---")
+            printSystemMessage("--- Settings ---")
             printErrorMessage("Access to editing Settings was disabled by file. Please try again later!")
             input("> ")
             return ts("Settings was not saved!")
         return mainSettings()
     def continueToCredits(): # Credits
         quote = "'"
-        printWarnMessage("--- Credits ---")
+        printSystemMessage("--- Credits ---")
         printMainMessage(f"1. Made by {colors_class.wrap('@EfazDev 🍊', 202)}")
         printMainMessage(f"2. Old Player Sounds and Cursors were sourced from {colors_class.wrap('Bloxstrap 🎮 (https://github.com/pizzaboxer/bloxstrap)', 165)}")
         printMainMessage(f"3. Avatar Editor Maps were from {colors_class.wrap(f'Mielesgames{quote}s Map Files 🗺️ (https://github.com/Mielesgames/RobloxAvatarEditorMaps)', 197)} slightly edited to be usable for the current version of Roblox (as of the time of writing this)")
@@ -2554,7 +2649,7 @@ if __name__ == "__main__":
             printMainMessage(f"Command: \"{sys.executable}\" Install.py -r -rp")
         printDebugMessage(f"Operating System: {main_os}")
     def continueToUnfriendedFriends(): # View Unfriended Friends
-        printWarnMessage(f"--- Unfriended Friends ---")
+        printSystemMessage(f"--- Unfriended Friends ---")
         unfriended_friends = []
         blank_user_ids = 0
         friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
@@ -2632,7 +2727,7 @@ if __name__ == "__main__":
         is_python_beta = pip_class.getIfPythonVersionIsBeta()
         current_python_version = pip_class.getCurrentPythonVersion()
         latest_python_version = pip_class.getLatestPythonVersion(beta=is_python_beta)
-        printWarnMessage(f"--- Update to Python {latest_python_version} ---")
+        printSystemMessage(f"--- Update to Python {latest_python_version} ---")
         if current_python_version == latest_python_version: printSuccessMessage(f"You're already in the latest version of Python!")
         else:
             printMainMessage(f"Would you like to update Python to {latest_python_version} using the official Python Installer? (y/n)")
@@ -2660,7 +2755,7 @@ if __name__ == "__main__":
                     sys.exit(0)
                 else: printErrorMessage("Python Installation was may be canceled or Python was not installed!")
     def continueToUpdatePythonModules(): # Update Python Modules
-        printWarnMessage(f"--- Update Python Modules ---")
+        printSystemMessage(f"--- Update Python Modules ---")
         can_be_updated_modules = ["pypresence", "psutil", "pip", "truststore"]
         if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
         elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
@@ -2692,7 +2787,7 @@ if __name__ == "__main__":
     def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
         global run_studio
         global custom_cookies
-        printWarnMessage("--- Roblox Link Shortcuts ---")
+        printSystemMessage("--- Roblox Link Shortcuts ---")
         if main_config.get("EFlagDisableSettingsAccess") == True:
             printErrorMessage("Access to using Link Shortcuts was disabled by file. Please try again later!")
             input("> ")
@@ -2787,7 +2882,7 @@ if __name__ == "__main__":
                     elif opt["index"] == 999999.5:
                         printYellowMessage("Important Notes:")
                         printYellowMessage("This option will automatically fetch your cookies and save them into the Roblox folder so you can login quicker.")
-                        printYellowMessage("This option cannot be backed up to an another computer using OrangeBlox installer due to cookie locations are saved.")
+                        printYellowMessage(f"This option cannot be backed up to an another computer using {obName0()} installer due to cookie locations are saved.")
                         printYellowMessage("Launching Roblox from the web will automatically log out the user. Please know that.")
                         printYellowMessage("Log into the account you want to save as a shortcut before you continue.")
                         if not handler.getIfRobloxIsOpen():
@@ -2884,7 +2979,7 @@ if __name__ == "__main__":
                             def loo():
                                 if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                                     generated_ui_options = []
-                                    printWarnMessage("--- Select Link Shortcut ---")
+                                    printSystemMessage("--- Select Link Shortcut ---")
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id"): 
                                             approved = False
@@ -2931,7 +3026,7 @@ if __name__ == "__main__":
                                                             if i[0] == "/usr/bin/xattr": subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                                                             else: subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                                                         printSuccessMessage("Generated Shortcut App!")
-                                                    else: printErrorMessage("Unable to generate a shortcut app because this path for the shortcut is non-OrangeBlox and exists!")
+                                                    else: printErrorMessage(f"Unable to generate a shortcut app because this path for the shortcut is non-{obName0()} and exists!")
                                                 else: printErrorMessage("Unable to generate a shortcut app because Play Roblox app is not available!")
                                         saveSettings()
                                         printMainMessage("Would you like to generate an another shortcut app? (y/n)")
@@ -2942,7 +3037,7 @@ if __name__ == "__main__":
                     elif opt["index"] == 1000000.5:
                         if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                             generated_ui_options = []
-                            printWarnMessage("--- Select Link Shortcut ---")
+                            printSystemMessage("--- Select Link Shortcut ---")
                             for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                 if v and v.get("name") and v.get("id"): 
                                     approved = False
@@ -2989,20 +3084,20 @@ if __name__ == "__main__":
                                                     if cookie_req.status_code == 403:
                                                         failed.append((2, v.get("id"), v.get("name"), v.get('cookie_user')))
                                             except Exception as e: printErrorMessage(f"Unable to validate shortcut {v.get('name')} due to an Python exception: \n{trace()}")
-                            printWarnMessage("--- Final Results! ---")
+                            printSystemMessage("--- Final Results! ---")
                             if len(failed) > 0:
                                 printYellowMessage("The following shortcuts no longer have valid cookies:")
                                 printMainMessage(", ".join([f"{shortcut_name} [{shortcut_id}] [@{cookie_user}]{'' if client == 1 else ' [STUDIO]'}" for client, shortcut_id, shortcut_name, cookie_user in failed]))
                             else: printMainMessage("Your shortcuts are valid and don't contain invalid cookies. :D")
                         except Exception as e: printErrorMessage(f"Unable to validate due to an Python exception: \n{trace()}")
-                        printWarnMessage("--- Roblox Link Shortcuts ---")
+                        printSystemMessage("--- Roblox Link Shortcuts ---")
                         linkLoop()
                     elif opt["index"] == 1000001:
                         if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                             def loo():
                                 if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
                                     generated_ui_options = []
-                                    printWarnMessage("--- Select Link Shortcut ---")
+                                    printSystemMessage("--- Select Link Shortcut ---")
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id"): 
                                             approved = False
@@ -3050,7 +3145,7 @@ if __name__ == "__main__":
         global main_config
         if main_config.get("EFlagEnableMods") == True:
             def mainModManager():
-                if reverify_mod_script == None: printWarnMessage("--- Mods Manager ---")
+                if reverify_mod_script == None: printSystemMessage("--- Mods Manager ---")
                 if reverify_mod_script == None:
                     printSuccessMessage(f"Mods Enabled: Yes")
                     if main_config.get("EFlagAllowActivityTracking") == False:
@@ -3104,11 +3199,11 @@ if __name__ == "__main__":
                     opt = {"index": 999998, "message": ts("Mod Script Settings")}
                 if opt:
                     if reverify_mod_script == None: startMessage()
-                    printWarnMessage(f"--- {opt['message']} ---")
+                    printSystemMessage(f"--- {opt['message']} ---")
                     if opt["index"] == 999998:
                         def modScriptsLoop(se):
                             if se == 0: se += 1
-                            else: printWarnMessage(f"--- Mod Script Settings ---")
+                            else: printSystemMessage(f"--- Mod Script Settings ---")
                             if reverify_mod_script == None:
                                 printMainMessage("Select the mod scripts you want to be used!")
                                 mod_script_generated_ui_options = []
@@ -3201,7 +3296,7 @@ if __name__ == "__main__":
                                                 printSuccessMessage(f"Successfully cleared {sel_mod_script2.get('final_name')}'s Mod Script Configurations!")
                                             else: printErrorMessage("Canceled Clearing Operation.")
                                     elif sel_mod_script["index"] == 2:
-                                        if sel_mod_script["mod_info"]["mod_script_supports"] > current_version["version"]: printErrorMessage(f"This mod script is unsupported! Please update to OrangeBlox v{sel_mod_script['mod_info']['mod_script_supports']} in order to use!")
+                                        if sel_mod_script["mod_info"]["mod_script_supports"] > current_version["version"]: printErrorMessage(f"This mod script is unsupported! Please update to {obName0()} v{sel_mod_script['mod_info']['mod_script_supports']} in order to use!")
                                         else:
                                             printErrorMessage(f"This mod script has reached their end support! Creator Note:")
                                             printErrorMessage(v['mod_info']["mod_script_end_support_reasoning"])
@@ -3300,7 +3395,7 @@ if __name__ == "__main__":
                                 got_backgrounds = []
                                 for i in os.listdir(os.path.join(mods_folder, "AvatarEditorMaps")):
                                     if os.path.isfile(os.path.join(mods_folder, "AvatarEditorMaps", i)) and i.endswith(".rbxl"): got_backgrounds.append(i)
-                                printWarnMessage("Select the number that is associated with the map you want to use.")
+                                printSystemMessage("Select the number that is associated with the map you want to use.")
                                 got_backgrounds = sorted(got_backgrounds)
                                 count = 1
                                 for i in got_backgrounds:
@@ -3347,7 +3442,7 @@ if __name__ == "__main__":
                                 for i in os.listdir(os.path.join(mods_folder, "Cursors")):
                                     if os.path.isdir(os.path.join(mods_folder, "Cursors", i)): got_cursors.append(i)
                                 got_cursors = sorted(got_cursors)
-                                printWarnMessage("Select the number that is associated with the cursor you want to use.")
+                                printSystemMessage("Select the number that is associated with the cursor you want to use.")
                                 count = 1
                                 for i in got_cursors:
                                     printMainMessage(f"[{str(count)}] {i}")
@@ -3391,7 +3486,7 @@ if __name__ == "__main__":
                                 for i in os.listdir(os.path.join(mods_folder, "RobloxBrand")):
                                     if os.path.isdir(os.path.join(mods_folder, "RobloxBrand", i)): got_icons.append(i)
                                 got_icons = sorted(got_icons)
-                                printWarnMessage("Select the number that is associated with the icon you want to use.")
+                                printSystemMessage("Select the number that is associated with the icon you want to use.")
                                 count = 1
                                 for i in got_icons:
                                     printMainMessage(f"[{str(count)}] {i}")
@@ -3437,7 +3532,7 @@ if __name__ == "__main__":
                                     for i in os.listdir(os.path.join(mods_folder, "RobloxStudioBrand")):
                                         if os.path.isdir(os.path.join(mods_folder, "RobloxStudioBrand", i)): got_icons.append(i)
                                     got_icons = sorted(got_icons)
-                                    printWarnMessage("Select the number that is associated with the icon you want to use.")
+                                    printSystemMessage("Select the number that is associated with the icon you want to use.")
                                     count = 1
                                     for i in got_icons:
                                         printMainMessage(f"[{str(count)}] {i}")
@@ -3502,7 +3597,7 @@ if __name__ == "__main__":
                                 for i in os.listdir(os.path.join(mods_folder, "PlayerSounds")):
                                     if os.path.isdir(os.path.join(mods_folder, "PlayerSounds", i)): got_sounds.append(i)
                                 got_sounds = sorted(got_sounds)
-                                printWarnMessage("Select the number that is associated with the player sounds you want to use.")
+                                printSystemMessage("Select the number that is associated with the player sounds you want to use.")
                                 count = 1
                                 for i in got_sounds:
                                     printMainMessage(f"[{str(count)}] {i}")
@@ -3597,12 +3692,12 @@ if __name__ == "__main__":
                 else: return
             if not (main_config.get("EFlagDisableModsManagerAccess") == True): mainModManager()
             else:
-                printWarnMessage("--- Mods Manager ---")
+                printSystemMessage("--- Mods Manager ---")
                 printErrorMessage("Access to editing Mods was disabled by file. Please try again later!")
                 input("> ")
                 return ts("Mods Settings was not saved!")
         else:
-            printWarnMessage("--- Mods Manager ---")
+            printSystemMessage("--- Mods Manager ---")
             printErrorMessage("Mods Enabled: No")
             printMainMessage("Would you like to enable Mods? (y/n)")
             b = input("> ")
@@ -3611,7 +3706,7 @@ if __name__ == "__main__":
                 saveSettings()
                 continueToModsManager(reverify_mod_script)
     def continueToUpdates(): # Check for Updates
-        printWarnMessage("--- Checking for Bootstrap Updates ---")
+        printSystemMessage("--- Checking for Bootstrap Updates ---")
         printDebugMessage("Setting Installed App Path to Local User..") 
         if main_os == "Darwin": setInstalledAppPath(os.path.realpath(os.path.join(macos_app_path, "../") + "/"))
         elif main_os == "Windows": setInstalledAppPath(os.path.realpath(cur_path))
@@ -3627,8 +3722,8 @@ if __name__ == "__main__":
                 if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
                     download_location = latest_vers.get("download_location", "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip")
                     printDebugMessage(f"Update v{latest_vers['latest_version']} detected!")
-                    printWarnMessage("--- New Bootstrap Update ---")
-                    printMainMessage(f"We have detected a new version of OrangeBlox! Would you like to install it? (y/n)")
+                    printSystemMessage("--- New Bootstrap Update ---")
+                    printMainMessage(f"We have detected a new version of {obName0()}! Would you like to install it? (y/n)")
                     if download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
                         printSuccessMessage("✅ This version is a public update available on GitHub for viewing.")
@@ -3636,7 +3731,7 @@ if __name__ == "__main__":
                         printSuccessMessage(f"✅ Download Location: {download_location}")
                     elif download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/beta.zip":
                         download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"
-                        printYellowMessage("⚠️ This version is a beta version of OrangeBlox and may cause issues with your installation.")
+                        printYellowMessage(f"⚠️ This version is a beta version of {obName0()} and may cause issues with your installation.")
                         printYellowMessage("⚠️ For information about this update, use this link: https://github.com/EfazDev/orangeblox/releases")
                         printSuccessMessage(f"⚠️ Download Location: {download_location}")
                     elif not (main_config.get("EFlagUpdatesAuthorizationKey", "") == ""):
@@ -3645,7 +3740,7 @@ if __name__ == "__main__":
                         printSuccessMessage(f"🔨 Download Location: {download_location}")
                     else:
                         printErrorMessage("❌ The download location is different from the official GitHub link!")
-                        printErrorMessage("❌ You may be downloading an unofficial OrangeBlox version! Download a copy from https://github.com/EfazDev/orangeblox!")
+                        printErrorMessage(f"❌ You may be downloading an unofficial {obName0()} version! Download a copy from https://github.com/EfazDev/orangeblox!")
                         printSuccessMessage(f"❌ Download Location: {download_location}")
                     printSuccessMessage(f"v{current_version.get('version', '1.0.0')} [Current] => v{latest_vers['latest_version']} [Latest]")
                     if isYes(input("> ")) == True:
@@ -3698,21 +3793,21 @@ if __name__ == "__main__":
                                                 os.remove(os.path.join(cur_path, 'Update.zip'))
                                                 shutil.rmtree(os.path.join(cur_path, 'Update'))
                                             except Exception as e:
-                                                printErrorMessage("Something went wrong while cleaning the files for OrangeBlox update!")
+                                                printErrorMessage(f"Something went wrong while cleaning the files for {obName0()} update!")
                                                 printDebugMessage(f"Cleaning Error: \n{trace()}")
                                             sys.exit(0)
                                         else:
                                             silent_install = stdout.run_process(args=[sys.executable, "Install.py", "--update-mode"], cwd=cur_path)
                                             if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
                                     except Exception as e:
-                                        printErrorMessage("Something went wrong while updating the files for OrangeBlox!")
+                                        printErrorMessage(f"Something went wrong while updating the files for {obName0()}!")
                                         printDebugMessage(f"Updating Error: \n{trace()}")
                                     try:
                                         printMainMessage("Cleaning up files..")
                                         os.remove(os.path.join(cur_path, 'Update.zip'))
                                         shutil.rmtree(os.path.join(cur_path, 'Update'), ignore_errors=True)
                                     except Exception as e:
-                                        printErrorMessage("Something went wrong while cleaning the files for OrangeBlox update!")
+                                        printErrorMessage(f"Something went wrong while cleaning the files for {obName0()} update!")
                                         printDebugMessage(f"Cleaning Error: \n{trace()}")
                                     printSuccessMessage(f"Update to v{latest_vers['version']} was finished successfully! Restarting bootstrap..")
                                     pip_class.restartScript("Main.py", given_args)
@@ -3723,7 +3818,7 @@ if __name__ == "__main__":
                                         os.remove(os.path.join(cur_path, 'Update.zip'))
                                         shutil.rmtree(os.path.join(cur_path, 'Update'), ignore_errors=True)
                                     except Exception as e:
-                                        printErrorMessage("Something went wrong while cleaning the files for OrangeBlox update!")
+                                        printErrorMessage(f"Something went wrong while cleaning the files for {obName0()} update!")
                                         printDebugMessage(f"Update Error: \n{trace()}")
                                     printErrorMessage("There was an issue extracting the update due to an error!")
                                     return ts("Update was unable to be installed!")
@@ -3737,10 +3832,10 @@ if __name__ == "__main__":
                         printDebugMessage("User rejected update.")
                         return ts("Update was cancelled!")
                 elif current_version.get("version", "1.0.0") > latest_vers.get("latest_version", "1.0.0"):
-                    printSuccessMessage("OrangeBlox is in a beta version! No updates are needed!")
+                    printSuccessMessage(f"{obName0()} is in a beta version! No updates are needed!")
                     return ts("No updates are needed!")
                 else:
-                    printMainMessage("OrangeBlox is currently on the latest version! No updates are needed!")
+                    printMainMessage(f"{obName0()} is currently on the latest version! No updates are needed!")
                     return ts("No updates are needed!")
             else:
                 printDebugMessage("There was an error reading the latest version.")
@@ -3759,8 +3854,8 @@ if __name__ == "__main__":
             if (not (main_config.get("EFlagRemoveMenuAndSkipToRoblox") == True)) or (len(given_args) > 1 and "efaz-bootstrap:" in given_args[1]) or (len(given_args) > 1 and "orangeblox:" in given_args[1]):
                 startMessage()
                 if os.path.exists(os.path.join(cur_path, "Backup.obx")):
-                    printWarnMessage("--- OrangeBlox Backup Assistant ---")
-                    printMainMessage("It seems that you have installed OrangeBlox with a backup file included.")
+                    printSystemMessage(f"--- {obName0()} Backup Assistant ---")
+                    printMainMessage(f"It seems that you have installed {obName0()} with a backup file included.")
                     printMainMessage(f"Path: {os.path.join(cur_path, 'Backup.obx')}")
                     printMainMessage("Would you like to restore the data on it? (y/n)")
                     printYellowMessage("This will overwrite your current configuration and mods!!")
@@ -3769,7 +3864,7 @@ if __name__ == "__main__":
                         backup_path = os.path.join(cur_path, "Backup")
                         backup_file = os.path.join(cur_path, "Backup.obx")
                         try:
-                            printMainMessage("Unwrapping OrangeBlox file..")
+                            printMainMessage(f"Unwrapping {obName0()} file..")
                             makedirs(backup_path)
                             zip_extract = pip_class.unzipFile(backup_file, backup_path, ["FastFlagConfiguration.json", "Cursors", "Mods", "RobloxBrand"])
                             if zip_extract.returncode == 0:
@@ -3810,21 +3905,21 @@ if __name__ == "__main__":
                                 printMainMessage("Finished transferring! Deleting backup data..")
                                 if os.path.exists(backup_path): shutil.rmtree(backup_path, ignore_errors=True)
                                 if os.path.exists(os.path.join(cur_path, "Backup.obx")): os.remove(os.path.join(cur_path, "Backup.obx"))
-                                printSuccessMessage("Successfully restored OrangeBlox data! Would you to restart the app? (y/n)")
+                                printSuccessMessage(f"Successfully restored {obName0()} data! Would you to restart the app? (y/n)")
                                 a = input("> ")
                                 if isYes(a) == True: pip_class.restartScript("Main.py", sys.argv)
                                 else: sys.exit(0)
-                            else: raise Exception("There was an issue trying to open the OrangeBlox file! Make sure it's readable before trying again!")
+                            else: raise Exception(f"There was an issue trying to open the {obName0()} file! Make sure it's readable before trying again!")
                         except Exception as e:
-                            printErrorMessage("There was an error trying to restore your OrangeBlox files!")
+                            printErrorMessage(f"There was an error trying to restore your {obName0()} files!")
                             printErrorMessage(f"Python Exception: \n{trace()}")
                             input("> ")
                             sys.exit(0)
                             return
                 if not (main_config.get("EFlagCompletedTutorial") == True): # Tutorial        
-                    printWarnMessage("--- Tutorial ---")
-                    printMainMessage("Welcome to OrangeBlox 🍊!")
-                    printMainMessage("OrangeBlox is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
+                    printSystemMessage("--- Tutorial ---")
+                    printMainMessage(f"Welcome to {obName0()} {obName1()}!")
+                    printMainMessage(f"{obName0()} is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
                     printMainMessage("Before we get started, there's some information that may be needed to know.")
                     if validateInstallation(): printSuccessMessage("Installation Valid! You may continue! [✅]")
                     else:
@@ -3832,43 +3927,43 @@ if __name__ == "__main__":
                         input("> ")
                         sys.exit(0)
                     information_num = 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
+                    printSystemMessage(f"--- Info #{information_num} ---")
                     printMainMessage("There's lot of permissions that are needed to be set in order for this bootstrap to work.")
-                    printMainMessage("For example, it may ask you to allow access to the Roblox app files or allow access to a Terminal. Please put it in always allow in order to allow OrangeBlox to function properly!")
+                    printMainMessage(f"For example, it may ask you to allow access to the Roblox app files or allow access to a Terminal. Please put it in always allow in order to allow {obName0()} to function properly!")
                     input("> ")
                     information_num += 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
+                    printSystemMessage(f"--- Info #{information_num} ---")
                     printMainMessage("Since this bootstrap is made using Python, anti-viruses may report this app as a virus.")
-                    printMainMessage("For example, Windows Defender may detect OrangeBlox with Win32/Wacapew.C!ml. You may need to authorize the app through your anti-virus or build the app directly in order to allow use.")
+                    printMainMessage(f"For example, Windows Defender may detect {obName0()} with Win32/Wacapew.C!ml. You may need to authorize the app through your anti-virus or build the app directly in order to allow use.")
                     input("> ")
                     information_num += 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
+                    printSystemMessage(f"--- Info #{information_num} ---")
                     printMainMessage("Most features are based on Activity Tracking, a watching system based on watching Roblox logs in response of actions.")
                     printMainMessage("This app will use your Roblox logs to track data such as Game Join Data, Discord Presences, BloxstrapRPC and a lot more!")
                     printMainMessage("If you wish to change these settings, once you get to the settings menu, go to the Activity Tracking settings!")
                     printYellowMessage("This will not get you banned as this is based on files, not interrupting the client.")
                     input("> ")
                     information_num += 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
+                    printSystemMessage(f"--- Info #{information_num} ---")
                     displayNotification(ts("Hello!"), ts("If you see this, your notifications are set up! Great job!"))
                     printMainMessage("We have just sent a notification to your computer, so that you can allow notifications")
                     printYellowMessage("Depending on your OS (Windows or macOS), you may be able to select Allow for features like Server Locations to work!")
                     input("> ")
                     information_num += 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
+                    printSystemMessage(f"--- Info #{information_num} ---")
                     printMainMessage("If you haven't noticed, we have also installed a Play Roblox and Run Studio app into your system!")
-                    printMainMessage("This will allow you to skip the main menu and launch Roblox instantly through OrangeBlox!")
+                    printMainMessage(f"This will allow you to skip the main menu and launch Roblox instantly through {obName0()}!")
                     if main_os == "Darwin": printMainMessage("You may find this in your Applications folder or through Launchpad!")
                     elif main_os == "Windows": printMainMessage("You may find this in your Start Menu or Desktop!")
                     input("> ")
                     information_num += 1
-                    printWarnMessage(f"--- Info #{information_num} ---")
-                    printMainMessage("If you have issues with OrangeBlox, you may report it on GitHub using the issues page:")
+                    printSystemMessage(f"--- Info #{information_num} ---")
+                    printMainMessage(f"If you have issues with {obName0()}, you may report it on GitHub using the issues page:")
                     printMainMessage("https://github.com/EfazDev/orangeblox/issues")
                     printErrorMessage("However, please check if you're on the latest bootstrap version first before continuing. If you don't have the latest version, please do!")
                     printYellowMessage("If you want to uninstall this bootstrap, you may run the Install.py script which you ran to be here and select Uninstall!")
                     printYellowMessage("Additionally, you can use the Reinstall Roblox option in the settings menu to prevent uninstalling this.")
-                    printWarnMessage("--- Step 1 ---")
+                    printSystemMessage("--- Step 1 ---")
                     printMainMessage("Alright, now that you have read all the needed information, let's get started! First, it's important that you best understand on how the choosing works.")
                     printMainMessage("Let\'s say you want to enable an option (use the prompt here for the example), just type \"y\" and hit enter!")
                     printMainMessage("For example in this case:")
@@ -3885,7 +3980,7 @@ if __name__ == "__main__":
                             printErrorMessage("Uhm, not quite. Try again!")
                             a()
                     a()
-                    printWarnMessage("--- Step 2 ---")
+                    printSystemMessage("--- Step 2 ---")
                     printMainMessage("Congrats! You completed the first step!")
                     printMainMessage('Now, let\'s try that again! But instead, enter "n" for you don\'t want this option!')
                     printMainMessage("--------------------")
@@ -3900,7 +3995,7 @@ if __name__ == "__main__":
                             printErrorMessage("Uhm, not quite. Try again!")
                             a()
                     a()
-                    printWarnMessage("--- Step 3 ---")
+                    printSystemMessage("--- Step 3 ---")
                     printMainMessage("You're getting good at this!")
                     printMainMessage('Now, let\'s learn about how you select from a list. Take the list below for an example.')
                     printMainMessage("The list contains a number that can be used to select which option to choose!")
@@ -3922,7 +4017,7 @@ if __name__ == "__main__":
                     generated_ui_options.append({"index": 5, "message": ts("Do neither")})
                     generated_ui_options.append({"index": 6, "message": ts("Do all of the above")})
                     generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-                    printWarnMessage("--- Select Option ---")
+                    printSystemMessage("--- Select Option ---")
                     count = 1
                     for i in generated_ui_options:
                         printMainMessage(f"[{str(count)}] {i['message']}")
@@ -3937,7 +4032,7 @@ if __name__ == "__main__":
                             printErrorMessage("Uhm, not quite an option here, try again!")
                             return a()
                     a()
-                    printWarnMessage("--- Step 4 ---")
+                    printSystemMessage("--- Step 4 ---")
                     if os.path.exists(os.path.join(cur_path, "Translations")):
                         printMainMessage("Alright! Now, select the bootstrap language you want to use! (English is default, you can just continue)")
                         langs_sel = []
@@ -3955,7 +4050,7 @@ if __name__ == "__main__":
                             stdout.translation_obj.load_new_language(selected_language["code"])
                             printMainMessage(f"Successfully set language to {language_names[main_config.get('EFlagSelectedBootstrapLanguage', 'en')]}! All future messages are now translated in this language.")
                     if not (main_config.get("EFlagDisableSettingsAccess") == True):
-                        printWarnMessage("--- Step 5 ---")
+                        printSystemMessage("--- Step 5 ---")
                         printMainMessage("Nice job! Oh yea, during the tutorial, it repeated with a \"Not quite\" if you gave an incorrect input or response. However, it will close the window in future prompts like in main menu.")
                         printYellowMessage("Additionally, if you do meet with an option with a *, this means that any input will result with that option.")
                         printMainMessage("Anyways, welcome to step 4! Here, you can select your settings!")
@@ -3964,20 +4059,20 @@ if __name__ == "__main__":
                         input("> ")
                         continueToSettings()
                     if not (main_config.get("EFlagDisableFastFlagInstallAccess") == True):
-                        printWarnMessage("--- Step 6 ---")
+                        printSystemMessage("--- Step 6 ---")
                         printMainMessage("Welcome back! I hope you have enabled some things you may want!")
                         printMainMessage("Now, let's get more customizable! Next, you will be able to select your fast flags.")
                         printYellowMessage("But before, prepare yourself your Roblox User ID (if you're not currently logged in). It will be used for some settings depending on what you select.")
                         input("> ")
                         continueToFFlagInstaller()
                     if not (main_config.get("EFlagDisableModsManagerAccess") == True):
-                        printWarnMessage("--- Step 7 ---")
+                        printSystemMessage("--- Step 7 ---")
                         printMainMessage("Hey! You made it through the list again!")
                         printMainMessage("Now, let's explore the Mods category. Mods are files that can be used to edit your Roblox client such as a custom theme or font. Today, you will be configuring that.")
                         printYellowMessage("If you want to get your own mods and install them, open the Mods Manager and use the open folder command! This will help you where to put the extracted mod.")
                         input("> ")
                         continueToModsManager()
-                    printWarnMessage("--- Final Touches ---")
+                    printSystemMessage("--- Final Touches ---")
                     printSuccessMessage("Woo hoo! You finally reached the end of this tutorial!")
                     printSuccessMessage("I hope you learned from this and how you may use Roblox using this bootstrap!")
                     printSuccessMessage("For now, before you continue, I hope you have a great day!")
@@ -3988,8 +4083,8 @@ if __name__ == "__main__":
                     startMessage()
                 if (len(given_args) < 2):
                     if not validateInstallation():
-                        printWarnMessage("--- Install Required! ---")
-                        printMainMessage("Please install OrangeBlox from running Install.py in order to continue!")
+                        printSystemMessage("--- Install Required! ---")
+                        printMainMessage(f"Please install {obName0()} from running Install.py in order to continue!")
                         input("> ")
                         sys.exit(0)
                     generated_ui_options = []
@@ -4128,7 +4223,7 @@ if __name__ == "__main__":
                                                 with open(generateFileKey("OrangeBloxUpdate"), "r", encoding="utf-8") as f: ss = f.read()
                                                 if ss == versio_name: return
                                             with open(generateFileKey("OrangeBloxUpdate"), "w", encoding="utf-8") as f: f.write(versio_name)
-                                            displayNotification(ts("OrangeBlox Update Available!"), ts(f'OrangeBlox v{latest_vers.get("latest_version", "1.0.0")} is now available for download! Install the update by opening the main menu, checking for updates and then install!'))
+                                            displayNotification(ts(f"{obName0()} Update Available!"), ts(f'{obName0()} v{latest_vers.get("latest_version", "1.0.0")} is now available for download! Install the update by opening the main menu, checking for updates and then install!'))
                                         else:
                                             if os.path.exists(generateFileKey("OrangeBloxUpdate")): os.remove(generateFileKey("OrangeBloxUpdate"))
                         pip_class.startThread(func=bootstrap_update_check, daemon=True)
@@ -4192,7 +4287,7 @@ if __name__ == "__main__":
                         "end_mes": ts("Would you like to go to Roblox?"),
                         "clear_console": True
                     })
-                    printWarnMessage("--- Main Menu ---")
+                    printSystemMessage("--- Main Menu ---")
                     opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Bootstrap"))
                     if opt:
                         try:
@@ -4274,7 +4369,7 @@ if __name__ == "__main__":
                                 else: handleOptionSelect(isRedirectedFromApp=True)
                             elif ("shortcuts/" in url): continueToLinkShortcuts(url)
                             else:
-                                printWarnMessage("--- Unknown URL ---")
+                                printSystemMessage("--- Unknown URL ---")
                                 printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                                 printDebugMessage(f"URL Scheme Requested: {url}")
                                 printDebugMessage(f"Arguments Received: {given_args}")
@@ -4297,26 +4392,26 @@ if __name__ == "__main__":
                             if not ("?quick-action=true" in url): handleOptionSelect()
                             else: handleOptionSelect(isRedirectedFromApp=True)
                     elif "roblox-studio" in url or url.startswith("obx-launch-studio"):
-                        printWarnMessage("--- Redirecting to Roblox Studio! ---")
+                        printSystemMessage("--- Redirecting to Roblox Studio! ---")
                         printMainMessage("Successfully loaded Roblox Studio URL Scheme! Continuing to Roblox Studio..")
                         run_studio = True
                         if "obx-launch-studio" in url: given_args[1] = given_args[1].replace("obx-launch-studio ", "").replace("obx-launch-studio", "")
                     elif "roblox" in url or url.startswith("obx-launch-player"):
-                        printWarnMessage("--- Redirecting to Roblox! ---")
+                        printSystemMessage("--- Redirecting to Roblox! ---")
                         if main_config.get("EFlagEnableDuplicationOfClients") == True: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox [Multi-Instance]..")
                         else: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox..")
                         if main_config.get("EFlagEnableSkipModificationMode") == True: skip_modification_mode = True
                         if "obx-launch-player" in url: given_args[1] = given_args[1].replace("obx-launch-player ", "").replace("obx-launch-player", "")
                     elif os.path.isfile(url):
                         if url.endswith(".rbxl") or url.endswith(".rbxlx"):
-                            printWarnMessage("--- Redirecting to Roblox Studio! ---")
+                            printSystemMessage("--- Redirecting to Roblox Studio! ---")
                             printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox Studio..")
                             run_studio = True
                         elif url.endswith(".obx"):
                             if os.path.exists(url):
                                 try:
-                                    printWarnMessage("--- OrangeBlox Backup Assistant ---")
-                                    printMainMessage("Are you sure you want to restore your OrangeBlox files using the following OrangeBlox file?")
+                                    printSystemMessage(f"--- {obName0()} Backup Assistant ---")
+                                    printMainMessage(f"Are you sure you want to restore your {obName0()} files using the following {obName0()} file?")
                                     printMainMessage(f"File: {url}")
                                     printErrorMessage("This operation is dangerous to use if not used carefully and will overwrite your Mods and Configuration.")
                                     printErrorMessage("If someone that you have recently met sent you this file, do not use!!")
@@ -4327,7 +4422,7 @@ if __name__ == "__main__":
                                         backup_path = os.path.join(cur_path, "Backup")
                                         backup_file = url
                                         try:
-                                            printMainMessage("Unwrapping OrangeBlox file..")
+                                            printMainMessage(f"Unwrapping {obName0()} file..")
                                             makedirs(backup_path)
                                             zip_extract = pip_class.unzipFile(backup_file, backup_path, ["FastFlagConfiguration.json", "Cursors", "Mods", "RobloxBrand"])
                                             if zip_extract.returncode == 0:
@@ -4340,18 +4435,18 @@ if __name__ == "__main__":
                                                 if os.path.exists(os.path.join(backup_path, "Metadata.json")):
                                                     with open(os.path.join(backup_path, "Metadata.json"), "r", encoding="utf-8") as f: back_metadata = json.load(f)
                                                 if back_metadata.get("bootstrap_version") == "0.0.0":
-                                                    printWarnMessage("--- Attention Needed! ---")
-                                                    printMainMessage("This backup is created in a version before OrangeBlox v2.0.1. Are you sure you want to continue with this backup? (y/n)")
+                                                    printSystemMessage("--- Attention Needed! ---")
+                                                    printMainMessage(f"This backup is created in a version before {obName0()} v2.0.1. Are you sure you want to continue with this backup? (y/n)")
                                                     a = input("> ")
                                                     if isYes(a) == False: sys.exit(0); return
                                                 elif back_metadata.get("bootstrap_version") > current_version["version"]:
-                                                    printWarnMessage("--- Attention Needed! ---")
-                                                    printMainMessage(f"This backup is created in a version (v{back_metadata.get('bootstrap_version')}) after OrangeBlox v{current_version['version']}. Are you sure you want to continue with this backup? (y/n)")
+                                                    printSystemMessage("--- Attention Needed! ---")
+                                                    printMainMessage(f"This backup is created in a version (v{back_metadata.get('bootstrap_version')}) after {obName0()} v{current_version['version']}. Are you sure you want to continue with this backup? (y/n)")
                                                     a = input("> ")
                                                     if isYes(a) == False: sys.exit(0); return
                                                 elif back_metadata.get("bootstrap_version") < current_version["version"]:
-                                                    printWarnMessage("--- Attention Needed! ---")
-                                                    printMainMessage(f"This backup is created in a version (v{back_metadata.get('bootstrap_version')}) before OrangeBlox v{current_version['version']}. Are you sure you want to continue with this backup? (y/n)")
+                                                    printSystemMessage("--- Attention Needed! ---")
+                                                    printMainMessage(f"This backup is created in a version (v{back_metadata.get('bootstrap_version')}) before {obName0()} v{current_version['version']}. Are you sure you want to continue with this backup? (y/n)")
                                                     a = input("> ")
                                                     if isYes(a) == False: sys.exit(0); return
                                                 printMainMessage("Copying Configuration.json..")
@@ -4390,35 +4485,35 @@ if __name__ == "__main__":
                                                 pip_class.copyTreeWithMetadata(os.path.join(backup_path, "RobloxStudioBrand"), os.path.join(mods_folder, "RobloxStudioBrand"), dirs_exist_ok=True, ignore_if_not_exist=True)
                                                 printMainMessage("Finished transferring! Deleting backup data..")
                                                 if os.path.exists(backup_path): shutil.rmtree(backup_path, ignore_errors=True)
-                                                printSuccessMessage("Successfully restored OrangeBlox data! Would you to restart the app? (y/n)")
+                                                printSuccessMessage(f"Successfully restored {obName0()} data! Would you to restart the app? (y/n)")
                                                 a = input("> ")
                                                 if isYes(a) == True: pip_class.restartScript("Main.py", sys.argv)
                                                 else: sys.exit(0)
-                                            else: raise Exception("There was an issue trying to open the OrangeBlox file! Make sure it's readable before trying again!")
+                                            else: raise Exception(f"There was an issue trying to open the {obName0()} file! Make sure it's readable before trying again!")
                                         except Exception as e:
-                                            printErrorMessage("There was an error trying to restore your OrangeBlox files!")
+                                            printErrorMessage(f"There was an error trying to restore your {obName0()} files!")
                                             printErrorMessage(f"Python Exception: \n{trace()}")
                                             input("> ")
                                             sys.exit(0)
                                             return
                                     else: sys.exit(0)
                                 except Exception as e:
-                                    printWarnMessage("--- OrangeBlox Backup Assistant ---")
+                                    printSystemMessage(f"--- {obName0()} Backup Assistant ---")
                                     printErrorMessage(f"Something went wrong: \n{trace()}")
                                     input("> ")
                                     sys.exit(0)
                             else:
-                                printWarnMessage("--- OrangeBlox Backup Assistant ---")
-                                printErrorMessage(f"Unable to read OrangeBlox file due to the file not existing or unable to be accessed.")
+                                printSystemMessage(f"--- {obName0()} Backup Assistant ---")
+                                printErrorMessage(f"Unable to read {obName0()} file due to the file not existing or unable to be accessed.")
                                 input("> ")
                                 sys.exit(0)
                         else:
-                            printWarnMessage("--- Unknown file ---")
-                            printErrorMessage(f"Unable to read OrangeBlox file due to the file handler not added.")
+                            printSystemMessage(f"--- Unknown file ---")
+                            printErrorMessage(f"Unable to read {obName0()} file due to the file handler not added.")
                             input("> ")
                             sys.exit(0)
                     else:
-                        printWarnMessage("--- Unknown URL ---")
+                        printSystemMessage("--- Unknown URL ---")
                         printMainMessage("There was an issue trying to parse your URL scheme. Please select an option below to continue:")
                         printDebugMessage(f"URL Scheme Requested: {url}")
                         printDebugMessage(f"Arguments Received: {given_args}")
@@ -4441,7 +4536,7 @@ if __name__ == "__main__":
                 else: mes = ts(f"{mes} Would you like to return to the main menu or would you like to continue to Roblox?")
             if not (main_config.get("EFlagReturnToMainMenuInstant") == True):
                 if isRedirectedFromApp == False:
-                    printWarnMessage(mes)
+                    printSystemMessage(mes)
                     printMainMessage("[1] Return to Main Menu")
                     printMainMessage("[2] Exit Bootstrap")
                     if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] Continue to Roblox Studio")
@@ -4451,7 +4546,7 @@ if __name__ == "__main__":
                     elif a == "2": sys.exit(0)
                     elif a == "3" and main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
                 else:
-                    printWarnMessage(mes)
+                    printSystemMessage(mes)
                     printMainMessage("[1] Continue to Roblox")
                     if main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] Continue to Roblox Studio")
                     printMainMessage("[*] Exit Bootstrap")
@@ -4473,8 +4568,8 @@ if __name__ == "__main__":
     try:
         # Check for Permissions
         if run_studio == True and not main_config.get("EFlagRobloxStudioEnabled") == True:
-            printWarnMessage("--- Roblox Studio Permission ---")
-            printMainMessage("Roblox Studio with OrangeBlox is currently disabled right now! Would you like to enable it or would you want to exit? (y/n)")
+            printSystemMessage("--- Roblox Studio Permission ---")
+            printMainMessage(f"Roblox Studio with {obName0()} is currently disabled right now! Would you like to enable it or would you want to exit? (y/n)")
             if isYes(input("> ")) == True:
                 main_config["EFlagRobloxStudioEnabled"] = True
                 saveSettings()
@@ -4496,8 +4591,8 @@ if __name__ == "__main__":
             studio_can_be_used = validateInstallation()
             # Install Roblox Studio
             if not (studio_can_be_used == True):
-                printWarnMessage("--- Installing Roblox Studio to Bootstrap ---")
-                printMainMessage("Please wait while we install Roblox Studio into OrangeBlox!")
+                printSystemMessage("--- Installing Roblox Studio to Bootstrap ---")
+                printMainMessage(f"Please wait while we install Roblox Studio into {obName0()}!")
                 submit_status.start()
                 res = handler.installRoblox(studio=True, debug=main_config.get("EFlagEnableDebugMode"))
                 submit_status.end()
@@ -4527,7 +4622,7 @@ if __name__ == "__main__":
             # Check for Updates
             if (not (connect_instead == True)) and (not (main_config.get("EFlagDisableRobloxUpdateChecks") == True)):
                 waitForInternet()
-                printWarnMessage("--- Checking for Roblox Studio Updates ---")
+                printSystemMessage("--- Checking for Roblox Studio Updates ---")
                 current_roblox_version = handler.getCurrentClientVersion(studio=True)
                 if current_roblox_version["success"] == True:
                     url_channel = None
@@ -4576,9 +4671,9 @@ if __name__ == "__main__":
                         else:
                             continue_to_update = True
                             printSuccessMessage(f"A new version of Roblox Studio is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['hash']}")
-                            printWarnMessage("--- Installing Latest Roblox Studio Version ---")
+                            printSystemMessage("--- Installing Latest Roblox Studio Version ---")
                             if continue_to_update == True:
-                                printMainMessage("Please wait while we install a newer version of Roblox Studio into OrangeBlox!")
+                                printMainMessage(f"Please wait while we install a newer version of Roblox Studio into {obName0()}!")
                                 submit_status.start()
                                 res = handler.installRoblox(studio=True, debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxStudioInstaller.app") or os.path.join(cur_path, "RobloxStudioInstaller.exe")), downloadInstaller=True, downloadChannel=download_channel, downloadToken=main_config.get("EFlagRobloxChannelUpdateToken"))
                                 submit_status.end()
@@ -4626,7 +4721,7 @@ if __name__ == "__main__":
             # Check for Updates
             if (not (main_config.get("EFlagDisableRobloxUpdateChecks") == True)):
                 waitForInternet()
-                printWarnMessage("--- Checking for Roblox Updates ---")
+                printSystemMessage("--- Checking for Roblox Updates ---")
                 current_roblox_version = handler.getCurrentClientVersion()
                 if (main_config.get("EFlagFreshCopyRoblox") == True and not skip_modification_mode == True) or player_can_be_used == False:
                     url_channel = None
@@ -4675,7 +4770,7 @@ if __name__ == "__main__":
                             if (multi_instance_enabled == True or main_config.get("EFlagEnableDuplicationOfClients") == True) and handler.getIfRobloxIsOpen(): printMainMessage("Skipping Roblox Reinstall due to Multi-Instancing enabled.")
                             else:
                                 printMainMessage(f"Fresh copy was enabled! Therefore, starting Roblox install!")
-                                printWarnMessage("--- Installing Latest Roblox Version ---")
+                                printSystemMessage("--- Installing Latest Roblox Version ---")
                                 submit_status.start()
                                 res = handler.installRoblox(forceQuit=True, debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadInstaller=True, downloadChannel=download_channel, downloadToken=main_config.get("EFlagRobloxChannelUpdateToken"), verifyInstall=not (main_config.get("EFlagVerifyRobloxHashAfterInstall")==False))
                                 submit_status.end()
@@ -4687,7 +4782,7 @@ if __name__ == "__main__":
                                 time.sleep(3)
                         else:
                             printMainMessage(f"Fresh copy was enabled! Therefore, starting Roblox install!")
-                            printWarnMessage("--- Installing Latest Roblox Version ---")
+                            printSystemMessage("--- Installing Latest Roblox Version ---")
                             submit_status.start()
                             res = handler.installRoblox(forceQuit=False, debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadInstaller=True, downloadChannel=download_channel, downloadToken=main_config.get("EFlagRobloxChannelUpdateToken"), verifyInstall=not (main_config.get("EFlagVerifyRobloxHashAfterInstall")==False))
                             submit_status.end()
@@ -4745,9 +4840,9 @@ if __name__ == "__main__":
                         else:
                             continue_to_update = True
                             printSuccessMessage(f"A new version of Roblox is available! Versions: {current_roblox_version['version']} => {latest_roblox_version['hash']}")
-                            printWarnMessage("--- Installing Latest Roblox Version ---")
+                            printSystemMessage("--- Installing Latest Roblox Version ---")
                             if continue_to_update == True:
-                                printMainMessage("Please wait while we install a newer version of Roblox into OrangeBlox!")
+                                printMainMessage(f"Please wait while we install a newer version of Roblox into {obName0()}!")
                                 submit_status.start()
                                 res = handler.installRoblox(debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadInstaller=True, downloadToken=main_config.get("EFlagRobloxChannelUpdateToken"), downloadChannel=download_channel)
                                 submit_status.end()
@@ -4783,7 +4878,7 @@ if __name__ == "__main__":
             global main_config
             global run_studio
             global installed_update
-            printWarnMessage("--- Preparing Roblox Studio ---" if run_studio == True else "--- Preparing Roblox ---")
+            printSystemMessage(ts("--- Preparing Roblox Studio ---") if run_studio == True else ts("--- Preparing Roblox ---"))
             if main_os == "Windows":
                 content_folder_paths["Windows"] = handler.getRobloxInstallFolder(studio=run_studio)
                 font_folder_paths["Windows"] = os.path.join(content_folder_paths['Windows'], "content", "fonts")
@@ -5283,9 +5378,9 @@ if __name__ == "__main__":
                         registry_key = win32api.RegCreateKey(win32con.HKEY_CURRENT_USER, registry_path)
                         win32api.RegSetValueEx(registry_key, "UninstallString", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(bootstrap_folder_path, 'Install.py')}\" -un")
                         win32api.RegSetValueEx(registry_key, "ModifyPath", 0, win32con.REG_SZ, f"\"{sys.executable}\" \"{os.path.join(bootstrap_folder_path, 'Install.py')}\"")
-                        win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, "OrangeBlox")
+                        win32api.RegSetValueEx(registry_key, "DisplayName", 0, win32con.REG_SZ, obName0())
                         win32api.RegSetValueEx(registry_key, "DisplayVersion", 0, win32con.REG_SZ, current_version["version"])
-                        win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico"))
+                        win32api.RegSetValueEx(registry_key, "DisplayIcon", 0, win32con.REG_SZ, main_config.get("EFlagCustomBootstrapIconPath", os.path.join(bootstrap_folder_path, "Images", "AppIcon.ico")))
                         win32api.RegSetValueEx(registry_key, "HelpLink", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(registry_key, "URLUpdateInfo", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
                         win32api.RegSetValueEx(registry_key, "URLInfoAbout", 0, win32con.REG_SZ, "https://github.com/efazdev/orangeblox")
@@ -5625,9 +5720,9 @@ if __name__ == "__main__":
                                                                                                             "description": description or "",
                                                                                                             "color": color,
                                                                                                             "fields": [i.convert() for i in fields],
-                                                                                                            "author": { "name": "OrangeBlox", "icon_url": f"{main_host}/Images/DiscordIcon.png" },
+                                                                                                            "author": { "name": obName0(), "icon_url": main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png") },
                                                                                                             "thumbnail": { "url": image },
-                                                                                                            "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
+                                                                                                            "footer": { "text": (ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev")) + (" | Custom Theme" if obName0() != "OrangeBlox" or obName1() != "🍊" else ""), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
                                                                                                             "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')
                                                                                                         }
                                                                                                     ],
@@ -5747,6 +5842,10 @@ if __name__ == "__main__":
                                                                                         "getRequest": requests.get,
                                                                                         "postRequest": requests.post,
                                                                                         "deleteRequest": requests.delete,
+                                                                                        "getOrangeBloxName": obName0,
+                                                                                        "getOrangeBloxEmoji": obName1,
+                                                                                        "getOrangeBloxColorAnsi": obColorA,
+                                                                                        "getOrangeBloxColorHex": obColorH,
                                                                                     }
                                                                                     func_list = dict(defined_func)
                                                                                     func_list.update(undefined_func)
@@ -5870,7 +5969,7 @@ if __name__ == "__main__":
                                                 else: mod_manifest = generateModsManifest().get(sel_mod); s(sel_mod)
                                         s(str(sel_mo))
                                     else:
-                                        if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"This mod script is not supported. Please update to OrangeBlox v{mod_manifest['mod_script_supports']}")
+                                        if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"This mod script is not supported. Please update to {obName0()} v{mod_manifest['mod_script_supports']}")
                                         elif mod_manifest["mod_script_supports_operating_system"] == False:
                                             if main_os == "Darwin": printYellowMessage(f"This mod script is only supported for Windows!")
                                             elif main_os == "Windows": printYellowMessage(f"This mod script is only supported for macOS!")
@@ -5982,7 +6081,7 @@ if __name__ == "__main__":
                             else: printDebugMessage(f"Setting Windows Icon on Roblox Runtime with an icon that doesn't exist?")
                 time.sleep(2)
         def generateEmbedField(name, value, inline=True): return {"name": name, "value": str(value), "inline": inline}
-        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": "OrangeBlox", "icon_url": f"{main_host}/Images/DiscordIcon.png" }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev"), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
+        def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": obName0(), "icon_url": main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png") }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": (ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev")) + (" | Custom Theme" if obName0() != "OrangeBlox" or obName1() != "🍊" else ""), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
         def getRobloxThumbnailURL(studio: bool=None):
             if studio == None: studio = run_studio
             thumbnail_url = f"{main_host}/Images/RobloxStudioLogo.png" if studio == True else f"{main_host}/Images/RobloxLogo.png"
@@ -6004,11 +6103,11 @@ if __name__ == "__main__":
         # Roblox Ready Message
         if run_studio == True:
             printSuccessMessage("Done! Roblox Studio is ready!")
-            printWarnMessage("--- Running Roblox Studio ---")
+            printSystemMessage("--- Running Roblox Studio ---")
         else:
             printSuccessMessage("Done! Roblox is ready!")
-            printWarnMessage("--- Running Roblox ---")
-        if waitForInternet() == True: printWarnMessage("-----------")
+            printSystemMessage("--- Running Roblox ---")
+        if waitForInternet() == True: printSystemMessage("-----------")
 
         # Activity Tracking Functions
         if run_studio == True:
@@ -6179,14 +6278,14 @@ if __name__ == "__main__":
                                                         "large_image_url": f"https://www.roblox.com",
                                                         "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconRunStudioDiscord.png",
                                                         "small_image_url": f"{main_host}/",
-                                                        "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
+                                                        "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else obName0(),
                                                         "buttons": [],
                                                         "state_url": None,
                                                         "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                     }
                                                     if formatted_info["small_image"] == f"{main_host}/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): 
                                                         formatted_info["small_image"] = connected_user_info.get("thumbnail")
-                                                    if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
+                                                    if formatted_info["small_text"] == obName0() and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
                                                         formatted_info["small_text"] = ts(f"Opened Studio as {connected_user_info.get('display')} (@{connected_user_info.get('name')})!")
                                                         formatted_info["buttons"].append({
                                                             "label": ts("Open User Page 🌐"), 
@@ -6315,7 +6414,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
+                        thumbnail_url = main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png")
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6365,7 +6464,7 @@ if __name__ == "__main__":
                 printSuccessMessage("Roblox Game has been successfully published to Roblox!")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGamePublished") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
+                        thumbnail_url = main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png")
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6404,7 +6503,7 @@ if __name__ == "__main__":
                 printSuccessMessage("Roblox Game has been successfully saved to Roblox!")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookGameSaved") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
+                        thumbnail_url = main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png")
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6604,14 +6703,14 @@ if __name__ == "__main__":
                                                             "state_url": None,
                                                             "buttons": [],
                                                             "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconPlayRobloxDiscord.png",
-                                                            "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else "OrangeBlox",
+                                                            "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else obName0(),
                                                             "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
                                                         }
                                                         launch_data = ""
                                                         add_exam = False
                                                         if not formatted_info["launch_data"] == "": formatted_info["launch_data"] = f"&launchData={formatted_info['launch_data']}"; add_exam = False
-                                                        if formatted_info["small_image"] == f"{main_host}/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
-                                                        if formatted_info["small_text"] == "OrangeBlox" and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
+                                                        if formatted_info["small_image"] == f"{main_host}/Images/AppIconPlayRobloxDiscord.png" and formatted_info["small_text"] == obName0() and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): formatted_info["small_image"] = connected_user_info.get("thumbnail")
+                                                        if formatted_info["small_text"] == obName0() and main_config.get("EFlagShowUsernameInSmallImage") == True and connected_user_info and connected_user_info.get("display") and connected_user_info.get("name"): 
                                                             formatted_info["small_text"] = ts(f"Playing @{connected_user_info.get('name')} as {connected_user_info.get('display')}!")
                                                             formatted_info["smart_image_url"] = f"https://www.roblox.com/users/{logged_in_user.get('id')}/profile"
                                                         if current_place_info:
@@ -6742,7 +6841,7 @@ if __name__ == "__main__":
                 except Exception as e: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                 if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookDisconnect") == True:
                     if main_config.get("EFlagDiscordWebhookURL"):
-                        thumbnail_url = f"{main_host}/Images/DiscordIcon.png"
+                        thumbnail_url = main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png")
                         server_location = ts("Unknown Location")
                         start_time = 0
                         place_info = {"name": "???"}
@@ -6855,7 +6954,7 @@ if __name__ == "__main__":
                             large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
                             small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
                             small_url=main_host,
-                            small_text="OrangeBlox", 
+                            small_text=obName0(), 
                             buttons=[
                                 {
                                     "label": ts("Go to Roblox! 🌐"), 
@@ -7323,7 +7422,7 @@ if __name__ == "__main__":
                     prepareRobloxClientWithErrorCatcher()
                     printSuccessMessage(f"Done! Roblox{' Studio' if run_studio == True else ''} is ready!")
                     time.sleep(2)
-                    printWarnMessage(f"--- Running Roblox{' Studio' if run_studio == True else ''} ---")
+                    printSystemMessage(f"--- Running Roblox{' Studio' if run_studio == True else ''} ---")
                     runRobloxClient()
                 else: printSuccessMessage(f"Roblox{' Studio' if run_studio == True else ''} doesn't require any updates!")
             else: printErrorMessage(f"Is {'Roblox Studio' if run_studio == True else 'Roblox Player'} crashing instantly..? Well, ending script here.")

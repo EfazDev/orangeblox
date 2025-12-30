@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5f
+# v2.4.5g
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.5f"}
+    current_version = {"version": "2.4.5g"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -247,6 +247,11 @@ if __name__ == "__main__":
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
+        "EFlagCustomBootstrapName": "str",
+        "EFlagCustomBootstrapEmoji": "str",
+        "EFlagCustomBootstrapColor": "str",
+        "EFlagCustomBootstrapInternetURL": "str",
+        "EFlagCustomBootstrapIconPath": "path",
         "EFlagUseEfazDevAPI": "bool"
     }
     handler = RFFI.Handler()
@@ -271,6 +276,7 @@ if __name__ == "__main__":
     def printErrorMessage(mes): colors_class.print(ts(mes), 196)
     def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
     def printWarnMessage(mes): colors_class.print(ts(mes), 202)
+    def printSystemMessage(mes): colors_class.print(ts(mes), 202)
     def printYellowMessage(mes): colors_class.print(ts(mes), 226)
     def printDebugMessage(mes): colors_class.print(ts(mes), 226)
 
@@ -528,7 +534,7 @@ if __name__ == "__main__":
         return exec_array
     def waitForInternet():
         if pip_class.getIfConnectedToInternet() == False:
-            printWarnMessage("--- Waiting for Internet ---")
+            printSystemMessage("--- Waiting for Internet ---")
             printMainMessage("Please connect to your internet in order to continue! If you're connecting to a VPN, try reconnecting.")
             while pip_class.getIfConnectedToInternet() == False: time.sleep(0.05)
             return True
@@ -541,7 +547,7 @@ if __name__ == "__main__":
             try:
                 code_id = code[0]
                 if code_id == 0: 
-                    printWarnMessage(chart_module.prefix_print + code[1])
+                    printSystemMessage(chart_module.prefix_print + code[1])
                     running.append(0)
                 elif code_id == 1: 
                     if chart_module.variables.get("IDs"):
@@ -605,6 +611,7 @@ if __name__ == "__main__":
             def printErrorMessage(mes): colors_class.print(ts(mes), 196)
             def printSuccessMessage(mes): silent_mode = True
             def printWarnMessage(mes): silent_mode = True
+            def printSystemMessage(mes): silent_mode = True
             def printDebugMessage(mes): silent_mode = True
         else:
             if not ("--no-clear" in sys.argv or "-nc" in sys.argv): colors_class.clear_console()
@@ -624,13 +631,13 @@ if __name__ == "__main__":
     if "--use-x86-windows" in sys.argv or "-x86" in sys.argv: use_x86_windows = True
 
     def startMessage():
-        printWarnMessage("-----------")
-        printWarnMessage("Welcome to OrangeBlox Installer 🍊!")
-        printWarnMessage("Made by Efaz from efaz.dev!")
-        printWarnMessage(f"v{current_version['version']}")
-        printWarnMessage("-----------")
+        printSystemMessage("-----------")
+        printSystemMessage("Welcome to OrangeBlox Installer 🍊!")
+        printSystemMessage("Made by Efaz from efaz.dev!")
+        printSystemMessage(f"v{current_version['version']}")
+        printSystemMessage("-----------")
         # Requirement Checks
-        if waitForInternet() == True: printWarnMessage("-----------")
+        if waitForInternet() == True: printSystemMessage("-----------")
         if main_os == "Windows": printMainMessage(f"System OS: {main_os} ({platform.version()}) | Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
         elif main_os == "Darwin": printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]}) | Python Version: {pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}")
         else:
@@ -649,7 +656,7 @@ if __name__ == "__main__":
                 sys.exit(0)
             else:
                 latest_python = pip_class.getLatestPythonVersion()
-                printWarnMessage("--- Python Update Required ---")
+                printSystemMessage("--- Python Update Required ---")
                 printMainMessage("Hello! In order to use OrangeBlox, you'll need to install Python 3.11 or higher in order to continue. ")
                 printMainMessage(f"If you wish, you may install Python {latest_python} by typing \"y\" and continue.")
                 printMainMessage("Otherwise, you may close the app by just continuing without typing.")
@@ -662,7 +669,7 @@ if __name__ == "__main__":
     startMessage()
 
     if pip_class.getIfRunningWindowsAdmin():
-        printWarnMessage("--- Admin Permissions Not Required ---")
+        printSystemMessage("--- Admin Permissions Not Required ---")
         printErrorMessage("Please run OrangeBlox under user permissions instead of running administrator!")
         input("> ")
         sys.exit(0)
@@ -1509,8 +1516,8 @@ if __name__ == "__main__":
                 else: printErrorMessage("Something went wrong trying to find the installation folder.")
             else: printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
         else: printErrorMessage("There was an issue while finding the Apps folder for installation.")
-    if overwrited == True: printWarnMessage("--- Updater ---")
-    else: printWarnMessage("--- Installer ---")
+    if overwrited == True: printSystemMessage("--- Updater ---")
+    else: printSystemMessage("--- Installer ---")
     if silent_mode == True:
         instant_install = True
         try: install()
@@ -1525,7 +1532,7 @@ if __name__ == "__main__":
             printMainMessage("OrangeBlox is a Roblox bootstrap that allows you to add modifications to your Roblox client using files, activity tracking and Python!")
             if overwrited == False:
                 printMainMessage("Before we continue to installing, you must follow this guide on how to navigate, so you can use for when you're using the bootstrap!")
-                printWarnMessage("--- Step 1 ---")
+                printSystemMessage("--- Step 1 ---")
                 printMainMessage("First, it's important that you best understand on how the choosing works.")
                 printMainMessage('Let\'s start off with a quick input! Let\'s say you want to enable this option (use the prompt here for the example), enter "y"!')
                 def a():
@@ -1535,7 +1542,7 @@ if __name__ == "__main__":
                         printErrorMessage("Uhm, not quite. Try again!")
                         a()
                 a()
-                printWarnMessage("--- Step 2 ---")
+                printSystemMessage("--- Step 2 ---")
                 printMainMessage("Congrats! You completed the first step!")
                 printMainMessage('Now, let\'s try that again! But instead, enter "n" for you don\'t want this option!')
                 def a():
@@ -1545,7 +1552,7 @@ if __name__ == "__main__":
                         printErrorMessage("Uhm, not quite. Try again!")
                         a()
                 a()
-                printWarnMessage("--- Step 3 ---")
+                printSystemMessage("--- Step 3 ---")
                 printMainMessage("You're getting good at this!")
                 printMainMessage('Now, let\'s learn about how you select from a list. Take the list below for an example.')
                 printMainMessage("Try selecting a number that is next to that option!")
@@ -1558,7 +1565,7 @@ if __name__ == "__main__":
                 generated_ui_options.append({"index": 5, "message": ts("Do neither")})
                 generated_ui_options.append({"index": 6, "message": ts("Do all of the above")})
                 generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-                printWarnMessage("--- Select Option ---")
+                printSystemMessage("--- Select Option ---")
                 count = 1
                 for i in generated_ui_options:
                     printMainMessage(f"[{str(count)}] {i['message']}")
@@ -1584,7 +1591,7 @@ if __name__ == "__main__":
                         if current_version.get("version"):
                             if current_version.get("version", "1.0.0") < latest_vers.get("latest_version", "1.0.0"):
                                 download_location = latest_vers.get("download_location", "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip")
-                                printWarnMessage("--- New Bootstrap Update ---")
+                                printSystemMessage("--- New Bootstrap Update ---")
                                 printMainMessage(f"We have detected a new version of OrangeBlox! Would you like to install it? (y/n)")
                                 if download_location == "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip":
                                     download_location = f"https://github.com/EfazDev/orangeblox/releases/download/v{latest_vers['latest_version']}/OrangeBlox-v{latest_vers['latest_version']}.zip"

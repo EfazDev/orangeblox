@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5f
+# v2.4.5g
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.5f
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.5g
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.4.5f", "bootstrap_version": "2.4.5f"}
+current_version = {"version": "2.4.5g", "bootstrap_version": "2.4.5g"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
@@ -376,6 +376,58 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse().response
+    def getOrangeBloxName(self) -> str | None:
+        """
+        Get the name of OrangeBlox set!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.5g+**
+
+        ```python
+        orangeblox_name = OrangeAPI.getOrangeBloxName() # -> "OrangeBlox"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getOrangeBloxName").generateResponse().response
+    def getOrangeBloxEmoji(self) -> str | None:
+        """
+        Get the emoji set for OrangeBlox!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.5g+**
+
+        ```python
+        orangeblox_emoji = OrangeAPI.getOrangeBloxEmoji() # -> "🍊"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getOrangeBloxEmoji").generateResponse().response
+    def getOrangeBloxColorAnsi(self) -> int | None:
+        """
+        Get the ANSI color set for OrangeBlox!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.5g+**
+
+        ```python
+        orangeblox_color_ansi = OrangeAPI.getOrangeBloxColorAnsi() # -> 202
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getOrangeBloxColorAnsi").generateResponse().response
+    def getOrangeBloxColorHex(self) -> str | None:
+        """
+        Get the HEX color set for OrangeBlox!
+        
+        Permission: No Permission Needed | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.4.5g+**
+
+        ```python
+        orangeblox_color_hex = OrangeAPI.getOrangeBloxColorHex() # -> "#ff4b00"
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getOrangeBloxColorHex").generateResponse().response
     def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.
@@ -949,7 +1001,7 @@ class OrangeAPI:
         elif platform == "Windows":
             print("User is running Windows!")
         else:
-            print("OrangeBlox is not supported by the bootstrap. How?")
+            print("This is not supported by the bootstrap. How?")
         ```
         """
         s = platform.system()

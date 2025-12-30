@@ -31,8 +31,8 @@ def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Co
 def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
 def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
 def isNo(text: str): text = text.strip(); return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
-    
-OrangeAPI.printColoredMessage("Kliko Mod Tool 🍎 for OrangeBlox 🍊", 197)
+
+OrangeAPI.printColoredMessage(f"Kliko Mod Tool 🍎 for {OrangeAPI.getOrangeBloxName()} {OrangeAPI.getOrangeBloxEmoji()}", 197)
 OrangeAPI.printColoredMessage("Edited for OrangeBlox by EfazDev 🍊 / Originally Made By TheKliko 🍎", 197)
 OrangeAPI.printColoredMessage("THIS MOD IS NOT MADE BY THEKLIKO NOR WARRANTED BY HIM!", 197)
 studio = OrangeAPI.getStudioMode()

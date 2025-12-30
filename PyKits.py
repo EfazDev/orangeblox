@@ -1,5 +1,5 @@
 """
-PyKits v1.7.0 | Made by Efaz from efaz.dev
+PyKits v1.7.1 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -36,7 +36,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.7.0"
+__version__ = "1.7.1"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -951,7 +951,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.7.0")
+            headers.setdefault("user-agent", f"PyKits/1.7.1")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -1028,6 +1028,8 @@ class request:
             # Let's download the request!
             if follow_redirects == None:
                 follow_redirects = self.automatic_redirect
+            if not chunk_size:
+                chunk_size = 65535
             with opener.open(req) as resp:
                 ssl_handshake = (self._time.perf_counter()-start_download)*1000
                 start_download = self._time.perf_counter()
@@ -1041,7 +1043,7 @@ class request:
                         resp = opener.open(req)
                         status_code = getattr(resp, "status", None) or resp.getcode()
                 download_info = self._create_response(resp, url, downloading=True, download_path=output)
-                if check == True and not download_info.ok: raise self.DownloadError(f"Unable to download file at {url}!", download_info.status_code)
+                if check == True and not download_info.ok: raise self.DownloadError(url, download_info.status_code)
                 total = download_info.headers.get("content-length")
                 encoding = download_info.headers.get("content-encoding")
                 if total is not None: total = int(total)
@@ -1050,25 +1052,27 @@ class request:
                     while True:
                         # Read and write chunk into file
                         start = self._time.perf_counter()
-                        chunk_size = min(chunk_size, total)
+                        chunk_size = (min(chunk_size, total) if total else chunk_size)
                         chunk = resp.read(chunk_size)
+                        downloaded_chunk_size = len(chunk)
                         if encoding: chunk, encoding = self._handle_compression(chunk, encoding)
                         if not chunk: break
                         f.write(chunk)
                         end = self._time.perf_counter()
                         duration = end-start
-                        speed = chunk_size
-                        try: speed = chunk_size / duration
+                        speed = downloaded_chunk_size
+                        try: speed = downloaded_chunk_size / duration
                         except: pass
 
                         # Update status
-                        downloaded += chunk_size
+                        downloaded += downloaded_chunk_size
                         if downloaded > total: downloaded = total
                         if total and submit_status:
                             percent = downloaded * 100 / total
                             progress = self.DownloadStatus(speed=speed, downloaded=self.format_bytes_to_size(downloaded), downloaded_bytes=downloaded, percent=percent, total_size=total)
                             submit_status.submit(progress)
                     download_info.downloaded = downloaded
+                    if not total: total = self._os.path.getsize(output)
                     download_info.size = total
                 download_info.ssl_handshake_time = ssl_handshake
                 download_info.loading_time = (self._time.perf_counter()-start_download)*1000
