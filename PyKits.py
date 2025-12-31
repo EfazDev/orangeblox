@@ -1090,7 +1090,7 @@ class request:
         ssl_ctx = None
         if self._platform.python_version() >= "3.10.0": 
             if not getattr(self._sys, "frozen", False) and che("truststore") == False:
-                self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install", "--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
+                self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install", "--user", "--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
                 import site
                 self._site = site
                 site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
@@ -1102,7 +1102,7 @@ class request:
         elif che("certifi") == False:
             STAT_0o775 = ( self._stat.S_IRUSR | self._stat.S_IWUSR | self._stat.S_IXUSR | self._stat.S_IRGRP | self._stat.S_IWGRP | self._stat.S_IXGRP | self._stat.S_IROTH |  self._stat.S_IXOTH )
             openssl_dir, openssl_cafile = self._os.path.split(self._ssl.get_default_verify_paths().openssl_cafile)
-            self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install", "--upgrade", "certifi"])
+            self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install", "--user", "--upgrade", "certifi"])
             import certifi
             self._os.chdir(openssl_dir)
             relpath_to_certifi_cafile = self._os.path.relpath(certifi.where())
