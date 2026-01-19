@@ -1,7 +1,6 @@
 import sys
 import subprocess
 import json
-import threading
 import os
 import zlib
 import platform
@@ -16,7 +15,7 @@ import webbrowser
 import PyKits
 
 if __name__ == "__main__":
-    current_version = {"version": "2.4.1"}
+    current_version = {"version": "2.4.5"}
     main_os = platform.system()
     args = sys.argv
     generated_app_id = os.urandom(3).hex()
@@ -32,6 +31,7 @@ if __name__ == "__main__":
         2: "#ffff00",
         3: "#ff4b00",
         4: "#00ff00",
+        5: "#ff4b00"
     }
     flag_types = {
         "EFlagRobloxStudioFlags": "dict",
@@ -71,6 +71,7 @@ if __name__ == "__main__":
         "EFlagEnableMultiAutoReconnect": "bool",
         "EFlagNotifyServerLocation": "bool",
         "EFlagEnableDiscordRPC": "bool",
+        "EFlagEnableDiscordRPCStudio": "bool",
         "EFlagEnableDiscordRPCJoining": "bool",
         "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
         "EFlagShowUsernameInSmallImage": "bool",
@@ -160,6 +161,11 @@ if __name__ == "__main__":
         "EFlagLastModVersionMacOSCaching": "str",
         "EFlagRobloxChannelUpdateToken": "str",
         "EFlagRobloxSecurityCookieUsage": "bool",
+        "EFlagCustomBootstrapName": "str",
+        "EFlagCustomBootstrapEmoji": "str",
+        "EFlagCustomBootstrapColor": "str",
+        "EFlagCustomBootstrapInternetURL": "str",
+        "EFlagCustomBootstrapIconPath": "path",
         "EFlagUseEfazDevAPI": "bool"
     }
     main_config = {}
@@ -180,13 +186,19 @@ if __name__ == "__main__":
         exc_m = str(tb_v)
         lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
         return "\n".join(lines)
+    def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").strip()
+    def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
+    def obColorA(): return colors_class.hex_to_ansi(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
+    def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
     def printMainMessage(mes): colors_class.print(ts(mes), 255); logs.append((ts(mes), 0))
     def printErrorMessage(mes): colors_class.print(ts(mes), 196); logs.append((ts(mes), 1))
     def printSuccessMessage(mes): colors_class.print(ts(mes), 82); logs.append((ts(mes), 4))
     def printWarnMessage(mes): colors_class.print(ts(mes), 202); logs.append((ts(mes), 3))
+    def printSystemMessage(mes): colors_class.print(ts(mes), obColorA()); logs.append((ts(mes), 5))
     def printYellowMessage(mes): colors_class.print(ts(mes), 226); logs.append((ts(mes), 2))
     def printDebugMessage(mes): 
         if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logs.append((ts(mes), 2))
+    def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
     def setLoggingHandler(handler_name):
         global app_path
         global main_os
@@ -268,28 +280,30 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(app_path, "Main.py")):
             with open(os.path.join(app_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
             try: obfuscated_json = json.loads(obfuscated_json)
-            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8"))
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
             main_config = obfuscated_json
             loaded_json = True
         
     setLoggingHandler("Bootloader")
-    printWarnMessage("-----------")
-    printWarnMessage("Welcome to OrangeBlox Loader 🍊!")
-    printWarnMessage("Made by Efaz from efaz.dev!")
-    printWarnMessage(f"v{current_version['version']}")
-    printWarnMessage("-----------")
-    if main_os == "Windows": printMainMessage(f"System OS: {main_os} ({platform.version()})")
-    elif main_os == "Darwin": printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]})")
+    printSystemMessage("-----------")
+    printSystemMessage(f"Welcome to {obName0()} Loader {obName1()}!")
+    if obName0() != "OrangeBlox" or obName1() != "🍊":
+        printSystemMessage("Custom Theme of OrangeBlox 🍊")
+    printSystemMessage("Made by Efaz from efaz.dev!")
+    printSystemMessage(f"v{current_version['version']}")
+    printSystemMessage("-----------")
+    if main_os == "Windows": printMainMessage(f"System OS: {main_os} ({platform.version()}) | Python Version: {pythonVersionStr()}")
+    elif main_os == "Darwin": printMainMessage(f"System OS: {main_os} (macOS {platform.mac_ver()[0]}) | Python Version: {pythonVersionStr()}")
     else:
-        printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
+        printErrorMessage(f"{obName0()} is only supported for macOS and Windows.")
         input("> ")
         sys.exit(0)
     if not pip_class.osSupported(windows_build=17763, macos_version=(10,13,0)):
-        if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
-        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+        if main_os == "Windows": printErrorMessage(f"{obName0()} is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
+        elif main_os == "Darwin": printErrorMessage(f"{obName0()} is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
         input("> ")
         sys.exit(0)
-    printWarnMessage("-----------")
+    printSystemMessage("-----------")
 
     def displayNotification(title="Unknown Title", message="Unknown Message"):
         if main_os == "Darwin":
@@ -313,7 +327,7 @@ if __name__ == "__main__":
                 instance().notify(
                     title=title,
                     message=message,
-                    app_name="OrangeBlox",
+                    app_name=obName0(),
                     app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
                     toast=True
                 )
@@ -359,7 +373,7 @@ if __name__ == "__main__":
             pythonExecutable = pip_class.findPython(path=True)
             pip_class.executable = pythonExecutable
             if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0):
-                printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
+                printErrorMessage(f"Please install Python 3.11 or later in order to use {obName0()}!")
                 input("> ")
                 sys.exit(0)
         printMainMessage(f"Generated App Window Fetching ID: {generated_app_id}")
@@ -369,7 +383,7 @@ if __name__ == "__main__":
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
                     shutil.rmtree(venv_path, ignore_errors=True)
                 generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
@@ -393,7 +407,7 @@ if __name__ == "__main__":
             activate
             set existing_profile to false
             repeat with s in settings sets
-                if name of s is equal to "OrangeBlox" then
+                if (name of s is equal to "{obName0()}") or (name of s is equal to "OrangeBlox") then
                     set existing_profile to true
                     exit repeat
                 end if
@@ -441,7 +455,7 @@ if __name__ == "__main__":
             on error
                 set can_close_windows to (every window whose processes = {"{}"})
                 repeat with window_to_close in can_close_windows
-                    if name of window_to_close contains "OrangeBlox" then
+                    if (name of window_to_close contains "OrangeBlox") or (name of window_to_close contains "{obName0()}") then
                         close window_to_close
                     end if
                 end repeat
@@ -548,7 +562,7 @@ if __name__ == "__main__":
                             printErrorMessage(f"Bootstrap Run Failed: {result.returncode}")
                             sys.exit(0)
                     else:
-                        displayNotification(ts("Uh oh!"), ts("Your copy of OrangeBlox was unable to be validated and might be tampered with!"))
+                        displayNotification(ts("Uh oh!"), ts(f"Your copy of {obName0()} was unable to be validated and might be tampered with!"))
                         printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
                         for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
                         printErrorMessage(f"Requested validation failed window from pyobjc.")
@@ -565,9 +579,21 @@ if __name__ == "__main__":
                     printMainMessage(f"Starting GUI App Replication..")
                     while validated == None: time.sleep(0)
                     try:
+                        # Import and Modify Foundation
                         import objc
-                        import AppKit
                         import Foundation
+                        try:
+                            if main_config.get("EFlagCustomBootstrapName"):
+                                try:
+                                    bundle = Foundation.NSBundle.mainBundle()
+                                    if bundle:
+                                        app_info = bundle.localizedInfoDictionary() or bundle.infoDictionary()
+                                        if app_info: app_info['CFBundleName'] = main_config.get("EFlagCustomBootstrapName")
+                                except ImportError: pass
+                        except Exception as e: printDebugMessage(f"Failed to modify Foundation bundle info: \n{trace()}")
+                        
+                        # Import Other Modules
+                        import AppKit
                         import random
                         class AppDelegate(Foundation.NSObject):
                             terminal_window = None
@@ -610,7 +636,7 @@ if __name__ == "__main__":
                                     self.master_controller = AppKit.NSWindowController.alloc().initWithWindow_(self.master)
                                     self.master_controller.setShouldCascadeWindows_(False)
                                     self.master_controller.showWindow_(self.master)
-                                    self.master.setTitle_("OrangeBlox")
+                                    self.master.setTitle_(obName0())
                                     self.master.setOpaque_(False)
                                     self.master.setAlphaValue_(0.0)
                                     self.master.setDelegate_(self)
@@ -649,18 +675,19 @@ if __name__ == "__main__":
                                     ]
                                     content_view.addConstraints_(constraints)
 
-                                    app_icon_url = f"{app_path}/Images/AppIcon64.png"
+                                    app_icon_url = main_config.get("EFlagCustomBootstrapIconPath", f"{app_path}/Images/AppIcon64.png")
                                     if main_config.get("EFlagUseFollowingAppIconPath"): app_icon_url = main_config.get("EFlagUseFollowingAppIconPath")
                                     if os.path.exists(app_icon_url): self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(app_icon_url)
-                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(f"{app_path}/Images/AppIcon.icns")
+                                    else: self.app_icon = AppKit.NSImage.alloc().initByReferencingFile_(main_config.get("EFlagCustomBootstrapIconPath", f"{app_path}/Images/AppIcon.icns"))
                                     self.icon_view = AppKit.NSImageView.alloc().init()
                                     self.icon_view.setImage_(self.app_icon)
                                     self.icon_view.setImageScaling_(AppKit.NSImageScaleProportionallyUpOrDown)
                                     self.icon_view.setTranslatesAutoresizingMaskIntoConstraints_(False)
                                     self.holding_frame.addSubview_(self.icon_view)
+                                    AppKit.NSApp().setApplicationIconImage_(self.app_icon)
 
                                     self.label1 = AppKit.NSTextField.alloc().init()
-                                    self.label1.setStringValue_(ts("Ooh! Hi there! Welcome to OrangeBlox 🍊!"))
+                                    self.label1.setStringValue_(ts(f"Ooh! Hi there! Welcome to {obName0()} {obName1()}!"))
                                     self.label1.setFont_(AppKit.NSFont.systemFontOfSize_(16))
                                     self.label1.setBezeled_(False)
                                     self.label1.setDrawsBackground_(False)
@@ -793,7 +820,7 @@ if __name__ == "__main__":
                                         printDebugMessage(f"Received Terminal ID from Receiver: {associated_terminal_pid}")
                                         self.terminal_window = associated_terminal_pid
                                         self.activate_terminal_window()
-                                    threading.Thread(target=awaitTerminal, daemon=True).start()
+                                    pip_class.startThread(func=awaitTerminal, daemon=True)
 
                                     self.generate_top_menu()
                                     if not (main_config.get("EFlagEnableGUIOptionMenus") == False): self.generate_dock_menu()
@@ -808,8 +835,8 @@ if __name__ == "__main__":
                                     else:
                                         try:
                                             if ended == False:
-                                                threading.Thread(target=self.reset_button_click, daemon=True).start()
-                                                threading.Thread(target=self.config_reload_period_func, daemon=True).start()
+                                                pip_class.startThread(func=self.reset_button_click, daemon=True)
+                                                pip_class.startThread(func=self.config_reload_period_func, daemon=True)
                                                 if validated == False: self.show_validation_failed_menu()
                                                 self.master.setDocumentEdited_(True)
                                                 self.threadingloop_(None)
@@ -850,6 +877,7 @@ if __name__ == "__main__":
                                         return AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, 1.0)
                                     def update_ui_on_main_thread():
                                         try:
+                                            COLOR_CODES[5] = obColorH()
                                             new_logs = logs[self.last_checked_index:]
                                             for log, color_code in new_logs:
                                                 lines = textwrap.wrap(log, width=75)
@@ -884,7 +912,7 @@ if __name__ == "__main__":
                                         self.config_reload_period = False
                                     if not ended and not (obj == "oranges"):
                                         def delayed_loop(): time.sleep(0.1); self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
-                                        threading.Thread(target=delayed_loop, daemon=True).start()
+                                        pip_class.startThread(func=delayed_loop, daemon=True)
                                 except Exception as e: printErrorMessage(f"There was an error loading loop! Error: \n{trace()}")
                             def scrollingLogs_(self, notification):
                                 content_view = self.output_scroll_view.contentView()
@@ -944,7 +972,7 @@ if __name__ == "__main__":
                                     self.top_menu_options[title] = item
                                     menu.addItem_(item)
                                     return item
-                                add_menu_item(self.main_menu, ts("About OrangeBlox"), "showAboutMenu_", "]")
+                                add_menu_item(self.main_menu, ts(f"About {obName0()}"), "showAboutMenu_", "]")
                                 self.main_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 add_menu_item(self.main_menu, ts("New Bootstrap Window"), "newBootstrapWindow_", "n")
                                 add_menu_item(self.main_menu, ts("Refresh App Configuration"), "refreshConfig_", "r")
@@ -955,7 +983,7 @@ if __name__ == "__main__":
                                 add_menu_item(self.main_menu, ts("Open Mods Manager"), "openModsManager_", "m")
                                 add_menu_item(self.main_menu, ts("Open Settings"), "openSettings_", ",")
                                 add_menu_item(self.main_menu, ts("Open Credits"), "openCredits_", "[")
-                                quit_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(ts("Quit OrangeBlox"), "terminate:", "q")
+                                quit_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(ts(f"Quit {obName0()}"), "terminate:", "q")
                                 self.main_menu.addItem_(quit_item)
 
                                 file_menu = AppKit.NSMenu.alloc().initWithTitle_("File")
@@ -1038,7 +1066,7 @@ if __name__ == "__main__":
                                 help_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Help", None, "")
                                 self.top_menu.addItem_(help_menu_item)
                                 self.top_menu.setSubmenu_forItem_(help_menu, help_menu_item)
-                                add_menu_item(help_menu, ts("OrangeBlox Wiki"), "showHelpMenu_")
+                                add_menu_item(help_menu, ts(f"{obName0()} Wiki"), "showHelpMenu_")
                                 add_menu_item(help_menu, ts("GitHub Issues"), "showGitHubIssuesMenu_")
                                 help_menu_item.setSubmenu_(help_menu)
 
@@ -1151,8 +1179,8 @@ if __name__ == "__main__":
                                     global associated_terminal_pid
                                     global ended
                                     ended = False
-                                    threading.Thread(target=startBootstrap, daemon=False).start()
-                                threading.Thread(target=sta, daemon=True).start()
+                                    pip_class.startThread(func=startBootstrap, daemon=False)
+                                pip_class.startThread(func=sta, daemon=True)
                             def activate_terminal_window(self, event=""): activateTerminalWindow(event)
                             def show_help_menu(self): webbrowser.open("https://github.com/EfazDev/orangeblox/wiki")
                             def show_github_issues_menu(self): webbrowser.open("https://github.com/EfazDev/orangeblox/issues")
@@ -1243,7 +1271,7 @@ if __name__ == "__main__":
                                     about_controller.setShouldCascadeWindows_(False)
                                     about_controller.showWindow_(about_window)
                                     about_window.setDelegate_(self)
-                                    about_window.setTitle_(ts("About OrangeBlox"))
+                                    about_window.setTitle_(ts(f"About {obName0()}"))
                                     about_window.setReleasedWhenClosed_(False)
                                     about_window.setLevel_(AppKit.NSModalPanelWindowLevel)
                                     about_window.center()
@@ -1259,7 +1287,7 @@ if __name__ == "__main__":
                                     about_frame.addSubview_(icon_view)
                                     
                                     label1 = AppKit.NSTextField.alloc().initWithFrame_(AppKit.NSMakeRect(100, 70, 150, 24))
-                                    label1.setStringValue_("OrangeBlox")
+                                    label1.setStringValue_(obName0())
                                     label1.setFont_(AppKit.NSFont.boldSystemFontOfSize_(16))
                                     label1.setBezeled_(False)
                                     label1.setDrawsBackground_(False)
@@ -1269,7 +1297,11 @@ if __name__ == "__main__":
                                     about_frame.addSubview_(label1)
                                     
                                     version_text = ts(f"Bootstrap Version {current_version.get('version')}\nMade by @EfazDev")
-                                    label2 = AppKit.NSTextField.alloc().initWithFrame_(AppKit.NSMakeRect(50, 30, 250, 40))
+                                    version_lines = 2
+                                    if obName0() != "OrangeBlox" or obName1() != "🍊":
+                                        version_text += "\n" + ts(f"Custom Theme of OrangeBlox 🍊")
+                                        version_lines += 1
+                                    label2 = AppKit.NSTextField.alloc().initWithFrame_(AppKit.NSMakeRect(50, 50-15*version_lines, 250, 20*version_lines))
                                     label2.setStringValue_(version_text)
                                     label2.setFont_(AppKit.NSFont.systemFontOfSize_(12))
                                     label2.setBezeled_(False)
@@ -1278,9 +1310,9 @@ if __name__ == "__main__":
                                     label2.setSelectable_(False)
                                     label2.setAlignment_(AppKit.NSCenterTextAlignment)
                                     label2.setLineBreakMode_(AppKit.NSLineBreakByWordWrapping)
-                                    label2.setMaximumNumberOfLines_(2)
+                                    label2.setMaximumNumberOfLines_(version_lines)
                                     about_frame.addSubview_(label2)
-                                    
+
                                     about_window.orderFrontRegardless()
                                     self.about_window = about_window
                                 except Exception as e:
@@ -1319,7 +1351,7 @@ if __name__ == "__main__":
                                     self.validation_frame.addSubview_(icon_view)
                                     
                                     label1 = AppKit.NSTextField.alloc().initWithFrame_(AppKit.NSMakeRect(175, 205, 150, 30))
-                                    label1.setStringValue_("OrangeBlox")
+                                    label1.setStringValue_(obName0())
                                     label1.setFont_(AppKit.NSFont.boldSystemFontOfSize_(20))
                                     label1.setBezeled_(False)
                                     label1.setDrawsBackground_(False)
@@ -1408,7 +1440,7 @@ if __name__ == "__main__":
                                     self.requested_kill = False
                                     if not (event == "oranges") and ended == False: printMainMessage(f"Window was triggered! Current count: {self.button_click_count}")
                                     if self.button_click_count > 9:
-                                        self.master.setTitle_("OrangeBlox")
+                                        self.master.setTitle_(obName0())
                                         self.master.setContentSize_((800, 500))
                                         self.master.setOpaque_(True)
                                         self.master.setAlphaValue_(1.0)
@@ -1425,7 +1457,7 @@ if __name__ == "__main__":
                                         if self.debug_mode_window_enabled == False:
                                             printDebugMessage("Debug Window Mode is now enabled! Now when clicking the taskbar icon, it will show this window instead of going to the terminal directly.")
                                             if not (event == "oranges"):
-                                                printWarnMessage("--- Hello Robloxian! ---")
+                                                printSystemMessage("--- Hello Robloxian! ---")
                                                 printMainMessage("It seems like you found a secret easter egg!")
                                                 printMainMessage("Well, it's just a command line but is something!")
                                                 if not (main_config.get("EFlagEnableSecretJackpot") == False):
@@ -1445,7 +1477,7 @@ if __name__ == "__main__":
                                 if self.debug_mode_window_enabled == True:
                                     self.debug_mode_window_enabled = False
                                     self.button_click_count = 0
-                                    self.master.setTitle_("OrangeBlox")
+                                    self.master.setTitle_(obName0())
                                     self.master.setOpaque_(False)
                                     self.master.setAlphaValue_(0.0)
                                     self.master.orderOut_(None)
@@ -1468,9 +1500,9 @@ if __name__ == "__main__":
                         except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                     except Exception as e: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
                 except Exception as e: printErrorMessage(str(e))
-            threading.Thread(target=notificationLoop, daemon=False).start()
-            threading.Thread(target=terminalAwaitLoop, daemon=True).start()
-            threading.Thread(target=startBootstrap, daemon=False).start()
+            pip_class.startThread(func=notificationLoop, daemon=False)
+            pip_class.startThread(func=terminalAwaitLoop, daemon=True)
+            pip_class.startThread(func=startBootstrap, daemon=False)
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
             if app_count < 1: 
                 with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
@@ -1491,7 +1523,7 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         local_app_data = pip_class.getLocalAppData()
-        colors_class.set_console_title("OrangeBlox 🍊")
+        colors_class.set_console_title(f"{obName0()} {obName1()}")
         if os.path.exists(os.path.join(app_path, "Main.py")):
             if os.path.exists(os.path.join(app_path, "BootstrapCooldown")):
                 if not main_config.get("EFlagDisableBootstrapCooldown") == True:
@@ -1507,7 +1539,7 @@ if __name__ == "__main__":
                     with open(os.path.join(app_path, "BootstrapCooldown"), "w", encoding="utf-8") as f: f.write(str(int(datetime.datetime.now(tz=datetime.UTC).timestamp()) + 1))
                     time.sleep(main_config.get("EFlagBootstrapCooldownAmount", 1))
                     if os.path.exists(os.path.join(app_path, "BootstrapCooldown")): os.remove(os.path.join(app_path, "BootstrapCooldown"))
-                threading.Thread(target=cool, daemon=True).start()
+                pip_class.startThread(func=cool, daemon=True)
 
             if len(args) > 1:
                 if certain_player: 
@@ -1532,7 +1564,7 @@ if __name__ == "__main__":
                     with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
             if pip_class.getIfRunningWindowsAdmin():
-                printErrorMessage("Please run OrangeBlox under user permissions instead of running administrator!")
+                printErrorMessage(f"Please run {obName0()} under user permissions instead of running administrator!")
                 input("> ")
                 sys.exit(0)
             printMainMessage("Finding Python Executable..")
@@ -1546,7 +1578,7 @@ if __name__ == "__main__":
                 pythonExecutable = pip_class.findPython(path=True)
                 pip_class.executable = pythonExecutable
                 if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0):
-                    printErrorMessage("Please install Python 3.11 or later in order to use OrangeBlox!")
+                    printErrorMessage(f"Please install Python 3.11 or later in order to use {obName0()}!")
                     input("> ")
                     sys.exit(0)
 
@@ -1558,7 +1590,7 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                    if os.path.exists(venv_path) and not pip_class.getMajorMinorVersion(venv_class.getCurrentPythonVersion()) == pip_class.getMajorMinorVersion(pip_class.getCurrentPythonVersion()):
+                    if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
                         shutil.rmtree(venv_path, ignore_errors=True)
                     generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
@@ -1628,7 +1660,7 @@ if __name__ == "__main__":
                     except Exception as e:
                         printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
                         sys.exit(0)
-                threading.Thread(target=awake, daemon=True).start()
+                pip_class.startThread(func=awake, daemon=True)
                 startBootstrap()
             except Exception as e:
                 traceback.print_exc()

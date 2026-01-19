@@ -17,7 +17,7 @@ def extract(source: str | Path, destination: str | Path, ignore_filetype: bool =
 
     if ignore_filetype:
         if not os.path.exists(destination): os.makedirs(destination,mode=511)
-        if platform.system() == "Darwin": subprocess.run([ "/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if platform.system() == "Darwin": subprocess.run(["/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else: subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", source, "-C", destination], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return
     match source.suffix:

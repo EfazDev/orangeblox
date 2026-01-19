@@ -1,0 +1,220 @@
+@font-face {
+    font-family: mainfont;
+    src: url("https://cdn.efaz.dev/styles/mainFont.ttf");
+    font-weight: bold;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    background: #0a0a0a;
+}
+
+body {
+    font-family: sans-serif;
+    background: linear-gradient(180deg, #0a0a0a, #111111, #1c1c1c);
+    color: rgb(255, 255, 255);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 2rem;
+    padding-right: 1rem;
+    padding-bottom: 3.5rem;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.collage-img {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+    margin-top: 0.5rem;
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+p {
+    font-size: 1.125rem;
+    max-width: 600px;
+}
+
+.link {
+    font-size: 1.125rem;
+    max-width: 600px;
+    color: #ff4b00;
+}
+
+.button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 16px;
+    color: white;
+    background: linear-gradient(to right, #232323 60%, #222 70%, #181818 80%), linear-gradient(to right, #ff4b00, #ffff00, #00ff00);
+    background-blend-mode: multiply;
+    cursor: pointer;
+    min-height: 44px;
+    transition: transform 0.2s, padding 0.25s cubic-bezier(.4, 2, .3, 1), box-shadow 0.25s cubic-bezier(.4, 2, .3, 1);
+    white-space: nowrap;
+    overflow: hidden;
+    border: 3px solid transparent;
+    box-sizing: border-box;
+    z-index: 0;
+    position: relative;
+}
+
+.button>* {
+    position: relative;
+    z-index: 1;
+}
+
+.button>* {
+    position: relative;
+    z-index: 2;
+}
+
+.button>* {
+    position: relative;
+    z-index: 2;
+}
+
+.button .material-symbols-outlined {
+    font-size: 1.3em;
+    vertical-align: middle;
+    transition: none;
+    margin-right: 4px;
+    margin-left: 0;
+    line-height: 1;
+    display: inline-block;
+}
+
+.button:hover {
+    box-shadow: 0 4px 24px rgba(255, 75, 0, 0.18), 0 1.5px 8px rgba(0, 0, 0, 0.12);
+}
+
+.button:active {
+    transform: scale(0.97);
+}
+
+.button-border {
+    display: inline-block;
+    padding: 3px;
+    border-radius: 19px;
+    background: linear-gradient(to right, #ff4b00, #ffff00, #00ff00);
+    transition: background 0.3s cubic-bezier(.4, 2, .3, 1), transform 0.2s cubic-bezier(.4, 2, .3, 1);
+}
+
+.button-border:hover {
+    background: linear-gradient(to right, #ff4b00, #ffff00, #00ff00);
+    transform: scale(1.06);
+}
+
+table,
+th,
+td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+tbody {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+tbody>* {
+    margin: 0;
+}
+
+@media (max-width: 800px) {
+    body {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .container {
+        max-width: 100vw;
+        gap: 1rem;
+        margin-top: 1.2rem;
+    }
+
+    ul {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .button {
+        width: 100%;
+        min-width: 0;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .collage-img {
+        max-width: 100vw;
+        margin-top: 1rem;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    p,
+    a {
+        font-size: 1rem;
+        max-width: 100vw;
+    }
+}
+
+@media (orientation: portrait) {
+    html {
+        font-size: 80%;
+    }
+
+    body {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}

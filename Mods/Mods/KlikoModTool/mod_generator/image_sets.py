@@ -1,7 +1,11 @@
 from pathlib import Path
+from fontTools.ttLib import TTFont, newTable
+from fontTools.colorLib.builder import buildCOLR, buildCPAL
+from fontTools.pens.ttGlyphPen import TTGlyphPen
 from mod_generator.exceptions import ImageSetsNotFoundError, ImageSetDataNotFoundError
-from mod_generator.modules import Logger, request
+from mod_generator.modules import Logger
 from PIL import Image, PngImagePlugin
+import typing
 import numpy as np
 import json
 import sys
@@ -10,6 +14,9 @@ import os
 
 IMAGESET_IMG_NAME: str = "img_set_1x_1.png"
 IMAGESET_LUA_NAME: str = "GetImageSetData.lua"
+BUILDERFONT_ICON_NAME: str = "BuilderIcons-Regular.ttf"
+BUILDERFONT_FILLED_ICON_NAME: str = "BuilderIcons-Filled.ttf"
+CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 SUPPORTED_FILETYPES: list[str] = [".png"]
 IMAGE_CACHE: dict[str, Image.Image] = {}
 
@@ -36,6 +43,15 @@ def locate_imagesetdata_files(start: Path) -> Path:
             continue
         files.append(Path(dirpath, IMAGESET_LUA_NAME).relative_to(start))
     if len(files) <= 0: raise ImageSetDataNotFoundError("Failed to find path to ImageSetData")
+    return files
+def locate_builderfont(start: Path) -> Path:
+    files = []
+    for dirpath, dirnames, filenames in os.walk(start):
+        if BUILDERFONT_ICON_NAME in filenames:
+            files.append(Path(dirpath).relative_to(start) / BUILDERFONT_ICON_NAME)
+        if BUILDERFONT_FILLED_ICON_NAME in filenames:
+            files.append(Path(dirpath).relative_to(start) / BUILDERFONT_FILLED_ICON_NAME)
+    if len(files) <= 0: raise ImageSetsNotFoundError(f"Failed to find path to BuilderFonts")
     return files
 def parse_lua_content(content: str) -> dict[str, dict[str, dict[str, str | int]]]:
     # ChatGPT
@@ -182,8 +198,7 @@ def generate_user_selected_files(
         modded_icon.putalpha(a)
         modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int, studio: bool) -> None:
-    cur_path = os.path.dirname(os.path.abspath(__file__))
-    mod_generator_files = Path(cur_path) / "additional_files"
+    mod_generator_files = Path(CUR_PATH) / "additional_files"
     index_filepath: Path = mod_generator_files / "__index__.json"
     if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! __index_.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
@@ -399,6 +414,175 @@ def generate_imagesets(
     if modded_imagesets:
         for item in base_directory.iterdir():
             if item.is_file() and item.name not in modded_imagesets: item.unlink()
+def generate_fonts_with_color(
+    base_directory: Path,
+    builder_fonts: typing.List[Path],
+    colors: list[str],
+    angle: int, 
+    studio: bool
+):
+    target = ["ExtraContent", "LuaPackages", "Packages", "_Index", "BuilderIcons", "BuilderIcons", "Font"]
+    Path(base_directory, *target).mkdir(parents=True, exist_ok=True)
+    for font_path in builder_fonts:
+        font = TTFont(Path(base_directory, font_path))
+        units = font["head"].unitsPerEm
+        colors_needed = {}
+        handled_alignment = []
+        index = 0
+
+        if type(colors) is dict:
+            old_icons = get_old_icons()
+            for icon_name in font.getGlyphOrder():
+                selected_color = False
+                selected_icon = False
+
+                def handle_table(table):
+                    nonlocal index
+                    nonlocal colors_needed
+                    nonlocal selected_color
+                    nonlocal selected_icon
+                    nonlocal handled_alignment
+                    nonlocal icon_name
+                    if table:
+                        if not selected_color and type(table) is list:
+                            if len(table) == 1: 
+                                r, g, b = 0, 0, 0
+                                rgb = hex_to_rgb(table[0])
+                                r += float(rgb[0])/255.0
+                                g += float(rgb[1])/255.0
+                                b += float(rgb[2])/255.0
+                                colors_needed[icon_name] = [index, (min(float(r), 1.0), min(float(g), 1.0), min(float(b), 1.0), 1.0)]
+                                index += 1
+                            else: 
+                                r, g, b, t = 0, 0, 0, 0
+                                for i in table:
+                                    rgb = hex_to_rgb(i)
+                                    r += float(rgb[0])/255.0
+                                    g += float(rgb[1])/255.0
+                                    b += float(rgb[2])/255.0
+                                    t += 1
+                                colors_needed[icon_name] = [index, (min(float(r / t), 1.0), min(float(g / t), 1.0), min(float(b / t), 1.0), 1.0)]
+                                index += 1
+                            selected_color = True
+                        if not selected_icon and isinstance(table, str):
+                            blocked_icons = (".notdef", "space", "base_icon")
+                            if icon_name in blocked_icons:
+                                return
+                            with Image.open(table, formats=("PNG",)) as image:
+                                image = image.convert("RGBA")
+                            image.thumbnail((64, 64), resample=Image.Resampling.NEAREST)
+                            arr = np.array(image)
+                            h, w = arr.shape[:2]
+                            glyphset = font.getGlyphSet()
+                            units = font["head"].unitsPerEm
+                            orig_aw, orig_lsb = font["hmtx"][icon_name]
+                            orig_glyph = font["glyf"][icon_name]
+                            try:
+                                xMin = orig_glyph.xMin
+                                yMax = orig_glyph.yMax
+                                xMax = orig_glyph.xMax
+                                yMin = orig_glyph.yMin
+                                bbox_width = xMax - xMin
+                                bbox_height = yMax - yMin
+                            except Exception:
+                                xMin = 0
+                                yMax = units
+                                bbox_width = 0
+                                bbox_height = 0
+                            if bbox_width <= 0:
+                                bbox_width = max(1.0, orig_aw - orig_lsb)
+                                xMin = orig_lsb
+                            if bbox_height <= 0:
+                                bbox_height = units
+                                yMax = units
+                            scale = min(bbox_width / (float(w)), bbox_height / (float(h)))*1.2
+                            if scale <= 0:
+                                scale = 1.0
+                            top_left_x = xMin
+                            top_left_y = yMax*1.1
+                            pen = TTGlyphPen(glyphset)
+                            for py in range(h):
+                                for px in range(w):
+                                    r, g, b, a = arr[py, px]
+                                    if a < 128:
+                                        continue
+                                    fy_top = top_left_y - (py * scale)
+                                    fy_bottom = top_left_y - ((py + 1) * scale)
+                                    x0 = top_left_x + (px * scale)
+                                    x1 = top_left_x + ((px + 1) * scale)
+                                    y0 = fy_bottom
+                                    y1 = fy_top
+                                    pen.moveTo((x0, y0))
+                                    pen.lineTo((x1, y0))
+                                    pen.lineTo((x1, y1))
+                                    pen.lineTo((x0, y1))
+                                    pen.closePath()
+                            new_glyph = pen.glyph()
+                            new_glyph.recalcBounds(glyphset)
+                            font["glyf"][icon_name] = new_glyph
+                            font["hmtx"][icon_name] = (orig_aw, orig_lsb)
+                            if icon_name in font["glyf"] and hasattr(font["glyf"][icon_name], 'xMin'):
+                                glyph = font["glyf"][icon_name]
+                                glyph_width = glyph.xMax - glyph.xMin
+                                new_aw = units
+                                new_lsb = (units - glyph_width) / 2
+                                font['hmtx'].metrics[icon_name] = (int(round(new_aw) * 1.05), round(new_lsb))
+                                handled_alignment.append(icon_name)
+                            selected_icon = True
+                handle_table(colors.get(icon_name))
+                handle_table(colors.get("_" + icon_name))
+                handle_table(colors.get("_font"))
+                if colors.get("_old_icons") == True and old_icons.get(icon_name):
+                    handle_table(old_icons.get(icon_name))
+                handle_table(colors.get("*"))
+                if not selected_color:
+                    colors_needed[icon_name] = [index, (1.0, 1.0, 1.0, 1.0)]
+                    index += 1
+        else:
+            for icon_name in font.getGlyphOrder():
+                if len(colors) == 1: 
+                    r, g, b = 0, 0, 0
+                    rgb = hex_to_rgb(colors[0])
+                    r += float(rgb[0])/255.0
+                    g += float(rgb[1])/255.0
+                    b += float(rgb[2])/255.0
+                    colors_needed[icon_name] = [index, (min(float(r), 1.0), min(float(g), 1.0), min(float(b)), 1.0)]
+                    index += 1
+                else:
+                    r, g, b, t = 0, 0, 0, 0
+                    for i in colors:
+                        rgb = hex_to_rgb(i)
+                        r += float(rgb[0])/255.0
+                        g += float(rgb[1])/255.0
+                        b += float(rgb[2])/255.0
+                        t += 1
+                    colors_needed[icon_name] = [index, (min(float(r / t), 1.0), min(float(g / t), 1.0), min(float(b / t), 1.0), 1.0)]
+                    index += 1
+        
+        palettes_data = [
+            [
+                rgba for _, rgba in sorted(colors_needed.values(), key=lambda item: item[0])
+            ]
+        ]
+        font['CPAL'] = buildCPAL(palettes_data)
+
+        for glyph_name in font.getGlyphOrder():
+            if glyph_name not in ['.notdef', '.null', 'space']:
+                if glyph_name in font["glyf"] and hasattr(font["glyf"][glyph_name], 'xMin') and glyph_name not in handled_alignment:
+                    glyph = font["glyf"][glyph_name]
+                    glyph_width = glyph.xMax - glyph.xMin
+                    new_aw = units
+                    new_lsb = (units - glyph_width) / 2
+                    font['hmtx'].metrics[glyph_name] = (int(round(new_aw) / 1.1), round(new_lsb))
+
+        color_glyphs = {}
+        for glyph_name in font.getGlyphOrder():
+            if glyph_name not in ['.notdef', '.null', 'space']:
+                color_glyphs[glyph_name] = [
+                    (glyph_name, colors_needed[glyph_name][0])
+                ]
+        font['COLR'] = buildCOLR(color_glyphs)
+        font.save(Path(base_directory, font_path))
 def get_authorized_from_blacklist(colors: list):
     if type(colors) is dict:
         total = []
@@ -728,3 +912,9 @@ def get_blacklist(authorized: list=[]) -> list[str]:
         "squircles/hollowBold"
     ]
     return [i for i in blacklist if i not in authorized]
+def get_old_icons(blocked: list=[]) -> dict[str]:
+    icons = {}
+    for i in os.listdir(os.path.join(CUR_PATH, "..", "resources", "old_icons")):
+        j = i.split(".")[0]
+        if j not in blocked: icons[j] = os.path.join(CUR_PATH, "..", "resources", "old_icons", i)
+    return icons

@@ -6,6 +6,12 @@
     "angle": 135,
     "advanced": {
         "*": ["#ff4b00", "#ffff00", "#00ff00"],
+        "tilt": ["#ff6a00"],
+        "studio": ["#ff6a00"],
+        "play-small": ["#ffffff"],
+        "play-large": ["#ffffff"],
+        "_tilt": "{main}/AppIcon.png",
+        "_studio": "{main}/AppIconRunStudio.png",
         "icons/logo/block": "{main}/AppIcon.png",
         "icons/logo/letterform": "{main}/Banner.png",
         "icons/logo/studiologo": "{main}/AppIconRunStudio.png",
@@ -20,6 +26,7 @@
         "_all_optional": true,
         "_voice_chat": true,
         "_loading": true,
-        "_leaderboard": false
+        "_leaderboard": false,
+        "_old_icons": true
     }
 }

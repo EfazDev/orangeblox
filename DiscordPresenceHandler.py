@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.4.1
+# v2.4.5
 # 
 
 # Modules
@@ -22,7 +22,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.4.1"}
+current_version: typing.Dict[str, str] = {"version": "2.4.5"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -116,8 +116,7 @@ class Presence(pypresence.Presence):
                             self.discord_session_connected = False
                             try: self.close()
                             except Exception as e: pass
-                    self.main_thread = threading.Thread(target=loop, daemon=True)
-                    self.main_thread.start()
+                    self.main_thread = pip_class.startThread(func=loop, daemon=True)
                 except Exception as e:
                     # Discord may not be open, await opening loop.
                     if not type(e) is pypresence.DiscordNotFound and not type(e) is ConnectionRefusedError: self.printDebugMessage(f"Unable to connect to Discord (1)! Error: {str(e)}")
@@ -125,7 +124,7 @@ class Presence(pypresence.Presence):
                         while (self.get_if_discord_opened() == False and self.connected == True): time.sleep(0.5)
                         if self.connected == True: create_connection()
             self.connected = True
-            threading.Thread(target=create_connection, daemon=True).start()
+            pip_class.startThread(func=create_connection, daemon=True)
             return {"success": True, "code": 0}
         else: return {"success": True, "code": 1}
     def generate_loop_key(self):

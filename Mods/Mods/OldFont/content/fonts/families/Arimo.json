@@ -1,0 +1,53 @@
+{
+	"name": "Arimo",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/arial.ttf"
+		},
+		{
+			"name": "Italic",
+			"weight": 400,
+			"style": "italic",
+			"assetId": "rbxasset://fonts/Roboto-Italic.ttf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/arial.ttf"
+		},
+		{
+			"name": "Medium Italic",
+			"weight": 500,
+			"style": "italic",
+			"assetId": "rbxasset://fonts/Roboto-Italic.ttf"
+		},
+		{
+			"name": "Semi Bold",
+			"weight": 600,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/arialbd.ttf"
+		},
+		{
+			"name": "Semi Bold Italic",
+			"weight": 600,
+			"style": "italic",
+			"assetId": "rbxasset://fonts/Roboto-Italic.ttf"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/arialbd.ttf"
+		},
+		{
+			"name": "Bold Italic",
+			"weight": 700,
+			"style": "italic",
+			"assetId": "rbxasset://fonts/Roboto-Italic.ttf"
+		}
+	]
+}

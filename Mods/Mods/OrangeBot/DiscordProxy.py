@@ -121,14 +121,14 @@ async def status_task():
                 await bot.change_presence(status=discord.Status.online,
                     activity=discord.Activity(
                         type=discord.ActivityType.playing,
-                        name=f"{place_info['name']} by {creator_name}"
+                        name=f"{place_info['name']} | {creator_name}"
                     )
                 )
             else:
                 await bot.change_presence(status=discord.Status.idle,
                     activity=discord.Activity(
                         type=discord.ActivityType.playing,
-                        name=f"Idling Roblox{' Studio' if OrangeAPI.getStudioMode() else ''}"
+                        name=OrangeAPI.translate(f"Idling Roblox{' Studio' if OrangeAPI.getStudioMode() else ''}")
                     )
                 )
         except Exception as e:

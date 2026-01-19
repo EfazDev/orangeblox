@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.3.1
+# v1.4.0
 # 
 
 # Python Modules
@@ -18,9 +18,10 @@ debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
 current_version = OrangeAPI.getVersion()
 cur_path = os.path.dirname(os.path.abspath(__file__))
+reinstall_mode = False # Enable this if you want to always recreate the mod
 
 def getFilePrompt():
-    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode().strip()
+    return subprocess.run([sys.executable, "-c", "import promptlib; prompter = promptlib.Files(); print(prompter.file())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode(errors="ignore").strip()
     
 # Printing Functions
 def printMainMessage(mes): OrangeAPI.printMainMessage(mes) # White System Console Text
@@ -30,8 +31,8 @@ def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Co
 def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
 def isYes(text: str): text = text.strip(); return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
 def isNo(text: str): text = text.strip(); return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
-    
-OrangeAPI.printColoredMessage("Kliko Mod Tool 🍎 for OrangeBlox 🍊", 197)
+
+OrangeAPI.printColoredMessage(f"Kliko Mod Tool 🍎 for {OrangeAPI.getOrangeBloxName()} {OrangeAPI.getOrangeBloxEmoji()}", 197)
 OrangeAPI.printColoredMessage("Edited for OrangeBlox by EfazDev 🍊 / Originally Made By TheKliko 🍎", 197)
 OrangeAPI.printColoredMessage("THIS MOD IS NOT MADE BY THEKLIKO NOR WARRANTED BY HIM!", 197)
 studio = OrangeAPI.getStudioMode()
@@ -42,6 +43,15 @@ if installed["success"] == False:
     installed = {"success": installed["success"], "channel": installed.get("attempted_channel"), "version": installed.get("client_version"), "hash": installed.get("hash")}
 if installed["success"] == True:
     OrangeAPI.printColoredMessage(f"Roblox Version Used: {installed['version']} (Channel: {installed['channel']} 🍎)", 197)
+
+    # Major Update About Mod Generation..
+    if not (type(OrangeAPI.getConfiguration("ReadDisclaimer2025.2")) is bool):
+        printYellowMessage("--- Major Update about Mod Generation and Updating! ---")
+        printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.")
+        n = OrangeAPI.requestInput("Press enter to continue.")
+        if n != None: OrangeAPI.setConfiguration("ReadDisclaimer2025.2", True)
+
+    # Actual Modding
     if not (type(OrangeAPI.getConfiguration("KlikoHandlingModType")) is int):
         printMainMessage("[1] = Generate New Mods")
         printMainMessage("[2] = Update Old Mods")
@@ -176,7 +186,7 @@ if installed["success"] == True:
                     try:
                         with open(mod_style_file, "r", encoding="utf-8") as f: mod_style_json = json.load(f)
                         if mod_style_json.get("name") and (mod_style_json.get("colors") or mod_style_json.get("advanced")) and mod_style_json.get("angle"):
-                            if not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"] and OrangeAPI.getConfiguration(f"KlikoModVersion{'Studio' if studio else ''}") == current_version):
+                            if reinstall_mode == True or not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"] and OrangeAPI.getConfiguration(f"KlikoModVersion{'Studio' if studio else ''}") == current_version):
                                 printMainMessage("Running Proxy using Python Executable..")
                                 fold_name = mod_style_json["name"]
                                 if studio == True: fold_name = f'{mod_style_json["name"]} [STUDIO]'
