@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5l
+# v2.4.6a
 # 
 
 # Modules
@@ -22,7 +22,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.4.5l"}
+current_version: typing.Dict[str, str] = {"version": "2.4.6a"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():

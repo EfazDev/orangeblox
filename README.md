@@ -44,7 +44,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
 2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.0 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.2 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
 4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc psutil truststore <br>
    Windows: pip install pypresence pywin32 plyer psutil truststore
@@ -69,13 +69,13 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `ee187e16d107ebe7257a09e1ebcdb6af` |
+| Main Bootstrap (Main.py) | `9899029d8d51c229ad1a86b754e42de5` |
 | Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a5232d621dd180d461ae4b46401385ab` |
-| Installer (Install.py) | `5166bcfa38e6d1b067981b6112252e51` |
-| Bootstrap API (OrangeAPI.py) | `285787022fb93bd742841fcd682bced6` |
-| Bootstrap Loader (OrangeBlox.py) | `bb451e4b3758f6fc28d67553b9bbcc70` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `48ae3b7fb1ff4c213f5ff014eb0c59be` |
-| PyKits API (PyKits.py) | `8e5c457db103ade2b8a0d5ea51496eca` |
+| Installer (Install.py) | `30f55ceb531b0235ef85afe97fe43983` |
+| Bootstrap API (OrangeAPI.py) | `52033362eb15e296beda49197c8d9987` |
+| Bootstrap Loader (OrangeBlox.py) | `d457f2bd72f8f434df1500886c2b1033` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `2166010bc16d9a57bdd22a26f6fff2c7` |
+| PyKits API (PyKits.py) | `1040e4af2a6040be86c13191a3d2c365` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5l
+# v2.4.6a
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.5l"}
+    current_version = {"version": "2.4.6a"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -744,6 +744,7 @@ if __name__ == "__main__":
     # Python Modules (Pypi Installed)
     import psutil
     if main_os == "Windows":
+        import pythoncom # type: ignore
         import win32com.client as win32client # type: ignore
         import win32api # type: ignore
         import win32con # type: ignore
@@ -1361,23 +1362,26 @@ if __name__ == "__main__":
                     if not (disabled_shortcuts_installation == True or main_config.get("EFlagDisableShortcutsInstall") == True):
                         printMainMessage("Setting up shortcuts..")
                         try:
-                            def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                            pythoncom.CoInitialize()
+                            try:
                                 shell = win32client.Dispatch('WScript.Shell')
-                                if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
-                                shortcut = shell.CreateShortcut(shortcut_path)
-                                shortcut.TargetPath = target_path
-                                if arguments: shortcut.Arguments = arguments
-                                if working_directory: shortcut.WorkingDirectory = working_directory
-                                if icon_path: shortcut.IconLocation = icon_path
-                                shortcut.Save()
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
-                            create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                                    if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
+                                    shortcut = shell.CreateShortcut(shortcut_path)
+                                    shortcut.TargetPath = target_path
+                                    if arguments: shortcut.Arguments = arguments
+                                    if working_directory: shortcut.WorkingDirectory = working_directory
+                                    if icon_path: shortcut.IconLocation = icon_path
+                                    shortcut.Save()
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                                create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                            finally: pythoncom.CoUninitialize()
                         except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
                     # Copy App Resources
@@ -1904,31 +1908,34 @@ if __name__ == "__main__":
                             # Remove Shortcuts
                             printMainMessage("Removing shortcuts..")
                             try:
-                                def remove_path(pat):
-                                    if os.path.exists(pat):  os.remove(pat)
-                                def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                                pythoncom.CoInitialize()
+                                try:
                                     shell = win32client.Dispatch('WScript.Shell')
-                                    if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
-                                    shortcut = shell.CreateShortcut(shortcut_path)
-                                    shortcut.TargetPath = target_path
-                                    if arguments: shortcut.Arguments = arguments
-                                    if working_directory: shortcut.WorkingDirectory = working_directory
-                                    if icon_path: shortcut.IconLocation = icon_path
-                                    shortcut.Save()
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Run Studio.lnk'))
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'))
-                                remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
-                                if cur:
-                                    if cur["success"] == True:
-                                        create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Player.lnk'))
-                                        create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
-                                if cur_studio:
-                                    if cur_studio["success"] == True:
-                                        create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Studio.lnk'))
-                                        create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                                    def remove_path(pat):
+                                        if os.path.exists(pat):  os.remove(pat)
+                                    def create_shortcut(target_path, shortcut_path, working_directory=None, icon_path=None, arguments=None):
+                                        if not os.path.exists(os.path.dirname(shortcut_path)): os.makedirs(os.path.dirname(shortcut_path),mode=511)
+                                        shortcut = shell.CreateShortcut(shortcut_path)
+                                        shortcut.TargetPath = target_path
+                                        if arguments: shortcut.Arguments = arguments
+                                        if working_directory: shortcut.WorkingDirectory = working_directory
+                                        if icon_path: shortcut.IconLocation = icon_path
+                                        shortcut.Save()
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Run Studio.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Play Roblox.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'))
+                                    remove_path(os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
+                                    if cur:
+                                        if cur["success"] == True:
+                                            create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Player.lnk'))
+                                            create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur['version']}\\RobloxPlayerBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Player.lnk'))
+                                    if cur_studio:
+                                        if cur_studio["success"] == True:
+                                            create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Studio.lnk'))
+                                            create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                                finally: pythoncom.CoUninitialize()
                             except Exception as e: printErrorMessage(f"Unable to remove shortcuts: {str(e)}")
 
                             # Remove from Windows' Program List

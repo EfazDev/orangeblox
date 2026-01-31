@@ -2454,7 +2454,7 @@
  "Custom Theme of OrangeBlox": "OrangeBlox-ის მორგებული თემა",
  "Please enter the custom name for OrangeBlox (OrangeBlox will reset to default):": "Გთხოვთ, შეიყვანოთ OrangeBlox-ის მორგებული სახელი (OrangeBlox დაბრუნდება ნაგულისხმევად):",
  "Theme has been reset. Ignore this error.": "Თემა გადატვირთულია. იგნორირება გაუკეთეთ ამ შეცდომას..",
- "--- Bootstrap Media ---": "--- Bootstrap Media ---",
+ "--- Bootstrap Media ---": "--- Bootstrap მედია ---",
  "Extracted successfully! Running Installer!": "Ამოღებულია წარმატებით! გაშვებული ინსტალერი!",
  "Latest Version: v(*)": "Უახლესი ვერსია: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Გსურთ დროებით ჩამოტვირთოთ OrangeBlox Installer ახალ საქაღალდეში? (y/n)"
