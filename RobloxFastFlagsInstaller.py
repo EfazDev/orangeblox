@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.5
+# v2.5.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -31,7 +31,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.5.5"
+script_version = "2.5.6"
 
 # Base Functions 1
 def getLocalAppData():
@@ -616,7 +616,7 @@ class Handler:
                     f_index = line.find("[F")
                     if f_index != -1:
                         filtered_line = line[f_index:]
-                        if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "[FLog::FMOD] FMOD API error" in line: should_remove = True
+                        if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "Calling mi_collect" in line or "[FLog::FMOD] FMOD API error" in line: should_remove = True
                         else: current_log = filtered_line
                     if should_remove == False: end_lines.append(line)
                 write_file.writelines(end_lines)
@@ -746,7 +746,7 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
                 elif "RobloxAudioDevice::StopRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
                 elif "RobloxAudioDevice::StartRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
-                elif "[FLog::Output]" in line:
+                elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
                         if output == -1: return None
@@ -977,7 +977,7 @@ class Handler:
                 elif "RobloxAudioDevice::StopRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
                 elif "RobloxAudioDevice::StartRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
                 elif "raiseTeleportInitFailedEvent" in line: self.submitEvent(eventName="onGameTeleportFailed", data=line, isLine=True)
-                elif "[FLog::Output]" in line:
+                elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
                         if output == -1: return None
