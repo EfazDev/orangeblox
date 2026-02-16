@@ -1,5 +1,5 @@
 """
-PyKits v1.7.5 | Made by Efaz from efaz.dev
+PyKits v1.7.6 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -36,7 +36,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.7.5"
+__version__ = "1.7.6"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -1092,9 +1092,9 @@ class request:
         virt = self._os.path.exists(self._os.path.join(alleged_path, "..", "pyvenv.cfg")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe")))
         if self._platform.python_version() >= "3.10.0": 
             if not getattr(self._sys, "frozen", False) and che("truststore") == False:
-                self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install"] + (["--user"] if not virt else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
                 import site
                 self._site = site
+                self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install"] + (["--user"] if (not virt or not self._site.ENABLE_USER_SITE) else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
                 site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
                 for path in site_packages_paths:
                     if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
@@ -1778,7 +1778,7 @@ class pip:
         if not self.executable: return False
         if self._os.path.exists(self.executable) and self._os.path.exists(self._sys.executable): return self._os.path.samefile(self.executable, self._sys.executable)
         else: return False
-    def getMajorMinorVersion(self, version: str="3.14.2"): return ".".join(version.split(".")[:-1])
+    def getMajorMinorVersion(self, version: str="3.14.3"): return ".".join(version.split(".")[:-1])
 
     # Python Functions
     def getLocalAppData(self):

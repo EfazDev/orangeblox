@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.6
+# v2.5.7
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -31,7 +31,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.5.6"
+script_version = "2.5.7"
 
 # Base Functions 1
 def getLocalAppData():
@@ -2140,7 +2140,8 @@ class Handler:
         return f"{url_scheme}:1+{'+'.join(s)}"
     def parseRobloxCookieFile(self, file_path: str="", file_index: int=1):
         if not file_path: return None
-        if main_os == "Windows" and file_path.endswith(".dat"):
+        if main_os == "Windows":
+            if not file_path.endswith(".dat"): return None
             with open(file_path, "r", encoding="utf-8") as f: cookie_file = json.load(f)
             encoded_cookies = cookie_file.get("CookiesData")
             if encoded_cookies == None: return None
@@ -2149,7 +2150,8 @@ class Handler:
             match = re.search(br'\.ROBLOSECURITY\t([^;]+)', cookie_data)
             if match == None: return None
             return match[file_index].decode("utf-8", errors="ignore")
-        elif main_os == "Darwin" and file_path.endswith(".binarycookies"):
+        elif main_os == "Darwin":
+            if not file_path.endswith(".binarycookies"): return None
             # A converted and non-package neeeding version of the binarycookies package
             from dataclasses import dataclass, field
             from datetime import datetime, timezone
@@ -2337,10 +2339,11 @@ class Handler:
             for i in cookies:
                 if i.name == ".ROBLOSECURITY":
                     return i.value
-        else:
-            self.unsupportedFunction()
+        else: self.unsupportedFunction()
     def getRobloxCookieFileLocation(self, studio: bool=False):
-        if main_os == "Windows" and os.path.exists(os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")): return os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat"), 1
+        if main_os == "Windows": 
+            if os.path.exists(os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")): return os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat"), 1
+            else: return None, None
         elif main_os == "Darwin":
             if studio == True and os.path.exists(os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxStudio.binarycookies")): return os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxStudio.binarycookies"), -1
             elif studio == False and os.path.exists(os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies")): return os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies"), -1
@@ -2675,7 +2678,7 @@ class Handler:
                             printMainMessage("Would you like to open Roblox? (y/n)")
                             if input("> ").lower() == "y": self.openRoblox()
                 else: printErrorMessage("Roblox couldn't be found.")
-            else: printErrorMessage("Roblox Fast Flags Installer is only supported for macOS and Windows.")
+            else: self.unsupportedFunction()
         else:
             if askForPerms == True:
                 if submit_status: submit_status.submit("[FFLAGS] Asking for permissions..", 0)
@@ -2799,7 +2802,7 @@ class Handler:
                     except Exception as e: printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                 return flags_final
             else: return {}
-        else: printErrorMessage("Roblox Fast Flags Installer is only supported for macOS and Windows.")
+        else: self.unsupportedFunction()
     def installGlobalBasicSettings(self, globalsettings: dict, studio: bool=False, askForPerms: bool=False, endRobloxInstances: bool=True, flat: bool=False, debug: bool=False):
         if askForPerms == True:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Asking for permissions..", 0)
