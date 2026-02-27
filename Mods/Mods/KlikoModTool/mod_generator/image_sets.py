@@ -6,6 +6,7 @@ from mod_generator.exceptions import ImageSetsNotFoundError, ImageSetDataNotFoun
 from mod_generator.modules import Logger
 from PIL import Image, PngImagePlugin
 import typing
+import logging
 import numpy as np
 import json
 import sys
@@ -19,6 +20,8 @@ BUILDERFONT_FILLED_ICON_NAME: str = "BuilderIcons-Filled.ttf"
 CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 SUPPORTED_FILETYPES: list[str] = [".png"]
 IMAGE_CACHE: dict[str, Image.Image] = {}
+
+logging.getLogger("fontTools").setLevel(logging.CRITICAL + 1)
 
 def hex_to_rgb(hex_color: str): hex_color = hex_color.lstrip("#"); return np.array([int(hex_color[i:i+2], 16) for i in (0, 2, 4)])
 def clear_cache() -> None: IMAGE_CACHE.clear()

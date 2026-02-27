@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6c
+# v2.4.6d
 # 
 
 # Modules
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         "AppIconRunStudio.ico", 
         "AppIcon64.png"
     ]
-    current_version = {"version": "2.4.6c"}
+    current_version = {"version": "2.4.6d"}
     cur_path = os.path.dirname(os.path.abspath(__file__))
     rebuild_target = []
     repair_mode = False
@@ -633,6 +633,7 @@ if __name__ == "__main__":
     if "--download-media" in sys.argv or "-dm" in sys.argv: download_mode = True
 
     def startMessage():
+        if main_os == "Windows": colors_class.fix_windows_ansi()
         printSystemMessage("-----------")
         printSystemMessage("Welcome to OrangeBlox Installer 🍊!")
         printSystemMessage("Made by Efaz from efaz.dev!")

@@ -1,5 +1,5 @@
 """
-PyKits v1.7.6 | Made by Efaz from efaz.dev
+PyKits v1.7.8 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -36,7 +36,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.7.6"
+__version__ = "1.7.8"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -951,7 +951,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.7.1")
+            headers.setdefault("user-agent", f"PyKits/1.7.8")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -1083,28 +1083,32 @@ class request:
             elif isinstance(e.reason, ConnectionRefusedError) or isinstance(e.reason, ConnectionResetError): raise self.ConnectionRefusedException(url, str(e.reason))
             raise self.ResolveError(url, str(e.reason))
         except Exception as e: raise self.DownloadError(url, str(e))
-    def ensure_python_certs(self):
+    def ensure_python_certs(self, certifi_only: bool=False):
         def che(a):
             try: self._importlib_metadata.version(a); return True
             except self._importlib_metadata.PackageNotFoundError: return False
         ssl_ctx = None
         alleged_path = self._os.path.dirname(self._sys.executable)
         virt = self._os.path.exists(self._os.path.join(alleged_path, "..", "pyvenv.cfg")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe")))
-        if self._platform.python_version() >= "3.10.0": 
-            if not getattr(self._sys, "frozen", False) and che("truststore") == False:
-                import site
-                self._site = site
-                self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install"] + (["--user"] if (not virt or not self._site.ENABLE_USER_SITE) else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
-                site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
-                for path in site_packages_paths:
-                    if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
-                self._importlib.invalidate_caches()
-            import truststore # type: ignore
-            ssl_ctx = truststore.SSLContext(self._ssl.PROTOCOL_TLS_CLIENT)
+        if certifi_only == False and self._platform.python_version() >= "3.10.0": 
+            try:
+                if not getattr(self._sys, "frozen", False) and che("truststore") == False:
+                    import site
+                    self._site = site
+                    s = self._subprocess.run([self._sys.executable, "-m", "pip", "install"] + (["--user"] if (not virt and self._site.ENABLE_USER_SITE) else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
+                    if s.returncode == 0:
+                        site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
+                        for path in site_packages_paths:
+                            if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
+                        self._importlib.invalidate_caches()
+                    else: return self.ensure_python_certs(certifi_only=True)
+                import truststore # type: ignore
+                ssl_ctx = truststore.SSLContext(self._ssl.PROTOCOL_TLS_CLIENT)
+            except Exception: return self.ensure_python_certs(certifi_only=True)
         elif che("certifi") == False:
             STAT_0o775 = ( self._stat.S_IRUSR | self._stat.S_IWUSR | self._stat.S_IXUSR | self._stat.S_IRGRP | self._stat.S_IWGRP | self._stat.S_IXGRP | self._stat.S_IROTH |  self._stat.S_IXOTH )
             openssl_dir, openssl_cafile = self._os.path.split(self._ssl.get_default_verify_paths().openssl_cafile)
-            self._subprocess.check_call([self._sys.executable, "-E", "-s", "-m", "pip", "install"] + (["--user"] if not virt else []) + ["--upgrade", "certifi"])
+            self._subprocess.check_call([self._sys.executable, "-E", "-m", "pip", "install"] + (["--user"] if not virt else []) + ["--upgrade", "certifi"])
             import certifi
             self._os.chdir(openssl_dir)
             relpath_to_certifi_cafile = self._os.path.relpath(certifi.where())
@@ -1117,8 +1121,11 @@ class request:
     def get_if_ok(self, code: int): return int(code) < 300 and int(code) >= 200
     def get_if_redirect(self, code: int): return int(code) < 400 and int(code) >= 300
     def get_if_ip(self, ip: int):
-        try: self._socket.inet_aton(ip); return True
-        except: return False
+        try: self._socket.inet_pton(self._socket.AF_INET, ip); return True
+        except OSError: 
+            try: self._socket.inet_pton(self._socket.AF_INET6, ip); return True
+            except Exception: return False
+        except Exception: return False
     def get_if_cooldown(self, code: int): return int(code) == 429
     def generate_location_url(self, location_header: str="", host: str="https://google.com"):
         if not location_header: return ""
@@ -2234,18 +2241,14 @@ class Colors:
     }
     def __init__(self): import os, platform; self._os = os; self._platform = platform; self._main_os = platform.system()
     def fix_windows_ansi(self):
-        def getIfRunningWindowsAdmin():
-            if self._main_os == "Windows":
-                try: import ctypes; return ctypes.windll.shell32.IsUserAnAdmin()
-                except: return False
-            else: return False
-        if getIfRunningWindowsAdmin():
+        try:
             if not hasattr(self, "_ctypes"): import ctypes; self._ctypes = ctypes
             kernel32 = self._ctypes.windll.kernel32
             handle = kernel32.GetStdHandle(-11)
             mode = self._ctypes.c_uint()
             kernel32.GetConsoleMode(handle, self._ctypes.byref(mode))
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
+        except Exception: pass
     def get_reset_color(self): return "\033[0m"
     def get_ansi_start(self, ansi_num: int): 
         if isinstance(ansi_num, self.Color): ansi_num = ansi_num.ansi

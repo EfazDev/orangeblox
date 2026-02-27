@@ -25,7 +25,7 @@ class ProgressBar():
 def download_luapackages(version: str, channel: str, output_directory: str | Path, studio: bool) -> None:
     progress_bar = ProgressBar()
     output_directory = Path(output_directory)
-    if platform.system() == "Darwin":
+    if False:
         download(Api.Roblox.Deployment.download(version, "RobloxStudioApp.zip", channel, True), output_directory / "download" / f"{version}-RobloxStudioApp.zip")
         progress_bar.submit("[MOD_GEN] Extracting Roblox Studio..", 35)
         extract(os.path.join(output_directory, "download", f"{version}-RobloxStudioApp.zip"), output_directory / version / "RobloxStudio.app", False, ["RobloxStudio.app/Contents/Resources/content/*", "RobloxStudio.app/Contents/Resources/ExtraContent/*"])

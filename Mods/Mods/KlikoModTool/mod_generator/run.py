@@ -34,22 +34,17 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
     try:
         progress_bar.start()
         progress_bar.submit("[MOD_GEN] Fetching Studio Version!", 0)
-        if studio == True:
-            channel = versions["channel"]
-            version = versions["version"]
-            hash = versions["hash"]
-        else:
-            channel = versions["channel"]
-            try:
-                deploy_history: DeployHistory = get_deploy_history(versions["version"])
-                try: hash = deploy_history.get_hash(versions['version'])
-                except Exception as e: hash = versions["hash"]
-                try: version: str = deploy_history.get_studio_version(hash, macos=platform.system()=="Darwin")
-                except Exception as e: version: str = deploy_history.get_latest_studio_version(macos=platform.system()=="Darwin"); channel = "LIVE"
-            except Exception as e:
-                s = versions["hash"].split(".")
-                version: str = DeployHistory("").get_latest_studio_version(macos=platform.system()=="Darwin", hash_majors=(s[0], s[1]))
-                channel = "LIVE"
+        channel = versions["channel"]
+        try:
+            deploy_history: DeployHistory = get_deploy_history(versions["version"])
+            try: hash = deploy_history.get_hash(versions['version'])
+            except Exception as e: hash = versions["hash"]
+            try: version: str = deploy_history.get_studio_version(hash, macos=False)
+            except Exception as e: version: str = deploy_history.get_latest_studio_version(macos=False); channel = "LIVE"
+        except Exception as e:
+            s = versions["hash"].split(".")
+            version: str = DeployHistory("").get_latest_studio_version(macos=False, hash_majors=(s[0], s[1]))
+            channel = "LIVE"
         progress_bar.submit("[MOD_GEN] Making Base Directories..", 5)
         output_dir = os.path.join(cur_path, "test")
         output_dir = Path(output_dir)

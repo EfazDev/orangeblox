@@ -14,28 +14,15 @@ def getLatestRobloxStudioAppSettings(debug=False, bootstrapper=False, bucket="")
     # Windows: https://clientsettingscdn.roblox.com/v2/settings/application/PCStudioApp
     try:    
         if bucket == "LIVE" or bucket == "production": bucket = ""
-        if platform.system() == "Darwin":
-            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'MacStudioBootstrapper' if bootstrapper == True else 'MacStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
-            if res.ok:
-                jso = res.json()
-                if jso.get("applicationSettings"):
-                    return {"success": True, "application_settings": jso.get("applicationSettings")}
-                else:
-                    return {"success": False, "message": "Something went wrong."}
-            else:
-                return {"success": False, "message": "Something went wrong."}
-        elif platform.system() == "Windows":
-            res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'PCStudioBootstrapper' if bootstrapper == True else 'PCStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
-            if res.ok:
-                jso = res.json()
-                if jso.get("applicationSettings"):
-                    return {"success": True, "application_settings": jso.get("applicationSettings")}
-                else:
-                    return {"success": False, "message": "Something went wrong."}
+        res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'PCStudioBootstrapper' if bootstrapper == True else 'PCStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
+        if res.ok:
+            jso = res.json()
+            if jso.get("applicationSettings"):
+                return {"success": True, "application_settings": jso.get("applicationSettings")}
             else:
                 return {"success": False, "message": "Something went wrong."}
         else:
-            return {"success": False, "message": "OS not compatible."}
+            return {"success": False, "message": "Something went wrong."}
     except Exception as e:
         return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
 
@@ -72,11 +59,11 @@ class Api:
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"
                 link_start = f"https://setup.rbxcdn.com/{starter_url}"
-                if platform.system() == "Darwin":
-                    if platform.machine() == "arm64":
-                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
-                    else:
-                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
+                #if platform.system() == "Darwin":
+                #    if platform.machine() == "arm64":
+                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
+                #    else:
+                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
                 return rf"{link_start}{version}-rbxPkgManifest.txt"
             @staticmethod
             def download(version: str, file: str, rbx_channel: str, studio: bool) -> str:
@@ -89,11 +76,11 @@ class Api:
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"
                 link_start = f"https://setup.rbxcdn.com/{starter_url}"
-                if platform.system() == "Darwin":
-                    if platform.machine() == "arm64":
-                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
-                    else:
-                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
+                #if platform.system() == "Darwin":
+                #    if platform.machine() == "arm64":
+                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
+                #    else:
+                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
                 return rf"{link_start}{version}-{file}"
 # region get()
 def get(url: str, attempts: int = 3, cached: bool = False, timeout: Optional[tuple[int, int]] = None, dont_log_cached_request: bool = False) -> Response:
