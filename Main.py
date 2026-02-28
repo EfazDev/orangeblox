@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6f
+# v2.4.6g
 # 
 
 # Python Modules
@@ -51,13 +51,15 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.4.6f"}
+current_version: typing.Dict[str, str] = {"version": "2.4.6g"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
 macos_app_path: str = (os.path.realpath(os.path.join(cur_path, "../", "../") + "/")) if main_os == "Darwin" else cur_path
 user_folder: str = (os.path.expanduser("~") if main_os == "Darwin" else pip_class.getLocalAppData())
 orangeblox_library: str = os.path.join(user_folder, "Library", "OrangeBlox")
+discord_rpc = None
+discord_rpc_info = None
 flag_types: typing.Dict[str, str] = {
     "EFlagRobloxStudioFlags": "dict",
     "EFlagRobloxPlayerFlags": "dict",
@@ -4694,8 +4696,6 @@ def runRoblox():
         else: pip_class.startThread(func=prepareRobloxClientWithErrorCatcher, daemon=True)
 
         # Event Variables
-        rpc = None
-        rpc_info = None
         current_place_info = None
         is_teleport = False
         is_app_login_fail = False
@@ -5409,8 +5409,8 @@ def runRoblox():
                 nonlocal connected_to_game
                 nonlocal current_place_info
                 nonlocal connected_user_info
-                nonlocal rpc
-                nonlocal rpc_info
+                global discord_rpc
+                global discord_rpc_info
                 nonlocal set_current_private_server_key
                 connected_to_game = True
                 generated_location = "Unknown Location"
@@ -5547,15 +5547,15 @@ def runRoblox():
                                     
                                         def embed():
                                             try:
-                                                nonlocal rpc
-                                                nonlocal rpc_info
+                                                global discord_rpc
+                                                global discord_rpc_info
                                                 nonlocal set_current_private_server_key
 
                                                 err_count = 0
-                                                loop_key = rpc.generate_loop_key()
+                                                loop_key = discord_rpc.generate_loop_key()
                                                 while True:
-                                                    if (not rpc) or (not rpc.connected) or (not rpc.current_loop_id == loop_key): printDebugMessage("Invalid RPC Loop Information Detected! Broken Loop!"); break
-                                                    if rpc_info == None: rpc_info = {}
+                                                    if (not discord_rpc) or (not discord_rpc.connected) or (not discord_rpc.current_loop_id == loop_key): printDebugMessage("Invalid RPC Loop Information Detected! Broken Loop!"); break
+                                                    if discord_rpc_info == None: discord_rpc_info = {}
                                                     playing_game_name = place_info['name']
                                                     if place_info['creator']['name'] == "Local File" and place_info['creator']['id'] == 0: creator_name = ts(f"Opened as Local File!")
                                                     else:
@@ -5564,19 +5564,19 @@ def runRoblox():
                                                         else: creator_name = f"{creator_name}!"
                                                     if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                     formatted_info = {
-                                                        "details": rpc_info.get("details") if rpc_info.get("details") else f"Editing {playing_game_name}",
-                                                        "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
-                                                        "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
-                                                        "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
-                                                        "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
-                                                        "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
+                                                        "details": discord_rpc_info.get("details") if discord_rpc_info.get("details") else f"Editing {playing_game_name}",
+                                                        "state": discord_rpc_info.get("state") if discord_rpc_info.get("state") else creator_name,
+                                                        "start": discord_rpc_info.get("start") if discord_rpc_info.get("start") else start_time,
+                                                        "stop": discord_rpc_info.get("stop") if discord_rpc_info.get("stop") and discord_rpc_info.get("stop") > 1000 else None,
+                                                        "large_image": discord_rpc_info.get("large_image") if discord_rpc_info.get("large_image") else thumbnail_url,
+                                                        "large_text": discord_rpc_info.get("large_text") if discord_rpc_info.get("large_text") else playing_game_name,
                                                         "large_image_url": f"https://www.roblox.com",
-                                                        "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconRunStudioDiscord.png",
+                                                        "small_image": discord_rpc_info.get("small_image") if discord_rpc_info.get("small_image") else f"{main_host}/Images/AppIconRunStudioDiscord.png",
                                                         "small_image_url": f"{main_host}/",
-                                                        "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else obName0(),
+                                                        "small_text": discord_rpc_info.get("small_text") if discord_rpc_info.get("small_text") else obName0(),
                                                         "buttons": [],
                                                         "state_url": None,
-                                                        "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
+                                                        "launch_data": discord_rpc_info.get("launch_data") if discord_rpc_info.get("launch_data") else ""
                                                     }
                                                     if formatted_info["small_image"] == f"{main_host}/Images/AppIconRunStudioDiscord.png" and main_config.get("EFlagShowUserProfilePictureInsteadOfLogo") == True and connected_user_info and connected_user_info.get("thumbnail"): 
                                                         formatted_info["small_image"] = connected_user_info.get("thumbnail")
@@ -5606,9 +5606,9 @@ def runRoblox():
                                                     try:
                                                         isInstance = False
                                                         if formatted_info.get("start") and formatted_info.get("end"): isInstance = True
-                                                        if rpc:
+                                                        if discord_rpc:
                                                             try:
-                                                                req = rpc.update(
+                                                                req = discord_rpc.update(
                                                                     loop_key=loop_key, 
                                                                     details=formatted_info["details"], 
                                                                     state=formatted_info["state"], 
@@ -5748,12 +5748,12 @@ def runRoblox():
                             try: sendDiscordWebhook(generated_body, "onGameDisconnected")
                             except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
                 if main_config.get("EFlagEnableDiscordRPCStudio") == True:
-                    nonlocal rpc
-                    nonlocal rpc_info
+                    global discord_rpc
+                    global discord_rpc_info
                     try: 
-                        if rpc: rpc.clear()
+                        if discord_rpc: discord_rpc.clear()
                     except Exception as e: printDebugMessage(f"There was an error clearing Discord RPC: \n{trace()}")
-                    rpc_info = None
+                    discord_rpc_info = None
                 if main_config.get("EFlagEndStudioPlaceWhenDisconnected") == True and connected_roblox_instance and handler.getIfRobloxIsOpen(studio=run_studio, pid=connected_roblox_instance.pid): connected_roblox_instance.endInstance()
             def onRobloxPublishing(info):
                 printSuccessMessage("Roblox Game has been successfully published to Roblox!")
@@ -5850,8 +5850,6 @@ def runRoblox():
                 nonlocal current_place_info
                 nonlocal connected_user_info
                 nonlocal connected_to_game
-                nonlocal rpc
-                nonlocal rpc_info
                 nonlocal set_current_private_server_key
                 if info.get("ip"):
                     printDebugMessage(f"Roblox IP Address Detected! IP: {info.get('ip')}")
@@ -5973,15 +5971,15 @@ def runRoblox():
                                         
                                             def embed():
                                                 try:
-                                                    nonlocal rpc
-                                                    nonlocal rpc_info
+                                                    global discord_rpc
+                                                    global discord_rpc_info
                                                     nonlocal set_current_private_server_key
 
                                                     err_count = 0
-                                                    loop_key = rpc.generate_loop_key()
+                                                    loop_key = discord_rpc.generate_loop_key()
                                                     while True:
-                                                        if (not rpc) or (not rpc.connected) or (not rpc.current_loop_id == loop_key): break
-                                                        if rpc_info == None: rpc_info = {}
+                                                        if (not discord_rpc) or (not discord_rpc.connected) or (not discord_rpc.current_loop_id == loop_key): break
+                                                        if discord_rpc_info == None: discord_rpc_info = {}
                                                         playing_game_name = place_info['name']
                                                         creator_name = ts(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}")
                                                         creator_name = creator_name.replace("✅", "")
@@ -5989,19 +5987,19 @@ def runRoblox():
                                                         else: creator_name = f"{creator_name}!"
                                                         if not (place_info.get("rootPlaceId") == place_info.get("id")): playing_game_name = f"{playing_game_name} ({place_info['rootPlaceName']})"
                                                         formatted_info = {
-                                                            "details": rpc_info.get("details") if rpc_info.get("details") else f"Playing {playing_game_name}",
-                                                            "state": rpc_info.get("state") if rpc_info.get("state") else creator_name,
-                                                            "start": rpc_info.get("start") if rpc_info.get("start") else start_time,
-                                                            "stop": rpc_info.get("stop") if rpc_info.get("stop") and rpc_info.get("stop") > 1000 else None,
+                                                            "details": discord_rpc_info.get("details") if discord_rpc_info.get("details") else f"Playing {playing_game_name}",
+                                                            "state": discord_rpc_info.get("state") if discord_rpc_info.get("state") else creator_name,
+                                                            "start": discord_rpc_info.get("start") if discord_rpc_info.get("start") else start_time,
+                                                            "stop": discord_rpc_info.get("stop") if discord_rpc_info.get("stop") and discord_rpc_info.get("stop") > 1000 else None,
                                                             "large_image_url": f"https://www.roblox.com/",
-                                                            "large_image": rpc_info.get("large_image") if rpc_info.get("large_image") else thumbnail_url,
-                                                            "large_text": rpc_info.get("large_text") if rpc_info.get("large_text") else playing_game_name,
+                                                            "large_image": discord_rpc_info.get("large_image") if discord_rpc_info.get("large_image") else thumbnail_url,
+                                                            "large_text": discord_rpc_info.get("large_text") if discord_rpc_info.get("large_text") else playing_game_name,
                                                             "small_image_url": f"{main_host}/",
                                                             "state_url": None,
                                                             "buttons": [],
-                                                            "small_image": rpc_info.get("small_image") if rpc_info.get("small_image") else f"{main_host}/Images/AppIconPlayRobloxDiscord.png",
-                                                            "small_text": rpc_info.get("small_text") if rpc_info.get("small_text") else obName0(),
-                                                            "launch_data": rpc_info.get("launch_data") if rpc_info.get("launch_data") else ""
+                                                            "small_image": discord_rpc_info.get("small_image") if discord_rpc_info.get("small_image") else f"{main_host}/Images/AppIconPlayRobloxDiscord.png",
+                                                            "small_text": discord_rpc_info.get("small_text") if discord_rpc_info.get("small_text") else obName0(),
+                                                            "launch_data": discord_rpc_info.get("launch_data") if discord_rpc_info.get("launch_data") else ""
                                                         }
                                                         launch_data = ""
                                                         add_exam = False
@@ -6041,9 +6039,9 @@ def runRoblox():
                                                                         "label": ts("Join Server! 🚀"),
                                                                         "url": f"roblox://experiences/start?placeId={current_place_info['placeId']}{formatted_info['launch_data']}"
                                                                     })
-                                                                if rpc:
+                                                                if discord_rpc:
                                                                     try:
-                                                                        req = rpc.update(
+                                                                        req = discord_rpc.update(
                                                                             loop_key=loop_key, 
                                                                             details=formatted_info["details"], 
                                                                             state=formatted_info["state"], 
@@ -6185,12 +6183,12 @@ def runRoblox():
                             try: sendDiscordWebhook(generated_body, "onGameDisconnected")
                             except Exception as e:  printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
                 if main_config.get("EFlagEnableDiscordRPC") == True:
-                    nonlocal rpc
-                    nonlocal rpc_info
+                    global discord_rpc
+                    global discord_rpc_info
                     try: 
-                        if rpc: rpc.clear()
+                        if discord_rpc: discord_rpc.clear()
                     except Exception as e: printDebugMessage(f"There was an error clearing Discord RPC: \n{trace()}")
-                    rpc_info = None
+                    discord_rpc_info = None
             def onGameStart(info):
                 nonlocal current_place_info
                 nonlocal skip_disconnect_notification
@@ -6229,21 +6227,21 @@ def runRoblox():
             def onRobloxVoiceChatMute(data): printDebugMessage("Voice Chat microphone has been muted!")
             def onRobloxVoiceChatUnmute(data): printDebugMessage("Voice Chat microphone has been unmuted!")
         def onRobloxAppStart(consoleLine):
-            nonlocal rpc
+            global discord_rpc
             thumbnail_url = getRobloxThumbnailURL()
             if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
                 need_new_rpc = True
                 try: 
-                    if rpc and rpc.connected == True: need_new_rpc = False
+                    if discord_rpc and discord_rpc.connected == True: need_new_rpc = False
                 except Exception as e: printDebugMessage(f"There was an error checking Discord RPC: \n{trace()}")
                 if need_new_rpc == True:
-                    rpc = Presence("1367683523338698863" if run_studio == True else "1297668920349823026")
-                    rpc.set_debug_mode(main_config.get("EFlagEnableDebugMode") == True)
-                    rpc.connect()
+                    discord_rpc = Presence("1367683523338698863" if run_studio == True else "1297668920349823026")
+                    discord_rpc.set_debug_mode(main_config.get("EFlagEnableDebugMode") == True)
+                    discord_rpc.connect()
                     if not (main_config.get("EFlagEnableDefaultDiscordRPC") == False):
                         start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
                         if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
-                        rpc.update(
+                        discord_rpc.update(
                             details=f"Idling Roblox{' Studio' if run_studio == True else ''}",
                             start=start_time,
                             large_image=thumbnail_url, 
@@ -6259,7 +6257,7 @@ def runRoblox():
                                 }
                             ]
                         )
-                        rpc.default_presence = rpc.current_presence
+                        discord_rpc.default_presence = discord_rpc.current_presence
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxAppStart") == True:
                 if main_config.get("EFlagDiscordWebhookURL"):
                     embed_fields = [
@@ -6273,15 +6271,15 @@ def runRoblox():
         def onRobloxCrash(consoleLine):
             nonlocal updated_count
             nonlocal connected_to_game
-            nonlocal rpc
-            nonlocal rpc_info
+            global discord_rpc
+            global discord_rpc_info
             connected_to_game = False
             updated_count = 999
             try: 
-                if rpc: rpc.close()
+                if discord_rpc: discord_rpc.close()
             except Exception as e: printDebugMessage(f"There was an error closing Discord RPC: \n{trace()}")
-            rpc = None
-            rpc_info = None
+            discord_rpc = None
+            discord_rpc_info = None
             printErrorMessage(f"There was an error inside the {'RobloxStudio' if run_studio == True else 'RobloxPlayer'} that has caused it to crash! Sorry!")
             printDebugMessage(f"Crashed Data: {consoleLine}")
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxCrash") == True and main_config.get("EFlagDiscordWebhookURL"):
@@ -6297,13 +6295,13 @@ def runRoblox():
             if connected_roblox_instance and connected_roblox_instance.created_mutex == True: printYellowMessage("This process is handling multi-instance for all open Roblox windows. If you close this window, all Roblox windows may close.")
             else: printErrorMessage(f"Roblox{' Studio' if run_studio == True else ''} window was closed! Closing Bootstrap App..")
             if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
-                nonlocal rpc
-                nonlocal rpc_info
+                global discord_rpc
+                global discord_rpc_info
                 try: 
-                    if rpc: rpc.close()
+                    if discord_rpc: discord_rpc.close()
                 except Exception as e: printDebugMessage(f"There was an error closing Discord RPC: \n{trace()}")
-                rpc = None
-                rpc_info = None
+                discord_rpc = None
+                discord_rpc_info = None
             if run_studio == False and main_config.get("EFlagEnableMultiAutoReconnect") == True and current_place_info and current_place_info.get("place_info") and current_place_info.get("placeId"): 
                 nonlocal set_current_private_server_key
                 global given_args
@@ -6338,8 +6336,8 @@ def runRoblox():
                     except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
         def onBloxstrapMessage(info, disableWebhook=False):
             if (run_studio == True and main_config.get("EFlagAllowBloxstrapStudioSDK") == True) or (run_studio == False and main_config.get("EFlagAllowBloxstrapSDK") == True):
-                nonlocal rpc
-                nonlocal rpc_info
+                global discord_rpc
+                global discord_rpc_info
                 if info.get("command"):
                     went_through = False
                     data_names = {
@@ -6353,25 +6351,25 @@ def runRoblox():
                     }
                     before_data = {}
                     passed_data = {}
-                    if rpc_info == None: rpc_info = {}
-                    for i,v in rpc_info.items(): before_data[i] = v
+                    if discord_rpc_info == None: discord_rpc_info = {}
+                    for i,v in discord_rpc_info.items(): before_data[i] = v
                     if info["command"] == "SetRichPresence":
-                        if rpc:
-                            if rpc_info == None: rpc_info = {}
+                        if discord_rpc:
+                            if discord_rpc_info == None: discord_rpc_info = {}
                             if type(info["data"]) is dict:
-                                if info["data"].get("clear") == True or info["data"].get("reset") == True: rpc_info = {}
+                                if info["data"].get("clear") == True or info["data"].get("reset") == True: discord_rpc_info = {}
                                 if type(info["data"].get("details")) is str or type(info["data"].get("details")) is None: 
-                                    rpc_info["details"] = info["data"].get("details")
+                                    discord_rpc_info["details"] = info["data"].get("details")
                                     passed_data[data_names["details"]] = info["data"].get("details")
                                 if type(info["data"].get("state")) is str or type(info["data"].get("state")) is None: 
-                                    rpc_info["state"] = info["data"].get("state")
+                                    discord_rpc_info["state"] = info["data"].get("state")
                                     passed_data[data_names["state"]] = info["data"].get("state")
                                 if type(info["data"].get("timeStart")) is int or type(info["data"].get("timeStart")) is None or type(info["data"].get("timeStart")) is float: 
-                                    rpc_info["start"] = info["data"].get("timeStart")
+                                    discord_rpc_info["start"] = info["data"].get("timeStart")
                                     if type(info["data"].get("timeStart")) is None: passed_data[data_names["timeStart"]] = f'None'
                                     else: passed_data[data_names["timeStart"]] = f'<t:{int(info["data"].get("timeStart"))}:R>'
                                 if type(info["data"].get("timeEnd")) is int or type(info["data"].get("timeEnd")) is None or type(info["data"].get("timeEnd")) is float: 
-                                    rpc_info["stop"] = info["data"].get("timeEnd")
+                                    discord_rpc_info["stop"] = info["data"].get("timeEnd")
                                     if type(info["data"].get("timeEnd")) is None: passed_data[data_names["timeEnd"]] = f'None'
                                     else: passed_data[data_names["timeEnd"]] = f'<t:{int(info["data"].get("timeEnd"))}:R>'
                                 def getImageUrlFromAsset(assetId):
@@ -6386,8 +6384,8 @@ def runRoblox():
                                     else: return None
                                 if type(info["data"].get("largeImage")) is dict: 
                                     if info["data"]["largeImage"].get("clear") == True or info["data"]["largeImage"].get("reset") == True:
-                                        rpc_info["large_image"] = None
-                                        rpc_info["large_text"] = None
+                                        discord_rpc_info["large_image"] = None
+                                        discord_rpc_info["large_text"] = None
                                         passed_data[data_names["largeImage"]] = f'None'
                                     else:
                                         link = info["data"]["largeImage"].get("assetId")
@@ -6405,17 +6403,17 @@ def runRoblox():
                                                 else: link = "None"
                                             except Exception as e: link = "None"
                                         else: link = "None"
-                                        if approved_image: rpc_info["small_image"] = approved_image
-                                        if type(info["data"]["largeImage"].get("hoverText")) is str: rpc_info["large_text"] = info["data"]["largeImage"]["hoverText"]
+                                        if approved_image: discord_rpc_info["small_image"] = approved_image
+                                        if type(info["data"]["largeImage"].get("hoverText")) is str: discord_rpc_info["large_text"] = info["data"]["largeImage"]["hoverText"]
                                         passed_data[data_names["largeImage"]] = f'{info["data"]["largeImage"].get("hoverText", None)} | {link}'
                                 elif type(info["data"].get("largeImage")) is None:
-                                    rpc_info["large_image"] = None
-                                    rpc_info["large_text"] = None
+                                    discord_rpc_info["large_image"] = None
+                                    discord_rpc_info["large_text"] = None
                                     passed_data[data_names["largeImage"]] = f'None'
                                 if type(info["data"].get("smallImage")) is dict: 
                                     if info["data"]["smallImage"].get("clear") == True or info["data"]["smallImage"].get("reset") == True:
-                                        rpc_info["small_image"] = None
-                                        rpc_info["small_text"] = None
+                                        discord_rpc_info["small_image"] = None
+                                        discord_rpc_info["small_text"] = None
                                         passed_data[data_names["smallImage"]] = f'None'
                                     else:
                                         link = info["data"]["smallImage"].get("assetId")
@@ -6433,27 +6431,27 @@ def runRoblox():
                                                 else: link = "None"
                                             except Exception as e: link = "None"
                                         else: link = "None"
-                                        if approved_image: rpc_info["small_image"] = approved_image
-                                        if type(info["data"]["smallImage"].get("hoverText")) is str: rpc_info["small_text"] = info["data"]["smallImage"]["hoverText"]
+                                        if approved_image: discord_rpc_info["small_image"] = approved_image
+                                        if type(info["data"]["smallImage"].get("hoverText")) is str: discord_rpc_info["small_text"] = info["data"]["smallImage"]["hoverText"]
                                         passed_data[data_names["smallImage"]] = f'{info["data"]["smallImage"].get("hoverText", None)} | {link}'
                                 elif type(info["data"].get("smallImage")) is None:
-                                    rpc_info["small_image"] = None
-                                    rpc_info["small_text"] = None
+                                    discord_rpc_info["small_image"] = None
+                                    discord_rpc_info["small_text"] = None
                                     passed_data[data_names["smallImage"]] = f'None'
                                 went_through = True
                     elif info["command"] == "SetLaunchData":
-                        if rpc:
-                            if rpc_info == None: rpc_info = {}
+                        if discord_rpc:
+                            if discord_rpc_info == None: discord_rpc_info = {}
                             if type(info["data"]) is str: 
-                                rpc_info["launch_data"] = info["data"]
+                                discord_rpc_info["launch_data"] = info["data"]
                                 passed_data[data_names["launch_data"]] = info["data"]
                             went_through = True
                     if went_through == True and disableWebhook == False and main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookBloxstrapRPC") == True:
                         is_different = False
                         for i,v in before_data.items():
-                            if not (before_data.get(i) == rpc_info.get(i)): is_different = True
-                        for i,v in rpc_info.items():
-                            if not (before_data.get(i) == rpc_info.get(i)): is_different = True
+                            if not (before_data.get(i) == discord_rpc_info.get(i)): is_different = True
+                        for i,v in discord_rpc_info.items():
+                            if not (before_data.get(i) == discord_rpc_info.get(i)): is_different = True
                         if is_different == False: return
                         if main_config.get("EFlagDiscordWebhookURL"):
                             thumbnail_url = f"{main_host}/Images/Bloxstrap.png"
