@@ -25,8 +25,8 @@ def generateFileHash(file_path):
 
 # Load Version.json
 version_json = {
-    "version": "2.4.6d",
-    "latest_version": "2.4.6d",
+    "version": "2.4.6e",
+    "latest_version": "2.4.6e",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }
@@ -39,7 +39,7 @@ for i in os.listdir("./"):
     if i.endswith(".py"):
         generated_hash = generateFileHash(f"./{i}")
         generated_hash_json[i] = generated_hash
-generated_hash2 = generateFileHash(f"./Apps/Scripts/OrangeBlox.py")
+generated_hash2 = generateFileHash(f"./Apps/Building/OrangeBlox.py")
 generated_hash_json["OrangeBlox.py"] = generated_hash2
 previous_hashes = version_json["hashes"]
 version_json["hashes"] = generated_hash_json

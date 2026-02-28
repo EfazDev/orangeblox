@@ -42,12 +42,18 @@ __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
 __email__ = "support@efaz.dev"
 __all__ = [
+    "requests",
+    "Request",
+    "Requests",
     "request", 
+    "Pip",
     "pip", 
     "curl",
+    "Plist",
     "plist", 
     "Colors", 
     "Translator", 
+    "Stdout",
     "stdout", 
     "ProgressBar",
     "TimerBar",

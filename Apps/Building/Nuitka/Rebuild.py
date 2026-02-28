@@ -33,7 +33,7 @@ variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
-current_version = {"version": "2.4.6d"}
+current_version = {"version": "2.4.6e"}
 
 split_vers = current_version["version"].split(".")
 letter_version = None
@@ -53,7 +53,7 @@ def getArg(num, default=None):
 def generate_script_hash():
     return [
         [PRINT, "Generating Script Hashes.."],
-        [RUN, PYTHON, ["./Apps/Scripts/UpdateVersion.py"]]
+        [RUN, PYTHON, ["./Apps/Building/UpdateVersion.py"]]
     ]
 def macos_clean_up():
     return [
@@ -102,7 +102,7 @@ def windows_rebuild():
             "--output-dir=Apps/Building",
             "--windows-icon-from-ico=./Images/AppIcon.ico",
             "--target=OrangeBlox",
-            "./Apps/Scripts/OrangeBlox.py"
+            "./Apps/Building/OrangeBlox.py"
         ]],
         [MAKE_DIR, os.path.join(variables["building_dir"], "OrangeBloxWindows")],
         [MAKE_DIR, os.path.join(variables["building_dir"], "OrangeBloxWindows", variables["arch"])],
@@ -140,9 +140,9 @@ macos = {
             "--lto=yes", 
             "--remove-output", 
             "--target=OrangeBlox", 
-            "./Apps/Scripts/OrangeBlox.py"
+            "./Apps/Building/OrangeBlox.py"
         ]],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Scripts/Nuitka/Info.plist", "./Apps/Building/OrangeBlox.app/Contents/Info.plist"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Building/Nuitka/Info.plist", "./Apps/Building/OrangeBlox.app/Contents/Info.plist"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Building/OrangeBlox.app/Contents/MacOS/OrangeBlox"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Building/OrangeBlox.app/Contents/MacOS/Python"]],
         [RUN, REGULAR, 'find "./Apps/Building/OrangeBlox.app" -type f \\( -name "*.so" -o -name "*.dylib" \\) -exec strip -S {} + 2>/dev/null \\'],
@@ -155,7 +155,7 @@ macos = {
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
-        [RM_DIR, "./Apps/Scripts/Nuitka/__pycache__"],
+        [RM_DIR, "./Apps/Building/Nuitka/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeBlox for Intel macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMacIntel.zip"]
     ],
@@ -178,9 +178,9 @@ macos = {
             "--lto=yes", 
             "--remove-output", 
             "--target=OrangeBlox", 
-            "./Apps/Scripts/OrangeBlox.py"
+            "./Apps/Building/OrangeBlox.py"
         ]],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Scripts/Nuitka/Info.plist", "./Apps/Building/OrangeBlox.app/Contents/Info.plist"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Building/Nuitka/Info.plist", "./Apps/Building/OrangeBlox.app/Contents/Info.plist"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Building/OrangeBlox.app/Contents/MacOS/OrangeBlox"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Building/OrangeBlox.app/Contents/MacOS/Python"]],
         [RUN, REGULAR, 'find "./Apps/Building/OrangeBlox.app" -type f \\( -name "*.so" -o -name "*.dylib" \\) -exec strip -S {} + 2>/dev/null \\'],
@@ -193,7 +193,7 @@ macos = {
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
-        [RM_DIR, "./Apps/Scripts/Nuitka/__pycache__"],
+        [RM_DIR, "./Apps/Building/Nuitka/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeBlox for arm64 macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMac.zip"]
     ]

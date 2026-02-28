@@ -14,233 +14,276 @@ import hashlib
 import webbrowser
 import PyKits
 
+current_version = {"version": "2.4.6e"}
+main_os = platform.system()
+args = sys.argv
+generated_app_id = os.urandom(3).hex()
+pip_class = PyKits.pip(find=True)
+colors_class = PyKits.Colors()
+app_path = ""
+macos_path = ""
+logs = []
+
+COLOR_CODES = {
+    0: "#ffffff",
+    1: "#ff0000",
+    2: "#ffff00",
+    3: "#ff4b00",
+    4: "#00ff00",
+    5: "#ff4b00"
+}
+flag_types = {
+    "EFlagRobloxStudioFlags": "dict",
+    "EFlagRobloxPlayerFlags": "dict",
+    "EFlagDisableAutosaveToInstallation": "bool",
+    "EFlagOrangeBloxSyncDir": "path",
+    "EFlagBootstrapRobloxInstallFolderName": "str",
+    "EFlagBootstrapRobloxStudioInstallFolderName": "str",
+    "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
+    "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
+    "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
+    "EFlagInstallEfazDevECCCertificates": "bool",
+    "EFlagDisableDeleteOtherOSApps": "bool",
+    "EFlagAvailableInstalledDirectories": "dict",
+    "EFlagDisableURLSchemeInstall": "bool",
+    "EFlagDisableShortcutsInstall": "bool",
+    "EFlagRobloxBootstrapUpdatesAuthorizationKey": "EFlagUpdatesAuthorizationKey",
+    "EFlagUpdatesAuthorizationKey": "str",
+    "EFlagEnableDebugMode": "bool",
+    "EFlagEnabledMods": "dict",
+    "EFlagMakeMainBootstrapLogFiles": "bool",
+    "EFlagCompletedTutorial": "bool",
+    "EFlagVerifyRobloxHashAfterInstall": "bool",
+    "EFlagEnableDuplicationOfClients": "bool",
+    "EFlagAllowActivityTracking": "bool",
+    "EFlagDisableFastFlagInstallAccess": "bool",
+    "EFlagBootstrapUpdateServer": "str",
+    "EFlagRobloxStudioEnabled": "bool",
+    "EFlagRemoveRobloxAppDockShortcut": "bool",
+    "EFlagFreshCopyRoblox": "bool",
+    "EFlagRobloxPlayerArguments": "str",
+    "EFlagRobloxStudioArguments": "str",
+    "EFlagRobloxUnfriendCheckEnabled": "bool",
+    "EFlagRobloxUnfriendCheckUserID": "int",
+    "EFlagEnableSkipModificationMode": "bool",
+    "EFlagDisableRobloxReinstallNeededChecks": "bool",
+    "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagNotifyServerLocation": "bool",
+    "EFlagEnableDiscordRPC": "bool",
+    "EFlagEnableDiscordRPCStudio": "bool",
+    "EFlagEnableDiscordRPCJoining": "bool",
+    "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
+    "EFlagShowUsernameInSmallImage": "bool",
+    "EFlagAllowBloxstrapSDK": "bool",
+    "EFlagAllowBloxstrapStudioSDK": "bool",
+    "EFlagAllowPrivateServerJoining": "bool",
+    "EFlagUseDiscordWebhook": "bool",
+    "EFlagDiscordWebhookURL": "str",
+    "EFlagDiscordWebhookUserId": "str",
+    "EFlagDiscordWebhookConnect": "bool",
+    "EFlagDiscordWebhookDisconnect": "bool",
+    "EFlagDiscordWebhookRobloxAppStart": "bool",
+    "EFlagDiscordWebhookRobloxAppClose": "bool",
+    "EFlagDiscordWebhookRobloxCrash": "bool",
+    "EFlagDiscordWebhookBloxstrapRPC": "bool",
+    "EFlagDiscordWebhookGamePublished": "bool",
+    "EFlagDiscordWebhookGameSaved": "bool",
+    "EFlagDiscordWebhookShowPidInFooter": "bool",
+    "EFlagForceReconnectOnStudioLost": "bool",
+    "EFlagShowRunningAccountNameInTitle": "bool",
+    "EFlagShowRunningGameInTitle": "bool",
+    "EFlagShowDisplayNameInTitle": "bool",
+    "EFlagSimplifiedEfazRobloxBootstrapPromptUI": "bool",
+    "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
+    "EFlagDisableBootstrapChecks": "bool",
+    "EFlagDisablePythonUpdateChecks": "bool",
+    "EFlagDisablePythonModuleUpdateChecks": "bool",
+    "EFlagDisableBootstrapCooldown": "bool",
+    "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
+    "EFlagEnableGUIOptionMenus": "bool",
+    "EFlagAllowFullDebugMode": "bool",
+    "EFlagRobloxClientChannel": "str",
+    "EFlagDisableRobloxUpdateChecks": "bool",
+    "EFlagRobloxStudioClientChannel": "str",
+    "EFlagDisableSecureHashSecurity": "bool",
+    "EFlagDisableSettingsAccess": "bool",
+    "EFlagRobloxLinkShortcuts": "dict",
+    "EFlagRobloxCodesigningName": "str",
+    "EFlagEnableMods": "bool",
+    "EFlagSelectedModScripts": "dict",
+    "EFlagRemoveBuilderFont": "bool",
+    "EFlagAvatarEditorBackground": "str",
+    "EFlagEnableChangeAvatarEditorBackground": "bool",
+    "EFlagSelectedCursor": "str",
+    "EFlagEnableChangeCursor": "bool",
+    "EFlagSelectedBrandLogo": "str",
+    "EFlagEnableChangeBrandIcons": "bool",
+    "EFlagSelectedBrandLogo2": "str",
+    "EFlagEnableChangeBrandIcons2": "bool",
+    "EFlagShowGameNameInStatusBar": "bool",
+    "EFlagShowStudioGameNameInStatusBar": "bool",
+    "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
+    "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
+    "EFlagSelectedPlayerSounds": "str",
+    "EFlagEnableChangePlayerSound": "bool",
+    "EFlagDisableModsManagerAccess": "bool",
+    "EFlagDisableModScriptsAccess": "bool",
+    "EFlagRemoveMenuAndSkipToRoblox": "bool",
+    "EFlagDisableLinkShortcutsAccess": "bool",
+    "EFlagReturnToMainMenuInstant": "bool",
+    "EFlagRemoveCodeSigningMacOS": "bool",
+    "EFlagModScriptRequestTooFastMessage": "bool",
+    "EFlagModScriptAPIRefreshTime": "float",
+    "EFlagRobloxUnfriendCheckCooldown": "int",
+    "EFlagSetDiscordRPCStart": "int",
+    "EFlagEndStudioPlaceWhenDisconnected": "bool",
+    "EFlagDisableAutoOpenOrangeBloxFromStudio": "bool",
+    "EFlagSpecifyPythonExecutable": "path",
+    "EFlagEnableSecretJackpot": "bool",
+    "EFlagBootstrapCooldownAmount": "int",
+    "EFlagSelectedBootstrapLanguage": "str",
+    "EFlagUseFollowingAppIconPath": "path",
+    "EFlagUseConfigurationWebServer": "bool",
+    "EFlagConfigurationWebServerURL": "str",
+    "EFlagConfigurationAuthorizationKey": "str",
+    "EFlagLimitAPIDocsLocalization": "str",
+    "EFlagOverwriteUnneededStudioFonts": "bool",
+    "EFlagEnableSeeMoreAwaiting": "bool",
+    "EFlagEnableLoop429Requests": "bool",
+    "EFlagEnableEndingRobloxCrashHandler": "bool",
+    "EFlagEnablePythonVirtualEnvironments": "bool",
+    "EFlagBuildPythonCacheOnStart": "bool",
+    "EFlagEnableSlientPythonInstalls": "bool",
+    "EFlagEnableDefaultDiscordRPC": "bool",
+    "EFlagUseIXPFastFlagsMethod": "EFlagUseIXPFastFlagsMethod2",
+    "EFlagUseIXPFastFlagsMethod2": "bool",
+    "EFlagLastModVersionMacOSCaching": "str",
+    "EFlagRobloxChannelUpdateToken": "str",
+    "EFlagRobloxSecurityCookieUsage": "bool",
+    "EFlagCustomBootstrapName": "str",
+    "EFlagCustomBootstrapEmoji": "str",
+    "EFlagCustomBootstrapColor": "str",
+    "EFlagCustomBootstrapInternetURL": "str",
+    "EFlagCustomBootstrapIconPath": "path",
+    "EFlagUseEfazDevAPI": "bool"
+}
+main_config = {}
+
+def ts(mes):
+    mes = str(mes)
+    if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
+    return mes
+def trace():
+    _, tb_v, tb_b = sys.exc_info()
+    tb_lines = traceback.extract_tb(tb_b)
+    lines = []
+    lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
+    for fn, ln, f, tx in tb_lines:
+        lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
+        if tx: lines.append(f'    {tx}')
+    exc_t = type(tb_v).__name__
+    exc_m = str(tb_v)
+    lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
+    return "\n".join(lines)
+def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").strip()
+def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
+def obColorA(): return colors_class.hex_to_ansi(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
+def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
+def printMainMessage(mes): colors_class.print(ts(mes), 255); logs.append((ts(mes), 0))
+def printErrorMessage(mes): colors_class.print(ts(mes), 196); logs.append((ts(mes), 1))
+def printSuccessMessage(mes): colors_class.print(ts(mes), 82); logs.append((ts(mes), 4))
+def printWarnMessage(mes): colors_class.print(ts(mes), 202); logs.append((ts(mes), 3))
+def printSystemMessage(mes): colors_class.print(ts(mes), obColorA()); logs.append((ts(mes), 5))
+def printYellowMessage(mes): colors_class.print(ts(mes), 226); logs.append((ts(mes), 2))
+def printDebugMessage(mes): 
+    if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logs.append((ts(mes), 2))
+def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
+def setLoggingHandler(handler_name):
+    global app_path
+    global main_os
+    log_path = os.path.join(app_path, "Logs")
+    if main_os == "Darwin": log_path = os.path.join(pip_class.getLocalAppData(), "Logs", "OrangeBlox")
+    if not os.path.exists(log_path): os.makedirs(log_path,mode=511)
+    generated_file_name = f'OrangeBlox_{handler_name}_{datetime.datetime.now().strftime("%B_%d_%Y_%H_%M_%S_%f")}.log' 
+    if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding='utf-8')
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    if main_config.get("EFlagMakeMainBootstrapLogFiles") == True:
+        file_handler = logging.FileHandler(os.path.join(log_path, generated_file_name), encoding="utf-8")
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    stdout_stream = logging.StreamHandler(sys.stdout)
+    stdout_stream.setLevel(logging.INFO)
+    stdout_stream.setFormatter(logging.Formatter("%(message)s"))
+    if main_config.get("EFlagMakeMainBootstrapLogFiles") == True: logger.addHandler(file_handler)
+    logger.addHandler(stdout_stream)
+    sys.stdout = PyKits.stdout(logger, logging.INFO, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
+    sys.stderr = PyKits.stdout(logger, logging.ERROR, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
+    if main_os == "Windows": colors_class.fix_windows_ansi()
+    return True
+def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
+def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
+def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
+def getIfCertainPlayer():
+    if main_os == "Windows":
+        if os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")): 
+            with open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "studio"
+        elif os.path.exists(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt")): 
+            with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
+        else: return None, None
+    else: return None, None
+
+def displayNotification(title="Unknown Title", message="Unknown Message"):
+    if main_os == "Darwin":
+        try:
+            import objc
+            NSUserNotification = objc.lookUpClass("NSUserNotification")
+            NSUserNotificationCenter = objc.lookUpClass("NSUserNotificationCenter")
+
+            notification = NSUserNotification.alloc().init()
+            notification.setTitle_(title)
+            notification.setInformativeText_(message)
+            center = NSUserNotificationCenter.defaultUserNotificationCenter()
+            center.deliverNotification_(notification)
+        except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
+    elif main_os == "Windows":
+        try:
+            try: from plyer.platforms.win.notification import instance
+            except Exception as e:
+                pip_class.install(["plyer"])
+                instance = pip_class.importModule("plyer.platforms.win.notification").instance
+            instance().notify(
+                title=title,
+                message=message,
+                app_name=obName0(),
+                app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
+                toast=True
+            )
+        except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
+def generateFileHash(file_path):
+    try:
+        tmp_path = None
+        if main_os == "Windows":
+            import tempfile
+            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
+            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
+        with open(tmp_path if tmp_path else file_path, "rb") as f:
+            hasher = hashlib.md5()
+            chunk = f.read(8192)
+            while chunk: 
+                hasher.update(chunk)
+                chunk = f.read(8192)
+        if tmp_path: os.remove(tmp_path)
+        return hasher.hexdigest()
+    except Exception as e: return None
 if __name__ == "__main__":
-    current_version = {"version": "2.4.6d"}
-    main_os = platform.system()
-    args = sys.argv
-    generated_app_id = os.urandom(3).hex()
-    pip_class = PyKits.pip(find=True)
-    colors_class = PyKits.Colors()
-    app_path = ""
-    macos_path = ""
-    logs = []
-
-    COLOR_CODES = {
-        0: "#ffffff",
-        1: "#ff0000",
-        2: "#ffff00",
-        3: "#ff4b00",
-        4: "#00ff00",
-        5: "#ff4b00"
-    }
-    flag_types = {
-        "EFlagRobloxStudioFlags": "dict",
-        "EFlagRobloxPlayerFlags": "dict",
-        "EFlagDisableAutosaveToInstallation": "bool",
-        "EFlagOrangeBloxSyncDir": "path",
-        "EFlagBootstrapRobloxInstallFolderName": "str",
-        "EFlagBootstrapRobloxStudioInstallFolderName": "str",
-        "EFlagRebuildClangAppFromSourceDuringUpdates": "bool",
-        "EFlagRebuildPyinstallerAppFromSourceDuringUpdates": "bool",
-        "EFlagRebuildNuitkaAppFromSourceDuringUpdates": "bool",
-        "EFlagInstallEfazDevECCCertificates": "bool",
-        "EFlagDisableDeleteOtherOSApps": "bool",
-        "EFlagAvailableInstalledDirectories": "dict",
-        "EFlagDisableURLSchemeInstall": "bool",
-        "EFlagDisableShortcutsInstall": "bool",
-        "EFlagRobloxBootstrapUpdatesAuthorizationKey": "EFlagUpdatesAuthorizationKey",
-        "EFlagUpdatesAuthorizationKey": "str",
-        "EFlagEnableDebugMode": "bool",
-        "EFlagEnabledMods": "dict",
-        "EFlagMakeMainBootstrapLogFiles": "bool",
-        "EFlagCompletedTutorial": "bool",
-        "EFlagVerifyRobloxHashAfterInstall": "bool",
-        "EFlagEnableDuplicationOfClients": "bool",
-        "EFlagAllowActivityTracking": "bool",
-        "EFlagDisableFastFlagInstallAccess": "bool",
-        "EFlagBootstrapUpdateServer": "str",
-        "EFlagRobloxStudioEnabled": "bool",
-        "EFlagRemoveRobloxAppDockShortcut": "bool",
-        "EFlagFreshCopyRoblox": "bool",
-        "EFlagRobloxPlayerArguments": "str",
-        "EFlagRobloxStudioArguments": "str",
-        "EFlagRobloxUnfriendCheckEnabled": "bool",
-        "EFlagRobloxUnfriendCheckUserID": "int",
-        "EFlagEnableSkipModificationMode": "bool",
-        "EFlagDisableRobloxReinstallNeededChecks": "bool",
-        "EFlagEnableMultiAutoReconnect": "bool",
-        "EFlagNotifyServerLocation": "bool",
-        "EFlagEnableDiscordRPC": "bool",
-        "EFlagEnableDiscordRPCStudio": "bool",
-        "EFlagEnableDiscordRPCJoining": "bool",
-        "EFlagShowUserProfilePictureInsteadOfLogo": "bool",
-        "EFlagShowUsernameInSmallImage": "bool",
-        "EFlagAllowBloxstrapSDK": "bool",
-        "EFlagAllowBloxstrapStudioSDK": "bool",
-        "EFlagAllowPrivateServerJoining": "bool",
-        "EFlagUseDiscordWebhook": "bool",
-        "EFlagDiscordWebhookURL": "str",
-        "EFlagDiscordWebhookUserId": "str",
-        "EFlagDiscordWebhookConnect": "bool",
-        "EFlagDiscordWebhookDisconnect": "bool",
-        "EFlagDiscordWebhookRobloxAppStart": "bool",
-        "EFlagDiscordWebhookRobloxAppClose": "bool",
-        "EFlagDiscordWebhookRobloxCrash": "bool",
-        "EFlagDiscordWebhookBloxstrapRPC": "bool",
-        "EFlagDiscordWebhookGamePublished": "bool",
-        "EFlagDiscordWebhookGameSaved": "bool",
-        "EFlagDiscordWebhookShowPidInFooter": "bool",
-        "EFlagForceReconnectOnStudioLost": "bool",
-        "EFlagShowRunningAccountNameInTitle": "bool",
-        "EFlagShowRunningGameInTitle": "bool",
-        "EFlagShowDisplayNameInTitle": "bool",
-        "EFlagSimplifiedEfazRobloxBootstrapPromptUI": "bool",
-        "EFlagSkipEfazRobloxBootstrapPromptUI": "bool",
-        "EFlagDisableBootstrapChecks": "bool",
-        "EFlagDisablePythonUpdateChecks": "bool",
-        "EFlagDisablePythonModuleUpdateChecks": "bool",
-        "EFlagDisableBootstrapCooldown": "bool",
-        "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
-        "EFlagEnableGUIOptionMenus": "bool",
-        "EFlagAllowFullDebugMode": "bool",
-        "EFlagRobloxClientChannel": "str",
-        "EFlagDisableRobloxUpdateChecks": "bool",
-        "EFlagRobloxStudioClientChannel": "str",
-        "EFlagDisableSecureHashSecurity": "bool",
-        "EFlagDisableSettingsAccess": "bool",
-        "EFlagRobloxLinkShortcuts": "dict",
-        "EFlagRobloxCodesigningName": "str",
-        "EFlagEnableMods": "bool",
-        "EFlagSelectedModScripts": "dict",
-        "EFlagRemoveBuilderFont": "bool",
-        "EFlagAvatarEditorBackground": "str",
-        "EFlagEnableChangeAvatarEditorBackground": "bool",
-        "EFlagSelectedCursor": "str",
-        "EFlagEnableChangeCursor": "bool",
-        "EFlagSelectedBrandLogo": "str",
-        "EFlagEnableChangeBrandIcons": "bool",
-        "EFlagSelectedBrandLogo2": "str",
-        "EFlagEnableChangeBrandIcons2": "bool",
-        "EFlagShowGameNameInStatusBar": "bool",
-        "EFlagShowStudioGameNameInStatusBar": "bool",
-        "EFlagUseRobloxAppIconAsShortcutIcon": "bool",
-        "EFlagReplaceRobloxRuntimeIconWithModIcon": "bool",
-        "EFlagSelectedPlayerSounds": "str",
-        "EFlagEnableChangePlayerSound": "bool",
-        "EFlagDisableModsManagerAccess": "bool",
-        "EFlagDisableModScriptsAccess": "bool",
-        "EFlagRemoveMenuAndSkipToRoblox": "bool",
-        "EFlagDisableLinkShortcutsAccess": "bool",
-        "EFlagReturnToMainMenuInstant": "bool",
-        "EFlagRemoveCodeSigningMacOS": "bool",
-        "EFlagModScriptRequestTooFastMessage": "bool",
-        "EFlagModScriptAPIRefreshTime": "float",
-        "EFlagRobloxUnfriendCheckCooldown": "int",
-        "EFlagSetDiscordRPCStart": "int",
-        "EFlagEndStudioPlaceWhenDisconnected": "bool",
-        "EFlagDisableAutoOpenOrangeBloxFromStudio": "bool",
-        "EFlagSpecifyPythonExecutable": "path",
-        "EFlagEnableSecretJackpot": "bool",
-        "EFlagBootstrapCooldownAmount": "int",
-        "EFlagSelectedBootstrapLanguage": "str",
-        "EFlagUseFollowingAppIconPath": "path",
-        "EFlagUseConfigurationWebServer": "bool",
-        "EFlagConfigurationWebServerURL": "str",
-        "EFlagConfigurationAuthorizationKey": "str",
-        "EFlagLimitAPIDocsLocalization": "str",
-        "EFlagOverwriteUnneededStudioFonts": "bool",
-        "EFlagEnableSeeMoreAwaiting": "bool",
-        "EFlagEnableLoop429Requests": "bool",
-        "EFlagEnableEndingRobloxCrashHandler": "bool",
-        "EFlagEnablePythonVirtualEnvironments": "bool",
-        "EFlagBuildPythonCacheOnStart": "bool",
-        "EFlagEnableSlientPythonInstalls": "bool",
-        "EFlagEnableDefaultDiscordRPC": "bool",
-        "EFlagUseIXPFastFlagsMethod": "EFlagUseIXPFastFlagsMethod2",
-        "EFlagUseIXPFastFlagsMethod2": "bool",
-        "EFlagLastModVersionMacOSCaching": "str",
-        "EFlagRobloxChannelUpdateToken": "str",
-        "EFlagRobloxSecurityCookieUsage": "bool",
-        "EFlagCustomBootstrapName": "str",
-        "EFlagCustomBootstrapEmoji": "str",
-        "EFlagCustomBootstrapColor": "str",
-        "EFlagCustomBootstrapInternetURL": "str",
-        "EFlagCustomBootstrapIconPath": "path",
-        "EFlagUseEfazDevAPI": "bool"
-    }
-    main_config = {}
-
-    def ts(mes):
-        mes = str(mes)
-        if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
-        return mes
-    def trace():
-        _, tb_v, tb_b = sys.exc_info()
-        tb_lines = traceback.extract_tb(tb_b)
-        lines = []
-        lines.append(colors_class.foreground("Traceback (most recent call last):", color="Magenta", bright=True))
-        for fn, ln, f, tx in tb_lines:
-            lines.append(f'  File {colors_class.foreground(fn, color="Magenta", bright=True)}, line {colors_class.foreground(ln, color="Magenta", bright=True)}, in {colors_class.foreground(f, color="Magenta", bright=True)}')
-            if tx: lines.append(f'    {tx}')
-        exc_t = type(tb_v).__name__
-        exc_m = str(tb_v)
-        lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
-        return "\n".join(lines)
-    def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").strip()
-    def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
-    def obColorA(): return colors_class.hex_to_ansi(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
-    def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
-    def printMainMessage(mes): colors_class.print(ts(mes), 255); logs.append((ts(mes), 0))
-    def printErrorMessage(mes): colors_class.print(ts(mes), 196); logs.append((ts(mes), 1))
-    def printSuccessMessage(mes): colors_class.print(ts(mes), 82); logs.append((ts(mes), 4))
-    def printWarnMessage(mes): colors_class.print(ts(mes), 202); logs.append((ts(mes), 3))
-    def printSystemMessage(mes): colors_class.print(ts(mes), obColorA()); logs.append((ts(mes), 5))
-    def printYellowMessage(mes): colors_class.print(ts(mes), 226); logs.append((ts(mes), 2))
-    def printDebugMessage(mes): 
-        if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logs.append((ts(mes), 2))
-    def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
-    def setLoggingHandler(handler_name):
-        global app_path
-        global main_os
-        log_path = os.path.join(app_path, "Logs")
-        if main_os == "Darwin": log_path = os.path.join(pip_class.getLocalAppData(), "Logs", "OrangeBlox")
-        if not os.path.exists(log_path): os.makedirs(log_path,mode=511)
-        generated_file_name = f'OrangeBlox_{handler_name}_{datetime.datetime.now().strftime("%B_%d_%Y_%H_%M_%S_%f")}.log' 
-        if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding='utf-8')
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        if main_config.get("EFlagMakeMainBootstrapLogFiles") == True:
-            file_handler = logging.FileHandler(os.path.join(log_path, generated_file_name), encoding="utf-8")
-            file_handler.setLevel(logging.INFO)
-            file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-        stdout_stream = logging.StreamHandler(sys.stdout)
-        stdout_stream.setLevel(logging.INFO)
-        stdout_stream.setFormatter(logging.Formatter("%(message)s"))
-        if main_config.get("EFlagMakeMainBootstrapLogFiles") == True: logger.addHandler(file_handler)
-        logger.addHandler(stdout_stream)
-        sys.stdout = PyKits.stdout(logger, logging.INFO, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
-        sys.stderr = PyKits.stdout(logger, logging.ERROR, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
-        if main_os == "Windows": colors_class.fix_windows_ansi()
-        return True
-    def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
-    def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
-    def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
-
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         if main_os == "Windows": app_path = os.path.dirname(sys.executable); macos_path = os.path.join(os.path.dirname(sys.executable), "MacOS")
         else: app_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "MacOS")
     else:
         if main_os == "Windows": app_path = os.path.dirname(sys.argv[0]); macos_path = os.path.dirname(sys.argv[0])
         else: cur_path = os.path.dirname(os.path.abspath(__file__)); app_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(cur_path).split(os.sep)[:-3]), "MacOS")
-    
-    def getIfCertainPlayer():
-        if main_os == "Windows":
-            if os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")): 
-                with open(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "studio"
-            elif os.path.exists(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt")): 
-                with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
-            else: return None, None
-        else: return None, None
+
     certain_player, certain_type = getIfCertainPlayer()
     if certain_player: app_path = certain_player
     if main_os == "Darwin":
@@ -305,50 +348,6 @@ if __name__ == "__main__":
         sys.exit(0)
     printSystemMessage("-----------")
 
-    def displayNotification(title="Unknown Title", message="Unknown Message"):
-        if main_os == "Darwin":
-            try:
-                import objc
-                NSUserNotification = objc.lookUpClass("NSUserNotification")
-                NSUserNotificationCenter = objc.lookUpClass("NSUserNotificationCenter")
-
-                notification = NSUserNotification.alloc().init()
-                notification.setTitle_(title)
-                notification.setInformativeText_(message)
-                center = NSUserNotificationCenter.defaultUserNotificationCenter()
-                center.deliverNotification_(notification)
-            except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
-        elif main_os == "Windows":
-            try:
-                try: from plyer.platforms.win.notification import instance
-                except Exception as e:
-                    pip_class.install(["plyer"])
-                    instance = pip_class.importModule("plyer.platforms.win.notification").instance
-                instance().notify(
-                    title=title,
-                    message=message,
-                    app_name=obName0(),
-                    app_icon=os.path.join(app_path, "Images", "AppIcon.ico"),
-                    toast=True
-                )
-            except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
-    def generateFileHash(file_path):
-        try:
-            tmp_path = None
-            if main_os == "Windows":
-                import tempfile
-                with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-                with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-            with open(tmp_path if tmp_path else file_path, "rb") as f:
-                hasher = hashlib.md5()
-                chunk = f.read(8192)
-                while chunk: 
-                    hasher.update(chunk)
-                    chunk = f.read(8192)
-            if tmp_path: os.remove(tmp_path)
-            return hasher.hexdigest()
-        except Exception as e: return None
-    
     with open(os.path.join(os.path.dirname(__file__), "Version.json"), "r", encoding="utf-8") as f:
         current_version = json.load(f)
         f.close()
@@ -1672,10 +1671,5 @@ if __name__ == "__main__":
             input("> ")
             sys.exit(0)
 else:
-    class OrangeBloxNotModule(Exception):
-        def __init__(self): super().__init__("OrangeBlox is only a runable instance, not a module.")
-    class OrangeBloxInstallerNotModule(Exception):
-        def __init__(self): super().__init__("The installer for OrangeBlox is only a runable instance, not a module.")
-    class OrangeBloxLoaderNotModule(Exception):
-        def __init__(self): super().__init__("The loader for OrangeBlox is only a runable instance, not a module.")
-    raise OrangeBloxLoaderNotModule()
+    class OrangeBloxLoaderNotModule(Exception): pass
+    raise OrangeBloxLoaderNotModule("The loader for OrangeBlox is only a runable instance, not a module.")

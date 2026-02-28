@@ -43,7 +43,7 @@ def getArg(num, default=None):
 def generate_script_hash():
     return [
         [PRINT, "Generating Script Hashes.."],
-        [RUN, PYTHON, ["./Apps/Scripts/UpdateVersion.py"]]
+        [RUN, PYTHON, ["./Apps/Building/UpdateVersion.py"]]
     ]
 def macos_clean_up():
     return [
@@ -72,7 +72,7 @@ def windows_rebuild():
     return [
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
-        [RUN, PYINSTALLER, ["./Apps/Scripts/Pyinstaller/OrangeBlox_Windows.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
+        [RUN, PYINSTALLER, ["./Apps/Building/Pyinstaller/OrangeBlox_Windows.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
         [MAKE_DIR, os.path.join(variables["building_dir"], "OrangeBloxWindows")],
         [MAKE_DIR, os.path.join(variables["building_dir"], "OrangeBloxWindows", variables["arch"])],
         [MOVE, os.path.join(variables["building_dir"], "OrangeBlox.exe"), os.path.join(variables["building_dir"], "OrangeBloxWindows", variables["arch"], "OrangeBlox.exe")],
@@ -95,7 +95,7 @@ macos = {
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMacIntel.zip"]],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
-        [RUN, PYINSTALLER, ["./Apps/Scripts/Pyinstaller/OrangeBlox_macOSIntel.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
+        [RUN, PYINSTALLER, ["./Apps/Building/Pyinstaller/OrangeBlox_macOSIntel.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
         [PRINT, "Signing Package.."],
         [LOOP, macos_codesign],
         [PRINT, "Creating OrangeBloxMacIntel.zip.."],
@@ -105,7 +105,7 @@ macos = {
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
-        [RM_DIR, "./Apps/Scripts/Pyinstaller/__pycache__"],
+        [RM_DIR, "./Apps/Building/Pyinstaller/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeBlox for Intel macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMacIntel.zip"]
     ],
@@ -114,7 +114,7 @@ macos = {
         [RUN, REGULAR, ["/bin/rm", "-f", "./Apps/OrangeBloxMac.zip"]],
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
-        [RUN, PYINSTALLER, ["./Apps/Scripts/Pyinstaller/OrangeBlox_macOS.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
+        [RUN, PYINSTALLER, ["./Apps/Building/Pyinstaller/OrangeBlox_macOS.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
         [PRINT, "Signing Package.."],
         [LOOP, macos_codesign],
         [PRINT, "Creating OrangeBloxMac.zip.."],
@@ -124,7 +124,7 @@ macos = {
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
-        [RM_DIR, "./Apps/Scripts/Pyinstaller/__pycache__"],
+        [RM_DIR, "./Apps/Building/Pyinstaller/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeBlox for arm64 macOS!"],
         [PRINT, "Check the Apps folder for the generated ZIP file! File: ./Apps/OrangeBloxMac.zip"]
     ]
