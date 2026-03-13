@@ -2456,5 +2456,7 @@
  "--- Bootstrap Media ---": "--- بوٹسٹریپ میڈیا ---",
  "Extracted successfully! Running Installer!": "کامیابی کے ساتھ نکالا! چلانے والا انسٹالر!",
  "Latest Version: v(*)": "تازہ ترین ورژن: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "کیا آپ اورنج بلوکس انسٹالر کو عارضی طور پر کسی نئے فولڈر میں ڈاؤن لوڈ کرنا چاہیں گے؟ (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "کیا آپ اورنج بلوکس انسٹالر کو عارضی طور پر کسی نئے فولڈر میں ڈاؤن لوڈ کرنا چاہیں گے؟ (y/n)",
+ "Applying App Storage Patch..": "ایپ سٹوریج پیچ کو لاگو کیا جا رہا ہے..",
+ "Preparing for Launch..": "لانچ کی تیاری ہو رہی ہے.."
 }

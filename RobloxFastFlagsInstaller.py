@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.7
+# v2.5.8
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -31,7 +31,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.5.7"
+script_version = "2.5.8"
 
 # Base Functions 1
 def getLocalAppData():
@@ -1967,11 +1967,13 @@ class Handler:
         appStorage = {}
         if self.__main_os__ == "Darwin":
             try:
-                if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")): appStorage = json.load(open(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json"), "r", encoding="utf-8"))
+                if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")): 
+                    with open(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json"), "r", encoding="utf-8") as f: appStorage = json.load(f)
             except Exception: appStorage = {}
         elif self.__main_os__ == "Windows":
             try:
-                if os.path.exists(os.path.join(windows_dir, "LocalStorage", "appStorage.json")): appStorage = json.load(open(os.path.join(windows_dir, "LocalStorage", "appStorage.json"), "r", encoding="utf-8"))
+                if os.path.exists(os.path.join(windows_dir, "LocalStorage", "appStorage.json")): 
+                    with open(os.path.join(windows_dir, "LocalStorage", "appStorage.json"), "r", encoding="utf-8") as f: appStorage = json.load(f)
             except Exception: appStorage = {}
         else:
             self.unsupportedFunction()
@@ -1995,6 +1997,30 @@ class Handler:
             "experimentCache": json.loads(appStorage.get("ExperimentCache")) if appStorage.get("ExperimentCache") else {},
             "policyServiceResponse": json.loads(appStorage.get("PolicyServiceHttpResponse")) if appStorage.get("PolicyServiceHttpResponse") else {}
         }
+    def applyAppStoragePatch(self):
+        try:
+            appStorage = {}
+            p = None
+            if self.__main_os__ == "Darwin":
+                try:
+                    p = os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")
+                    if os.path.exists(p): 
+                        with open(p, "r", encoding="utf-8") as f: appStorage = json.load(f)
+                except Exception: appStorage = {}
+            elif self.__main_os__ == "Windows":
+                try: p = os.path.join(windows_dir, "LocalStorage", "appStorage.json")
+                except Exception: appStorage = {}
+            else:
+                self.unsupportedFunction()
+                return {"success": False, "message": "OS not compatible."}
+            if p and os.path.exists(p): 
+                with open(p, "r", encoding="utf-8") as f: appStorage = json.load(f)
+                appStorage["_UpdateControllerCacheJsonPayload"] = appStorage.get("UpdateControllerCacheJsonPayload", "")
+                if appStorage.get("UpdateControllerCacheJsonPayload"): appStorage.pop("UpdateControllerCacheJsonPayload")
+                with open(p, "w", encoding="utf-8") as f: json.dump(appStorage, f)
+            return {"success": True, "message": f"App Storage Patch Success!"}
+        except Exception as e:
+            return {"success": False, "message": f"Exception occurred: {str(e)}"}
     def getRobloxGlobalBasicSettings(self, studio: bool=False):
         roblox_app_location = ""
         if self.__main_os__ == "Darwin": roblox_app_location = os.path.join(user_folder, "Library", "Roblox")
@@ -2395,6 +2421,9 @@ class Handler:
             if forceQuit == True:
                 self.endRoblox(studio=studio)
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
+        if debug == True: printDebugMessage("Applying App Storage Patch..")
+        self.applyAppStoragePatch()
+        if debug == True: printDebugMessage("Preparing for Launch..")
         if self.__main_os__ == "Darwin":
             tar_dir = macOS_studioDir if studio == True else macOS_dir
             if startData == "": startData = []

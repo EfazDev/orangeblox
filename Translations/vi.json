@@ -2456,5 +2456,7 @@
  "--- Bootstrap Media ---": "--- Phương tiện Bootstrap ---",
  "Extracted successfully! Running Installer!": "Đã giải nén thành công! Đang chạy trình cài đặt!",
  "Latest Version: v(*)": "Phiên bản mới nhất: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Bạn có muốn tạm thời tải xuống Trình cài đặt OrangeBlox vào một thư mục mới không? (có/không)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Bạn có muốn tạm thời tải xuống Trình cài đặt OrangeBlox vào một thư mục mới không? (có/không)",
+ "Applying App Storage Patch..": "Đang áp dụng Bản vá lưu trữ ứng dụng..",
+ "Preparing for Launch..": "Chuẩn bị ra mắt.."
 }

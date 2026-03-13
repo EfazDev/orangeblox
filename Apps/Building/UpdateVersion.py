@@ -25,8 +25,8 @@ def generateFileHash(file_path):
 
 # Load Version.json
 version_json = {
-    "version": "2.4.6g",
-    "latest_version": "2.4.6g",
+    "version": "2.4.6h",
+    "latest_version": "2.4.6h",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

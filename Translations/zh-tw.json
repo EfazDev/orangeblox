@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- 引導媒體 ---",
  "Extracted successfully! Running Installer!": "提取成功!運行安裝程序!",
  "Latest Version: v(*)": "最新版本:v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "您想將 OrangeBlox 安裝程序暫時下載到新文件夾中嗎? (是/否)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "您想將 OrangeBlox 安裝程序暫時下載到新文件夾中嗎? (是/否)",
+ "Applying App Storage Patch..": "應用程式存儲補丁..",
+ "Preparing for Launch..": "準備發射.."
 }

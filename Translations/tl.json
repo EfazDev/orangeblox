@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Bootstrap Media ---",
  "Extracted successfully! Running Installer!": "Matagumpay na na-extract! Tumatakbong Installer!",
  "Latest Version: v(*)": "Pinakabagong Bersyon: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Gusto mo bang pansamantalang i-download ang OrangeBlox Installer sa isang bagong folder? (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Gusto mo bang pansamantalang i-download ang OrangeBlox Installer sa isang bagong folder? (y/n)",
+ "Applying App Storage Patch..": "Inilapat ang App Storage Patch..",
+ "Preparing for Launch..": "Paghahanda para sa Paglulunsad.."
 }

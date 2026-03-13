@@ -2458,5 +2458,7 @@
  "--- Bootstrap Media ---": "--- ブートストラップメディア ---",
  "Extracted successfully! Running Installer!": "無事抽出されました!インストーラーを実行しています!",
  "Latest Version: v(*)": "最新バージョン: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox インストーラーを新しいフォルダーに一時的にダウンロードしますか? (はい/いいえ)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox インストーラーを新しいフォルダーに一時的にダウンロードしますか? (はい/いいえ)",
+ "Applying App Storage Patch..": "App Storage パッチを適用しています..",
+ "Preparing for Launch..": "打ち上げの準備中.."
 }

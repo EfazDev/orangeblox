@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Medios de arranque ---",
  "Extracted successfully! Running Installer!": "¡Extraído con éxito! ¡Ejecutando el instalador!",
  "Latest Version: v(*)": "Última versión: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "¿Le gustaría descargar temporalmente el instalador de OrangeBlox en una carpeta nueva? (t/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "¿Le gustaría descargar temporalmente el instalador de OrangeBlox en una carpeta nueva? (t/n)",
+ "Applying App Storage Patch..": "Aplicando el parche de almacenamiento de aplicaciones..",
+ "Preparing for Launch..": "Preparándose para el lanzamiento..."
 }

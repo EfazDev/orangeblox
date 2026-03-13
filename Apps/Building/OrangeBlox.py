@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.4.6g"}
+current_version = {"version": "2.4.6h"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -362,8 +362,12 @@ if __name__ == "__main__":
 
         if not os.path.exists(orangeblox_library): os.makedirs(orangeblox_library)
         printMainMessage("Finding Python Executable..")
-        if main_config.get("EFlagSpecifyPythonExecutable"): pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
-        else:
+        pythonExecutable = None
+        if main_config.get("EFlagSpecifyPythonExecutable"): 
+            pythonExecutable = main_config.get("EFlagSpecifyPythonExecutable")
+            pip_class.executable = pythonExecutable
+            if not os.path.exists(pythonExecutable) or not pip_class.pythonSupported(3, 11, 0): pythonExecutable = None
+        if not pythonExecutable:
             if pip_class.pythonInstalled(computer=True) == False: pip_class.pythonInstall()
             pythonExecutable = pip_class.findPython(path=True)
         pip_class.executable = pythonExecutable

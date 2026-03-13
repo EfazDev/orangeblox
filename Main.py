@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6g
+# v2.4.6h
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.4.6g"}
+current_version: typing.Dict[str, str] = {"version": "2.4.6h"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -508,7 +508,7 @@ def getSettings(updating: bool=False):
             if req.ok: 
                 for i, v in req.json.items():
                     if flag_types.get(i) == "path": continue
-                    else: main_config[i] = v
+                    main_config[i] = v
         except: pass
     remove_items = []
     for i, v in main_config.items():

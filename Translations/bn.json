@@ -2459,5 +2459,7 @@
  "--- Bootstrap Media ---": "--- বুটস্ট্র্যাপ মিডিয়া ---",
  "Extracted successfully! Running Installer!": "সফলভাবে নিষ্কাশন! ইনস্টলার চলমান!",
  "Latest Version: v(*)": "সর্বশেষ সংস্করণ: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "আপনি কি অস্থায়ীভাবে OrangeBlox ইনস্টলারটিকে একটি নতুন ফোল্ডারে ডাউনলোড করতে চান? (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "আপনি কি অস্থায়ীভাবে OrangeBlox ইনস্টলারটিকে একটি নতুন ফোল্ডারে ডাউনলোড করতে চান? (y/n)",
+ "Applying App Storage Patch..": "অ্যাপ স্টোরেজ প্যাচ প্রয়োগ করা হচ্ছে..",
+ "Preparing for Launch..": "লঞ্চের জন্য প্রস্তুত হচ্ছে.."
 }

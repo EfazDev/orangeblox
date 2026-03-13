@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Μέσα Bootstrap ---",
  "Extracted successfully! Running Installer!": "Εξήχθη με επιτυχία! Εκτελούμενο πρόγραμμα εγκατάστασης!",
  "Latest Version: v(*)": "Τελευταία έκδοση: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Θέλετε να κάνετε προσωρινή λήψη του προγράμματος εγκατάστασης OrangeBlox σε έναν νέο φάκελο; (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Θέλετε να κάνετε προσωρινή λήψη του προγράμματος εγκατάστασης OrangeBlox σε έναν νέο φάκελο; (y/n)",
+ "Applying App Storage Patch..": "Εφαρμογή ενημέρωσης κώδικα αποθήκευσης εφαρμογών..",
+ "Preparing for Launch..": "Προετοιμασία για την κυκλοφορία.."
 }
