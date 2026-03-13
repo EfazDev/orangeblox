@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../Images/AppIcon.icns"
-current_version = {"version": "2.4.5"}
+current_version = {"version": "2.4.6"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -59,7 +59,7 @@ main_exe = EXE(
     bootloader_ignore_signals=False,
     argv_emulation=False,
     strip=False,
-    target_arch="arm64",
+    target_arch="x86_64",
     windowed=True,
     upx=True,
     icon=icon_file,

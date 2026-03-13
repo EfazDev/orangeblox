@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- बूटस्ट्रैप मीडिया ---",
  "Extracted successfully! Running Installer!": "सफलतापूर्वक निकाला गया! इंस्टॉलर चल रहा है!",
  "Latest Version: v(*)": "नवीनतम संस्करण: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "क्या आप ऑरेंजब्लॉक्स इंस्टॉलर को अस्थायी रूप से एक नए फ़ोल्डर में डाउनलोड करना चाहेंगे? (य/नहीं)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "क्या आप ऑरेंजब्लॉक्स इंस्टॉलर को अस्थायी रूप से एक नए फ़ोल्डर में डाउनलोड करना चाहेंगे? (य/नहीं)",
+ "Applying App Storage Patch..": "ऐप स्टोरेज पैच लागू करना..",
+ "Preparing for Launch..": "लॉन्च की तैयारी.."
 }

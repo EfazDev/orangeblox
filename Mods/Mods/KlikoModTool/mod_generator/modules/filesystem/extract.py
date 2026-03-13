@@ -1,4 +1,5 @@
 import os
+import shutil
 import platform
 import subprocess
 from pathlib import Path
@@ -17,13 +18,41 @@ def extract(source: str | Path, destination: str | Path, ignore_filetype: bool =
 
     if ignore_filetype:
         if not os.path.exists(destination): os.makedirs(destination,mode=511)
-        if platform.system() == "Darwin": subprocess.run(["/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if platform.system() == "Darwin": 
+            subprocess.run(["/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            move = []
+            for dirpath, _, filenames in os.walk(destination):
+                for name in filenames:
+                    old_path = os.path.join(dirpath, name)
+                    if old_path.endswith("\\"): os.remove(old_path); continue
+                    new_rel = os.path.relpath(old_path, destination).replace("\\", "/")
+                    new_path = os.path.join(destination, new_rel).replace("//", "/")
+                    if old_path == new_path: continue
+                    move.append((old_path, new_path))
+            for old_path, new_path in move:
+                os.makedirs(os.path.dirname(new_path), exist_ok=True, mode=511)
+                if os.path.exists(new_path): continue
+                shutil.move(old_path, new_path)
         else: subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", source, "-C", destination], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return
     match source.suffix:
         case ".zip":
             if not os.path.exists(destination): os.makedirs(destination,mode=511)
-            if platform.system() == "Darwin": subprocess.run(["/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if platform.system() == "Darwin": 
+                subprocess.run(["/usr/bin/ditto", "-xk", source, destination], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                move = []
+                for dirpath, _, filenames in os.walk(destination):
+                    for name in filenames:
+                        old_path = os.path.join(dirpath, name)
+                        if old_path.endswith("\\"): os.remove(old_path); continue
+                        new_rel = os.path.relpath(old_path, destination).replace("\\", "/")
+                        new_path = os.path.join(destination, new_rel).replace("//", "/")
+                        if old_path == new_path: continue
+                        move.append((old_path, new_path))
+                for old_path, new_path in move:
+                    os.makedirs(os.path.dirname(new_path), exist_ok=True, mode=511)
+                    if os.path.exists(new_path): continue
+                    shutil.move(old_path, new_path)
             else: subprocess.run(["C:\\Windows\\System32\\tar.exe", "-xf", source, "-C", destination], shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         case _:
             raise FileExtractError(f"Unsupported file format: {source.name}")

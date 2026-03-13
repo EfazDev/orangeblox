@@ -44,7 +44,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
 2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.2 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.3 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
 4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc psutil truststore <br>
    Windows: pip install pypresence pywin32 plyer psutil truststore
@@ -69,13 +69,13 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `1483bac3cbf94e19a141e7f83939d5c4` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `a5232d621dd180d461ae4b46401385ab` |
-| Installer (Install.py) | `2af024bab9ffd9a42b96d708473024be` |
-| Bootstrap API (OrangeAPI.py) | `431d8b4719b80c5f943259bbbc06038d` |
-| Bootstrap Loader (OrangeBlox.py) | `cbd774cf3e187b810bc1824f356d3a30` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `81726d9544c9fcce504524ec74392c3b` |
-| PyKits API (PyKits.py) | `bbafa290d4012c6f47f1ea62af1d6e35` |
+| Main Bootstrap (Main.py) | `5a154e24b9e724f51fd1c12dd7e41ee6` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `c18942dc001351ce60d88086f1f868b0` |
+| Installer (Install.py) | `5fa9e55429804d4730967c76b682c9f1` |
+| Bootstrap API (OrangeAPI.py) | `479ec5e4fc4650464ff28e2b725f31da` |
+| Bootstrap Loader (OrangeBlox.py) | `5af618e6600cc7ed90ffbad4b589638b` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `9806ea94e37e77607c83796e41e65c82` |
+| PyKits API (PyKits.py) | `e4053dd9781d453ed8036cd4fda4f2bd` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

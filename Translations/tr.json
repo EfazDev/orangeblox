@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Önyükleme Medyası ---",
  "Extracted successfully! Running Installer!": "Başarıyla çıkarıldı! Yükleyici çalıştırılıyor!",
  "Latest Version: v(*)": "Son Sürüm: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox Yükleyicisini geçici olarak yeni bir klasöre indirmek ister misiniz? (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox Yükleyicisini geçici olarak yeni bir klasöre indirmek ister misiniz? (y/n)",
+ "Applying App Storage Patch..": "App Storage Düzeltme Eki uygulanıyor..",
+ "Preparing for Launch..": "Lansmana Hazırlanıyor.."
 }

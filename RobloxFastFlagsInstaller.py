@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.5
+# v2.5.8
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -31,7 +31,7 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
-script_version = "2.5.5"
+script_version = "2.5.8"
 
 # Base Functions 1
 def getLocalAppData():
@@ -616,7 +616,7 @@ class Handler:
                     f_index = line.find("[F")
                     if f_index != -1:
                         filtered_line = line[f_index:]
-                        if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "[FLog::FMOD] FMOD API error" in line: should_remove = True
+                        if filtered_line == current_log or "[FLog::WndProcessCheck]" in line or "Calling mi_collect" in line or "[FLog::FMOD] FMOD API error" in line: should_remove = True
                         else: current_log = filtered_line
                     if should_remove == False: end_lines.append(line)
                 write_file.writelines(end_lines)
@@ -746,7 +746,7 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
                 elif "RobloxAudioDevice::StopRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
                 elif "RobloxAudioDevice::StartRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
-                elif "[FLog::Output]" in line:
+                elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
                         if output == -1: return None
@@ -977,7 +977,7 @@ class Handler:
                 elif "RobloxAudioDevice::StopRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStopRecording", data=line, isLine=True)
                 elif "RobloxAudioDevice::StartRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
                 elif "raiseTeleportInitFailedEvent" in line: self.submitEvent(eventName="onGameTeleportFailed", data=line, isLine=True)
-                elif "[FLog::Output]" in line:
+                elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
                         if output == -1: return None
@@ -1967,11 +1967,13 @@ class Handler:
         appStorage = {}
         if self.__main_os__ == "Darwin":
             try:
-                if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")): appStorage = json.load(open(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json"), "r", encoding="utf-8"))
+                if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")): 
+                    with open(os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json"), "r", encoding="utf-8") as f: appStorage = json.load(f)
             except Exception: appStorage = {}
         elif self.__main_os__ == "Windows":
             try:
-                if os.path.exists(os.path.join(windows_dir, "LocalStorage", "appStorage.json")): appStorage = json.load(open(os.path.join(windows_dir, "LocalStorage", "appStorage.json"), "r", encoding="utf-8"))
+                if os.path.exists(os.path.join(windows_dir, "LocalStorage", "appStorage.json")): 
+                    with open(os.path.join(windows_dir, "LocalStorage", "appStorage.json"), "r", encoding="utf-8") as f: appStorage = json.load(f)
             except Exception: appStorage = {}
         else:
             self.unsupportedFunction()
@@ -1995,6 +1997,30 @@ class Handler:
             "experimentCache": json.loads(appStorage.get("ExperimentCache")) if appStorage.get("ExperimentCache") else {},
             "policyServiceResponse": json.loads(appStorage.get("PolicyServiceHttpResponse")) if appStorage.get("PolicyServiceHttpResponse") else {}
         }
+    def applyAppStoragePatch(self):
+        try:
+            appStorage = {}
+            p = None
+            if self.__main_os__ == "Darwin":
+                try:
+                    p = os.path.join(user_folder, "Library", "Roblox", "LocalStorage", "appStorage.json")
+                    if os.path.exists(p): 
+                        with open(p, "r", encoding="utf-8") as f: appStorage = json.load(f)
+                except Exception: appStorage = {}
+            elif self.__main_os__ == "Windows":
+                try: p = os.path.join(windows_dir, "LocalStorage", "appStorage.json")
+                except Exception: appStorage = {}
+            else:
+                self.unsupportedFunction()
+                return {"success": False, "message": "OS not compatible."}
+            if p and os.path.exists(p): 
+                with open(p, "r", encoding="utf-8") as f: appStorage = json.load(f)
+                appStorage["_UpdateControllerCacheJsonPayload"] = appStorage.get("UpdateControllerCacheJsonPayload", "")
+                if appStorage.get("UpdateControllerCacheJsonPayload"): appStorage.pop("UpdateControllerCacheJsonPayload")
+                with open(p, "w", encoding="utf-8") as f: json.dump(appStorage, f)
+            return {"success": True, "message": f"App Storage Patch Success!"}
+        except Exception as e:
+            return {"success": False, "message": f"Exception occurred: {str(e)}"}
     def getRobloxGlobalBasicSettings(self, studio: bool=False):
         roblox_app_location = ""
         if self.__main_os__ == "Darwin": roblox_app_location = os.path.join(user_folder, "Library", "Roblox")
@@ -2140,7 +2166,8 @@ class Handler:
         return f"{url_scheme}:1+{'+'.join(s)}"
     def parseRobloxCookieFile(self, file_path: str="", file_index: int=1):
         if not file_path: return None
-        if main_os == "Windows" and file_path.endswith(".dat"):
+        if main_os == "Windows":
+            if not file_path.endswith(".dat"): return None
             with open(file_path, "r", encoding="utf-8") as f: cookie_file = json.load(f)
             encoded_cookies = cookie_file.get("CookiesData")
             if encoded_cookies == None: return None
@@ -2149,7 +2176,8 @@ class Handler:
             match = re.search(br'\.ROBLOSECURITY\t([^;]+)', cookie_data)
             if match == None: return None
             return match[file_index].decode("utf-8", errors="ignore")
-        elif main_os == "Darwin" and file_path.endswith(".binarycookies"):
+        elif main_os == "Darwin":
+            if not file_path.endswith(".binarycookies"): return None
             # A converted and non-package neeeding version of the binarycookies package
             from dataclasses import dataclass, field
             from datetime import datetime, timezone
@@ -2337,10 +2365,11 @@ class Handler:
             for i in cookies:
                 if i.name == ".ROBLOSECURITY":
                     return i.value
-        else:
-            self.unsupportedFunction()
+        else: self.unsupportedFunction()
     def getRobloxCookieFileLocation(self, studio: bool=False):
-        if main_os == "Windows" and os.path.exists(os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")): return os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat"), 1
+        if main_os == "Windows": 
+            if os.path.exists(os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat")): return os.path.join(windows_dir, "LocalStorage", "RobloxCookies.dat"), 1
+            else: return None, None
         elif main_os == "Darwin":
             if studio == True and os.path.exists(os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxStudio.binarycookies")): return os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxStudio.binarycookies"), -1
             elif studio == False and os.path.exists(os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies")): return os.path.join(user_folder, "Library", "HTTPStorages", "com.roblox.RobloxPlayer.binarycookies"), -1
@@ -2392,6 +2421,9 @@ class Handler:
             if forceQuit == True:
                 self.endRoblox(studio=studio)
                 if debug == True: printDebugMessage("Ending Roblox Instances..")
+        if debug == True: printDebugMessage("Applying App Storage Patch..")
+        self.applyAppStoragePatch()
+        if debug == True: printDebugMessage("Preparing for Launch..")
         if self.__main_os__ == "Darwin":
             tar_dir = macOS_studioDir if studio == True else macOS_dir
             if startData == "": startData = []
@@ -2675,7 +2707,7 @@ class Handler:
                             printMainMessage("Would you like to open Roblox? (y/n)")
                             if input("> ").lower() == "y": self.openRoblox()
                 else: printErrorMessage("Roblox couldn't be found.")
-            else: printErrorMessage("Roblox Fast Flags Installer is only supported for macOS and Windows.")
+            else: self.unsupportedFunction()
         else:
             if askForPerms == True:
                 if submit_status: submit_status.submit("[FFLAGS] Asking for permissions..", 0)
@@ -2799,7 +2831,7 @@ class Handler:
                     except Exception as e: printErrorMessage(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                 return flags_final
             else: return {}
-        else: printErrorMessage("Roblox Fast Flags Installer is only supported for macOS and Windows.")
+        else: self.unsupportedFunction()
     def installGlobalBasicSettings(self, globalsettings: dict, studio: bool=False, askForPerms: bool=False, endRobloxInstances: bool=True, flat: bool=False, debug: bool=False):
         if askForPerms == True:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Asking for permissions..", 0)

@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Bootstrap Media ---",
  "Extracted successfully! Running Installer!": "Udtrukket med succes! Kører installationsprogram!",
  "Latest Version: v(*)": "Seneste version: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Vil du midlertidigt downloade OrangeBlox Installer til en ny mappe? (å/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Vil du midlertidigt downloade OrangeBlox Installer til en ny mappe? (å/n)",
+ "Applying App Storage Patch..": "Anvender App Storage Patch..",
+ "Preparing for Launch..": "Forbereder til lancering.."
 }

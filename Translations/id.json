@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- Media Bootstrap ---",
  "Extracted successfully! Running Installer!": "Berhasil diekstraksi! Menjalankan Pemasang!",
  "Latest Version: v(*)": "Versi Terbaru: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Apakah Anda ingin mengunduh sementara Penginstal OrangeBlox ke folder baru? (y/n)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Apakah Anda ingin mengunduh sementara Penginstal OrangeBlox ke folder baru? (y/n)",
+ "Applying App Storage Patch..": "Menerapkan Patch Penyimpanan Aplikasi..",
+ "Preparing for Launch..": "Persiapan Peluncuran.."
 }

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.4.5
+# v2.4.6
 # 
 
 # Modules
@@ -22,7 +22,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.4.5"}
+current_version: typing.Dict[str, str] = {"version": "2.4.6"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -45,7 +45,6 @@ class StatusDisplayType(Enum):
     NAME = 0
     STATE = 1
     DETAILS = 2
-
 class ActivityType(Enum):
     PLAYING = 0
     STREAMING = 1
@@ -53,7 +52,6 @@ class ActivityType(Enum):
     WATCHING = 3
     CUSTOM = 4
     COMPETING = 5
-
 class Presence(pypresence.Presence):
     connected = False
     discord_session_connected = False

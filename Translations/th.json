@@ -2457,5 +2457,7 @@
  "--- Bootstrap Media ---": "--- บูตสแตรปมีเดีย ---",
  "Extracted successfully! Running Installer!": "สกัดสำเร็จ! กำลังรันโปรแกรมติดตั้ง!",
  "Latest Version: v(*)": "เวอร์ชันล่าสุด: v(*)",
- "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "คุณต้องการดาวน์โหลด OrangeBlox Installer ลงในโฟลเดอร์ใหม่ชั่วคราวหรือไม่ (มี/ไม่มี)"
+ "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "คุณต้องการดาวน์โหลด OrangeBlox Installer ลงในโฟลเดอร์ใหม่ชั่วคราวหรือไม่ (มี/ไม่มี)",
+ "Applying App Storage Patch..": "กำลังใช้ App Storage Patch..",
+ "Preparing for Launch..": "เตรียมเปิดตัว.."
 }

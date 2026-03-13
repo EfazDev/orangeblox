@@ -51,7 +51,7 @@ def macos_codesign():
 macos = {
     "intel": [
         [PRINT, "Building Clang Package for OrangeLoader.."],
-        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Scripts/Clang/OrangeLoader.mm"]],
+        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader"]],
         [PRINT, "Building Clang Package for OrangePlayRoblox.."],
         [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
@@ -64,13 +64,13 @@ macos = {
         [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],
         [LOOP, macos_codesign],
-        [RM_DIR, "./Apps/Scripts/Clang/__pycache__"],
+        [RM_DIR, "./Apps/Building/Clang/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeLoader!"],
         [PRINT, "The executables have been moved to their assigned bundles and are ready for RecreateMacOS.sh!"]
     ],
     "arm": [
         [PRINT, "Building Clang Package for OrangeLoader.."],
-        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-arch", "arm64", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Scripts/Clang/OrangeLoader.mm"]],
+        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-arch", "arm64", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
         [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader"]],
         [PRINT, "Building Clang Package for OrangePlayRoblox.."],
         [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
@@ -83,7 +83,7 @@ macos = {
         [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],
         [LOOP, macos_codesign],
-        [RM_DIR, "./Apps/Scripts/Clang/__pycache__"],
+        [RM_DIR, "./Apps/Building/Clang/__pycache__"],
         [PRINT, "Successfully rebuilt OrangeLoader!"],
         [PRINT, "The executables have been moved to their assigned bundles and are ready for RecreateMacOS.sh!"]
     ]
