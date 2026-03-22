@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6i
+# v2.5.0a
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.4.6i
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0a
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.4.6i", "bootstrap_version": "2.4.6i"}
+current_version = {"version": "2.5.0a", "bootstrap_version": "2.5.0a"}
 requested_functions = {}
 cached_information = {}
 colors_class = Colors()
@@ -546,7 +546,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRobloxLogFolderSize", {"static": static}).generateResponse().response   
-    def getLatestRobloxVersion(self, channel: str="LIVE") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxVersion
+    def getLatestRobloxVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxVersion
         """
         This pings the Roblox servers to get what's the latest Roblox version in a channel.
 
@@ -557,7 +557,8 @@ class OrangeAPI:
         # {
         #     "success": True, 
         #     "client_version": "version-56269cdb46a44048", 
-        #     "hash": "6470717"
+        #     "hash": "6470717", 
+        #     "channel": "LIVE"
         # }
         ```
         """
@@ -579,7 +580,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getInstalledRobloxVersion").generateResponse().response
-    def getLatestOppositeRobloxVersion(self, channel: str="LIVE") -> dict[str, typing.Any] | None: # Permission: getLatestOppositeRobloxVersion
+    def getLatestOppositeRobloxVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestOppositeRobloxVersion
         """
         Get the latest version of the opposite application (Roblox Player -> Studio, Studio -> Player)
 
@@ -592,7 +593,8 @@ class OrangeAPI:
         # {
         #     "success": True, 
         #     "client_version": "version-56269cdb46a44048", 
-        #     "hash": "6470717"
+        #     "hash": "6470717", 
+        #     "channel": "LIVE"
         # }
         ```
         """
@@ -616,6 +618,82 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOppositeInstalledRobloxVersion").generateResponse().response
+    def getLatestRobloxStudioVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxStudioVersion
+        """
+        Get the latest version of Roblox Studio.
+
+        Permission: getLatestRobloxStudioVersion | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        latest_roblox_studio_version = OrangeAPI.getLatestRobloxStudioVersion() # -> 
+        # {
+        #     "success": True, 
+        #     "client_version": "version-82814734c7d04ac2", 
+        #     "hash": "7130910", 
+        #     "channel": "LIVE"
+        # }
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getLatestRobloxStudioVersion", {"channel": channel}).generateResponse().response 
+    def getInstalledRobloxStudioVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxStudioVersion
+        """
+        Get the current version of Roblox Studio.
+
+        Permission: getInstalledRobloxStudioVersion | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        current_roblox_studio_version = OrangeAPI.getInstalledRobloxStudioVersion() # -> 
+        # {
+        #     "success": True, 
+        #     "client_version": "version-82814734c7d04ac2",
+        #     "version": "0.713.0.7130910", 
+        #     "channel": "LIVE"
+        # }
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getInstalledRobloxStudioVersion").generateResponse().response
+    def getLatestRobloxPlayerVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxPlayerVersion
+        """
+        Get the latest version of Roblox Player.
+
+        Permission: getLatestRobloxPlayerVersion | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        latest_roblox_player_version = OrangeAPI.getLatestRobloxPlayerVersion() # -> 
+        # {
+        #     "success": True, 
+        #     "client_version": "version-0b2afd6436e74a1f", 
+        #     "hash": "7130910", 
+        #     "channel": "LIVE"
+        # }
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getLatestRobloxPlayerVersion", {"channel": channel}).generateResponse().response 
+    def getInstalledRobloxPlayerVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxPlayerVersion
+        """
+        Get the current version of Roblox Player.
+
+        Permission: getInstalledRobloxPlayerVersion | Level: 1 [Warning]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        current_roblox_player_version = OrangeAPI.getInstalledRobloxPlayerVersion() # -> 
+        # {
+        #     "success": True, 
+        #     "client_version": "version-0b2afd6436e74a1f,
+        #     "version": "0.713.0.7130910", 
+        #     "channel": "LIVE"
+        # }
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "getInstalledRobloxPlayerVersion").generateResponse().response
     def getRobloxInstallFolder(self) -> str | None: # Permission: getRobloxInstallFolder
         """
         This gets where Roblox is installed at. This may change between versions or operating systems.

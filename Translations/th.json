@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "เวอร์ชันล่าสุด: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "คุณต้องการดาวน์โหลด OrangeBlox Installer ลงในโฟลเดอร์ใหม่ชั่วคราวหรือไม่ (มี/ไม่มี)",
  "Applying App Storage Patch..": "กำลังใช้ App Storage Patch..",
- "Preparing for Launch..": "เตรียมเปิดตัว.."
+ "Preparing for Launch..": "เตรียมเปิดตัว..",
+ "Get the current version of the Roblox Player": "รับ Roblox Player เวอร์ชันปัจจุบัน",
+ "Get the current version of the Roblox Studio": "รับ Roblox Studio เวอร์ชันปัจจุบัน",
+ "Get the current version of Roblox Player": "รับ Roblox Player เวอร์ชันปัจจุบัน",
+ "Get the current version of Roblox Studio": "รับ Roblox Studio เวอร์ชันปัจจุบัน"
 }

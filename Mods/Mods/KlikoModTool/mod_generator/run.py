@@ -8,7 +8,7 @@ from pathlib import Path
 
 from mod_generator.deploy_history import DeployHistory, get_deploy_history
 from mod_generator.download_luapackages import download_luapackages
-from mod_generator.deploy_history import DeployHistory, get_deploy_history
+import mod_generator.modules.request as requests
 import mod_generator.image_sets as img_sets
 
 class ProgressBar():   
@@ -35,15 +35,19 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         progress_bar.start()
         progress_bar.submit("[MOD_GEN] Fetching Studio Version!", 0)
         channel = versions["channel"]
+        macos = False
         try:
             deploy_history: DeployHistory = get_deploy_history(versions["version"])
             try: hash = deploy_history.get_hash(versions['version'])
             except Exception as e: hash = versions["hash"]
-            try: version: str = deploy_history.get_studio_version(hash, macos=False)
-            except Exception as e: version: str = deploy_history.get_latest_studio_version(macos=False); channel = "LIVE"
+            if hash and hash < "0.713":
+                try: version: str = deploy_history.get_studio_version(hash, macos=False)
+                except Exception as e: version: str = deploy_history.get_latest_studio_version(macos=False); channel = "LIVE"
+            else: version: str = versions['version']; channel = "LIVE"; macos = platform.system() == "Darwin"
         except Exception as e:
             s = versions["hash"].split(".")
-            version: str = DeployHistory("").get_latest_studio_version(macos=False, hash_majors=(s[0], s[1]))
+            if s and (s[0] == "0" and s[1] < "713"): version: str = DeployHistory("").get_latest_studio_version(macos=False, hash_majors=(s[0], s[1]))
+            else: version: str = versions['version']; macos = platform.system() == "Darwin"
             channel = "LIVE"
         progress_bar.submit("[MOD_GEN] Making Base Directories..", 5)
         output_dir = os.path.join(cur_path, "test")
@@ -69,7 +73,7 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
         data: dict = {"clientVersionUpload": studio_version, "channel": channel, "watermark": "Generated with Kliko's mod generator"}
         with open(temp_target / "info.json", "w", encoding="utf-8") as file: json.dump(data, file, indent=4)
         progress_bar.submit("[MOD_GEN] Downloading Roblox Studio Packages..", 20)
-        download_luapackages(studio_version, channel, temporary_directory, studio)
+        download_luapackages(studio_version, channel, temporary_directory, macos)
         progress_bar.submit("[MOD_GEN] Locating Image Sets..", 50)
         imageset_paths: list[Path] = img_sets.locate_imagesets(temporary_directory / studio_version)
         for imageset_path in imageset_paths: shutil.copytree((temporary_directory / studio_version / imageset_path), (temp_target / imageset_path), dirs_exist_ok=True)

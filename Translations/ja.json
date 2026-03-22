@@ -2460,5 +2460,9 @@
  "Latest Version: v(*)": "最新バージョン: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox インストーラーを新しいフォルダーに一時的にダウンロードしますか? (はい/いいえ)",
  "Applying App Storage Patch..": "App Storage パッチを適用しています..",
- "Preparing for Launch..": "打ち上げの準備中.."
+ "Preparing for Launch..": "打ち上げの準備中..",
+ "Get the current version of the Roblox Player": "Roblox Player の現在のバージョンを入手する",
+ "Get the current version of the Roblox Studio": "Roblox Studio の現在のバージョンを入手する",
+ "Get the current version of Roblox Player": "Roblox Player の現在のバージョンを入手する",
+ "Get the current version of Roblox Studio": "Roblox Studio の最新バージョンを入手する"
 }

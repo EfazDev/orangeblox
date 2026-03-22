@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Son Sürüm: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox Yükleyicisini geçici olarak yeni bir klasöre indirmek ister misiniz? (y/n)",
  "Applying App Storage Patch..": "App Storage Düzeltme Eki uygulanıyor..",
- "Preparing for Launch..": "Lansmana Hazırlanıyor.."
+ "Preparing for Launch..": "Lansmana Hazırlanıyor..",
+ "Get the current version of the Roblox Player": "Roblox Player'ın güncel sürümünü edinin",
+ "Get the current version of the Roblox Studio": "Roblox Studio'nun güncel sürümünü edinin",
+ "Get the current version of Roblox Player": "Roblox Player'ın güncel sürümünü edinin",
+ "Get the current version of Roblox Studio": "Roblox Studio'nun güncel sürümünü edinin"
 }

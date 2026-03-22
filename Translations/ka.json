@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Უახლესი ვერსია: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Გსურთ დროებით ჩამოტვირთოთ OrangeBlox Installer ახალ საქაღალდეში? (y/n)",
  "Applying App Storage Patch..": "Მიმდინარეობს აპის შენახვის პაჩის გამოყენება..",
- "Preparing for Launch..": "Მზადება გაშვებისთვის.."
+ "Preparing for Launch..": "Მზადება გაშვებისთვის..",
+ "Get the current version of the Roblox Player": "Მიიღეთ Roblox Player-ის მიმდინარე ვერსია",
+ "Get the current version of the Roblox Studio": "Მიიღეთ Roblox Studio-ს მიმდინარე ვერსია",
+ "Get the current version of Roblox Player": "Მიიღეთ Roblox Player-ის მიმდინარე ვერსია",
+ "Get the current version of Roblox Studio": "Მიიღეთ Roblox Studio-ს მიმდინარე ვერსია"
 }

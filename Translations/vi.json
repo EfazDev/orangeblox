@@ -2458,5 +2458,9 @@
  "Latest Version: v(*)": "Phiên bản mới nhất: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Bạn có muốn tạm thời tải xuống Trình cài đặt OrangeBlox vào một thư mục mới không? (có/không)",
  "Applying App Storage Patch..": "Đang áp dụng Bản vá lưu trữ ứng dụng..",
- "Preparing for Launch..": "Chuẩn bị ra mắt.."
+ "Preparing for Launch..": "Chuẩn bị ra mắt..",
+ "Get the current version of the Roblox Player": "Nhận phiên bản hiện tại của Trình phát Roblox",
+ "Get the current version of the Roblox Studio": "Nhận phiên bản hiện tại của Roblox Studio",
+ "Get the current version of Roblox Player": "Nhận phiên bản hiện tại của Roblox Player",
+ "Get the current version of Roblox Studio": "Nhận phiên bản hiện tại của Roblox Studio"
 }

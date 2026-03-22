@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6i
+# v2.5.0a
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.4.6i"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0a"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -3690,6 +3690,8 @@ def updateRFFIEvents():
             "getInstalledRobloxVersion": {"message": ts("Get the currently installed Roblox version"), "level": 1},
             "getLatestOppositeRobloxVersion": {"message": ts("Get the latest version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
             "getOppositeInstalledRobloxVersion": {"message": ts("Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
+            "getLatestRobloxPlayerVersion": {"message": ts("Get the current version of Roblox Player"), "level": 1},
+            "getLatestRobloxStudioVersion": {"message": ts("Get the current version of Roblox Studio"), "level": 1},
             "getRobloxInstallationFolder": {"message": ts("Get the Roblox installation folder"), "level": 2},
             "getIfRobloxIsOpen": {"message": ts("Get if the Roblox client is open"), "level": 1},
             "getIfModIsEnabled": {"message": ts("Get if a mod is enabled or not."), "level": 1},
@@ -5074,10 +5076,33 @@ def runRoblox():
                                                                                         saveSettings()
                                                                                     def getCurrentRobloxPid(scri: str): 
                                                                                         return connected_roblox_instance and connected_roblox_instance.pid
-                                                                                    def getLatestRobloxVersion(scri: str, channel: str="LIVE"):
-                                                                                        return handler.getLatestClientVersion(studio=run_studio==True, channel=channel, token=createDownloadToken(run_studio==True))
-                                                                                    def getLatestOppositeRobloxVersion(scri: str, channel: str="LIVE"):
-                                                                                        return handler.getLatestClientVersion(studio=not run_studio==True, channel=channel, token=createDownloadToken(not run_studio==True))
+                                                                                    def getRbxChannel(studio: bool=False):
+                                                                                        if main_config.get("EFlagRobloxSecurityCookieUsage") == True:
+                                                                                            requesting_channel = handler.getUserChannel(studio=run_studio, debug=(main_config.get("EFlagEnableDebugMode") == True))
+                                                                                            if requesting_channel.get("success") == True and requesting_channel.get("channel_name") != "LIVE": return requesting_channel.get("channel_name")
+                                                                                        r = handler.getCurrentClientVersion(studio=studio)
+                                                                                        if r and r["success"] == True: return r["channel"]
+                                                                                        else: return "LIVE"
+                                                                                    def getLatestRobloxVersion(scri: str, channel: str="*"):
+                                                                                        if channel == "*": channel = getRbxChannel(studio=run_studio==True)
+                                                                                        res = handler.getLatestClientVersion(studio=run_studio==True, channel=channel, token=createDownloadToken(run_studio==True))
+                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                                                        return res
+                                                                                    def getLatestOppositeRobloxVersion(scri: str, channel: str="*"):
+                                                                                        if channel == "*": channel = getRbxChannel(studio=not run_studio==True)
+                                                                                        res = handler.getLatestClientVersion(studio=not run_studio==True, channel=channel, token=createDownloadToken(not run_studio==True))
+                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                                                        return res
+                                                                                    def getLatestRobloxPlayerVersion(scri: str, channel: str="*"):
+                                                                                        if channel == "*": channel = getRbxChannel(studio=False)
+                                                                                        res = handler.getLatestClientVersion(studio=False, channel=channel, token=createDownloadToken(False))
+                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                                                        return res
+                                                                                    def getLatestRobloxStudioVersion(scri: str, channel: str="*"):
+                                                                                        if channel == "*": channel = getRbxChannel(studio=True)
+                                                                                        res = handler.getLatestClientVersion(studio=True, channel=channel, token=createDownloadToken(True))
+                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                                                        return res
                                                                                     def getRobloxThumbnailURLl(scri: str, studio: bool=None):
                                                                                         return getRobloxThumbnailURL(studio)
 
@@ -5096,6 +5121,8 @@ def runRoblox():
                                                                                         "sendDiscordWebhookMessage": sendDiscordWebhookMessage,
                                                                                         "getLatestOppositeRobloxVersion": getLatestOppositeRobloxVersion,
                                                                                         "getLatestRobloxVersion": getLatestRobloxVersion,
+                                                                                        "getLatestRobloxPlayerVersion": getLatestRobloxPlayerVersion,
+                                                                                        "getLatestRobloxStudioVersion": getLatestRobloxStudioVersion,
                                                                                         "reprepareRoblox": startPrepareRoblox,
                                                                                         "enableMod": enableMod,
                                                                                         "disableMod": disableMod,
@@ -5126,6 +5153,8 @@ def runRoblox():
                                                                                         "getIfRobloxIsOpen": handler.getIfRobloxStudioIsOpen if run_studio==True else handler.getIfRobloxIsOpen,
                                                                                         "getInstalledRobloxVersion": handler.getCurrentStudioClientVersion if run_studio==True else handler.getCurrentClientVersion,
                                                                                         "getOppositeInstalledRobloxVersion": handler.getCurrentClientVersion if run_studio==True else handler.getCurrentStudioClientVersion,
+                                                                                        "getInstalledRobloxStudioVersion": handler.getCurrentStudioClientVersion,
+                                                                                        "getInstalledRobloxPlayerVersion": handler.getCurrentClientVersion,
                                                                                         "getRobloxInstallFolder": handler.getRobloxInstallFolder,
                                                                                         "getLatestRobloxPid": handler.getLatestOpenedRobloxStudioPid if run_studio==True else handler.getLatestOpenedRobloxPid,
                                                                                         "getOpenedRobloxPids": handler.getOpenedRobloxStudioPids if run_studio==True else handler.getOpenedRobloxPids,

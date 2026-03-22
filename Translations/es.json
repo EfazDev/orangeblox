@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Última versión: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "¿Le gustaría descargar temporalmente el instalador de OrangeBlox en una carpeta nueva? (t/n)",
  "Applying App Storage Patch..": "Aplicando el parche de almacenamiento de aplicaciones..",
- "Preparing for Launch..": "Preparándose para el lanzamiento..."
+ "Preparing for Launch..": "Preparándose para el lanzamiento...",
+ "Get the current version of the Roblox Player": "Obtén la versión actual de Roblox Player",
+ "Get the current version of the Roblox Studio": "Obtenga la versión actual de Roblox Studio",
+ "Get the current version of Roblox Player": "Obtén la versión actual de Roblox Player",
+ "Get the current version of Roblox Studio": "Obtén la versión actual de Roblox Studio"
 }

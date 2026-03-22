@@ -2461,5 +2461,9 @@
  "Latest Version: v(*)": "সর্বশেষ সংস্করণ: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "আপনি কি অস্থায়ীভাবে OrangeBlox ইনস্টলারটিকে একটি নতুন ফোল্ডারে ডাউনলোড করতে চান? (y/n)",
  "Applying App Storage Patch..": "অ্যাপ স্টোরেজ প্যাচ প্রয়োগ করা হচ্ছে..",
- "Preparing for Launch..": "লঞ্চের জন্য প্রস্তুত হচ্ছে.."
+ "Preparing for Launch..": "লঞ্চের জন্য প্রস্তুত হচ্ছে..",
+ "Get the current version of the Roblox Player": "Roblox Player এর বর্তমান সংস্করণ পান",
+ "Get the current version of the Roblox Studio": "Roblox স্টুডিওর বর্তমান সংস্করণ পান",
+ "Get the current version of Roblox Player": "Roblox Player এর বর্তমান সংস্করণ পান",
+ "Get the current version of Roblox Studio": "Roblox স্টুডিওর বর্তমান সংস্করণ পান"
 }

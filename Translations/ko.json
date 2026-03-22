@@ -2460,5 +2460,9 @@
  "Latest Version: v(*)": "최신 버전: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "OrangeBlox 설치 프로그램을 새 폴더에 임시로 다운로드하시겠습니까? (예/아니요)",
  "Applying App Storage Patch..": "앱스토리지 패치 적용중..",
- "Preparing for Launch..": "출시 준비 중.."
+ "Preparing for Launch..": "출시 준비 중..",
+ "Get the current version of the Roblox Player": "Roblox Player의 최신 버전을 다운로드하세요..",
+ "Get the current version of the Roblox Studio": "Roblox Studio의 최신 버전을 다운로드하세요..",
+ "Get the current version of Roblox Player": "Roblox Player의 최신 버전을 다운로드하세요..",
+ "Get the current version of Roblox Studio": "Roblox Studio의 최신 버전을 다운로드하세요.."
 }

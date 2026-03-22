@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Τελευταία έκδοση: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Θέλετε να κάνετε προσωρινή λήψη του προγράμματος εγκατάστασης OrangeBlox σε έναν νέο φάκελο; (y/n)",
  "Applying App Storage Patch..": "Εφαρμογή ενημέρωσης κώδικα αποθήκευσης εφαρμογών..",
- "Preparing for Launch..": "Προετοιμασία για την κυκλοφορία.."
+ "Preparing for Launch..": "Προετοιμασία για την κυκλοφορία..",
+ "Get the current version of the Roblox Player": "Αποκτήστε την τρέχουσα έκδοση του Roblox Player",
+ "Get the current version of the Roblox Studio": "Αποκτήστε την τρέχουσα έκδοση του Roblox Studio",
+ "Get the current version of Roblox Player": "Αποκτήστε την τρέχουσα έκδοση του Roblox Player",
+ "Get the current version of Roblox Studio": "Αποκτήστε την τρέχουσα έκδοση του Roblox Studio"
 }

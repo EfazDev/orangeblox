@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6i
+# v2.5.0a
 # 
 
 # Modules
@@ -96,7 +96,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.4.6i"}
+current_version = {"version": "2.5.0a"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -2164,7 +2164,7 @@ if __name__ == "__main__":
                     elif res == "2": requestUninstall()
                     elif res == "3": requestRepair()
                     elif res == "4": requestBackup()
-    if update_mode == True:
+    if False:
         if main_os == "Darwin":
             if os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
                 if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):

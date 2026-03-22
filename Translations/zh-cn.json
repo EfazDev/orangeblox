@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "最新版本:v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "您想将 OrangeBlox 安装程序暂时下载到新文件夹中吗? (是/否)",
  "Applying App Storage Patch..": "应用应用程序存储补丁..",
- "Preparing for Launch..": "准备发射.."
+ "Preparing for Launch..": "准备发射..",
+ "Get the current version of the Roblox Player": "获取 Roblox Player 的当前版本",
+ "Get the current version of the Roblox Studio": "获取 Roblox Studio 的当前版本",
+ "Get the current version of Roblox Player": "获取 Roblox Player 的当前版本",
+ "Get the current version of Roblox Studio": "获取 Roblox Studio 的当前版本"
 }

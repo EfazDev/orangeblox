@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Versi Terbaru: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Apakah Anda ingin mengunduh sementara Penginstal OrangeBlox ke folder baru? (y/n)",
  "Applying App Storage Patch..": "Menerapkan Patch Penyimpanan Aplikasi..",
- "Preparing for Launch..": "Persiapan Peluncuran.."
+ "Preparing for Launch..": "Persiapan Peluncuran..",
+ "Get the current version of the Roblox Player": "Dapatkan versi Roblox Player saat ini",
+ "Get the current version of the Roblox Studio": "Dapatkan versi Roblox Studio saat ini",
+ "Get the current version of Roblox Player": "Dapatkan Roblox Player versi saat ini",
+ "Get the current version of Roblox Studio": "Dapatkan versi Roblox Studio saat ini"
 }

@@ -2459,5 +2459,9 @@
  "Latest Version: v(*)": "Pinakabagong Bersyon: v(*)",
  "Would you like to temporarily download the OrangeBlox Installer into a new folder? (y/n)": "Gusto mo bang pansamantalang i-download ang OrangeBlox Installer sa isang bagong folder? (y/n)",
  "Applying App Storage Patch..": "Inilapat ang App Storage Patch..",
- "Preparing for Launch..": "Paghahanda para sa Paglulunsad.."
+ "Preparing for Launch..": "Paghahanda para sa Paglulunsad..",
+ "Get the current version of the Roblox Player": "Kunin ang kasalukuyang bersyon ng Roblox Player",
+ "Get the current version of the Roblox Studio": "Kunin ang kasalukuyang bersyon ng Roblox Studio",
+ "Get the current version of Roblox Player": "Kunin ang kasalukuyang bersyon ng Roblox Player",
+ "Get the current version of Roblox Studio": "Kunin ang kasalukuyang bersyon ng Roblox Studio"
 }

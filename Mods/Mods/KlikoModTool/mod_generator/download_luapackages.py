@@ -22,11 +22,11 @@ class ProgressBar():
         sys.__stdout__.flush()
     def start(self): pass
     def end(self): pass
-def download_luapackages(version: str, channel: str, output_directory: str | Path, studio: bool) -> None:
+def download_luapackages(version: str, channel: str, output_directory: str | Path, macos: bool) -> None:
     progress_bar = ProgressBar()
     output_directory = Path(output_directory)
-    if False:
-        download(Api.Roblox.Deployment.download(version, "RobloxStudioApp.zip", channel, True), output_directory / "download" / f"{version}-RobloxStudioApp.zip")
+    if macos:
+        download(Api.Roblox.Deployment.download(version, "RobloxStudioApp.zip", channel, macos), output_directory / "download" / f"{version}-RobloxStudioApp.zip")
         progress_bar.submit("[MOD_GEN] Extracting Roblox Studio..", 35)
         extract(os.path.join(output_directory, "download", f"{version}-RobloxStudioApp.zip"), output_directory / version / "RobloxStudio.app", False, ["RobloxStudio.app/Contents/Resources/content/*", "RobloxStudio.app/Contents/Resources/ExtraContent/*"])
         shutil.move(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "content"), output_directory / version / "content")
@@ -34,16 +34,16 @@ def download_luapackages(version: str, channel: str, output_directory: str | Pat
         shutil.rmtree(os.path.join(output_directory, version, "RobloxStudio.app"), ignore_errors=True)
     else:
         progress_bar.submit("[MOD_GEN] Downloading Extra Content Textures..", 30)
-        download(Api.Roblox.Deployment.download(version, "extracontent-textures.zip", channel, True), output_directory / "download" / f"{version}-extracontent-textures.zip")
+        download(Api.Roblox.Deployment.download(version, "extracontent-textures.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-textures.zip")
         extract(os.path.join(output_directory, "download", f"{version}-extracontent-textures.zip"), output_directory / version / "ExtraContent" / "textures")
         progress_bar.submit("[MOD_GEN] Downloading Lua Packages..", 40)
-        download(Api.Roblox.Deployment.download(version, "extracontent-luapackages.zip", channel, True), output_directory / "download" / f"{version}-extracontent-luapackages.zip")
+        download(Api.Roblox.Deployment.download(version, "extracontent-luapackages.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-luapackages.zip")
         extract(os.path.join(output_directory, "download", f"{version}-extracontent-luapackages.zip"), output_directory / version / "ExtraContent" / "LuaPackages")
         progress_bar.submit("[MOD_GEN] Downloading Extra Lua Scripts..", 40)
-        download(Api.Roblox.Deployment.download(version, "extracontent-scripts.zip", channel, True), output_directory / "download" / f"{version}-extracontent-scripts.zip")
+        download(Api.Roblox.Deployment.download(version, "extracontent-scripts.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-scripts.zip")
         extract(os.path.join(output_directory, "download", f"{version}-extracontent-scripts.zip"), output_directory / version / "ExtraContent" / "scripts")
         progress_bar.submit("[MOD_GEN] Downloading Textures..", 45)
-        download(Api.Roblox.Deployment.download(version, "content-textures2.zip", channel, True), output_directory / "download" / f"{version}-content-textures2.zip")
+        download(Api.Roblox.Deployment.download(version, "content-textures2.zip", channel, macos), output_directory / "download" / f"{version}-content-textures2.zip")
         extract(os.path.join(output_directory, "download", f"{version}-content-textures2.zip"), output_directory / version / "content" / "textures")
-        download(Api.Roblox.Deployment.download(version, "content-textures3.zip", channel, True), output_directory / "download" / f"{version}-content-textures3.zip")
+        download(Api.Roblox.Deployment.download(version, "content-textures3.zip", channel, macos), output_directory / "download" / f"{version}-content-textures3.zip")
         extract(os.path.join(output_directory, "download", f"{version}-content-textures3.zip"), output_directory / version / "content" / "textures")
