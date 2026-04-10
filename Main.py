@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0a
+# v2.5.0b
 # 
 
 # Python Modules
@@ -51,7 +51,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0a"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0b"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -3444,7 +3444,7 @@ def continueToUpdates(): # Check for Updates
                                         try:
                                             printMainMessage("Cleaning up files..")
                                             os.remove(os.path.join(cur_path, 'Update.zip'))
-                                            shutil.rmtree(os.path.join(cur_path, 'Update'))
+                                            shutil.rmtree(os.path.join(cur_path, 'Update'), ignore_errors=True)
                                         except Exception as e:
                                             printErrorMessage(f"Something went wrong while cleaning the files for {obName0()} update!")
                                             printDebugMessage(f"Cleaning Error: \n{trace()}")
@@ -3452,6 +3452,14 @@ def continueToUpdates(): # Check for Updates
                                     else:
                                         silent_install = stdout.run_process(args=[sys.executable, "Install.py", "--update-mode"], cwd=cur_path)
                                         if not (silent_install.returncode == 0): printErrorMessage("Bootstrap Installer failed.")
+                                        try:
+                                            printMainMessage("Cleaning up files..")
+                                            os.remove(os.path.join(cur_path, 'Update.zip'))
+                                            shutil.rmtree(os.path.join(cur_path, 'Update'), ignore_errors=True)
+                                        except Exception as e:
+                                            printErrorMessage(f"Something went wrong while cleaning the files for {obName0()} update!")
+                                            printDebugMessage(f"Cleaning Error: \n{trace()}")
+                                        sys.exit(0)
                                 except Exception as e:
                                     printErrorMessage(f"Something went wrong while updating the files for {obName0()}!")
                                     printDebugMessage(f"Updating Error: \n{trace()}")
@@ -4405,11 +4413,11 @@ def validateRobloxStudioInstallation():
     if main_os == "Windows":
         target_install_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
         if not os.path.exists(os.path.join(versions_folder, target_install_name)): return False
-        for i, v in handler.roblox_studio_bundle_files.items(): 
-            if not (v == "/" or v == "/Qml") and not os.path.exists(f"{os.path.join(versions_folder, target_install_name)}{v}"): return False
+        for v in ["content", "PlatformContent", "StudioContent", "ExtraContent", "shaders", "StudioFonts", "BuiltInStandalonePlugins", "BuiltInPlugins", "ApplicationConfig"]: 
+            if not os.path.exists(os.path.join(versions_folder, target_install_name, v)): return False
     elif main_os == "Darwin":
         if not os.path.exists(RFFI.macOS_studioDir): return False
-        roblox_bundle_folders = ["/content", "/ssl", "/PlatformContent", "/StudioContent", "/ExtraContent", "/shaders", "/RibbonConfig", "/StudioFonts", "/BuiltInStandalonePlugins", "/BuiltInPlugins", "/ApplicationConfig"]
+        roblox_bundle_folders = ["/content", "/PlatformContent", "/StudioContent", "/ExtraContent", "/shaders", "/StudioFonts", "/BuiltInStandalonePlugins", "/BuiltInPlugins", "/ApplicationConfig"]
         for i in roblox_bundle_folders: 
             if not os.path.exists(f"{os.path.join(RFFI.macOS_studioDir, 'Contents', 'Resources')}{i}"): return False
     return True
