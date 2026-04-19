@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "กำลังโหลดจาก (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "โปรดรีสตาร์ท OrangeBlox เพื่อติดตั้งใหม่ (*)!",
  "Saving to (*)..": "บันทึกไปที่ (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "มีข้อผิดพลาดเกิดขึ้นกับการตั้งค่าไอคอนรันไทม์ของ roblox: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "มีข้อผิดพลาดเกิดขึ้นกับการตั้งค่าไอคอนรันไทม์ของ roblox: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)สร้างตัวติดตั้งสำเร็จแล้ว!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "หากคุณต้องการสร้างโฟลเดอร์ซิงค์ใหม่ โปรดใช้ตัวเลือกตัวติดตั้ง OrangeBlox และเลือกสร้างตัวติดตั้ง",
+ "If you want to use an existing sync folder, use this.": "หากคุณต้องการใช้โฟลเดอร์ซิงค์ที่มีอยู่ ให้ใช้สิ่งนี้",
+ "Please select your sync directory!": "โปรดเลือกไดเร็กทอรีการซิงค์ของคุณ!",
+ "The installer had a problem creating!": "โปรแกรมติดตั้งมีปัญหาในการสร้าง!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "โฟลเดอร์ที่เลือกไม่ใช่โฟลเดอร์ซิงค์ที่ถูกต้อง โปรดตรวจสอบให้แน่ใจว่าโฟลเดอร์มีไฟล์ที่จำเป็นแล้วลองอีกครั้ง",
+ "Would you like to change your Sync Folder? (y/n)": "คุณต้องการเปลี่ยนโฟลเดอร์ซิงค์ของคุณหรือไม่? (มี/ไม่มี)",
+ "[c] = Download & Create": "[c] = ดาวน์โหลดและสร้าง",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox กำลังโหลด! โปรดรอ!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API ไม่ตอบสนอง! ยุติกระบวนการพร็อกซี Discord!"
 }

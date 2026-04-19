@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Memuat dari (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Silakan restart OrangeBlox untuk menginstal ulang (*)!",
  "Saving to (*)..": "Menyimpan ke (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Ada yang salah dengan pengaturan Ikon Runtime roblox: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Ada yang salah dengan pengaturan Ikon Runtime roblox: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Pemasang telah berhasil dibuat!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Jika Anda ingin membuat folder sinkronisasi baru, silakan gunakan opsi Pemasang OrangeBlox dan pilih untuk membuat pemasang..",
+ "If you want to use an existing sync folder, use this.": "Jika Anda ingin menggunakan folder sinkronisasi yang ada, gunakan ini..",
+ "Please select your sync directory!": "Silakan pilih direktori sinkronisasi Anda!",
+ "The installer had a problem creating!": "Penginstal mengalami masalah saat membuat!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Folder yang dipilih bukan folder sinkronisasi yang valid. Harap pastikan folder tersebut berisi file yang diperlukan dan coba lagi..",
+ "Would you like to change your Sync Folder? (y/n)": "Apakah Anda ingin mengubah Folder Sinkronisasi Anda? (y/n)",
+ "[c] = Download & Create": "[C] = Unduh & Buat",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox sedang memuat! Harap tunggu!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "API Proksi Perselisihan tidak merespons! Mengakhiri Proses Proksi Perselisihan!"
 }

@@ -1,7 +1,7 @@
 #
 # OrangeBot
 # OrangeBlox with Discord Bot Support
-# v1.0.0
+# v1.0.5
 # 
 
 # Load Bootstrap API
@@ -105,35 +105,43 @@ async def on_ready():
         OrangeAPI.setConfiguration("ModScriptVersion", OrangeAPI.getVersion())
 
     status_task.start()
-@tasks.loop()
+@tasks.loop(seconds=10)
 async def status_task():
-    while True:
-        try:
-            current_game_info = OrangeAPI.getCurrentPlaceInfo()
-            connected_game_status = OrangeAPI.getIfConnectedToGame()
-            if connected_game_status == True and current_game_info and current_game_info.get("place_info"):
-                place_info = current_game_info["place_info"]
-                if place_info['creator']['name'] == "Local File" and place_info['creator']['id'] == 0: creator_name = OrangeAPI.translate(f"Opened as Local File!")
-                else:
-                    creator_name = OrangeAPI.translate(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}").replace("✅", "")
-                    if place_info.get("creator").get("hasVerifiedBadge") == True: creator_name = f"{creator_name} ✅!"
-                    else: creator_name = f"{creator_name}!"
-                await bot.change_presence(status=discord.Status.online,
-                    activity=discord.Activity(
-                        type=discord.ActivityType.playing,
-                        name=f"{place_info['name']} | {creator_name}"
-                    )
-                )
+    try:
+        current_game_info = OrangeAPI.getCurrentPlaceInfo()
+        connected_game_status = OrangeAPI.getIfConnectedToGame()
+        if connected_game_status == True and current_game_info and current_game_info.get("place_info"):
+            place_info = current_game_info["place_info"]
+            if place_info['creator']['name'] == "Local File" and place_info['creator']['id'] == 0: creator_name = OrangeAPI.translate(f"Opened as Local File!")
             else:
-                await bot.change_presence(status=discord.Status.idle,
-                    activity=discord.Activity(
-                        type=discord.ActivityType.playing,
-                        name=OrangeAPI.translate(f"Idling Roblox{' Studio' if OrangeAPI.getStudioMode() else ''}")
-                    )
+                creator_name = OrangeAPI.translate(f"Made by {'@' if place_info['creator'].get('type') == 'User' else ''}{place_info['creator']['name']}").replace("✅", "")
+                if place_info.get("creator").get("hasVerifiedBadge") == True: creator_name = f"{creator_name} ✅!"
+                else: creator_name = f"{creator_name}!"
+            await bot.change_presence(status=discord.Status.online,
+                activity=discord.Activity(
+                    type=discord.ActivityType.playing,
+                    name=f"{place_info['name']} | {creator_name}"
                 )
-        except Exception as e:
-            printErrorMessage(f"Error while loading status text! Error: {str(e)}")
-        await asyncio.sleep(10)
+            )
+        else:
+            await bot.change_presence(status=discord.Status.idle,
+                activity=discord.Activity(
+                    type=discord.ActivityType.playing,
+                    name=OrangeAPI.translate(f"Idling Roblox{' Studio' if OrangeAPI.getStudioMode() else ''}")
+                )
+            )
+    except Exception as e:
+        printErrorMessage(f"Error while loading status text! Error: {str(e)}")
+@tasks.loop(seconds=10)
+async def check_api_status():
+    try:
+        res = await asyncio.wait_for(asyncio.to_thread(askForTask, "check_api_status"), timeout=5.0)
+        if res != True:
+            printErrorMessage("Discord Proxy API is not responding! Ending Discord Proxy Process!")
+            await bot.close()
+    except asyncio.TimeoutError:
+        printErrorMessage("Discord Proxy API is not responding! Ending Discord Proxy Process!")
+        await bot.close()
 @tree.command(name="sync", description="Sync command tree to all servers!")
 async def sync(interaction: discord.Interaction):
     ctx = interaction

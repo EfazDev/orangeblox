@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Chargement à partir de (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Veuillez redémarrer OrangeBlox afin de réinstaller (*) !",
  "Saving to (*)..": "Sauvegarder dans (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Quelque chose s'est mal passé lors de la configuration de l'icône d'exécution Roblox : (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Quelque chose s'est mal passé lors de la configuration de l'icône d'exécution Roblox : (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Le programme d'installation a été créé avec succès !",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Si vous souhaitez créer un nouveau dossier de synchronisation, veuillez utiliser l'option OrangeBlox Installer et choisir de créer un programme d'installation..",
+ "If you want to use an existing sync folder, use this.": "Si vous souhaitez utiliser un dossier de synchronisation existant, utilisez-le..",
+ "Please select your sync directory!": "Veuillez sélectionner votre répertoire de synchronisation !",
+ "The installer had a problem creating!": "L'installateur a eu un problème lors de la création !",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Le dossier sélectionné n'est pas un dossier de synchronisation valide. Veuillez vous assurer que le dossier contient les fichiers nécessaires et réessayer..",
+ "Would you like to change your Sync Folder? (y/n)": "Souhaitez-vous Modifier votre dossier de synchronisation ? (y/n)",
+ "[c] = Download & Create": "[C] = Télécharger et créer",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox est en cours de chargement ! S'il vous plaît, attendez!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "L'API Discord Proxy ne répond pas ! Mettre fin au processus de proxy Discord !"
 }

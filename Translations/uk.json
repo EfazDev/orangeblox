@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Завантаження з (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Перезапустіть OrangeBlox, щоб перевстановити (*)!",
  "Saving to (*)..": "Збереження в (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Щось пішло не так із налаштуванням значка Roblox Runtime: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Щось пішло не так із налаштуванням значка Roblox Runtime: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Інсталятор успішно створено!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Якщо ви хочете створити нову папку синхронізації, скористайтеся опцією інсталятора OrangeBlox і виберіть створити інсталятор..",
+ "If you want to use an existing sync folder, use this.": "Якщо ви хочете використовувати існуючу папку синхронізації, використовуйте це..",
+ "Please select your sync directory!": "Виберіть каталог для синхронізації!",
+ "The installer had a problem creating!": "У інсталятора виникла проблема під час створення!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Вибрана папка не є дійсною папкою синхронізації. Переконайтеся, що папка містить необхідні файли, і повторіть спробу..",
+ "Would you like to change your Sync Folder? (y/n)": "Бажаєте змінити папку синхронізації? (да/не)",
+ "[c] = Download & Create": "[C] = Завантажити та створити",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox завантажується! Будь ласка, зачекайте!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API не відповідає! Завершення процесу Discord Proxy!"
 }

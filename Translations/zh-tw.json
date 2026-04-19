@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "加載自 (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "請重新啟動 OrangeBlox 重新安裝 (*)!",
  "Saving to (*)..": "儲存到 (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "設定 Roblox 運行時圖示時出現問題:(*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "設定 Roblox 運行時圖示時出現問題:(*)(*)",
+ "(*) Installer has been created successfully!": "(*)安裝程式已成功建立!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "如果您想建立新的同步資料夾,請使用 OrangeBlox 安裝程式選項並選擇建立安裝程式..",
+ "If you want to use an existing sync folder, use this.": "如果您想使用現有的同步資料夾,請使用它..",
+ "Please select your sync directory!": "請選擇您的同步目錄!",
+ "The installer had a problem creating!": "安裝程式創建時出現問題!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "所選資料夾不是有效的同步資料夾.請確保該資料夾包含必要的文件,然後重試..",
+ "Would you like to change your Sync Folder? (y/n)": "您想更改您的同步資料夾嗎? (是/否)",
+ "[c] = Download & Create": "[c] = 下載並創建",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox 正在加載!請稍等!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord 代理 API 沒有回應!結束 Discord 代理程式!"
 }

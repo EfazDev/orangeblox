@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0d
+# v2.5.0e
 # 
 
 # Python Modules
@@ -37,6 +37,7 @@ requests: PyKits.request = PyKits.request()
 plist_class: PyKits.plist = PyKits.plist()
 colors_class: PyKits.Colors = PyKits.Colors()
 submit_status: PyKits.ProgressBar = PyKits.ProgressBar()
+file_selector: PyKits.FileSelector = PyKits.FileSelector()
 handler: RFFI.Handler = RFFI.Handler()
 cur_path: str = os.path.dirname(os.path.abspath(__file__))
 content_folder_paths: typing.Dict[str, str] = {}
@@ -51,7 +52,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0d"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0e"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -86,6 +87,7 @@ flag_types: typing.Dict[str, str] = {
     "EFlagAllowActivityTracking": "bool",
     "EFlagDisableFastFlagInstallAccess": "bool",
     "EFlagBootstrapUpdateServer": "str",
+    "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
     "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
@@ -316,18 +318,14 @@ def getFolderSize(folder_path, formatWithAbbreviation=True):
                         elif entry.is_dir(follow_symlinks=False): stack.append(entry.path)
                     except Exception: pass
         except Exception: pass
-    if formatWithAbbreviation == True: return formatSize(total_size)
-    else: return total_size
+    return formatSize(total_size) if formatWithAbbreviation == True else total_size
 def getFileSize(files, formatWithAbbreviation=True):
     total_size = 0
     for i in files: 
         if os.path.exists(i):
             if os.path.isdir(i): total_size += getFolderSize(i, formatWithAbbreviation=False)
             else: total_size += os.stat(i).st_size
-    if formatWithAbbreviation == True:
-        return formatSize(total_size)
-    else:
-        return total_size
+    return formatSize(total_size) if formatWithAbbreviation == True else total_size
 def getRobloxLogFolderSize(static=False):
     if main_os == "Darwin":
         log_path = os.path.join(os.path.expanduser("~"), "Library", "Logs", "Roblox")
@@ -357,6 +355,9 @@ def readJSONFile(path, listExpected=False):
                 else: return None
         except Exception as e: return None
     return None
+def checkSyncFolder(path: typing.Optional[str]=None):
+    sync_folder = path if path else main_config.get("EFlagOrangeBloxSyncDir")
+    return sync_folder and os.path.exists(sync_folder) and os.path.isdir(sync_folder) and not os.path.samefile(sync_folder, os.path.join(cur_path)) and os.path.exists(os.path.join(sync_folder, "Configuration.json")) and os.path.exists(os.path.join(sync_folder, "Mods"))
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         if not os.path.exists(os.path.join(cur_path, "AppNotification")):
@@ -502,19 +503,19 @@ def getSettings(updating: bool=False):
             req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "main"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
             if req.ok: 
                 for i, v in req.json.items():
-                    if flag_types.get(i) == "path": continue
+                    if flag_types.get(i).startswith("path") or "_local" in flag_types.get(i): continue
                     main_config[i] = v
         except: pass
     remove_items = []
     for i, v in main_config.items():
         if not (flag_types.get(i) is None):
-            if flag_types.get(i) == "str" and type(v) is str: pass
-            elif flag_types.get(i) == "path" and type(v) is str and os.path.exists(v): pass
-            elif flag_types.get(i) == "int" and type(v) is int: pass
-            elif flag_types.get(i) == "float" and type(v) is float: pass
-            elif flag_types.get(i) == "dict" and type(v) is dict: pass
-            elif flag_types.get(i) == "bool" and type(v) is bool: pass
-            elif flag_types.get(i) == "list" and type(v) is list: pass
+            if flag_types.get(i).startswith("str") and type(v) is str: pass
+            elif flag_types.get(i).startswith("path") and type(v) is str and os.path.exists(v): pass
+            elif flag_types.get(i).startswith("int") and type(v) is int: pass
+            elif flag_types.get(i).startswith("float") and type(v) is float: pass
+            elif flag_types.get(i).startswith("dict") and type(v) is dict: pass
+            elif flag_types.get(i).startswith("bool") and type(v) is bool: pass
+            elif flag_types.get(i).startswith("list") and type(v) is list: pass
             elif flag_types.get(flag_types.get(i)): main_config[flag_types.get(i)] = v; remove_items.append(i)
             else: remove_items.append(i)
         else: remove_items.append(i)
@@ -544,7 +545,7 @@ def saveSettings():
         else: remove_items.append(i)
     for i in remove_items: before_edit.pop(i)
     main_config = before_edit
-    if main_config.get("EFlagDisableAutosaveToInstallation") != True and (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+    if main_config.get("EFlagDisableAutosaveToInstallation") != True and checkSyncFolder():
         if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')):
             with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json'), "w", encoding="utf-8") as f: json.dump(main_config, f, indent=4)
             respo["sync_success"] = True
@@ -776,15 +777,18 @@ def continueToFFlagInstaller(): # Run Fast Flag Installer
 def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
     global main_config
     printSystemMessage(f"--- Run {obName0()} Installer ---")
-    if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+    if checkSyncFolder():
         printMainMessage(f"Are you sure you want to run {obName0()} installer from installation folder?")
         printMainMessage("[y/t] = Yes")
         printMainMessage("[r] = Download & Run")
+        printMainMessage("[c] = Download & Create")
         printMainMessage("[n/*] = No")
     else:
         printMainMessage(f"Are you sure you want to run {obName0()} installer?")
         printMainMessage("[y/t] = Yes")
+        printMainMessage("[c] = Download & Create")
         printMainMessage("[n/*] = No")
+    a = input("> ")
     def download_option():
         if pip_class.getIfConnectedToInternet():
             printDebugMessage("Setting Installed App Path to Local User..") 
@@ -820,43 +824,60 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
                 printMainMessage(f"Are you sure you would like to continue through downloading {obName0()} installer? (y/n)")
                 a = input("> ")
                 if (isYes(a) == True):
-                    printDebugMessage(f"Saving Settings..")
-                    saveSettings()
-                    printMainMessage(f"Downloading Latest Version of {obName0()}..")
-                    late_v = latest_vers.get("latest_version")
-                    download_update = requests.download(download_location, os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
-                    if download_update.ok:
-                        printMainMessage("Download Success! Extracting ZIP now!")
-                        dow_tar = os.path.join(user_folder, f'OrangeBloxInstaller')
-                        zip_extract = pip_class.unzipFile(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), dow_tar, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
-                        if zip_extract.returncode == 0:
-                            printMainMessage("Removing ZIP File..")
-                            if os.path.exists(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')): os.remove(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
-                            temp_sync = False
-                            if not (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
-                                printMainMessage(f"Registering Sync Directory..")
-                                printDebugMessage(f'Sync Directory: {os.path.join(dow_tar)}')
-                                main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar)
-                                saveSettings()
-                                temp_sync = True
-                            printMainMessage("Running Installer..")
-                            stdout.clear()
-                            e = stdout.run_process(args=[sys.executable, os.path.join(dow_tar, "Install.py")], cwd=dow_tar)
-                            if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has succeeded successfully! Once you continue, this script will reload.")
-                            else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
-                            if temp_sync == False and os.path.exists(dow_tar): 
-                                if os.path.exists(os.path.join(dow_tar, "Backup.obx")): shutil.move(os.path.join(dow_tar, "Backup.obx"), os.path.join(user_folder, "Documents", "OrangeBlox_Backup.obx"))
-                                shutil.rmtree(dow_tar, ignore_errors=True)
-                            input("> ")
-                            pip_class.restartScript("Main.py", sys.argv)
-                            sys.exit(0)
-                            return
+                    dow_tar = None
+                    if a == "c":
+                        printMainMessage(f"Please select your sync directory!")
+                        custom_path = file_selector.select_folder("Select the directory to create a sync directory to!", initialdir=cur_path)
+                        if custom_path and custom_path.ok: dow_tar = custom_path.path
+                    else: dow_tar = os.path.join(user_folder, f'OrangeBloxInstaller')
+                    if dow_tar:
+                        printDebugMessage(f"Saving Settings..")
+                        saveSettings()
+                        printMainMessage(f"Downloading Latest Version of {obName0()}..")
+                        late_v = latest_vers.get("latest_version")
+                        download_update = requests.download(download_location, os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
+                        if download_update.ok:
+                            printMainMessage("Download Success! Extracting ZIP now!")
+                            zip_extract = pip_class.unzipFile(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'), dow_tar, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                            if zip_extract.returncode == 0:                                                                                               
+                                printMainMessage("Removing ZIP File..")
+                                if os.path.exists(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')): os.remove(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
+                                if a == "c":
+                                    printMainMessage(f"Registering Sync Directory..")
+                                    printDebugMessage(f'Sync Directory: {os.path.join(dow_tar)}')
+                                    main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar)
+                                    saveSettings()
+                                    if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has been created successfully!")
+                                    else: printErrorMessage("The installer had a problem creating!")
+                                    input("> ")
+                                    return
+                                else:
+                                    temp_sync = False
+                                    if not checkSyncFolder():
+                                        printMainMessage(f"Registering Sync Directory..")
+                                        printDebugMessage(f'Sync Directory: {os.path.join(dow_tar)}')
+                                        main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar)
+                                        saveSettings()
+                                        temp_sync = True
+                                    printMainMessage("Running Installer..")
+                                    stdout.clear()
+                                    e = stdout.run_process(args=[sys.executable, os.path.join(dow_tar, "Install.py")], cwd=dow_tar)
+                                    if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has succeeded successfully! Once you continue, this script will reload.")
+                                    else: printErrorMessage("The installer had a problem! Once you continue, this script will reload.")
+                                    if temp_sync == False and os.path.exists(dow_tar): 
+                                        if os.path.exists(os.path.join(dow_tar, "Backup.obx")): shutil.move(os.path.join(dow_tar, "Backup.obx"), os.path.join(user_folder, "Documents", "OrangeBlox_Backup.obx"))
+                                        shutil.rmtree(dow_tar, ignore_errors=True)
+                                    input("> ")
+                                    pip_class.restartScript("Main.py", sys.argv)
+                                    sys.exit(0)
+                                    return
+                            else:
+                                printErrorMessage(f"There was an issue trying to unpack the {obName0()} installation folder!")
+                                return ts(f"{obName0()} Installer task was canceled!")
                         else:
-                            printErrorMessage(f"There was an issue trying to unpack the {obName0()} installation folder!")
+                            printErrorMessage(f"There was an issue trying to download {obName0()} from the download server!")
                             return ts(f"{obName0()} Installer task was canceled!")
-                    else:
-                        printErrorMessage(f"There was an issue trying to download {obName0()} from the download server!")
-                        return ts(f"{obName0()} Installer task was canceled!")
+                    else: return ts(f"{obName0()} Installer task was canceled!")
                 else: return ts(f"{obName0()} Installer task was canceled!")
             else:
                 printErrorMessage(f"There was an issue trying to fetch {obName0()} information!")
@@ -864,9 +885,8 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         else:
             printErrorMessage("Please connect to your internet in order to use this action!")
             return ts(f"{obName0()} Installer task was canceled!")
-    a = input("> ")
     if isYes(a) == True:
-        if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+        if checkSyncFolder():
             printMainMessage("Running Installer..")
             stdout.clear()
             e = stdout.run_process(args=[sys.executable, os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Install.py")], cwd=main_config.get("EFlagOrangeBloxSyncDir"))
@@ -877,7 +897,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
             sys.exit(0)
             return
         else: return download_option()
-    elif a == "r": return download_option()
+    elif a == "r" or a == "c": return download_option()
     else: return ts(f"{obName0()} Installer task was canceled!")
 def continueToClearTemporaryStorage(): # Clear Temporary Storage
     installer_paths = [os.path.join(cur_path, 'RobloxPlayerInstaller.exe'), os.path.join(cur_path, 'RobloxStudioInstaller.exe'), os.path.join(cur_path, 'RobloxPlayerInstaller.app'), os.path.join(cur_path, 'RobloxStudioInstaller.app')]
@@ -1349,7 +1369,7 @@ def syncToFFlagConfiguration(): # Sync to Configuration
     if isYes(a) == True:
         global main_config
         printMainMessage("Validating Bootstrap Install Directory..")
-        if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+        if checkSyncFolder():
             if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json")):
                 printDebugMessage(f"Saving to {os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')}..")
                 with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json"), "w", encoding="utf-8") as f: json.dump(main_config, f, indent=4)
@@ -1372,7 +1392,7 @@ def syncFromFFlagConfiguration(): # Sync from Fast Flag Configuration
     if isYes(a) == True:
         global main_config
         printMainMessage("Validating Bootstrap Install Directory..")
-        if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+        if checkSyncFolder():
             if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json")):
                 printDebugMessage(f"Loading from {os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')}..")
                 with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json"), "r", encoding="utf-8") as f: fromFastFlagConfig = json.load(f)
@@ -1873,6 +1893,22 @@ def continueToSettings(): # Open Settings
                 main_config["EFlagInstallEfazDevECCCertificates"] = False
                 printDebugMessage("User selected: False")
 
+            printMainMessage("Would you like to change your Sync Folder? (y/n)")
+            printMainMessage(f'Current Setting: {main_config.get("EFlagOrangeBloxSyncDir") if checkSyncFolder() else None}')
+            printYellowMessage("If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.")
+            printYellowMessage("If you want to use an existing sync folder, use this.")
+            a = input("> ")
+            if isYes(a) == True:
+                custom_path = file_selector.select_folder("Select the sync directory!", initialdir=cur_path)
+                if custom_path and custom_path.ok and checkSyncFolder(custom_path.path): 
+                    main_config["EFlagOrangeBloxSyncDir"] = custom_path.path
+                    printDebugMessage(f"User selected: {custom_path.path}")
+                else: printErrorMessage("The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.")
+            elif isRequestClose(a) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
+            elif isNo(a) == True:
+                main_config["EFlagOrangeBloxSyncDir"] = None
+                printDebugMessage("User selected: None")
+
             if main_os == "Darwin":
                 printMainMessage("Would you like to rebuild OrangeLoader, Play Roblox, and Run Studio app based on source code? (y/n)")
                 printMainMessage(f'Current Setting: {(main_config.get("EFlagRebuildClangAppFromSourceDuringUpdates")==True)}')
@@ -2223,7 +2259,7 @@ def continueToSettings(): # Open Settings
             "func": debugging,
             "clear_console": True
         })
-        if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
+        if checkSyncFolder():
             generated_ui_options.append({
                 "index": 97, 
                 "message": ts("Sync to Configuration"),
@@ -2484,6 +2520,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                         if v.get("cookie_paths"):
                             for c, k in v.get("cookie_paths").items():
                                 if os.path.exists(k): approved = True; cookie_added_str = f" [User: @{v.get('cookie_user')}]"; has_cookies = True
+                        if v.get("linked_computer") and v.get("linked_computer") != main_config.get("EFlagLinkedComputerID"): cookie_added_str += " [Linked]"
                         if v.get("url") or approved == True: generated_ui_options.append({"index": 1, "message": f"{v.get('name')} [{i}]{cookie_added_str}", "shortcut_info": v})
             generated_ui_options.append({"index": 999999, "message": ts("Create a new shortcut")})
             generated_ui_options.append({"index": 999999.5, "message": ts("Create a new user shortcut")})
@@ -2518,7 +2555,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                             if main_config.get("EFlagRobloxLinkShortcuts"): main_config.get("EFlagRobloxLinkShortcuts")[key] = {"url": ur, "name": name, "id": key}
                             else:
                                 main_config["EFlagRobloxLinkShortcuts"] = {}
-                                main_config["EFlagRobloxLinkShortcuts"][key] = {"url": ur, "name": name, "id": key}
+                                main_config["EFlagRobloxLinkShortcuts"][key] = {"url": ur, "name": name, "id": key, "linked_computer": main_config.get("EFlagLinkedComputerID")}
                             printSuccessMessage(f'Successfully created shortcut "{name}"! You may use this link using your browser or go through the main menu to use this shortcut: orangeblox://shortcuts/{key}')
                         saveSettings()
                         printMainMessage("Would you like to create an another shortcut? (y/n)")
@@ -2606,7 +2643,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                             if main_config.get("EFlagRobloxLinkShortcuts"): main_config.get("EFlagRobloxLinkShortcuts")[key] = {"cookie_paths": paths_generated, "cookie_id": user_info.get("id"), "cookie_user": user_info.get("name"), "url": ur if ur != "" else None, "name": name, "id": key}
                             else:
                                 main_config["EFlagRobloxLinkShortcuts"] = {}
-                                main_config["EFlagRobloxLinkShortcuts"][key] = {"cookie_paths": paths_generated, "cookie_id": user_info.get("id"), "cookie_user": user_info.get("name"), "url": ur if ur != "" else None, "name": name, "id": key}
+                                main_config["EFlagRobloxLinkShortcuts"][key] = {"cookie_paths": paths_generated, "cookie_id": user_info.get("id"), "cookie_user": user_info.get("name"), "url": ur if ur != "" else None, "name": name, "id": key, "linked_computer": main_config.get("EFlagLinkedComputerID")}
                             printSuccessMessage(f'Successfully created shortcut "{name}"! You may use this link using your browser or go through the main menu to use this shortcut: orangeblox://shortcuts/{key}')
                             saveSettings()
                         if main_os == "Darwin":
@@ -2841,7 +2878,7 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                     generated_ui_options.append({"index": 1, "message": f"[{final_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                 generated_ui_options.append({"index": 999998, "message": ts("Mod Script Settings")})
                 generated_ui_options.append({"index": 999998.5, "message": ts("Special Mod Settings")})
-                if (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Mods", "Mods"))): generated_ui_options.append({"index": 999999, "message": ts("Sync Mods from Installation Folder")})
+                if checkSyncFolder(): generated_ui_options.append({"index": 999999, "message": ts("Sync Mods from Installation Folder")})
                 generated_ui_options.append({"index": 1000000, "message": ts("Open Mods Folder")})
                 generated_ui_options.append({"index": 1000001, "message": ts("Disable Appling Mods")})
                 generated_ui_options.append({"index": 1000002, "message": ts("Clear Installed Mods [Reinstall Roblox]")})
@@ -3418,7 +3455,7 @@ def continueToUpdates(): # Check for Updates
                                             if (not file.endswith(".json")) or file == "Version.json":
                                                 try: shutil.copy2(src_path, dest_path)
                                                 except Exception as e: printDebugMessage(f"Update Error for file ({src_path}): \n{trace()}")
-                                    if main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir")):
+                                    if checkSyncFolder():
                                         printMainMessage("Extending Changes to Installation Folder..")
                                         for file in os.listdir(os.path.join(cur_path, 'Update')):
                                             src_path = os.path.join(os.path.join(cur_path, 'Update'), file)
@@ -6509,8 +6546,8 @@ def runRoblox():
                         if mods_manifest[s].get("mod_script") == True:
                             try:
                                 allowed_permissions = mods_manifest[s].get("permissions")
-                                if "onRobloxLog" in allowed_permissions and hasattr(mod_script_modules[s], "onRobloxLog"): pip_class.startThread(getattr(mod_script_modules[s], "onRobloxLog"), True, data).start()
-                                if data.get("eventName") in allowed_permissions and hasattr(mod_script_modules[s], data.get("eventName")): pip_class.startThread(getattr(mod_script_modules[s], data.get("eventName")), True, data["data"]).start()
+                                if "onRobloxLog" in allowed_permissions and hasattr(mod_script_modules[s], "onRobloxLog"): pip_class.startThread(getattr(mod_script_modules[s], "onRobloxLog"), True, data)
+                                if data.get("eventName") in allowed_permissions and hasattr(mod_script_modules[s], data.get("eventName")): pip_class.startThread(getattr(mod_script_modules[s], data.get("eventName")), True, data["data"])
                             except Exception as e: printDebugMessage(f"Something went wrong with pinging the Mod Script script: \n{trace()}")
         def onRobloxChannel(data):
             if data["channel"] == "production" or data["channel"] == "LIVE": url_channel = ""

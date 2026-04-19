@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Indlæser fra (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Genstart OrangeBlox for at geninstallere (*)!",
  "Saving to (*)..": "Gemmer til (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Noget gik galt med at indstille Roblox Runtime Icon: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Noget gik galt med at indstille Roblox Runtime Icon: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Installationsprogrammet er blevet oprettet!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Hvis du vil oprette en ny synkroniseringsmappe, skal du bruge indstillingen OrangeBlox Installer og vælge at oprette installationsprogram..",
+ "If you want to use an existing sync folder, use this.": "Hvis du vil bruge en eksisterende synkroniseringsmappe, skal du bruge denne..",
+ "Please select your sync directory!": "Vælg venligst din synkroniseringsmappe!",
+ "The installer had a problem creating!": "Installationsprogrammet havde et problem med at oprette!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Den valgte mappe er ikke en gyldig synkroniseringsmappe. Sørg for, at mappen indeholder de nødvendige filer, og prøv igen..",
+ "Would you like to change your Sync Folder? (y/n)": "Vil du ændre din synkroniseringsmappe? (å/n)",
+ "[c] = Download & Create": "[C] = Download og opret",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox indlæses! Vent venligst!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API svarer ikke! Afslutning af Discord Proxy-proces!"
 }

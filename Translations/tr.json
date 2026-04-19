@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "(*)adresinden yükleniyor..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Yeniden yüklemek için lütfen OrangeBlox'u yeniden başlatın (*)!",
  "Saving to (*)..": "(*)'a kaydediliyor..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox Çalışma Zamanı Simgesini ayarlarken bir şeyler ters gitti: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox Çalışma Zamanı Simgesini ayarlarken bir şeyler ters gitti: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Yükleyici başarıyla oluşturuldu!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Yeni bir senkronizasyon klasörü oluşturmak istiyorsanız lütfen OrangeBlox Yükleyici seçeneğini kullanın ve yükleyici oluşturmayı seçin..",
+ "If you want to use an existing sync folder, use this.": "Mevcut bir senkronizasyon klasörünü kullanmak istiyorsanız bunu kullanın..",
+ "Please select your sync directory!": "Lütfen senkronizasyon dizininizi seçin!",
+ "The installer had a problem creating!": "Yükleyici oluşturmada bir sorunla karşılaştı!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Seçilen klasör geçerli bir senkronizasyon klasörü değil. Lütfen klasörün gerekli dosyaları içerdiğinden emin olun ve tekrar deneyin..",
+ "Would you like to change your Sync Folder? (y/n)": "Eşitleme Klasörünüzü değiştirmek ister misiniz? (y/n)",
+ "[c] = Download & Create": "[C] = İndir ve Oluştur",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox yükleniyor! Lütfen bekleyin!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API'si yanıt vermiyor! Discord Proxy Sürecini Sonlandırıyoruz!"
 }

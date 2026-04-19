@@ -1,6 +1,6 @@
 {
     "name": "OrangeBot",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "player_studio_support": true,
     "list_in_normal_mods": false,
     "mod_script": true,
@@ -16,6 +16,7 @@
         "allowAccessingPythonFiles",
         "getRobloxAppSettings",
         "grantFileEditing",
+        "onRobloxExit",
         "endRoblox",
         "createAppLock"
     ],

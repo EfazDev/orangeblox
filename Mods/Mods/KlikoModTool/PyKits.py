@@ -1,5 +1,5 @@
 """
-PyKits v1.7.8 (MINI) | Made by Efaz from efaz.dev
+PyKits v1.8.0 (MINI) | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -21,7 +21,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.7.8"
+__version__ = "1.8.0"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"

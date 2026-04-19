@@ -2466,5 +2466,15 @@
  "Loading from (*)..": "Đang tải từ (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Vui lòng khởi động lại OrangeBlox để cài đặt lại (*)!",
  "Saving to (*)..": "Lưu vào (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Đã xảy ra lỗi khi đặt Biểu tượng thời gian chạy roblox: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Đã xảy ra lỗi khi đặt Biểu tượng thời gian chạy roblox: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Trình cài đặt đã được tạo thành công!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Nếu bạn muốn tạo một thư mục đồng bộ mới, vui lòng sử dụng tùy chọn Trình cài đặt OrangeBlox và chọn tạo trình cài đặt..",
+ "If you want to use an existing sync folder, use this.": "Nếu bạn muốn sử dụng thư mục đồng bộ hóa hiện có, hãy sử dụng thư mục này..",
+ "Please select your sync directory!": "Vui lòng chọn thư mục đồng bộ hóa của bạn!",
+ "The installer had a problem creating!": "Trình cài đặt đã gặp sự cố khi tạo!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Thư mục đã chọn không phải là thư mục đồng bộ hóa hợp lệ. Vui lòng đảm bảo thư mục chứa các tệp cần thiết và thử lại..",
+ "Would you like to change your Sync Folder? (y/n)": "Bạn có muốn thay đổi Thư mục đồng bộ hóa của mình không? (có/không)",
+ "[c] = Download & Create": "[C] = Tải xuống & Tạo",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox đang tải! Vui lòng chờ!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "API proxy Discord không phản hồi! Kết thúc quá trình proxy Discord!"
 }

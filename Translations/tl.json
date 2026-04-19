@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Naglo-load mula sa (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Mangyaring i-restart ang OrangeBlox upang muling mai-install ang (*)!",
  "Saving to (*)..": "Sine-save sa (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Nagkaproblema sa pagtatakda ng Roblox Runtime Icon: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Nagkaproblema sa pagtatakda ng Roblox Runtime Icon: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Matagumpay na nalikha ang installer!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Kung gusto mong lumikha ng bagong folder ng pag-sync, mangyaring gamitin ang pagpipiliang OrangeBlox Installer at piliin na lumikha ng installer..",
+ "If you want to use an existing sync folder, use this.": "Kung gusto mong gumamit ng kasalukuyang folder ng pag-sync, gamitin ito..",
+ "Please select your sync directory!": "Mangyaring piliin ang iyong direktoryo ng pag-sync!",
+ "The installer had a problem creating!": "Nagkaroon ng problema sa paggawa ang installer!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Ang napiling folder ay hindi isang wastong folder ng pag-sync. Pakitiyak na ang folder ay naglalaman ng mga kinakailangang file at subukang muli..",
+ "Would you like to change your Sync Folder? (y/n)": "Gusto mo bang palitan ang iyong Sync Folder? (y/n)",
+ "[c] = Download & Create": "[C] = I-download at Gumawa",
+ "OrangeBlox is loading! Please wait!": "Naglo-load ang OrangeBlox! Mangyaring maghintay!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Ang Discord Proxy API ay hindi tumutugon! Pagtatapos ng Discord Proxy Process!"
 }

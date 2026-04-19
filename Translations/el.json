@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Φόρτωση από (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Επανεκκινήστε το OrangeBlox για να εγκαταστήσετε ξανά το (*)!",
  "Saving to (*)..": "Αποθήκευση σε (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Κάτι πήγε στραβά με τη ρύθμιση του Roblox Runtime Icon: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Κάτι πήγε στραβά με τη ρύθμιση του Roblox Runtime Icon: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Το πρόγραμμα εγκατάστασης δημιουργήθηκε με επιτυχία!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Εάν θέλετε να δημιουργήσετε έναν νέο φάκελο συγχρονισμού, χρησιμοποιήστε την επιλογή OrangeBlox Installer και επιλέξτε να δημιουργήσετε πρόγραμμα εγκατάστασης..",
+ "If you want to use an existing sync folder, use this.": "Εάν θέλετε να χρησιμοποιήσετε έναν υπάρχοντα φάκελο συγχρονισμού, χρησιμοποιήστε αυτόν..",
+ "Please select your sync directory!": "Επιλέξτε τον κατάλογο συγχρονισμού σας!",
+ "The installer had a problem creating!": "Το πρόγραμμα εγκατάστασης είχε πρόβλημα με τη δημιουργία!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Ο επιλεγμένος φάκελος δεν είναι έγκυρος φάκελος συγχρονισμού. Βεβαιωθείτε ότι ο φάκελος περιέχει τα απαραίτητα αρχεία και δοκιμάστε ξανά..",
+ "Would you like to change your Sync Folder? (y/n)": "Θέλετε να αλλάξετε τον φάκελο συγχρονισμού; (y/n)",
+ "[c] = Download & Create": "[C] = Λήψη & Δημιουργία",
+ "OrangeBlox is loading! Please wait!": "Το OrangeBlox φορτώνεται! Παρακαλώ περιμένετε!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Το Discord Proxy API δεν αποκρίνεται! Τερματισμός Διαδικασίας Διαφωνίας μεσολάβησης!"
 }

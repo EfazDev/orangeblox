@@ -2468,5 +2468,15 @@
  "Loading from (*)..": "(*)から読み込み中..",
  "Please restart OrangeBlox in order to reinstall (*)!": "再インストールするには,OrangeBlox を再起動してください (*)..",
  "Saving to (*)..": "(*)に保存します..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox ランタイム アイコンの設定で問題が発生しました: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox ランタイム アイコンの設定で問題が発生しました: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)インストーラーは正常に作成されました..",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "新しい同期フォルダーを作成する場合は,OrangeBlox インストーラー オプションを使用して,インストーラーの作成を選択してください..",
+ "If you want to use an existing sync folder, use this.": "既存の同期フォルダーを使用する場合は,これを使用します..",
+ "Please select your sync directory!": "同期ディレクトリを選択してください..",
+ "The installer had a problem creating!": "インストーラーの作成中に問題が発生しました..",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "選択したフォルダーは有効な同期フォルダーではありません.フォルダーに必要なファイルが含まれていることを確認して,再試行してください..",
+ "Would you like to change your Sync Folder? (y/n)": "同期フォルダーを変更しますか? (はい/いいえ)",
+ "[c] = Download & Create": "[c] = ダウンロードして作成",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox を読み込み中です!お待ちください!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord プロキシ API が応答しません! Discordプロキシプロセスを終了します!"
 }

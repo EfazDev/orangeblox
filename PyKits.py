@@ -1,5 +1,5 @@
 """
-PyKits v1.7.9 | Made by Efaz from efaz.dev
+PyKits v1.8.0 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -30,13 +30,14 @@ However! Classes may depend on other classes. Use this resource list:
     ProgressBar: None
     TimerBar: ProgressBar
     InstantRequestJSONResponse: None
+    FileSelector: typing (module), pip?
     IterableSetup: None
     BuiltinEditor: None
     PyKitsIsAModule: None
 """
 
 # Module Information
-__version__ = "1.7.9"
+__version__ = "1.8.0"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -59,7 +60,8 @@ __all__ = [
     "TimerBar",
     "InstantRequestJSONResponse",
     "BuiltinEditor",
-    "IterableSetup"
+    "IterableSetup",
+    "FileSelector"
 ]
 
 # Modules
@@ -2424,6 +2426,72 @@ class stdout:
             try: self.logger.log(self.log_level, self.buffer.rstrip()); 
             except Exception: self.logger.log(self.log_level, self.buffer.rstrip().encode(self.encoding, errors="replace").decode(self.encoding))
         self.buffer = ""
+class FileSelector:
+    unable_to_use_tkinter = False
+    class Response:
+        ok: bool = False
+        path: typing.Optional[str] = None
+        def __init__(self, ok: bool, path: typing.Optional[str]):
+            self.ok = ok
+            self.path = path
+    def __init__(self):
+        import subprocess, sys, os, platform, json
+        pip_class = pip()
+        try:
+            tk = pip_class.importModule("tkinter")
+            filedialog = pip_class.importModule("tkinter.filedialog")
+        except Exception as e:
+            print(e)
+            try:
+                pip_class.install(["tk"])
+                tk = pip_class.importModule("tkinter")
+                filedialog = pip_class.importModule("tkinter.filedialog")
+            except Exception as e: self.unable_to_use_tkinter = True; print(e)
+        if not self.unable_to_use_tkinter:
+            self._tk = tk
+            self._filedialog = filedialog
+        self._subprocess = subprocess
+        self._sys = sys
+        self._json = json
+        self._os = os
+        self._main_os = platform.system()
+    def _run_in_subprocess(self, python_code: str, is_multiple: bool=False):
+        s = self._subprocess.run([self._sys.executable, "-c", f"import tkinter as tk; from tkinter import filedialog; root = tk.Tk(); root.withdraw(); path = {python_code}; print(path)"], capture_output=True, text=True)
+        if s.returncode == 0 and s.stdout.strip(): 
+            filepath = s.stdout.strip()
+            if is_multiple:
+                r = self._json.loads(filepath)
+                return [self.Response(ok=True, path=i) for i in r]
+            if self._os.path.exists(filepath): return self.Response(ok=True, path=filepath)
+            else: return self.Response(ok=False, path=None)
+        return self.Response(ok=False, path=None)
+    def select_file(self, title: str="Select a file", initialdir: typing.Optional[str]=None, filetypes: typing.Tuple=(("All files", "*.*"),)):
+        if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
+        if self._main_os == "Darwin": return self._run_in_subprocess(f'filedialog.askopenfilename(title="{title}", initialdir="{initialdir}"' + (f', filetypes={filetypes}' if filetypes else "") + ")")
+        root = self._tk.Tk()
+        root.withdraw()
+        path = self._filedialog.askopenfilename(title=title, initialdir=initialdir, filetypes=filetypes)
+        if path: return self.Response(ok=True, path=path)
+        return self.Response(ok=False, path=None)
+    def select_files(self, title: str="Select a file", initialdir: typing.Optional[str]=None, filetypes: typing.Tuple=(("All files", "*.*"),)):
+        if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
+        if self._main_os == "Darwin": 
+            s = self._run_in_subprocess(f'filedialog.askopenfilenames(title="{title}", initialdir="{initialdir}"' + (f', filetypes={filetypes}' if filetypes else "") + ")")
+            if type(s) is self.Response: return False, [s]
+            return True, s
+        root = self._tk.Tk()
+        root.withdraw()
+        path = self._filedialog.askopenfilenames(title=title, initialdir=initialdir, filetypes=filetypes)
+        if path: return True, [self.Response(ok=True, path=p) for p in path]
+        return False, [self.Response(ok=False, path=None)]
+    def select_folder(self, title: str="Select a folder", initialdir: typing.Optional[str]=None, mustexist: bool=True):
+        if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
+        if self._main_os == "Darwin": return self._run_in_subprocess(f'filedialog.askdirectory(title="{title}", initialdir="{initialdir}", mustexist={mustexist})')
+        root = self._tk.Tk()
+        root.withdraw()
+        path = self._filedialog.askdirectory(title=title, initialdir=initialdir, mustexist=mustexist)
+        if path: return self.Response(ok=True, path=path)
+        return self.Response(ok=False, path=None)
 class ProgressBar:
     """
     A class that allows you to work with progress bars in the console.

@@ -2466,5 +2466,15 @@
  "Loading from (*)..": "(*)سے لوڈ ہو رہا ہے۔",
  "Please restart OrangeBlox in order to reinstall (*)!": "(*)دوبارہ انسٹال کرنے کے لیے براہ کرم OrangeBlox کو دوبارہ شروع کریں!",
  "Saving to (*)..": "(*)میں محفوظ کر رہا ہے۔",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "روبلوکس رن ٹائم آئیکن کو ترتیب دینے میں کچھ غلط ہو گیا: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "روبلوکس رن ٹائم آئیکن کو ترتیب دینے میں کچھ غلط ہو گیا: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)انسٹالر کامیابی سے بن گیا ہے!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "اگر آپ نیا سنک فولڈر بنانا چاہتے ہیں تو براہ کرم اورنج بلوکس انسٹالر کا آپشن استعمال کریں اور انسٹالر بنانے کا انتخاب کریں۔",
+ "If you want to use an existing sync folder, use this.": "اگر آپ موجودہ مطابقت پذیر فولڈر استعمال کرنا چاہتے ہیں تو اسے استعمال کریں۔",
+ "Please select your sync directory!": "براہ کرم اپنی مطابقت پذیری کی ڈائرکٹری منتخب کریں!",
+ "The installer had a problem creating!": "انسٹالر کو بنانے میں ایک مسئلہ تھا!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "منتخب کردہ فولڈر درست مطابقت پذیر فولڈر نہیں ہے۔ براہ کرم یقینی بنائیں کہ فولڈر میں ضروری فائلیں ہیں اور دوبارہ کوشش کریں۔",
+ "Would you like to change your Sync Folder? (y/n)": "کیا آپ اپنا Sync فولڈر تبدیل کرنا چاہیں گے؟ (y/n)",
+ "[c] = Download & Create": "[c] = ڈاؤن لوڈ اور تخلیق کریں۔",
+ "OrangeBlox is loading! Please wait!": "اورنج بلوکس لوڈ ہو رہا ہے! براہ مہربانی انتظار کریں!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API جواب نہیں دے رہا ہے! ڈسکارڈ پراکسی عمل کا خاتمہ!"
 }

@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Caricamento da (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Riavviare OrangeBlox per reinstallare (*)!",
  "Saving to (*)..": "Salvataggio in (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Qualcosa è andato storto durante l'impostazione dell'icona Roblox Runtime: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Qualcosa è andato storto durante l'impostazione dell'icona Roblox Runtime: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)Il programma di installazione è stato creato con successo!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Se desideri creare una nuova cartella di sincronizzazione, utilizza l'opzione di installazione di OrangeBlox e scegli di creare il programma di installazione..",
+ "If you want to use an existing sync folder, use this.": "Se desideri utilizzare una cartella di sincronizzazione esistente, utilizza questa..",
+ "Please select your sync directory!": "Seleziona la directory di sincronizzazione!",
+ "The installer had a problem creating!": "Il programma di installazione ha riscontrato un problema durante la creazione!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "La cartella selezionata non è una cartella di sincronizzazione valida. Assicurati che la cartella contenga i file necessari e riprova..",
+ "Would you like to change your Sync Folder? (y/n)": "Desideri cambiare la tua cartella di sincronizzazione? (sì/no)",
+ "[c] = Download & Create": "[C] = Scarica e crea",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox si sta caricando! Attendere prego!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "L'API Discord Proxy non risponde! Fine del processo proxy Discord!"
 }

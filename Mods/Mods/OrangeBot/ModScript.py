@@ -1,7 +1,7 @@
 #
 # OrangeBot
 # OrangeBlox with Discord Bot Support
-# v1.0.0
+# v1.0.5
 # 
 
 # Load Bootstrap API
@@ -31,6 +31,7 @@ def ts(text): return OrangeAPI.translate(text)
 # Main Handler
 current_path_location = os.path.dirname(os.path.abspath(__file__))
 mod_id = str(uuid.uuid4())
+discord_thread = None
 
 # Setup
 printWarnMessage("--- OrangeBot Setup ---")
@@ -97,12 +98,14 @@ def run_handling():
                 kwargs = task.get("kwargs", {})
 
                 # Execute Function
-                res = None
-                try:
-                    res = getattr(OrangeAPI, func_name)(*args, **kwargs)
-                except Exception:
-                    traceback.print_exc()
-                    res = False
+                if func_name == "check_api_status": res = True
+                else:
+                    res = None
+                    try:
+                        res = getattr(OrangeAPI, func_name)(*args, **kwargs)
+                    except Exception:
+                        traceback.print_exc()
+                        res = False
 
                 # Write Result
                 try:
@@ -124,13 +127,21 @@ def clean_up_tasks():
             except Exception:
                 pass
 def run_discord_proxy():
+    global discord_thread
     printMainMessage("Starting discord.py proxy!")
-    s = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
-    returncode = s.wait()
-    if returncode == 0:
+    discord_thread = subprocess.Popen([sys.executable, os.path.join(current_path_location, "DiscordProxy.py"), mod_id], creationflags=subprocess.CREATE_NO_WINDOW if OrangeAPI.getPlatform() == "Windows" else 0)
+    returncode = discord_thread.wait()
+    if returncode == 0 or returncode == -15:
         printSuccessMessage("Discord Proxy ended with success!")
     else:
         printErrorMessage(f"Discord Proxy ended with fail! Return code: {returncode}")
+def onRobloxExit(data):
+    clean_up_tasks()
+    if discord_thread and discord_thread.poll() is None:
+        discord_thread.terminate()
+        try: discord_thread.wait(timeout=5)
+        except subprocess.TimeoutExpired: discord_thread.kill()
+
 def full_start():
     clean_up_tasks()
     threading.Thread(target=run_discord_proxy, daemon=True).start()

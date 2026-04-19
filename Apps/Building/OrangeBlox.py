@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0d"}
+current_version = {"version": "2.5.0e"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -58,6 +58,7 @@ flag_types = {
     "EFlagAllowActivityTracking": "bool",
     "EFlagDisableFastFlagInstallAccess": "bool",
     "EFlagBootstrapUpdateServer": "str",
+    "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
     "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
@@ -269,7 +270,7 @@ def generateFileHash(file_path):
                 hasher.update(chunk)
         return hasher.hexdigest()
     except Exception: return None
-if __name__ == "__main__":
+if __name__ == "__main__":  
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         if main_os == "Windows": app_path = os.path.dirname(sys.executable); macos_path = os.path.join(os.path.dirname(sys.executable), "MacOS")
         else: app_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "MacOS")
@@ -385,7 +386,7 @@ if __name__ == "__main__":
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!")
-        execute_command = f"unset HISTFILE && clear && echo 'Loading OrangeBlox!' && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && echo '{ts('OrangeBlox is loading! Please wait!')}' && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:

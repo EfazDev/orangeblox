@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "Იტვირთება (*)..",
  "Please restart OrangeBlox in order to reinstall (*)!": "Გთხოვთ, გადატვირთოთ OrangeBlox, რათა ხელახლა დააინსტალიროთ (*)!",
  "Saving to (*)..": "Ინახება (*)..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Რაღაც შეცდომა მოხდა Roblox Runtime Icon-ის დაყენებისას: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Რაღაც შეცდომა მოხდა Roblox Runtime Icon-ის დაყენებისას: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)ინსტალერი წარმატებით შეიქმნა!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "Თუ გსურთ შექმნათ ახალი სინქრონიზაციის საქაღალდე, გთხოვთ, გამოიყენოთ OrangeBlox Installer ვარიანტი და აირჩიოთ ინსტალერის შექმნა..",
+ "If you want to use an existing sync folder, use this.": "Თუ გსურთ გამოიყენოთ არსებული სინქრონიზაციის საქაღალდე, გამოიყენეთ ეს..",
+ "Please select your sync directory!": "Გთხოვთ, აირჩიოთ თქვენი სინქრონიზაციის დირექტორია!",
+ "The installer had a problem creating!": "Ინსტალერს შექმნის პრობლემა შეექმნა!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "Არჩეული საქაღალდე არ არის სწორი სინქრონიზაციის საქაღალდე. დარწმუნდით, რომ საქაღალდე შეიცავს საჭირო ფაილებს და სცადეთ ხელახლა..",
+ "Would you like to change your Sync Folder? (y/n)": "Გსურთ შეცვალოთ თქვენი სინქრონიზაციის საქაღალდე? (y/n)",
+ "[c] = Download & Create": "[C] = Ჩამოტვირთვა და შექმნა",
+ "OrangeBlox is loading! Please wait!": "OrangeBlox იტვირთება! გთხოვთ დაელოდოთ!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord Proxy API არ პასუხობს! უთანხმოების პროქსი პროცესის დასრულება!"
 }

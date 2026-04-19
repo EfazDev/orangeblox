@@ -2467,5 +2467,15 @@
  "Loading from (*)..": "(*)से लोड हो रहा है..",
  "Please restart OrangeBlox in order to reinstall (*)!": "(*)पुनः स्थापित करने के लिए कृपया ऑरेंजब्लॉक्स को पुनः आरंभ करें!",
  "Saving to (*)..": "(*)में सहेजा जा रहा है..",
- "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox रनटाइम आइकन सेट करने में कुछ गड़बड़ी हुई: (*)(*)"
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox रनटाइम आइकन सेट करने में कुछ गड़बड़ी हुई: (*)(*)",
+ "(*) Installer has been created successfully!": "(*)इंस्टॉलर सफलतापूर्वक बनाया गया है!",
+ "If you want to create a new sync folder, please use the OrangeBlox Installer option and choose to create installer.": "यदि आप एक नया सिंक फ़ोल्डर बनाना चाहते हैं, तो कृपया ऑरेंजब्लॉक्स इंस्टॉलर विकल्प का उपयोग करें और इंस्टॉलर बनाना चुनें।",
+ "If you want to use an existing sync folder, use this.": "यदि आप किसी मौजूदा सिंक फ़ोल्डर का उपयोग करना चाहते हैं, तो इसका उपयोग करें।",
+ "Please select your sync directory!": "कृपया अपनी सिंक निर्देशिका चुनें!",
+ "The installer had a problem creating!": "इंस्टॉलर को निर्माण में समस्या हुई!",
+ "The selected folder is not a valid sync folder. Please make sure the folder contains the necessary files and try again.": "चयनित फ़ोल्डर वैध सिंक फ़ोल्डर नहीं है. कृपया सुनिश्चित करें कि फ़ोल्डर में आवश्यक फ़ाइलें हैं और पुनः प्रयास करें।",
+ "Would you like to change your Sync Folder? (y/n)": "क्या आप अपना सिंक फ़ोल्डर बदलना चाहेंगे? (य/नहीं)",
+ "[c] = Download & Create": "[सी] = डाउनलोड करें और बनाएं",
+ "OrangeBlox is loading! Please wait!": "ऑरेंजब्लॉक्स लोड हो रहा है! कृपया प्रतीक्षा करें!",
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "डिस्कॉर्ड प्रॉक्सी एपीआई प्रतिक्रिया नहीं दे रहा है! कलह प्रॉक्सी प्रक्रिया को समाप्त करना!"
 }
