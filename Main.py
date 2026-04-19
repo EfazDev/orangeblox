@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0e
+# v2.5.0f
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0e"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0f"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -788,7 +788,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         printMainMessage("[y/t] = Yes")
         printMainMessage("[c] = Download & Create")
         printMainMessage("[n/*] = No")
-    a = input("> ")
+    op = input("> ")
     def download_option():
         if pip_class.getIfConnectedToInternet():
             printDebugMessage("Setting Installed App Path to Local User..") 
@@ -825,7 +825,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
                 a = input("> ")
                 if (isYes(a) == True):
                     dow_tar = None
-                    if a == "c":
+                    if op == "c":
                         printMainMessage(f"Please select your sync directory!")
                         custom_path = file_selector.select_folder("Select the directory to create a sync directory to!", initialdir=cur_path)
                         if custom_path and custom_path.ok: dow_tar = custom_path.path
@@ -842,7 +842,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
                             if zip_extract.returncode == 0:                                                                                               
                                 printMainMessage("Removing ZIP File..")
                                 if os.path.exists(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip')): os.remove(os.path.join(user_folder, f'OrangeBlox_v{late_v}.zip'))
-                                if a == "c":
+                                if op == "c":
                                     printMainMessage(f"Registering Sync Directory..")
                                     printDebugMessage(f'Sync Directory: {os.path.join(dow_tar)}')
                                     main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar)
@@ -885,7 +885,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         else:
             printErrorMessage("Please connect to your internet in order to use this action!")
             return ts(f"{obName0()} Installer task was canceled!")
-    if isYes(a) == True:
+    if isYes(op) == True:
         if checkSyncFolder():
             printMainMessage("Running Installer..")
             stdout.clear()
@@ -897,7 +897,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
             sys.exit(0)
             return
         else: return download_option()
-    elif a == "r" or a == "c": return download_option()
+    elif op == "r" or op == "c": return download_option()
     else: return ts(f"{obName0()} Installer task was canceled!")
 def continueToClearTemporaryStorage(): # Clear Temporary Storage
     installer_paths = [os.path.join(cur_path, 'RobloxPlayerInstaller.exe'), os.path.join(cur_path, 'RobloxStudioInstaller.exe'), os.path.join(cur_path, 'RobloxPlayerInstaller.app'), os.path.join(cur_path, 'RobloxStudioInstaller.app')]

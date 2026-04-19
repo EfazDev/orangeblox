@@ -69,12 +69,12 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `8ba2d51e0ae80c8e0b57a25a414bb761` |
+| Main Bootstrap (Main.py) | `a7178012f0b314a2d5a7b370c67cca7b` |
 | Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `b4e902aed5fc85101c2dd80eeaa6ab58` |
-| Installer (Install.py) | `b1792e4db973254bf78352354e51b298` |
-| Bootstrap API (OrangeAPI.py) | `ed759d1cef80918cc3a846c90869eaac` |
-| Bootstrap Loader (OrangeBlox.py) | `618ea43dfab531b968e41b932837a6cc` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `d1b1050c417c1243be9bb55ff5999d9d` |
+| Installer (Install.py) | `ce99bf5f5ec5757dfce2c586f44c124d` |
+| Bootstrap API (OrangeAPI.py) | `f19e700ee460a442248fdc3bbca845c3` |
+| Bootstrap Loader (OrangeBlox.py) | `578715a6a781ccf45e53bfdf1fd9eda2` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `5b16f09aa9da556ca5c0335aefc78bc4` |
 | PyKits API (PyKits.py) | `6a08cb2fa23c9541118fb34dca2fb8fe` |
 
 ## Credits
