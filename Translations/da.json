@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Hent den aktuelle version af Roblox Player",
  "Get the current version of the Roblox Studio": "Hent den aktuelle version af Roblox Studio",
  "Get the current version of Roblox Player": "Hent den aktuelle version af Roblox Player",
- "Get the current version of Roblox Studio": "Hent den aktuelle version af Roblox Studio"
+ "Get the current version of Roblox Studio": "Hent den aktuelle version af Roblox Studio",
+ "Loading from (*)..": "Indlæser fra (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Genstart OrangeBlox for at geninstallere (*)!",
+ "Saving to (*)..": "Gemmer til (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Noget gik galt med at indstille Roblox Runtime Icon: (*)(*)"
 }

@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Roblox Player'ın güncel sürümünü edinin",
  "Get the current version of the Roblox Studio": "Roblox Studio'nun güncel sürümünü edinin",
  "Get the current version of Roblox Player": "Roblox Player'ın güncel sürümünü edinin",
- "Get the current version of Roblox Studio": "Roblox Studio'nun güncel sürümünü edinin"
+ "Get the current version of Roblox Studio": "Roblox Studio'nun güncel sürümünü edinin",
+ "Loading from (*)..": "(*)adresinden yükleniyor..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Yeniden yüklemek için lütfen OrangeBlox'u yeniden başlatın (*)!",
+ "Saving to (*)..": "(*)'a kaydediliyor..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox Çalışma Zamanı Simgesini ayarlarken bir şeyler ters gitti: (*)(*)"
 }

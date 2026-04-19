@@ -2464,5 +2464,9 @@
  "Get the current version of the Roblox Player": "Roblox Player의 최신 버전을 다운로드하세요..",
  "Get the current version of the Roblox Studio": "Roblox Studio의 최신 버전을 다운로드하세요..",
  "Get the current version of Roblox Player": "Roblox Player의 최신 버전을 다운로드하세요..",
- "Get the current version of Roblox Studio": "Roblox Studio의 최신 버전을 다운로드하세요.."
+ "Get the current version of Roblox Studio": "Roblox Studio의 최신 버전을 다운로드하세요..",
+ "Loading from (*)..": "(*)에서 로드 중..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "다시 설치하려면 OrangeBlox를 다시 시작하십시오(*)!",
+ "Saving to (*)..": "(*)에 저장 중..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox 런타임 아이콘 설정에 문제가 발생했습니다: (*)(*)"
 }

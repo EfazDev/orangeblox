@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Obtén la versión actual de Roblox Player",
  "Get the current version of the Roblox Studio": "Obtenga la versión actual de Roblox Studio",
  "Get the current version of Roblox Player": "Obtén la versión actual de Roblox Player",
- "Get the current version of Roblox Studio": "Obtén la versión actual de Roblox Studio"
+ "Get the current version of Roblox Studio": "Obtén la versión actual de Roblox Studio",
+ "Loading from (*)..": "Cargando desde (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "¡Reinicie OrangeBlox para reinstalar (*)!",
+ "Saving to (*)..": "Guardando en (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Algo salió mal al configurar el ícono de tiempo de ejecución de roblox: (*)(*)"
 }

@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Αποκτήστε την τρέχουσα έκδοση του Roblox Player",
  "Get the current version of the Roblox Studio": "Αποκτήστε την τρέχουσα έκδοση του Roblox Studio",
  "Get the current version of Roblox Player": "Αποκτήστε την τρέχουσα έκδοση του Roblox Player",
- "Get the current version of Roblox Studio": "Αποκτήστε την τρέχουσα έκδοση του Roblox Studio"
+ "Get the current version of Roblox Studio": "Αποκτήστε την τρέχουσα έκδοση του Roblox Studio",
+ "Loading from (*)..": "Φόρτωση από (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Επανεκκινήστε το OrangeBlox για να εγκαταστήσετε ξανά το (*)!",
+ "Saving to (*)..": "Αποθήκευση σε (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Κάτι πήγε στραβά με τη ρύθμιση του Roblox Runtime Icon: (*)(*)"
 }

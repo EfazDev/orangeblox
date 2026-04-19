@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Отримайте поточну версію Roblox Player",
  "Get the current version of the Roblox Studio": "Отримайте актуальну версію Roblox Studio",
  "Get the current version of Roblox Player": "Отримайте поточну версію Roblox Player",
- "Get the current version of Roblox Studio": "Отримайте поточну версію Roblox Studio"
+ "Get the current version of Roblox Studio": "Отримайте поточну версію Roblox Studio",
+ "Loading from (*)..": "Завантаження з (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Перезапустіть OrangeBlox, щоб перевстановити (*)!",
+ "Saving to (*)..": "Збереження в (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Щось пішло не так із налаштуванням значка Roblox Runtime: (*)(*)"
 }

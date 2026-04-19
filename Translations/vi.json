@@ -2462,5 +2462,9 @@
  "Get the current version of the Roblox Player": "Nhận phiên bản hiện tại của Trình phát Roblox",
  "Get the current version of the Roblox Studio": "Nhận phiên bản hiện tại của Roblox Studio",
  "Get the current version of Roblox Player": "Nhận phiên bản hiện tại của Roblox Player",
- "Get the current version of Roblox Studio": "Nhận phiên bản hiện tại của Roblox Studio"
+ "Get the current version of Roblox Studio": "Nhận phiên bản hiện tại của Roblox Studio",
+ "Loading from (*)..": "Đang tải từ (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Vui lòng khởi động lại OrangeBlox để cài đặt lại (*)!",
+ "Saving to (*)..": "Lưu vào (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Đã xảy ra lỗi khi đặt Biểu tượng thời gian chạy roblox: (*)(*)"
 }

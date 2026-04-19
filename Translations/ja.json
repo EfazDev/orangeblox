@@ -2464,5 +2464,9 @@
  "Get the current version of the Roblox Player": "Roblox Player の現在のバージョンを入手する",
  "Get the current version of the Roblox Studio": "Roblox Studio の現在のバージョンを入手する",
  "Get the current version of Roblox Player": "Roblox Player の現在のバージョンを入手する",
- "Get the current version of Roblox Studio": "Roblox Studio の最新バージョンを入手する"
+ "Get the current version of Roblox Studio": "Roblox Studio の最新バージョンを入手する",
+ "Loading from (*)..": "(*)から読み込み中..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "再インストールするには,OrangeBlox を再起動してください (*)..",
+ "Saving to (*)..": "(*)に保存します..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Roblox ランタイム アイコンの設定で問題が発生しました: (*)(*)"
 }

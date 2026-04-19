@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Მიიღეთ Roblox Player-ის მიმდინარე ვერსია",
  "Get the current version of the Roblox Studio": "Მიიღეთ Roblox Studio-ს მიმდინარე ვერსია",
  "Get the current version of Roblox Player": "Მიიღეთ Roblox Player-ის მიმდინარე ვერსია",
- "Get the current version of Roblox Studio": "Მიიღეთ Roblox Studio-ს მიმდინარე ვერსია"
+ "Get the current version of Roblox Studio": "Მიიღეთ Roblox Studio-ს მიმდინარე ვერსია",
+ "Loading from (*)..": "Იტვირთება (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Გთხოვთ, გადატვირთოთ OrangeBlox, რათა ხელახლა დააინსტალიროთ (*)!",
+ "Saving to (*)..": "Ინახება (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Რაღაც შეცდომა მოხდა Roblox Runtime Icon-ის დაყენებისას: (*)(*)"
 }

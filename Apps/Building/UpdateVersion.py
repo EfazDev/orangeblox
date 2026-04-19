@@ -8,25 +8,18 @@ import os
 # Generate Hash Function based on Contents
 def generateFileHash(file_path):
     try:
-        tmp_path = None
-        if platform.system() == "Windows":
-            import tempfile
-            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-        with open(tmp_path if tmp_path else file_path, "rb") as f:
-            hasher = hashlib.md5()
-            chunk = f.read(8192)
-            while chunk: 
+        hasher = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                if platform.system() == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
                 hasher.update(chunk)
-                chunk = f.read(8192)
-        if tmp_path: os.remove(tmp_path)
         return hasher.hexdigest()
-    except Exception as e: return None
+    except Exception: return None
 
 # Load Version.json
 version_json = {
-    "version": "2.5.0c",
-    "latest_version": "2.5.0c",
+    "version": "2.5.0d",
+    "latest_version": "2.5.0d",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

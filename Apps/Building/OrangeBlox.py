@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0c"}
+current_version = {"version": "2.5.0d"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -262,20 +262,13 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
         except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
 def generateFileHash(file_path):
     try:
-        tmp_path = None
-        if main_os == "Windows":
-            import tempfile
-            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-        with open(tmp_path if tmp_path else file_path, "rb") as f:
-            hasher = hashlib.md5()
-            chunk = f.read(8192)
-            while chunk: 
+        hasher = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
                 hasher.update(chunk)
-                chunk = f.read(8192)
-        if tmp_path: os.remove(tmp_path)
         return hasher.hexdigest()
-    except Exception as e: return None
+    except Exception: return None
 if __name__ == "__main__":
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         if main_os == "Windows": app_path = os.path.dirname(sys.executable); macos_path = os.path.join(os.path.dirname(sys.executable), "MacOS")
@@ -392,7 +385,7 @@ if __name__ == "__main__":
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!")
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && echo 'Loading OrangeBlox!' && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -407,7 +400,6 @@ if __name__ == "__main__":
 
         applescript = f'''
         tell application "Terminal"
-            activate
             set existing_profile to false
             repeat with s in settings sets
                 if (name of s is equal to "{obName0()}") or (name of s is equal to "OrangeBlox") then
@@ -439,10 +431,8 @@ if __name__ == "__main__":
                     set terminal_id to "0"
                 end if
             end try
-            activate
             do shell script "echo " & terminal_id & " > " & quoted form of "{orangeblox_library}/Terminal_{generated_app_id}"
             activate
-            
             repeat
                 delay 1
                 try
@@ -914,8 +904,8 @@ if __name__ == "__main__":
                                         if not (main_config.get("EFlagEnableGUIOptionMenus") == False): self.generate_dock_menu()
                                         self.config_reload_period = False
                                     if not ended and not (obj == "oranges"):
-                                        def delayed_loop(): time.sleep(0.1); self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
-                                        pip_class.startThread(func=delayed_loop, daemon=True)
+                                        def delayed_loop(): self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
+                                        pip_class.delayedThread(func=delayed_loop, time=0.1, daemon=True)
                                 except Exception as e: printErrorMessage(f"There was an error loading loop! Error: \n{trace()}")
                             def scrollingLogs_(self, notification):
                                 content_view = self.output_scroll_view.contentView()

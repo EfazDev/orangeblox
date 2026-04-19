@@ -2465,5 +2465,9 @@
  "Get the current version of the Roblox Player": "احصل على الإصدار الحالي من Roblox Player",
  "Get the current version of the Roblox Studio": "احصل على الإصدار الحالي من Roblox Studio",
  "Get the current version of Roblox Player": "احصل على الإصدار الحالي من Roblox Player",
- "Get the current version of Roblox Studio": "احصل على الإصدار الحالي من Roblox Studio"
+ "Get the current version of Roblox Studio": "احصل على الإصدار الحالي من Roblox Studio",
+ "Loading from (*)..": "جاري التحميل من (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "الرجاء إعادة تشغيل OrangeBlox من أجل إعادة التثبيت (*)!",
+ "Saving to (*)..": "الحفظ في (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "حدث خطأ ما أثناء تعيين رمز Roblox Runtime: (*)(*)"
 }

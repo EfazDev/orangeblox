@@ -2462,5 +2462,9 @@
  "Get the current version of the Roblox Player": "روبلوکس پلیئر کا موجودہ ورژن حاصل کریں۔",
  "Get the current version of the Roblox Studio": "روبلوکس اسٹوڈیو کا موجودہ ورژن حاصل کریں۔",
  "Get the current version of Roblox Player": "روبلوکس پلیئر کا موجودہ ورژن حاصل کریں۔",
- "Get the current version of Roblox Studio": "روبلوکس اسٹوڈیو کا موجودہ ورژن حاصل کریں۔"
+ "Get the current version of Roblox Studio": "روبلوکس اسٹوڈیو کا موجودہ ورژن حاصل کریں۔",
+ "Loading from (*)..": "(*)سے لوڈ ہو رہا ہے۔",
+ "Please restart OrangeBlox in order to reinstall (*)!": "(*)دوبارہ انسٹال کرنے کے لیے براہ کرم OrangeBlox کو دوبارہ شروع کریں!",
+ "Saving to (*)..": "(*)میں محفوظ کر رہا ہے۔",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "روبلوکس رن ٹائم آئیکن کو ترتیب دینے میں کچھ غلط ہو گیا: (*)(*)"
 }

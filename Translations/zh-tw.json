@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "取得 Roblox Player 的當前版本",
  "Get the current version of the Roblox Studio": "取得 Roblox Studio 的目前版本",
  "Get the current version of Roblox Player": "取得 Roblox Player 的當前版本",
- "Get the current version of Roblox Studio": "取得 Roblox Studio 的目前版本"
+ "Get the current version of Roblox Studio": "取得 Roblox Studio 的目前版本",
+ "Loading from (*)..": "加載自 (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "請重新啟動 OrangeBlox 重新安裝 (*)!",
+ "Saving to (*)..": "儲存到 (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "設定 Roblox 運行時圖示時出現問題:(*)(*)"
 }

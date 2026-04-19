@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0c
+# v2.5.0d
 # 
 
 # Modules
@@ -96,7 +96,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.5.0c"}
+current_version = {"version": "2.5.0d"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -409,20 +409,13 @@ def saveSettings(main_config, directory=""):
     return respo
 def generateFileHash(file_path):
     try:
-        tmp_path = None
-        if main_os == "Windows":
-            import tempfile
-            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-        with open(tmp_path if tmp_path else file_path, "rb") as f:
-            hasher = hashlib.md5()
-            chunk = f.read(8192)
-            while chunk: 
+        hasher = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
                 hasher.update(chunk)
-                chunk = f.read(8192)
-        if tmp_path: os.remove(tmp_path)
         return hasher.hexdigest()
-    except Exception as e: return None
+    except Exception: return None
 def getInstalledAppPath():
     if main_os == "Darwin":
         macos_preference_expected = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
@@ -1185,6 +1178,7 @@ def install():
                                 if working_directory: shortcut.WorkingDirectory = working_directory
                                 if icon_path: shortcut.IconLocation = icon_path
                                 shortcut.Save()
+                                del shortcut
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
@@ -1193,6 +1187,7 @@ def install():
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                            del shell
                         finally: pythoncom.CoUninitialize()
                     except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
@@ -1815,8 +1810,7 @@ if __name__ == "__main__":
                         try: install()
                         except Exception as e: printErrorMessage(f"Something went wrong during installation: {str(e)}")
                         input("> ")
-                    else:
-                        if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                    elif remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
                 def requestUninstall():
                     if main_os == "Darwin":
                         if not os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
@@ -1927,6 +1921,7 @@ if __name__ == "__main__":
                                         if working_directory: shortcut.WorkingDirectory = working_directory
                                         if icon_path: shortcut.IconLocation = icon_path
                                         shortcut.Save()
+                                        del shortcut
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Run Studio.lnk'))
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
@@ -1941,6 +1936,7 @@ if __name__ == "__main__":
                                         if cur_studio["success"] == True:
                                             create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Studio.lnk'))
                                             create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                                    del shell
                                 finally: pythoncom.CoUninitialize()
                             except Exception as e: printErrorMessage(f"Unable to remove shortcuts: {str(e)}")
 

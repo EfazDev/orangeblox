@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Kunin ang kasalukuyang bersyon ng Roblox Player",
  "Get the current version of the Roblox Studio": "Kunin ang kasalukuyang bersyon ng Roblox Studio",
  "Get the current version of Roblox Player": "Kunin ang kasalukuyang bersyon ng Roblox Player",
- "Get the current version of Roblox Studio": "Kunin ang kasalukuyang bersyon ng Roblox Studio"
+ "Get the current version of Roblox Studio": "Kunin ang kasalukuyang bersyon ng Roblox Studio",
+ "Loading from (*)..": "Naglo-load mula sa (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Mangyaring i-restart ang OrangeBlox upang muling mai-install ang (*)!",
+ "Saving to (*)..": "Sine-save sa (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Nagkaproblema sa pagtatakda ng Roblox Runtime Icon: (*)(*)"
 }

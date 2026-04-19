@@ -1,5 +1,5 @@
 """
-PyKits v1.6.3 (MINI) | Made by Efaz from efaz.dev
+PyKits v1.7.8 (MINI) | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -21,7 +21,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.6.3"
+__version__ = "1.7.8"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -153,20 +153,16 @@ class Colors:
         "Teal": [36, 96, 46, 106], 
         "White": [37, 97, 47, 107]
     }
-    def __init__(self): import os, platform; self._os = os; self._platform = platform; self._main_os = platform.system()
+    def __init__(self): import os, platform, subprocess; self._os = os; self._platform = platform; self._subprocess = subprocess; self._main_os = platform.system()
     def fix_windows_ansi(self):
-        def getIfRunningWindowsAdmin():
-            if self._main_os == "Windows":
-                try: import ctypes; return ctypes.windll.shell32.IsUserAnAdmin()
-                except: return False
-            else: return False
-        if getIfRunningWindowsAdmin():
+        try:
             if not hasattr(self, "_ctypes"): import ctypes; self._ctypes = ctypes
             kernel32 = self._ctypes.windll.kernel32
             handle = kernel32.GetStdHandle(-11)
             mode = self._ctypes.c_uint()
             kernel32.GetConsoleMode(handle, self._ctypes.byref(mode))
             kernel32.SetConsoleMode(handle, mode.value | 0x0004)
+        except Exception: pass
     def get_reset_color(self): return "\033[0m"
     def get_ansi_start(self, ansi_num: int): 
         if isinstance(ansi_num, self.Color): ansi_num = ansi_num.ansi
@@ -176,10 +172,10 @@ class Colors:
     def italic(self, message: str): return f"\033[3m{message}\033[0m"
     def underline(self, message: str): return f"\033[4m{message}\033[0m"
     def strikethrough(self, message: str): return f"\033[9m{message}\033[0m"
-    def clear_console(self): self._os.system("cls" if self._os.name == "nt" else 'echo "\033c\033[3J"; clear')
+    def clear_console(self): self._subprocess.run("cls" if self._os.name == "nt" else 'echo "\033c\033[3J"; clear', shell=True)
     def set_console_title(self, title: str):
-        if self._platform.system() == "Windows": self._os.system(f"title {title}")
-        else: self._os.system(f'echo "\\033]0;{title}\\007"')
+        if self._platform.system() == "Windows": self._subprocess.run(f"title {title}", shell=True)
+        else: self._subprocess.run(f'echo "\\033]0;{title}\\007"', shell=True)
     def foreground(self, message: str, color: str="White", bright: bool=False): 
         if isinstance(color, self.Color): color = color.__str__()
         return f"{self.get_sgr_start(self.sgi_color_table[color][1 if bright == True else 0])}{message}{self.get_reset_color()}"

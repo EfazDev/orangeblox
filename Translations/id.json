@@ -2463,5 +2463,9 @@
  "Get the current version of the Roblox Player": "Dapatkan versi Roblox Player saat ini",
  "Get the current version of the Roblox Studio": "Dapatkan versi Roblox Studio saat ini",
  "Get the current version of Roblox Player": "Dapatkan Roblox Player versi saat ini",
- "Get the current version of Roblox Studio": "Dapatkan versi Roblox Studio saat ini"
+ "Get the current version of Roblox Studio": "Dapatkan versi Roblox Studio saat ini",
+ "Loading from (*)..": "Memuat dari (*)..",
+ "Please restart OrangeBlox in order to reinstall (*)!": "Silakan restart OrangeBlox untuk menginstal ulang (*)!",
+ "Saving to (*)..": "Menyimpan ke (*)..",
+ "Something went wrong with setting the Roblox Runtime Icon: (*)(*)": "Ada yang salah dengan pengaturan Ikon Runtime roblox: (*)(*)"
 }

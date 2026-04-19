@@ -31,26 +31,20 @@ main_os = platform.system()
 cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
+installable_app_folder = None
 script_version = "2.5.8"
 
 # Base Functions 1
 def getLocalAppData():
-    import platform
-    import os
     ma_os = platform.system()
     if ma_os == "Windows": return os.path.expandvars(r'%LOCALAPPDATA%')
     elif ma_os == "Darwin": return f'{os.path.expanduser("~")}/Library/'
     else: return f'{os.path.expanduser("~")}/'
 def getUserFolder():
-    import platform
-    import os
     ma_os = platform.system()
     if ma_os == "Windows": return os.path.basename(os.path.basename(os.path.expandvars(r'%LOCALAPPDATA%')))
     else: return os.path.expanduser("~")
 def getIfLoggedInIsMacOSAdmin():
-    import subprocess
-    import platform
-    import os
     ma_os = platform.system()
     if ma_os == "Darwin":
         logged_in_folder = getUserFolder()
@@ -60,13 +54,14 @@ def getIfLoggedInIsMacOSAdmin():
         else: return False
     else: return False
 def getInstallableApplicationsFolder():
-    import platform
-    import os
+    global installable_app_folder
     ma_os = platform.system()
+    if installable_app_folder: return installable_app_folder
     if ma_os == "Darwin":
-        if getIfLoggedInIsMacOSAdmin(): return os.path.join("/", "Applications")
-        else: return os.path.join(getUserFolder(), "Applications")
-    elif ma_os == "Windows": return getLocalAppData()
+        if getIfLoggedInIsMacOSAdmin(): installable_app_folder = os.path.join("/", "Applications")
+        else: installable_app_folder = os.path.join(getUserFolder(), "Applications")
+    elif ma_os == "Windows": installable_app_folder = getLocalAppData()
+    return installable_app_folder
 
 # Customizable Variables
 macOS_dir = os.path.join(getInstallableApplicationsFolder(), "Roblox.app")  # This is Roblox macOS path
@@ -913,10 +908,8 @@ class Handler:
                 elif "[FLog::Network] Client:Disconnect" in line:
                     if self.disconnect_cooldown == False:
                         self.disconnect_cooldown = True
-                        def b():
-                            time.sleep(3)
-                            self.disconnect_cooldown = False
-                        pip_class.startThread(func=b, daemon=True)
+                        def b(): self.disconnect_cooldown = False
+                        pip_class.delayedThread(func=b, time=3)
                         self.submitEvent(eventName="onPlayTestDisconnected", data=None, isLine=False)
                 elif "[telemetryLog]" in line:
                     def generate_arg():
@@ -1371,10 +1364,8 @@ class Handler:
                         main_code = int(code)
                         if self.disconnect_cooldown == False:
                             self.disconnect_cooldown = True
-                            def b():
-                                time.sleep(3)
-                                self.disconnect_cooldown = False
-                            pip_class.startThread(func=b, daemon=True)
+                            def b(): self.disconnect_cooldown = False
+                            pip_class.delayedThread(func=b, time=3)
                             code_message = "Unknown"
                             if self.main_handler.disconnect_code_list.get(str(main_code)): code_message = self.main_handler.disconnect_code_list.get(str(main_code))
                             self.submitEvent(eventName="onGameDisconnected", data={"code": main_code, "message": code_message}, isLine=False); self.connected_to_game = False; self.validating_disconnect = True
@@ -1666,7 +1657,7 @@ class Handler:
             async def testResult(host: str, priority: int, executor: concurrent.futures.ThreadPoolExecutor):
                 await asyncio.sleep(priority)
                 def block_test(): return requests.get(f"https://{host}/versionStudio", timeout=5).text
-                version_studio = await asyncio.get_event_loop().run_in_executor(executor, block_test)
+                version_studio = await asyncio.get_running_loop().run_in_executor(executor, block_test)
                 if version_studio == self.last_mfc_studio_version: return host
                 else: raise ValueError(f"Hash mismatch from {host}: got {version_studio}")
             async def overall():
@@ -1675,13 +1666,14 @@ class Handler:
                     tasks = [asyncio.create_task(testResult(host, priority, executor)) for host, priority in self.roblox_download_locations.items()]
                     while tasks:
                         done, _ = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-                        for i in done:
-                            tasks.remove(i)
-                            if i.cancelled(): continue
-                            elif i.exception(): exceptions.append(i.exception())
+                        for d in done:
+                            tasks.remove(d)
+                            if d.cancelled(): continue
+                            if d.exception(): exceptions.append(d.exception())
                             else:
                                 for t in tasks: t.cancel()
-                                return i.result()
+                                await asyncio.gather(*tasks, return_exceptions=True)
+                                return d.result()
             def start_asyncio_loop(): self.optimal_download_location = asyncio.run(overall())
             if pip_class.pythonSupported(3, 11, 0): pip_class.startThread(func=start_asyncio_loop, daemon=True)
         else: self.optimal_download_location = "setup.rbxcdn.com"
@@ -3223,7 +3215,7 @@ class Handler:
                                             if i == "WebView2RuntimeInstaller.zip":
                                                 try:
                                                     reg_sets = [
-                                                        (win32con.HKEY_LOCAL_MACHINE, "SOFTWAREWOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0),
+                                                        (win32con.HKEY_LOCAL_MACHINE, "SOFTWARE\\WOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0),
                                                         (win32con.HKEY_CURRENT_USER, "Software\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}", 0)
                                                     ]
                                                     if pip_class.getIf32BitWindows():
@@ -3240,7 +3232,7 @@ class Handler:
                                                             vers = version
                                                         except Exception: pass
                                                     if vers:
-                                                        if debug == True: printDebugMessage(f"WebView2 (vers: {version}) is currently installed!")
+                                                        if debug == True: printDebugMessage(f"WebView2 (vers: {vers}) is currently installed!")
                                                     else: raise Exception("oranges!!")
                                                 except Exception:
                                                     try:
