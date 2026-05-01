@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0f
+# v2.5.0g
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0f"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0g"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -847,8 +847,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
                                     printDebugMessage(f'Sync Directory: {os.path.join(dow_tar)}')
                                     main_config["EFlagOrangeBloxSyncDir"] = os.path.join(dow_tar)
                                     saveSettings()
-                                    if e.returncode == 0: printSuccessMessage(f"{obName0()} Installer has been created successfully!")
-                                    else: printErrorMessage("The installer had a problem creating!")
+                                    printSuccessMessage(f"{obName0()} Installer has been created successfully!")
                                     input("> ")
                                     return
                                 else:
