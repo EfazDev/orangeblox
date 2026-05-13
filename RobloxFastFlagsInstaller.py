@@ -2424,11 +2424,13 @@ class Handler:
                 for i in startData:
                     if i == "": s.append(i)
                 for e in s: startData.remove(e)
+            startData = (startData if type(startData) is list else startData.split(" "))
+            while "" in startData: startData.remove("")
             if makeDupe == True and not (studio == True):
                 if self.getIfRobloxIsOpen(studio=studio) == True:
                     self.prepareMultiInstance(debug=debug)
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
-                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, "RobloxPlayer")] + (startData if type(startData) is list else startData.split(" "))
+                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, "RobloxPlayer")] + startData
                     if debug == True: printDebugMessage(f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
@@ -2450,7 +2452,7 @@ class Handler:
                                 if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
                 else:
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
-                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, 'RobloxPlayer')] + (startData if type(startData) is list else startData.split(" "))
+                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, 'RobloxPlayer')] + startData
                     if debug == True: printDebugMessage(f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
@@ -2461,7 +2463,7 @@ class Handler:
                                 if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
             else:
                 # f"open -a \'{macOS_dir}\' {startData}"
-                com = ["/usr/bin/open"] + (["-n"] if makeDupe == True else []) + ["-a", tar_dir] + (startData if type(startData) is list else startData.split(" "))
+                com = ["/usr/bin/open"] + (["-n"] if makeDupe == True else []) + ["-a", tar_dir] + startData
                 if debug == True: printDebugMessage(f"Running Roblox using Command: {com}")
                 a = subprocess.run(com, check=True)
                 if a.returncode == 0:
