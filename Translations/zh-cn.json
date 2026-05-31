@@ -2477,5 +2477,9 @@
  "Would you like to change your Sync Folder? (y/n)": "您想更改您的同步文件夹吗? (是/否)",
  "[c] = Download & Create": "[c] = 下载并创建",
  "OrangeBlox is loading! Please wait!": "OrangeBlox 正在加载!请稍等!",
- "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord 代理 API 没有响应!结束 Discord 代理进程!"
+ "Discord Proxy API is not responding! Ending Discord Proxy Process!": "Discord 代理 API 没有响应!结束 Discord 代理进程!",
+ "Allow detecting when watchdog check is performed": "允许检测何时执行看门狗检查",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! (*)Though, colors from custom images will be ignored as it may unoptimible to use since photos contain many more multiple colors.(*)However, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.": "从 Roblox 版本 0.698 或更高版本开始,Roblox 已经实现了基于字体的图标,从而阻止了修改图标颜色的方法.然而,在 v1.5.0 中,基于字体的渐变着色现已添加到 Kliko Mod 工具扩展中,让您可以在较新的 Roblox 版本上再次享受渐变! (*)不过,自定义图像中的颜色将被忽略,因为它可能不适合使用,因为照片包含更多多种颜色.(*)但是,在未来的 Kliko Mod Tool 版本中,Mod 更新将很快被删除,以调整 Mod 生成的开发.建议将您的旧模组转换为生成模组并转向模组生成..",
+ "It is highly recommended to switch to Mod Generation by resetting your mod configuration.": "强烈建议通过重置 Mod 配置来切换到 Mod Generation..",
+ "Mod Updating will be later removed in future versions of the Kliko Mod Tool extension as Roblox's icon font based system is released.": "随着 Roblox 基于图标字体的系统的发布,Mod 更新将在 Kliko Mod Tool 扩展的未来版本中删除.."
 }

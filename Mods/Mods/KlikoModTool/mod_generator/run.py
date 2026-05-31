@@ -91,7 +91,7 @@ def run(versions: str, name: str, colors: list[str], angle: int, studio: bool=Fa
             if s == 0: img_sets.generate_imagesets((temp_target / imageset_path), icon_maps[0], colors, angle); s += 1
             elif s == 1: img_sets.generate_imagesets((temp_target / "ExtraContent" / "textures" / "ui" / "ImageSet"), icon_maps[1], colors, angle); s += 1
         progress_bar.submit("[MOD_GEN] Generating Font Files..", 85)
-        img_sets.generate_fonts_with_color(temp_target, builderfont_paths, colors, angle, studio)
+        img_sets.generate_fonts_with_color(temp_target, builderfont_paths, colors, angle)
         progress_bar.submit("[MOD_GEN] Generating Additional Files..", 90)
         img_sets.generate_additional_files(temp_target, colors, angle, studio)
         if user_selected_files: 

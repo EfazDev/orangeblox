@@ -1,5 +1,5 @@
 """
-PyKits v1.8.0 | Made by Efaz from efaz.dev
+PyKits v1.8.1 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -37,7 +37,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.0"
+__version__ = "1.8.1"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -612,6 +612,10 @@ class request:
         self.throw_exceptions = throw_exceptions==True
         self.opener_processors = opener_processors
         self._ssl_context = self.ensure_python_certs()
+        try: import brotli; self._brotli = brotli # type: ignore
+        except ImportError: self._brotli = None
+        try: import zstandard as zstd; self._zstd = zstd # type: ignore
+        except ImportError: self._zstd = None
     def __bool__(self): return self.get_if_connected()
     def _make_opener(self, jar=None):
         class HTTPStatusProcessor(self._urlreq.HTTPErrorProcessor):
@@ -689,8 +693,9 @@ class request:
         res.url = url
         res.path = self.get_url_path(url)
         res.scheme = self.get_url_scheme(url)
-        res.host = self._urlparse.urlparse(url).netloc
-        res.port = self._urlparse.urlparse(url).port or (443 if res.scheme == "https" else 80)
+        url_parsed = self._urlparse.urlparse(url)
+        res.host = url_parsed.netloc
+        res.port = url_parsed.port or (443 if res.scheme == "https" else 80)
         res.status_code = -1
         res.ok = False
         return res
@@ -753,10 +758,8 @@ class request:
         if not data: return b"", encoding
 
         # Handle more compression types
-        try: import brotli # type: ignore
-        except ImportError: brotli = None
-        try: import zstandard as zstd # type: ignore
-        except ImportError: zstd = None
+        brotli = self._brotli
+        zstd = self._zstd
 
         # Auto determine encoding
         if not encoding:
@@ -781,7 +784,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.7.8")
+            headers.setdefault("user-agent", f"PyKits/1.8.1")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -822,6 +825,9 @@ class request:
             else: data = None
             return url, opener, method, data, headers, cookies, auth, files
         except Exception as e: raise self.UnknownResponse(url, e)
+    def _pkg_check(self, package: str) -> bool:
+        try: self._importlib_metadata.version(package); return True
+        except self._importlib_metadata.PackageNotFoundError: return False
     def get(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
         return self._make_request(url=url, method="GET", data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
     def post(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], files: __FILES__={}, timeout: float=30.0, follow_redirects: bool=None, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
@@ -891,7 +897,6 @@ class request:
                         f.write(chunk)
                         end = self._time.perf_counter()
                         duration = end-start
-                        speed = downloaded_chunk_size
                         speed = (downloaded_chunk_size / duration) if duration > 0 else 0.0
 
                         # Update status
@@ -915,15 +920,12 @@ class request:
             raise self.ResolveError(url, str(e.reason))
         except Exception as e: raise self.DownloadError(url, str(e))
     def ensure_python_certs(self, certifi_only: bool=False):
-        def che(a):
-            try: self._importlib_metadata.version(a); return True
-            except self._importlib_metadata.PackageNotFoundError: return False
         ssl_ctx = None
         alleged_path = self._os.path.dirname(self._sys.executable)
         virt = self._os.path.exists(self._os.path.join(alleged_path, "..", "pyvenv.cfg")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe")))
         if certifi_only == False and self._platform.python_version() >= "3.10.0": 
             try:
-                if not getattr(self._sys, "frozen", False) and che("truststore") == False:
+                if not getattr(self._sys, "frozen", False) and self._pkg_check("truststore") == False:
                     import site
                     self._site = site
                     s = self._subprocess.run([self._sys.executable, "-m", "pip", "install"] + (["--user"] if (not virt and self._site.ENABLE_USER_SITE) else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
@@ -936,7 +938,7 @@ class request:
                 import truststore # type: ignore
                 ssl_ctx = truststore.SSLContext(self._ssl.PROTOCOL_TLS_CLIENT)
             except Exception: return self.ensure_python_certs(certifi_only=True)
-        elif che("certifi") == False:
+        elif self._pkg_check("certifi") == False:
             STAT_0o775 = ( self._stat.S_IRUSR | self._stat.S_IWUSR | self._stat.S_IXUSR | self._stat.S_IRGRP | self._stat.S_IWGRP | self._stat.S_IXGRP | self._stat.S_IROTH |  self._stat.S_IXOTH )
             openssl_dir, openssl_cafile = self._os.path.split(self._ssl.get_default_verify_paths().openssl_cafile)
             self._subprocess.check_call([self._sys.executable, "-E", "-m", "pip", "install"] + (["--user"] if not virt else []) + ["--upgrade", "certifi"])
@@ -972,12 +974,9 @@ class request:
         obj = self._urlparse.urlparse(url)
         if obj.query == "": return obj.path
         else: return obj.path + "?" + obj.query
-    def format_params(self, data: typing.Dict[str, str]={}):
-        mai_query = ""
-        if len(data.keys()) > 0:
-            mai_query = "?"
-            for i, v in data.items(): mai_query = mai_query + f"{i}={v}"
-        return mai_query
+    def format_params(self, data: typing.Dict[str, str]=None):
+        if not data: return ""
+        return "?" + self._urlparse.urlencode(data)
     def format_size_to_bytes(self, size_str: str):
         size_str = size_str.upper()
         try:
@@ -1049,6 +1048,7 @@ class pip:
 
         self._main_os = platform.system()
         self._daemon_threads = weakref.WeakSet()
+        if command is None: command = []
         if type(executable) is str:
             if os.path.isfile(executable): self.executable = executable
             else: self.executable = self.findPython(arch=arch, path=True) if find == True else sys.executable
@@ -1072,6 +1072,10 @@ class pip:
             self.iter_data = None
             self.iter_index = 0
             raise StopIteration
+    def _pkg_check(self, package: str):
+        try: self._importlib_metadata.version(package); return True
+        except self._importlib_metadata.PackageNotFoundError: return False
+    def _to_int(self, val): return int(self._re.sub(r'\D', '', val))
     def install(self, packages: typing.List[str], upgrade: bool=False, user: bool=True):
         self.ensure()
         res = {}
@@ -1101,16 +1105,13 @@ class pip:
     def installed(self, packages: typing.List[str]=[], boolonly: bool=False):
         self.ensure()
         if self.isSameRunningPythonExecutable() and len(packages) != 0:
-            def che(a):
-                try: self._importlib_metadata.version(a); return True
-                except self._importlib_metadata.PackageNotFoundError: return False
-            if len(packages) == 1: return che(packages[0].lower())
+            if len(packages) == 1: return self._pkg_check(packages[0].lower())
             else:
                 installed_checked = {}
                 all_installed = True
                 for i in packages:
                     try:
-                        if che(i.lower()): installed_checked[i] = True
+                        if self._pkg_check(i.lower()): installed_checked[i] = True
                         else:
                             installed_checked[i] = False
                             all_installed = False
@@ -1160,13 +1161,10 @@ class pip:
                     down_path = self._os.path.join(cur_path, '-'.join(url_paths) + "_download")
                     if self._os.path.isdir(down_path): self._shutil.rmtree(down_path, ignore_errors=True)
                     self._os.makedirs(down_path, mode=511)
-                    co = 0
                     downed_paths = []
-                    for url_path_1 in url_paths:
-                        url_path_2 = url_paths_2[co]
+                    for url_path_1, url_path_2 in zip(url_paths, url_paths_2):
                         s = self.requests.download(f"https://github.com/{url_path_2}/{url_path_1}/archive/refs/heads/main.zip", self._os.path.join(down_path, f"{url_path_1}.zip"))
                         if s.ok: downed_paths.append(self._os.path.join(down_path, f"{url_path_1}.zip"))
-                        co += 1
                     return {"success": True, "path": down_path, "package_files": downed_paths}
                 else:
                     down_path = self._os.path.join(cur_path, '-'.join(generated_list) + "_download")
@@ -1331,8 +1329,7 @@ class pip:
         match = self._re.match(r"(\d+)\.(\d+)\.(\w+)", version)
         if match:
             version = match.groups() 
-            def to_int(val): return int(self._re.sub(r'\D', '', val))
-            return tuple(map(to_int, version)) >= (major, minor, patch)
+            return tuple(map(self._to_int, version)) >= (major, minor, patch)
         else: return False
     def osSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)):
         if self._main_os == "Windows":
@@ -1344,7 +1341,7 @@ class pip:
             version = self._platform.mac_ver()[0]
             version_tuple = tuple(map(int, version.split('.')))
             while len(version_tuple) < 3: version_tuple += (0,)
-            while len(macos_version) < 3: min_version += (0,)
+            while len(macos_version) < 3: macos_version += (0,)
             return version_tuple >= macos_version
         else: return False
     def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False, manual: bool=False, arch: str=None):
@@ -1356,8 +1353,8 @@ class pip:
             "3.9.1rc1": "11.0"
         }
         if not self.pythonSupportedStatic(version, 3, 9, 2):
-            if not self.pythonSupportedStatic(version, 3, 9, 2) and self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.9"
-            elif self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.6"
+            if self.pythonSupportedStatic(version, 3, 7, 0): macos_version_numbers[version] = "x10.9"
+            else: macos_version_numbers[version] = "x10.6"
         if self.getIfConnectedToInternet() == False:
             self.printDebugMessage("Failed to download Python installer.")
             return
@@ -1519,7 +1516,9 @@ class pip:
                     mm.close()
                 arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
                 return arch_map.get(machine, "")
-            else: return machine_var
+            else:
+                result = self._subprocess.run([exe, "-c", "import platform; print(platform.machine())"], stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE)
+                return result.stdout.decode().strip()
     def getIfVirtualEnvironment(self):
         alleged_path = self._os.path.dirname(self.executable)
         return self._os.path.exists(self._os.path.join(alleged_path, "..", "pyvenv.cfg")) or (self._os.path.exists(self._os.path.join(alleged_path, "python.exe")) and self._os.path.exists(self._os.path.join(alleged_path, "pip.exe")))
@@ -1660,14 +1659,14 @@ class pip:
         self.uncacheLoadedModules()
         try: 
             s = self._importlib.import_module(module_name)
-            if type(s) is None: raise ModuleNotFoundError("")
+            if s is None: raise ModuleNotFoundError("")
             else: return s
         except ModuleNotFoundError:
             try:
                 if install_module_if_not_found == True and self.isSameRunningPythonExecutable(): self.install([module_name])
                 self.uncacheLoadedModules()
                 s = self._importlib.import_module(module_name)
-                if type(s) is None: raise ModuleNotFoundError("")
+                if s is None: raise ModuleNotFoundError("")
                 else: return s
             except Exception: 
                 if loop_until_import == False: raise ImportError(f'Unable to find module "{module_name}" in Python {self.getCurrentPythonVersion()} environment.')
@@ -1686,7 +1685,7 @@ class pip:
         for module_name in modules:
             try: 
                 s = self._importlib.import_module(module_name)
-                if type(s) is None: raise ModuleNotFoundError("")
+                if s is None: raise ModuleNotFoundError("")
                 modules_collected.append(s)
             except Exception as e: raise ImportError(f'Unable to import module "{module_name}" in Python {self.getCurrentPythonVersion()} environment. Exception: {str(e)}')
         return tuple(modules_collected)
@@ -1840,11 +1839,7 @@ class pip:
                 return system_windows
             elif self._main_os == "Darwin":
                 system_windows = self._CGWindowListCopyWindowInfo(self._kCGWindowListOptionOnScreenOnly, 0)
-                app_windows = [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(pid)]
-                new_set_of_system_windows = []
-                for win in app_windows:
-                    if win and win.get("kCGWindowOwnerPID"): new_set_of_system_windows.append(win)
-                return new_set_of_system_windows
+                return [win for win in system_windows if win.get("kCGWindowOwnerPID") == int(pid)]
             else: return []
         else: return []
     def addToUserPath(self, path_to_add: str):
@@ -1887,7 +1882,7 @@ class pip:
                 5000
             )
         elif self._main_os == "Darwin":
-            new_path = self._os.path.expandvars(self._os.path.expanduser(new_path))
+            new_path = self._os.path.expandvars(self._os.path.expanduser(path_to_add))
             shell = self._os.path.basename(self._os.environ.get("SHELL", "zsh"))
             rc_file = self._os.path.expanduser(f"~/.{shell}rc")
             export_line = f'export PATH="{new_path}:$PATH"'
@@ -1948,11 +1943,7 @@ class plist:
     def load(self, f):
         plist_data = self._plistlib.load(f)
         return plist_data
-    def loads(self, path: str):
-        if self._os.path.exists(path):
-            with open(path, "rb") as f: plist_data = self._plistlib.load(f)
-            return plist_data
-        else: return {}
+    loads = readPListFile
 class Colors:
     """
     A class that allows you to work with console colors with different formats of text and ANSI.
@@ -1999,11 +1990,13 @@ class Colors:
             super().__init__(0, 0, 255)
             self.sgi = self.__colors_obj__.sgi_color_table["Blue"]
         def __str__(self): return "Blue"
-    class Magneta(Color):
+    class Magenta(Color):
         def __init__(self): 
             super().__init__(255, 0, 255)
-            self.sgi = self.__colors_obj__.sgi_color_table["Magneta"]
-        def __str__(self): return "Magneta"
+            self.sgi = self.__colors_obj__.sgi_color_table["Magenta"]
+        def __str__(self): return "Magenta"
+    class Magneta(Magenta):
+        def __init__(self): super().__init__()
     class White(Color):
         def __init__(self): 
             super().__init__(255, 255, 255)
@@ -2112,15 +2105,7 @@ class Colors:
     def rgb_to_decimal(self, r: int, g: int, b: int): return (self.limit_rgb_value(r) << 16) + (self.limit_rgb_value(g) << 8) + self.limit_rgb_value(b)
     def decimal_to_hex(self, value: int): return self.rgb_to_hex(*self.decimal_to_rgb(value))
     def hex_to_decimal(self, hex_code: str): return self.rgb_to_decimal(*self.hex_to_rgb(hex_code))
-    def hex_to_ansi(self, hex_code: str):
-        target_rgb = self.hex_to_rgb(hex_code)
-        closest_code = None
-        closest_dist = float("inf")
-        for c, hex in self.ansi_to_hex_table.items():
-            cr, cg, cb = self.hex_to_rgb(hex)
-            dist = ((cr - target_rgb[0]) ** 2 + (cg - target_rgb[1]) ** 2 + (cb - target_rgb[2]) ** 2)
-            if dist < closest_dist: closest_dist = dist; closest_code = c
-        return closest_code
+    def hex_to_ansi(self, hex_code: str): return self.hex_to_ansi2(hex_code)
     def hex_to_ansi2(self, hex_code: str):
         closest_code = None
         closest_dist = float("inf")
@@ -2149,8 +2134,8 @@ class Colors:
             ))
         result = ""
         num_segments = len(color_stops) - 1
+        seg_length = length / num_segments
         for i, char in enumerate(message):
-            seg_length = length / num_segments
             seg_index = min(int(i / seg_length), num_segments - 1)
             start_rgb = stops_rgb[seg_index]
             end_rgb = stops_rgb[seg_index + 1]
@@ -2169,16 +2154,16 @@ class Translator:
         self.language = lang
         self.translation_json = {}
         self.patterns = {}
-        self.extractors = {}
         self.module_imports = {}
-        import os
-        import json
-        import re
+        import os, json, re
         from collections import defaultdict
         self._os = os
         self._json = json
         self._re = re
         self._defaultdict = defaultdict
+        self.indexed_patterns = self._defaultdict(list)
+        self.fallback_patterns = []
+        self.one_group_patterns = []
         if lang: self.load_new_language(lang)
     def __bool__(self): return self.language != "en" and bool(self.translation_json)
     def load_new_language(self, lang="en", include_ansi=False):
@@ -2203,46 +2188,44 @@ class Translator:
             })
             self.generate_patterns(include_ansi=include_ansi)
     def generate_patterns(self, include_ansi=False):
-        adding_ansi_translations = {}
+        self.patterns = {}
         self.indexed_patterns = self._defaultdict(list)
         self.fallback_patterns = []
-        for i in self.translation_json:
-            regex = self.generate_regex(i)
-            self.patterns[i] = regex
-            parts = i.split("(*)")
-            if parts[0]:
-                prefix = parts[0][:(len(parts[0]) // 2)]
-                self.indexed_patterns[prefix].append((i, regex))
-            else: self.fallback_patterns.append((i, regex))
+        for template in self.translation_json:
+            regex = self.generate_regex(template)
+            self.patterns[template] = regex
+            prefix = template.split("(*)", 1)[0]
+            if prefix: self.indexed_patterns[prefix[: len(prefix) // 2]].append((template, regex))
+            else: self.fallback_patterns.append((template, regex))
         if include_ansi:
-            ansi_template = f"\033[38;5;(*)m(*)\033[0m\n"
+            ansi_template = "\033[38;5;(*)m(*)\033[0m\n"
             ansi_regex = self.generate_regex(ansi_template)
             self.patterns[ansi_template] = ansi_regex
             self.fallback_patterns.append((ansi_template, ansi_regex))
-            adding_ansi_translations[ansi_template] = ansi_template
-        self.translation_json.update(adding_ansi_translations)
-        self.one_group_patterns = [regex for tpl, regex in self.patterns.items() if regex.groups == 1]
-    def generate_regex(self, template: str, tolerant: bool=False):
+            self.translation_json[ansi_template] = ansi_template
+        self.one_group_patterns = [r for r in self.patterns.values() if r.groups == 1]
+    def generate_regex(self, template: str, tolerant: bool = False):
         parts = template.split("(*)")
-        escaped_parts = []
+        escaped = []
         for part in parts:
-            if tolerant: part = self._re.sub(r'\.{2,}', r'\\.+', self._re.escape(part)); part = self._re.sub(r'!{2,}', r'!+', part)
-            else: part = self._re.escape(part)
-            escaped_parts.append(part)
-        pattern = "".join(part + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(escaped_parts))
+            if tolerant:
+                part = self._re.sub(r'\.{2,}', r'\\.+', self._re.escape(part))
+                part = self._re.sub(r'!{2,}', r'!+', part)
+            else:
+                part = self._re.escape(part)
+            escaped.append(part)
+        pattern = "".join(p + (r"(.+?)" if i < len(escaped) - 1 else "") for i, p in enumerate(escaped))
         return self._re.compile(f"^{pattern}$")
     def extract_placeholders(self, template: str, actual: str):
-        if template not in self.extractors:
-            parts = template.split("(*)")
-            pattern = "".join(self._re.escape(part) + (r"(.+?)" if i < len(parts) - 1 else "") for i, part in enumerate(parts))
-            self.extractors[template] = self._re.compile(f"^{pattern}$")
-        match = self.extractors[template].match(actual)
-        if match: return list(match.groups())
-        return None
+        regex = self.patterns.get(template) or self.patterns.setdefault(template, self.generate_regex(template))
+        match = regex.match(actual)
+        return list(match.groups()) if match else None
     def pre_translate(self, message: str, translate_id: str):
         try:
-            tr_me = self.translation_json.get(translate_id)
-            tr_placeholders = self.extract_placeholders(translate_id, message)
+            tr_me = self.translation_json[translate_id]
+            match = self.patterns[translate_id].match(message)
+            if not match: return message
+            tr_placeholders = match.groups()
             sp = tr_me.split("(*)")
             result = []
             for i in range(len(sp)):
@@ -2255,7 +2238,8 @@ class Translator:
         except Exception: return message
     def translate(self, message: str): 
         if self.language != "en":
-            if message in self.translation_json: return self.translation_json[message]
+            exact = self.translation_json.get(message)
+            if exact is not None: return exact
             possible_uses = self.indexed_patterns.get(message[:(len(message) // 2)], []) + self.fallback_patterns
             tried_templates = set()
             for i, v in possible_uses:
@@ -2287,17 +2271,18 @@ class stdout:
         import platform
         import subprocess
         import threading
-        if platform.system() != "Windows": import pty
+        operating_sys = platform.system()
+        if operating_sys != "Windows": import pty
         import select
 
         self._sys = sys
         self._os = os
         self._subprocess = subprocess
         self._threading = threading
-        if platform.system() != "Windows": self._pty = pty
+        if operating_sys != "Windows": self._pty = pty
         self._select = select
         self._platform = platform
-        self._main_os = platform.system()
+        self._main_os = operating_sys
         self.logger = logger
         self.log_level = log_level
         self.lang = lang
@@ -2306,9 +2291,8 @@ class stdout:
         self.line_count = 0
         self.locked_new = False
         self.awaiting_bar_logs = []
-        self.translation_obj = Translator()
+        self.translation_obj = Translator(lang)
         self.translate = self.translation_obj.translate
-        if lang != "en" and lang != None: self.translation_obj.load_new_language(lang)
     def __int__(self): return self.line_count
     def write(self, message: str): 
         if self.locked_new == True and not message.startswith("\033{progressend}"): self.awaiting_bar_logs.append(message); return
@@ -2332,13 +2316,16 @@ class stdout:
         if self.translation_obj: message = self.translation_obj.translate(message)
         self.buffer += message
         while "\n" in self.buffer:
-            line, self.buffer = self.buffer.rsplit("\n", 1)
+            line, self.buffer = self.buffer.split("\n", 1)
             self.line_count += 1
             if line.rstrip(): 
                 try: self.logger.log(self.log_level, line.rstrip())
                 except Exception: self.logger.log(self.log_level, line.rstrip().encode(self.encoding, errors="replace").decode(self.encoding))
     def clear(self):
-        self._subprocess.run("cls" if self._os.name == "nt" else 'echo "\033c\033[3J"; clear', shell=True)
+        if self._os.name == "nt": self._subprocess.run("cls", shell=True)
+        else:
+            self._sys.__stdout__.write("\033c\033[3J")
+            self._sys.__stdout__.flush()
         self.line_count = 0
     def fileno(self): return self._sys.__stdout__.fileno()
     def change_last_message(self, message: str):
@@ -2456,7 +2443,7 @@ class FileSelector:
         self._os = os
         self._main_os = platform.system()
     def _run_in_subprocess(self, python_code: str, is_multiple: bool=False):
-        s = self._subprocess.run([self._sys.executable, "-c", f"import tkinter as tk; from tkinter import filedialog; root = tk.Tk(); root.withdraw(); path = {python_code}; print(path)"], capture_output=True, text=True)
+        s = self._subprocess.run([self._sys.executable, "-c", f"import json; import tkinter as tk; from tkinter import filedialog; root = tk.Tk(); root.withdraw(); {python_code}; print(json.dumps(list(path)))"], capture_output=True, text=True)
         if s.returncode == 0 and s.stdout.strip(): 
             filepath = s.stdout.strip()
             if is_multiple:
@@ -2467,30 +2454,38 @@ class FileSelector:
         return self.Response(ok=False, path=None)
     def select_file(self, title: str="Select a file", initialdir: typing.Optional[str]=None, filetypes: typing.Tuple=(("All files", "*.*"),)):
         if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
-        if self._main_os == "Darwin": return self._run_in_subprocess(f'filedialog.askopenfilename(title="{title}", initialdir="{initialdir}"' + (f', filetypes={filetypes}' if filetypes else "") + ")")
+        if self._main_os == "Darwin": 
+            args_json = self._json.dumps({"title": title, "initialdir": initialdir, "filetypes": list(filetypes)})
+            return self._run_in_subprocess(f"inf=json.loads('{args_json}'); path = filedialog.askopenfilename(**inf)")
         root = self._tk.Tk()
         root.withdraw()
         path = self._filedialog.askopenfilename(title=title, initialdir=initialdir, filetypes=filetypes)
         if path: return self.Response(ok=True, path=path)
+        root.destroy()
         return self.Response(ok=False, path=None)
     def select_files(self, title: str="Select a file", initialdir: typing.Optional[str]=None, filetypes: typing.Tuple=(("All files", "*.*"),)):
         if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
         if self._main_os == "Darwin": 
-            s = self._run_in_subprocess(f'filedialog.askopenfilenames(title="{title}", initialdir="{initialdir}"' + (f', filetypes={filetypes}' if filetypes else "") + ")")
+            args_json = self._json.dumps({"title": title, "initialdir": initialdir, "filetypes": list(filetypes)})
+            s = self._run_in_subprocess(f"inf=json.loads('{args_json}'); path = filedialog.askopenfilenames(**inf)")
             if type(s) is self.Response: return False, [s]
             return True, s
         root = self._tk.Tk()
         root.withdraw()
         path = self._filedialog.askopenfilenames(title=title, initialdir=initialdir, filetypes=filetypes)
+        root.destroy()
         if path: return True, [self.Response(ok=True, path=p) for p in path]
         return False, [self.Response(ok=False, path=None)]
     def select_folder(self, title: str="Select a folder", initialdir: typing.Optional[str]=None, mustexist: bool=True):
         if self.unable_to_use_tkinter: return self.Response(ok=False, path=None)
-        if self._main_os == "Darwin": return self._run_in_subprocess(f'filedialog.askdirectory(title="{title}", initialdir="{initialdir}", mustexist={mustexist})')
+        if self._main_os == "Darwin": 
+            args_json = self._json.dumps({"title": title, "initialdir": initialdir, "mustexist": mustexist})
+            return self._run_in_subprocess(f"inf=json.loads('{args_json}'); path = filedialog.askdirectory(**inf)")
         root = self._tk.Tk()
         root.withdraw()
         path = self._filedialog.askdirectory(title=title, initialdir=initialdir, mustexist=mustexist)
         if path: return self.Response(ok=True, path=path)
+        root.destroy()
         return self.Response(ok=False, path=None)
 class ProgressBar:
     """
@@ -2525,9 +2520,8 @@ class TimerBar(ProgressBar):
     A class that allows you to work with countdown timers in the console.
     """
     def __init__(self, countdown: int=5, finished_text: str="Continue with your action!", begin_in_end: bool=True):
-        import sys
+        super().__init__()
         import time
-        self._sys = sys
         self._time = time
         self.current_countdown = int(countdown); 
         self.started = int(countdown); 
@@ -2550,7 +2544,6 @@ class TimerBar(ProgressBar):
         if hasattr(self._sys.stdout, "change_last_message"): print("\033{progress}")
         while self.current_countdown:
             self.submit()
-            if self.current_countdown == 0: break
             self.current_countdown -= 1
             self._time.sleep(1)
         self.submit()

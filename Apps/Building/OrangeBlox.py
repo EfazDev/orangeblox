@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0h"}
+current_version = {"version": "2.5.0i"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -386,7 +386,7 @@ if __name__ == "__main__":
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!")
-        execute_command = f"unset HISTFILE && clear && echo '{ts('OrangeBlox is loading! Please wait!')}' && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:

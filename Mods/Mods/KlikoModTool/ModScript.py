@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.4.5
+# v1.5.0
 # 
 
 # Python Modules
@@ -57,21 +57,22 @@ if installed["success"] == True:
         OrangeAPI.printColoredMessage(f"Roblox Version Used: {installed['version']} (Channel: {installed['channel']} 🍎)", 197)
 
         # Major Update About Mod Generation..
-        if not (type(OrangeAPI.getConfiguration("ReadDisclaimer2025.2")) is bool):
+        if not (type(OrangeAPI.getConfiguration("ReadDisclaimer2026.5")) is bool):
             printYellowMessage("--- Major Update about Mod Generation and Updating! ---")
-            printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. Because of this, this script has lost functionality with gradient coloring and has changed to static coloring for font files.")
+            printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! \nThough, colors from custom images will be ignored as it may unoptimible to use since photos contain many more multiple colors.\nHowever, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.")
             n = OrangeAPI.requestInput("Press enter to continue.")
-            if n != None: OrangeAPI.setConfiguration("ReadDisclaimer2025.2", True)
+            if n != None: OrangeAPI.setConfiguration("ReadDisclaimer2026.5", True)
 
         # Actual Modding
         if not (type(OrangeAPI.getConfiguration("KlikoHandlingModType")) is int):
-            printMainMessage("[1] = Generate New Mods")
+            """printMainMessage("[1] = Generate New Mods")
             printMainMessage("[2] = Update Old Mods")
-            a = OrangeAPI.requestInput("What type of mod action would you like to use? (To reset, delete your Configuration file)", "> ")
+            a = OrangeAPI.requestInput("What type of mod action would you like to use? (To reset, delete or reset your Configuration file)", "> ")
             if a:
                 if a == "1": OrangeAPI.setConfiguration("KlikoHandlingModType", 1)
                 elif a == "2": OrangeAPI.setConfiguration("KlikoHandlingModType", 2)
-                else: printDebugMessage("Invalid mod type option.")
+                else: printDebugMessage("Invalid mod type option.")"""
+            OrangeAPI.setConfiguration("KlikoHandlingModType", 1)
         mod_type = OrangeAPI.getConfiguration("KlikoHandlingModType")
         if (type(mod_type) is int):
             if mod_type == 1:
@@ -197,7 +198,7 @@ if installed["success"] == True:
                     if type(mod_style_file) is str and os.path.isfile(mod_style_file):
                         try:
                             with open(mod_style_file, "r", encoding="utf-8") as f: mod_style_json = json.load(f)
-                            if mod_style_json.get("name") and (mod_style_json.get("colors") or mod_style_json.get("advanced")) and mod_style_json.get("angle"):
+                            if mod_style_json.get("name") and (mod_style_json.get("colors") or mod_style_json.get("advanced")) and type(mod_style_json.get("angle")) is int:
                                 if reinstall_mode == True or not (OrangeAPI.getConfiguration(f"LastUpdatedRoblox{'Studio' if studio else ''}") == installed["version"] and OrangeAPI.getConfiguration(f"KlikoModVersion{'Studio' if studio else ''}") == current_version):
                                     printMainMessage("Running Proxy using Python Executable..")
                                     fold_name = mod_style_json["name"]
@@ -235,6 +236,8 @@ if installed["success"] == True:
                         printDebugMessage("Mod file is not found.")
                         OrangeAPI.setConfiguration("ModConfiguration", None)
             elif mod_type == 2:
+                printYellowMessage("Mod Updating will be later removed in future versions of the Kliko Mod Tool extension as Roblox's icon font based system is released.")
+                printYellowMessage("It is highly recommended to switch to Mod Generation by resetting your mod configuration.")
                 if not (type(OrangeAPI.getConfiguration("EnabledRobloxStudio")) is bool):
                     a = OrangeAPI.requestInput("Would you like to enable mod generation for Roblox Studio too? (y/n)", "> ")
                     if a:

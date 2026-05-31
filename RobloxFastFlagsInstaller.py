@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.8
+# v2.5.9
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -32,7 +32,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.5.8"
+script_version = "2.5.9"
 
 # Base Functions 1
 def getLocalAppData():
@@ -42,8 +42,7 @@ def getLocalAppData():
     else: return f'{os.path.expanduser("~")}/'
 def getUserFolder():
     ma_os = platform.system()
-    if ma_os == "Windows": return os.path.basename(os.path.basename(os.path.expandvars(r'%LOCALAPPDATA%')))
-    else: return os.path.expanduser("~")
+    return os.path.expanduser("~")
 def getIfLoggedInIsMacOSAdmin():
     ma_os = platform.system()
     if ma_os == "Darwin":
@@ -149,7 +148,8 @@ def printErrorMessage(mes): colors_class.print(ts(mes), 196)
 def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
 def printWarnMessage(mes): colors_class.print(ts(mes), 202)
 def printYellowMessage(mes): colors_class.print(ts(mes), 226)
-def printDebugMessage(mes): colors_class.print(f"[Roblox FFlag Installer] [DEBUG]: {ts(mes)}", 226)
+def printDebugMessage(debug_mode, mes): 
+    if debug_mode == True: colors_class.print(f"[Roblox FFlag Installer] [DEBUG]: {ts(mes)}", 226)
 def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
 def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
 def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
@@ -223,7 +223,8 @@ class Handler:
         "onRobloxVoiceChatLeft",
         "onRobloxAudioDeviceStopRecording",
         "onRobloxAudioDeviceStartRecording",
-        "onWatchdogReconnection"
+        "onWatchdogReconnection",
+        "onWatchdogCheckReconnect"
     ]
     roblox_studio_event_names = [
         "onRobloxExit", 
@@ -266,7 +267,8 @@ class Handler:
         "onRobloxSaved",
         "onNewStudioLaunching",
         "onStudioInstallerLaunched",
-        "onWatchdogReconnection"
+        "onWatchdogReconnection",
+        "onWatchdogCheckReconnect"
     ]
     roblox_event_info = {
         # 0 = Safe, 1 = Caution, 2 = Warning, 3 = Dangerous
@@ -311,6 +313,7 @@ class Handler:
         "onGameLeaving": {"message": ts("Allow detecting when you leave a game"), "level": 0, "robloxEvent": True}, 
         "onGameDisconnected": {"message": ts("Allow detecting when you disconnect from a game"), "level": 0, "robloxEvent": True},
         "onWatchdogReconnection": {"message": ts("Allow detecting when watchdog was reconnected"), "level": 0, "robloxEvent": True},
+        "onWatchdogCheckReconnect": {"message": ts("Allow detecting when watchdog check is performed"), "level": 0, "robloxEvent": True},
         
         # Roblox Studio Permissions
         "onJoiningTeam": {"message": ts("Allow detecting when you join a team create server"), "level": 1, "robloxEvent": True},
@@ -454,6 +457,7 @@ class Handler:
         class EndWatchdog(): code=1; data=None
         class ReconnectWatchdog(): code=2; data=None
         class NormalResponse(): code=3; data=None
+        class ReconnectOrCloseWatchdog(): code=4; data=None
     class InvalidRobloxHandlerException(Exception):
         def __init__(self): super().__init__("Please make sure you're providing the RobloxFastFlagsInstaller.Handler class!")
     class RobloxInstance():
@@ -492,6 +496,7 @@ class Handler:
                 self.one_threaded = one_threaded==True
                 self.daemon = daemon==True
                 self.clean_logs = clean_logs==True
+                self.__events__ = []
                 if log_file != "" and os.path.exists(log_file): self.log_file = log_file
                 if start_watchdog == True: self.startActivityTracking()
             else: raise Handler.InvalidRobloxHandlerException()
@@ -562,15 +567,16 @@ class Handler:
                 if (current_time - creation_time) <= 10: return True
                 else: return False
             except: return False
-        def getLatestLogFile(self):
+        def getLatestLogFile(self, log_creation_awaiting: bool=False):
+            if log_creation_awaiting == False: self.await_log_creation_attempts = 0
             logs_path = None
             if main_os == "Darwin": logs_path = os.path.join(user_folder, "Library", "Logs", "Roblox")
             elif main_os == "Windows": logs_path = os.path.join(windows_dir, "logs")
-            else: logs_path = os.path.join(windows_dir, "logs")
+            else: logs_path = os.path.join(os.path.expanduser("~"), "Roblox", "logs")
             makedirs(logs_path)
             main_log = self.newestFile(logs_path)
-            if not main_log: time.sleep(0.5); return self.getLatestLogFile()
-            if not main_log.endswith(".log"): time.sleep(0.5); return self.getLatestLogFile()
+            if not main_log: time.sleep(0.5); return self.getLatestLogFile(log_creation_awaiting=True)
+            if not main_log.endswith(".log"): time.sleep(0.5); return self.getLatestLogFile(log_creation_awaiting=True)
             logs_attached = []
             if os.path.exists(os.path.join(logs_path, "RFFILogFiles.json")):
                 with open(os.path.join(logs_path, "RFFILogFiles.json"), "r", encoding="utf-8") as f: logs_attached = json.load(f)
@@ -580,30 +586,31 @@ class Handler:
                         if main_log in logs_attached:
                             time.sleep(0.5)
                             self.await_log_creation_attempts += 1
-                            if self.debug_mode == True: printDebugMessage(f"Log file is already used in an another Roblox Instance ({self.await_log_creation_attempts}/30)")
-                            return self.getLatestLogFile()
+                            printDebugMessage(self.debug_mode, f"Log file is already used in an another Roblox Instance ({self.await_log_creation_attempts}/30)")
+                            return self.getLatestLogFile(log_creation_awaiting=True)
                         else:
                             logs_attached.append(main_log)
                             with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f: json.dump(logs_attached, f, indent=4)
-                            if self.debug_mode == True: printDebugMessage(f"Successfully found log file ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
+                            printDebugMessage(self.debug_mode, f"Successfully found log file ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
                             return main_log
                     else:
                         time.sleep(0.5)
                         self.await_log_creation_attempts += 1
-                        if self.debug_mode == True: printDebugMessage(f"Awaiting Log Creation ({self.await_log_creation_attempts}/30)")
-                        return self.getLatestLogFile()
+                        printDebugMessage(self.debug_mode, f"Awaiting Log Creation ({self.await_log_creation_attempts}/30)")
+                        return self.getLatestLogFile(log_creation_awaiting=True)
                 else:
                     logs_attached.append(main_log)
                     with open(os.path.join(logs_path, "RFFILogFiles.json"), "w", encoding="utf-8") as f: json.dump(logs_attached, f, indent=4)
-                    if self.debug_mode == True: printDebugMessage(f"Unable to find a new file within 15 seconds ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
+                    printDebugMessage(self.debug_mode, f"Unable to find a new file within 15 seconds ({self.await_log_creation_attempts}/30). Returning with: {main_log}")
                     return main_log
             else:
-                if self.debug_mode == True: printDebugMessage(f"Successfully found log file. Returning with: {main_log}")
+                printDebugMessage(self.debug_mode, f"Successfully found log file. Returning with: {main_log}")
                 return main_log
-        def cleanLogs(self):
-            if self.debug_mode == True: printDebugMessage(f"Cleaning logs from session..")
-            with open(self.log_file, "r", encoding="utf-8", errors="ignore") as file: lines = file.readlines()
-            with open(self.log_file, "w", encoding="utf-8", errors="ignore") as write_file:
+        def cleanLogs(self, log_file: str=None):
+            if log_file is None: log_file = self.log_file
+            printDebugMessage(self.debug_mode, f"Cleaning logs from session..")
+            with open(log_file, "r", encoding="utf-8", errors="ignore") as file: lines = file.readlines()
+            with open(log_file, "w", encoding="utf-8", errors="ignore") as write_file:
                 end_lines = []
                 current_log = ""
                 for line in lines:
@@ -615,6 +622,30 @@ class Handler:
                         else: current_log = filtered_line
                     if should_remove == False: end_lines.append(line)
                 write_file.writelines(end_lines)
+        def handleLogEvent(self, event: Handler.WatchdogLineResponse):
+            if event:
+                if event.code == 0:
+                    if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
+                    return True
+                elif event.code == 1:
+                    self.ended_process = True
+                elif event.code == 2:
+                    self.watchdog_started = False
+                    self.log_file = ""
+                    self.submitEvent("onWatchdogReconnection", None, isLine=False)
+                    self.startActivityTracking()
+                elif event.code == 4:
+                    found_log = self.log_file
+                    self.watchdog_started = False
+                    self.log_file = ""
+                    self.submitEvent("onWatchdogCheckReconnect", None, isLine=False)
+                    main_log = ""
+                    if self.log_file == "":
+                        main_log = self.getLatestLogFile()
+                        self.log_file = main_log
+                    else: main_log = self.log_file
+                    if found_log != main_log: self.startActivityTracking()
+            return False
         def handleLogLine(self, line: str=""):
             if self.is_studio == True:
                 if "[FLog::Output] LoadClientSettingsFromLocal" in line: self.submitEvent(eventName="onLoadedFFlags", data=line, isLine=True)
@@ -637,7 +668,7 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onPlayTestStart", data=generated_data, isLine=False)
                 elif "[FLog::TeamCreateJoinPayload] Joining game" in line:
                     def generate_arg():
-                        pattern = r"([a-f0-9-]+) place (\d+) at [(\d+\.\d+\.\d+\.\d+)]:(\d+)"
+                        pattern = r"([a-f0-9-]+) place (\d+) at \((\d+\.\d+\.\d+\.\d+)\):(\d+)"
                         match = re.search(pattern, line)
                         if match:
                             jobId = match.group(1)
@@ -726,7 +757,7 @@ class Handler:
                     if self.roblox_starter_launched == False:
                         self.submitEvent(eventName="onRobloxExit", data=line)
                         self.submitEvent(eventName="onRobloxSharedLogLaunch", data=line)
-                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
+                        return self.main_handler.WatchdogLineResponse.ReconnectOrCloseWatchdog()
                     else: self.submitEvent(eventName="onRobloxLauncherDestroyed", data=line)
                 elif "[FLog::Output] [BloxstrapRPC]" in line:
                     def generate_arg():
@@ -735,7 +766,7 @@ class Handler:
                         json_str = line[json_start_index:].strip()
                         try: return json.loads(json_str)
                         except json.JSONDecodeError as e:
-                            if self.debug_mode == True: printDebugMessage(str(e))
+                            printDebugMessage(self.debug_mode, str(e))
                             return None
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
@@ -743,8 +774,8 @@ class Handler:
                 elif "RobloxAudioDevice::StartRecording" in line: self.submitEvent(eventName="onRobloxAudioDeviceStartRecording", data=line, isLine=True)
                 elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
+                        if line.find('[FLog::Output]') == -1: return None
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameLog", data=generated_data, isLine=False)
@@ -762,15 +793,15 @@ class Handler:
                     if generated_data: self.submitEvent(eventName="onExpiredFlag", data=generated_data, isLine=False)
                 elif "[FLog::Error]" in line:
                     def generate_arg():
+                        if line.find('[FLog::Error]') == -1: return None
                         output = line.find('[FLog::Error]') + len('[FLog::Error] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameError", data=generated_data, isLine=False)
                 elif "[FLog::Warning]" in line:
                     def generate_arg():
+                        if line.find('[FLog::Warning]') == -1: return None
                         output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameWarning", data=generated_data, isLine=False)
@@ -913,8 +944,8 @@ class Handler:
                         self.submitEvent(eventName="onPlayTestDisconnected", data=None, isLine=False)
                 elif "[telemetryLog]" in line:
                     def generate_arg():
+                        if line.find('[telemetryLog]') == -1: return None
                         output = line.find('[telemetryLog]') + len('[telemetryLog] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onTelemetryLog", data=generated_data, isLine=False)
@@ -943,7 +974,7 @@ class Handler:
                         json_str = line[json_start_index:].strip()
                         try: return json.loads(json_str)
                         except json.JSONDecodeError as e:
-                            if self.debug_mode == True: printDebugMessage(str(e))
+                            printDebugMessage(self.debug_mode, str(e))
                             return None
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onBloxstrapSDK", data=generated_data, isLine=False)
@@ -972,22 +1003,22 @@ class Handler:
                 elif "raiseTeleportInitFailedEvent" in line: self.submitEvent(eventName="onGameTeleportFailed", data=line, isLine=True)
                 elif "[FLog::Output]" in line and "Calling mi_collect" not in line:
                     def generate_arg():
+                        if line.find('[FLog::Output]') == -1: return None
                         output = line.find('[FLog::Output]') + len('[FLog::Output] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameLog", data=generated_data, isLine=False)
                 elif "[FLog::Error]" in line:
                     def generate_arg():
+                        if line.find('[FLog::Error]') == -1: return None
                         output = line.find('[FLog::Error]') + len('[FLog::Error] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameError", data=generated_data, isLine=False)
                 elif "[FLog::Warning]" in line:
                     def generate_arg():
+                        if line.find('[FLog::Warning]') == -1: return None
                         output = line.find('[FLog::Warning]') + len('[FLog::Warning] ')
-                        if output == -1: return None
                         return line[output:].strip()
                     generated_data = generate_arg()
                     if generated_data: self.submitEvent(eventName="onGameWarning", data=generated_data, isLine=False)
@@ -995,7 +1026,7 @@ class Handler:
                     if self.roblox_starter_launched == False:
                         self.submitEvent(eventName="onRobloxExit", data=line)
                         self.submitEvent(eventName="onRobloxSharedLogLaunch", data=line)
-                        return self.main_handler.WatchdogLineResponse.EndWatchdog()
+                        return self.main_handler.WatchdogLineResponse.ReconnectOrCloseWatchdog()
                     else: self.submitEvent(eventName="onRobloxLauncherDestroyed", data=line)
                 elif "[FLog::UpdateController] Update check thread: updateRequired FALSE" in line: self.submitEvent(eventName="onRobloxPassedUpdate", data=line)
                 elif "[FLog::SingleSurfaceApp] initializeWithAppStarter" in line: self.submitEvent(eventName="onRobloxAppStart", data=line)
@@ -1378,12 +1409,12 @@ class Handler:
             if not (eventName == "onRobloxLog"): 
                 self.submitEvent(eventName="onRobloxLog", data={"eventName": eventName, "data": data, "isLine": isLine}, isLine=False)
                 if isLine == True:
-                    if self.debug_mode == True and not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(f'Event triggered: {eventName}, Line: {data}')
+                    if not (eventName == "onOtherRobloxLog" and self.allow_other_logs == False): printDebugMessage(self.debug_mode, f'Event triggered: {eventName}, Line: {data}')
                 else:
                     if self.debug_mode == True: 
                         if type(data) is str and (data.startswith("Settings Date timestamp is") or data.startswith("Settings Date header was")):
-                            if self.allow_other_logs == True: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
-                        else: printDebugMessage(f'Event triggered: {eventName}, Data: {data}')
+                            if self.allow_other_logs == True: printDebugMessage(True, f'Event triggered: {eventName}, Data: {data}')
+                        else: printDebugMessage(True, f'Event triggered: {eventName}, Data: {data}')
             for i in self.__events__:
                 if i and callable(i.get("callback")) and i.get("name") == eventName: 
                     if self.one_threaded == True:
@@ -1399,7 +1430,6 @@ class Handler:
                         main_log = ""
                         passed_lines = []
                         if self.log_file == "":
-                            self.await_log_creation_attempts = 0
                             main_log = self.getLatestLogFile()
                             self.log_file = main_log
                         else: main_log = self.log_file
@@ -1420,43 +1450,18 @@ class Handler:
                                         timestamp_str = timestamp_str[0]
                                         if re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", timestamp_str):
                                             try:
-                                                timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+                                                timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=datetime.timezone.utc)
                                                 current_time = datetime.datetime.now(datetime.timezone.utc)
                                                 if timestamp:
                                                     age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
                                                     if age_in_seconds < 60:
                                                         res = self.handleLogLine(line)
-                                                        if res:
-                                                            if res.code == 0:
-                                                                if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                                                break
-                                                            elif res.code == 1:
-                                                                self.ended_process = True
-                                                                return
-                                                            elif res.code == 2:
-                                                                self.watchdog_started = False
-                                                                self.log_file = ""
-                                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
-                                                                self.startActivityTracking()
-                                                                return
+                                                        if self.handleLogEvent(res): break
                                             except Exception as e:
-                                                if self.debug_mode == True: printDebugMessage(f"Unable to read log: {str(e)}")
+                                                printDebugMessage(self.debug_mode, f"Unable to read log: {str(e)}")
                                     else:
                                         res = self.handleLogLine(line)
-                                        if res:
-                                            if res.code == 0:
-                                                self.ended_process = True
-                                                if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                                break     
-                                            elif res.code == 1:
-                                                self.ended_process = True
-                                                return
-                                            elif res.code == 2:
-                                                self.watchdog_started = False
-                                                self.log_file = ""
-                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
-                                                self.startActivityTracking()
-                                                return 
+                                        if self.handleLogEvent(res): break
                             self.loading_existing_logs = False
                             file.seek(0, os.SEEK_END)
                             while True:
@@ -1479,52 +1484,13 @@ class Handler:
                                                 age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
                                                 if age_in_seconds < 60:
                                                     res = self.handleLogLine(line)
-                                                    if res:
-                                                        if res.code == 0:
-                                                            self.ended_process = True
-                                                            if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                                            break     
-                                                        elif res.code == 1:
-                                                            self.ended_process = True
-                                                            return 
-                                                        elif res.code == 2:
-                                                            self.watchdog_started = False
-                                                            self.log_file = ""
-                                                            self.submitEvent("onWatchdogReconnection", None, isLine=False)
-                                                            self.startActivityTracking()
-                                                            return 
+                                                    if self.handleLogEvent(res): break
                                         else:
                                             res = self.handleLogLine(line)
-                                            if res:
-                                                if res.code == 0:
-                                                    self.ended_process = True
-                                                    if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                                    break     
-                                                elif res.code == 1:
-                                                    self.ended_process = True
-                                                    return
-                                                elif res.code == 2:
-                                                    self.watchdog_started = False
-                                                    self.log_file = ""
-                                                    self.submitEvent("onWatchdogReconnection", None, isLine=False)
-                                                    self.startActivityTracking()
-                                                    return
+                                            if self.handleLogEvent(res): break
                                     else:
                                         res = self.handleLogLine(line)
-                                        if res:
-                                            if res.code == 0:
-                                                self.ended_process = True
-                                                if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                                break     
-                                            elif res.code == 1:
-                                                self.ended_process = True
-                                                return  
-                                            elif res.code == 2:
-                                                self.watchdog_started = False
-                                                self.log_file = ""
-                                                self.submitEvent("onWatchdogReconnection", None, isLine=False)
-                                                self.startActivityTracking()
-                                                return                         
+                                        if self.handleLogEvent(res): break          
                 pip_class.startThread(func=watchDog, daemon=self.daemon)
                 pip_class.startThread(func=self.awaitRobloxClosing, daemon=self.daemon)
         def requestThreadClosing(self): self.end_tracking = True
@@ -1725,49 +1691,49 @@ class Handler:
         try:    
             if channel == "production": channel = "LIVE"
             if self.__main_os__ == "Darwin":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}/channel/{channel}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{'MacStudio' if studio == True else 'MacPlayer'}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 if res.ok:
                     jso = res.json
                     if jso.get("clientVersionUpload") and jso.get("version"):
-                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        printDebugMessage(debug, f"Called ({res.url}): {res.text}")
                         return {"success": True, "client_version": jso.get("clientVersionUpload"), "hash": jso.get("version"), "attempted_channel": channel or "LIVE"}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
                     if not (channel == "LIVE"):
-                        if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                        printDebugMessage(debug, f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
                         return self.getLatestClientVersion(studio=studio, debug=debug, channel="LIVE")
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
             elif self.__main_os__ == "Windows":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 is32Bit = pip_class.getIf32BitWindows()
                 if channel: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}/channel/{channel}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 else: res = requests.get(f"https://clientsettingscdn.roblox.com/v2/client-version/{('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}", headers=({"Roblox-Channel-Token": token} if token else {}))
                 if res.ok:
                     jso = res.json
                     if jso.get("clientVersionUpload") and jso.get("version"):
-                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        printDebugMessage(debug, f"Called ({res.url}): {res.text}")
                         return {"success": True, "client_version": jso.get("clientVersionUpload"), "hash": jso.get("version"), "attempted_channel": channel or "LIVE"}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
                     if not (channel == "LIVE"):
-                        if debug == True: printDebugMessage(f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
+                        printDebugMessage(debug, f"Roblox rejected update check with channel {channel}, retrying as channel LIVE: {res.text}")
                         return self.getLatestClientVersion(studio=studio, debug=debug, channel="LIVE")
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
             else:
                 self.unsupportedFunction()
                 return {"success": False, "message": "OS not compatible."}
         except Exception as e:
-            if debug == True: printDebugMessage(str(e))
+            printDebugMessage(debug, str(e))
             return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
     def getCurrentClientVersion(self, studio: bool=False):
         if self.__main_os__ == "Darwin":
@@ -1821,39 +1787,39 @@ class Handler:
         try:    
             founded_roblosecurity = self.getRobloxCookieHeader(studio=studio)
             if self.__main_os__ == "Darwin":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 res = requests.get(f"https://clientsettings.roblox.com/v2/user-channel?binaryType={'MacStudio' if studio == True else 'MacPlayer'}", cookies=founded_roblosecurity)
                 if res.ok:
                     jso = res.json
                     if jso.get("channelName"):
-                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        printDebugMessage(debug, f"Called ({res.url}): {res.text}")
                         return {"success": True, "channel_name": jso.get("channelName"), "channel_assignment_type": jso.get("channelAssignmentType", 0), "token": jso.get("token")}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                     return {"success": False, "message": "Something went wrong."}
             elif self.__main_os__ == "Windows":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 is32Bit = pip_class.getIf32BitWindows()
                 res = requests.get(f"https://clientsettings.roblox.com/v2/user-channel?binaryType={('WindowsStudio' if is32Bit == True else 'WindowsStudio64') if studio == True else 'WindowsPlayer'}", cookies=founded_roblosecurity)
                 if res.ok:
                     jso = res.json
                     if jso.get("channelName"):
-                        if debug == True: printDebugMessage(f"Called ({res.url}): {res.text}")
+                        printDebugMessage(debug, f"Called ({res.url}): {res.text}")
                         return {"success": True, "channel_name": jso.get("channelName"), "channel_assignment_type": jso.get("channelAssignmentType", 0), "token": jso.get("token")}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                     return {"success": False, "message": "Something went wrong."}
             else:
                 self.unsupportedFunction()
                 return {"success": False, "message": "OS not compatible."}
         except Exception as e:
-            if debug == True: printDebugMessage(str(e))
+            printDebugMessage(debug, str(e))
             return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
     def getRobloxInstallFolder(self, studio: bool=False, directory: str=""):
         if self.__main_os__ == "Windows":
@@ -2050,47 +2016,47 @@ class Handler:
         try:    
             if bucket == "LIVE" or bucket == "production": bucket = ""
             if self.__main_os__ == "Darwin":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{('MacStudioBootstrapper' if bootstrapper == True else 'MacStudioApp') if studio == True else ('MacClientBootstrapper' if bootstrapper == True else 'MacDesktopClient')}{f'/bucket/{bucket}' if not bucket == '' else ''}")
                 if res.ok:
                     jso = res.json
                     if jso.get("applicationSettings"):
-                        if debug == True: printDebugMessage(f"Successfully got application settings! URL: ({res.url})")
+                        printDebugMessage(debug, f"Successfully got application settings! URL: ({res.url})")
                         return {"success": True, "application_settings": jso.get("applicationSettings")}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                     return {"success": False, "message": "Something went wrong."}
             elif self.__main_os__ == "Windows":
-                if debug == True: printDebugMessage("Sending Request to Roblox Servers..") 
+                printDebugMessage(debug, "Sending Request to Roblox Servers..") 
                 res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{('PCStudioBootstrapper' if bootstrapper == True else 'PCStudioApp') if studio == True else ('PCClientBootstrapper' if bootstrapper == True else 'PCDesktopClient')}{f'/bucket/{bucket}' if not bucket == '' else ''}")
                 if res.ok:
                     jso = res.json
                     if jso.get("applicationSettings"):
-                        if debug == True: printDebugMessage(f"Successfully got application settings! URL: ({res.url})")
+                        printDebugMessage(debug, f"Successfully got application settings! URL: ({res.url})")
                         return {"success": True, "application_settings": jso.get("applicationSettings")}
                     else:
-                        if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                        printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                         return {"success": False, "message": "Something went wrong."}
                 else:
-                    if debug == True: printDebugMessage(f"Something went wrong: {res.text} | {res.status_code}")
+                    printDebugMessage(debug, f"Something went wrong: {res.text} | {res.status_code}")
                     return {"success": False, "message": "Something went wrong."}
             else:
                 self.unsupportedFunction()
                 return {"success": False, "message": "OS not compatible."}
         except Exception as e:
-            if debug == True: printDebugMessage(str(e))
+            printDebugMessage(debug, str(e))
             return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
     def prepareMultiInstance(self, debug: bool=False, awaitRobloxClosure: bool=True, allowReattachment: bool=True):
         if self.__main_os__ == "Darwin":
             try:
                 posix_ipc.unlink_semaphore("/RobloxPlayerUniq")
-                if debug == True: printDebugMessage(f"Successfully unlinked semaphore to allow Roblox multi instance!")
+                printDebugMessage(debug, f"Successfully unlinked semaphore to allow Roblox multi instance!")
                 return True
             except posix_ipc.ExistentialError:
-                if debug == True: printDebugMessage(f"Roblox Single Instance Semaphore does not exist. You may launch Roblox without any problems!")
+                printDebugMessage(debug, f"Roblox Single Instance Semaphore does not exist. You may launch Roblox without any problems!")
                 return True
         elif self.__main_os__ == "Windows":
             import ctypes.wintypes
@@ -2105,12 +2071,12 @@ class Handler:
                 if not (mutex and mutex2): 
                     if allowReattachment == True:
                         if self.getIfRobloxIsOpen():
-                            if debug == True: printDebugMessage(f"Reattaching mutexes under name: {mutex_name}.")
+                            printDebugMessage(debug, f"Reattaching mutexes under name: {mutex_name}.")
                             self.endRoblox()
                     else:
                         if mutex: kernel32.CloseHandle(mutex)
                         if mutex2: kernel32.CloseHandle(mutex2)
-                        if debug == True: printDebugMessage("Unable to attach to mutex because it's already created by Roblox or by an another script.")
+                        printDebugMessage(debug, "Unable to attach to mutex because it's already created by Roblox or by an another script.")
                         return False
                     def hold_mutex(mu_name):
                         mutexW = kernel32.CreateMutexW(None, ctypes.wintypes.BOOL(True), mu_name)
@@ -2121,10 +2087,10 @@ class Handler:
                                 else:
                                     while True: time.sleep(1)
                             except Exception as e: 
-                                if debug == True: printDebugMessage(f"There was an error holding mutex W: {str(e)}")
+                                printDebugMessage(debug, f"There was an error holding mutex W: {str(e)}")
                             finally: kernel32.ReleaseMutex(mutexW)
                         else:
-                            if debug == True: printDebugMessage(f"There was an error holding mutex W due to response: {mutexW}")
+                            printDebugMessage(debug, f"There was an error holding mutex W due to response: {mutexW}")
                     def hold_mutex2(mu_name):
                         mutexA = kernel32.CreateMutexA(None, ctypes.wintypes.BOOL(True), mu_name)
                         if mutexA:
@@ -2135,10 +2101,10 @@ class Handler:
                                     while True: time.sleep(1)
                                 kernel32.ReleaseMutex(mutexA)
                             except Exception as e: 
-                                if debug == True: printDebugMessage(f"There was an error holding mutex A: {str(e)}")
+                                printDebugMessage(debug, f"There was an error holding mutex A: {str(e)}")
                             finally: kernel32.ReleaseMutex(mutexA)
                         else:
-                            if debug == True: printDebugMessage(f"There was an error holding mutex A due to response: {mutexA}")
+                            printDebugMessage(debug, f"There was an error holding mutex A due to response: {mutexA}")
                     pip_class.startThread(hold_mutex, False, mutex_name)
                     pip_class.startThread(hold_mutex2, False, mutex_bytename)
                     is_created = True
@@ -2412,10 +2378,10 @@ class Handler:
         if self.getIfRobloxIsOpen(studio=studio):
             if forceQuit == True:
                 self.endRoblox(studio=studio)
-                if debug == True: printDebugMessage("Ending Roblox Instances..")
-        if debug == True: printDebugMessage("Applying App Storage Patch..")
+                printDebugMessage(debug, "Ending Roblox Instances..")
+        printDebugMessage(debug, "Applying App Storage Patch..")
         self.applyAppStoragePatch()
-        if debug == True: printDebugMessage("Preparing for Launch..")
+        printDebugMessage(debug, "Preparing for Launch..")
         if self.__main_os__ == "Darwin":
             tar_dir = macOS_studioDir if studio == True else macOS_dir
             if startData == "": startData = []
@@ -2431,7 +2397,7 @@ class Handler:
                     self.prepareMultiInstance(debug=debug)
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
                     com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, "RobloxPlayer")] + startData
-                    if debug == True: printDebugMessage(f"Running Roblox Executable using Command: {com}")
+                    printDebugMessage(debug, f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
                         if attachInstance == True:
@@ -2453,7 +2419,7 @@ class Handler:
                 else:
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
                     com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, 'RobloxPlayer')] + startData
-                    if debug == True: printDebugMessage(f"Running Roblox Executable using Command: {com}")
+                    printDebugMessage(debug, f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
                         if attachInstance == True:
@@ -2464,7 +2430,7 @@ class Handler:
             else:
                 # f"open -a \'{macOS_dir}\' {startData}"
                 com = ["/usr/bin/open"] + (["-n"] if makeDupe == True else []) + ["-a", tar_dir] + startData
-                if debug == True: printDebugMessage(f"Running Roblox using Command: {com}")
+                printDebugMessage(debug, f"Running Roblox using Command: {com}")
                 a = subprocess.run(com, check=True)
                 if a.returncode == 0:
                     if attachInstance == True:
@@ -2481,13 +2447,13 @@ class Handler:
                         if created_mutex == True: printDebugMessage("Successfully attached the mutex! Once this window closes, all the other Roblox windows will close.")
                         else: printDebugMessage("There's an issue trying to create a mutex! This may be because the mutex was already taken!")
                 except Exception:
-                    if debug == True: printDebugMessage("There's an issue trying to create a mutex!")
+                    printDebugMessage(debug, "There's an issue trying to create a mutex!")
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=studio)
             if most_recent_roblox_version_dir:
                 startData = startData.replace("&", "^&")
                 if startData == "": com = ["start", os.path.join(most_recent_roblox_version_dir, f'Roblox{client_label}Beta.exe')]
                 else: com = ["start", os.path.join(most_recent_roblox_version_dir, f"Roblox{client_label}Beta.exe"), startData]
-                if debug == True: printDebugMessage(f"Running Roblox{client_label}Beta.exe using Command: {com}")
+                printDebugMessage(debug, f"Running Roblox{client_label}Beta.exe using Command: {com}")
                 a = subprocess.run(com, shell=True, check=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
@@ -2538,36 +2504,36 @@ class Handler:
                 if self.__main_os__ == "Darwin":
                     cur_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=channel)
                     if cur_vers and cur_vers.get("success") == True:
-                        if debug == True: printDebugMessage(f"Downloading Roblox {client_label} DMG from Roblox's servers..")
+                        printDebugMessage(debug, f"Downloading Roblox {client_label} DMG from Roblox's servers..")
                         cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-Roblox{"Studio" if studio == True else ""}.zip'
-                        if debug == True: printDebugMessage(f"Downloading from: {cur_vers_down_link}")
+                        printDebugMessage(debug, f"Downloading from: {cur_vers_down_link}")
                         down_req = requests.download(cur_vers_down_link, os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
                         if down_req.ok:
                             zip_extract = pip_class.unzipFile(os.path.join(cur_path, f"Roblox{client_label}Install.zip"), filePath, ["Contents"])
                             if zip_extract.returncode == 0: os.remove(os.path.join(cur_path, f"Roblox{client_label}Install.zip"))
                             else:
-                                if debug == True: printDebugMessage(f"Unable to unzip Roblox {client_label} installer due to an error.")
+                                printDebugMessage(debug, f"Unable to unzip Roblox {client_label} installer due to an error.")
                         else:
-                            if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an error. Code: {down_req.status_code}")
+                            printDebugMessage(debug, f"Unable to download Roblox {client_label} installer due to an error. Code: {down_req.status_code}")
                     else:
-                        if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error.")
+                        printDebugMessage(debug, f"Unable to download Roblox {client_label} installer due to an http error.")
                 elif self.__main_os__ == "Windows":
                     cur_vers = self.getLatestClientVersion(studio=studio, debug=debug, channel=channel)
                     if cur_vers and cur_vers.get("success") == True:
-                        if debug == True: printDebugMessage(f"Downloading Roblox EXE from Roblox's servers..")
+                        printDebugMessage(debug, f"Downloading Roblox EXE from Roblox's servers..")
                         cur_vers_down_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-Roblox{client_label}Installer.exe'
-                        if debug == True: printDebugMessage(f"Downloading from: {cur_vers_down_link}")
+                        printDebugMessage(debug, f"Downloading from: {cur_vers_down_link}")
                         down_req = requests.download(cur_vers_down_link, filePath)
                         if down_req.ok:
-                            if debug == True: printDebugMessage(f"Successfully downloaded installer!")
+                            printDebugMessage(debug, f"Successfully downloaded installer!")
                             return filePath
                         else:
-                            if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error. Code: {down_req.status_code}")
+                            printDebugMessage(debug, f"Unable to download Roblox {client_label} installer due to an http error. Code: {down_req.status_code}")
                     else:
-                        if debug == True: printDebugMessage(f"Unable to download Roblox {client_label} installer due to an http error.")
+                        printDebugMessage(debug, f"Unable to download Roblox {client_label} installer due to an http error.")
                 else: self.unsupportedFunction()
             else:
-                if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")
+                printDebugMessage(debug, f"Unable to fetch install bootstrapper settings from Roblox.")
         else: self.unsupportedFunction()
     def installFastFlags(self, fflags: dict, studio: bool=False, askForPerms: bool=False, merge: bool=True, flat: bool=False, endRobloxInstances: bool=True, debug: bool=False, main: bool=False):
         if __name__ == "__main__" or main == True:
@@ -2715,15 +2681,15 @@ class Handler:
                 if endRobloxInstances == True:
                     if submit_status: submit_status.submit("[FFLAGS] Ending Roblox Windows..", 10)
                     if studio == True:
-                        if debug == True: printDebugMessage(f"Closing any open Roblox Studio windows..")
+                        printDebugMessage(debug, f"Closing any open Roblox Studio windows..")
                         self.endRoblox(studio=True)
                     else:
-                        if debug == True: printDebugMessage(f"Closing any open Roblox windows..")
+                        printDebugMessage(debug, f"Closing any open Roblox windows..")
                         self.endRoblox()
                 if submit_status: submit_status.submit("[FFLAGS] Creating ClientSettings Folder..", 25)
                 set_location = os.path.join(macOS_studioDir if studio == True else macOS_dir, macOS_beforeClientServices, "ClientSettings", f'ClientAppSettings.json')
                 if not os.path.exists(os.path.dirname(set_location)):
-                    if debug == True: printDebugMessage("Creating ClientSettings folder..")
+                    printDebugMessage(debug, "Creating ClientSettings folder..")
                     makedirs(os.path.dirname(set_location))
                 if merge == True:
                     if submit_status: submit_status.submit("[FFLAGS] Merging Possible Configurations..", 45)
@@ -2732,29 +2698,29 @@ class Handler:
                             with open(set_location, "r", encoding="utf-8") as f: merge_json = json.load(f)
                             merge_json.update(fflags)
                             fflags = merge_json
-                            if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
+                            printDebugMessage(debug, "Successfully merged the JSON in the ClientSettings folder with the provided json!")
                         except Exception as e: printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                 if submit_status: submit_status.submit("[FFLAGS] Saving Configuration..", 50)
                 with open(set_location, "w", encoding="utf-8") as f:
                     if flat == True: json.dump(fflags, f)
                     else: json.dump(fflags, f, indent=4)
                 if submit_status: submit_status.submit("[FFLAGS] Saved FFlags!", 100)
-                if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
+                printDebugMessage(debug, f"Saved to ClientAppSettings.json successfully!")
             elif self.__main_os__ == "Windows":
                 if endRobloxInstances == True:
                     if submit_status: submit_status.submit("[FFLAGS] Ending Roblox Windows..", 10)
                     if studio == True:
-                        if debug == True: printDebugMessage(f"Closing any open Roblox Studio windows..")
+                        printDebugMessage(debug, f"Closing any open Roblox Studio windows..")
                         self.endRoblox(studio=True)
                     else:
-                        if debug == True: printDebugMessage(f"Closing any open Roblox windows..")
+                        printDebugMessage(debug, f"Closing any open Roblox windows..")
                         self.endRoblox()
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=studio)
                 if most_recent_roblox_version_dir or orangeblox_mode == True:
                     if submit_status: submit_status.submit("[FFLAGS] Creating ClientSettings Folder..", 25)
                     set_location = os.path.join(most_recent_roblox_version_dir, "ClientSettings", f"ClientAppSettings.json")
                     if not os.path.exists(os.path.dirname(set_location)):
-                        if debug == True: printDebugMessage("Creating ClientSettings folder..")
+                        printDebugMessage(debug, "Creating ClientSettings folder..")
                         makedirs(os.path.dirname(set_location))
                     if merge == True:
                         if submit_status: submit_status.submit("[FFLAGS] Merging Possible Configurations..", 45)
@@ -2763,14 +2729,14 @@ class Handler:
                                 with open(set_location, "r", encoding="utf-8") as f: merge_json = json.load(f)
                                 merge_json.update(fflags)
                                 fflags = merge_json
-                                if debug == True: printDebugMessage("Successfully merged the JSON in the ClientSettings folder with the provided json!")
+                                printDebugMessage(debug, "Successfully merged the JSON in the ClientSettings folder with the provided json!")
                             except Exception as e: printLog(f"Something went wrong while trying to generate a merged JSON: {str(e)}")
                     if submit_status: submit_status.submit("[FFLAGS] Saving Configuration..", 50)
                     with open(set_location, "w", encoding="utf-8") as f:
                         if flat == True: json.dump(fflags, f)
                         else: json.dump(fflags, f, indent=4)
                     if submit_status: submit_status.submit("[FFLAGS] Saved FFlags!", 100)
-                    if debug == True: printDebugMessage(f"Saved to ClientAppSettings.json successfully!")
+                    printDebugMessage(debug, f"Saved to ClientAppSettings.json successfully!")
                 else:
                     printLog("Roblox couldn't be found.")
                     if submit_status: submit_status.submit(f"{submit_status.error()}[FFLAGS] Roblox couldn't be found!", 100)
@@ -2844,10 +2810,10 @@ class Handler:
         if endRobloxInstances == True:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Ending Roblox Windows..", 10)
             if studio == True:
-                if debug == True: printDebugMessage(f"Closing any open Roblox Studio windows..")
+                printDebugMessage(debug, f"Closing any open Roblox Studio windows..")
                 self.endRoblox(studio=True)
             else:
-                if debug == True: printDebugMessage(f"Closing any open Roblox windows..")
+                printDebugMessage(debug, f"Closing any open Roblox windows..")
                 self.endRoblox()
         if submit_status: submit_status.submit("[GLOBALSETTINGS] Finding Global Basic Settings..", 25)
         file_name = None
@@ -2857,8 +2823,8 @@ class Handler:
                 file_name = i
         if file_name:
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Found Global Basic Settings File!", 25)
-            if debug == True: printDebugMessage(f"Founded File Name: {file_name}")
-            if debug == True: printDebugMessage("Reading Settings XML..")
+            printDebugMessage(debug, f"Founded File Name: {file_name}")
+            printDebugMessage(debug, "Reading Settings XML..")
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Reading XML File!", 25)
             with open(os.path.join(roblox_app_location, file_name), "r", encoding="utf-8") as f: xml_contents = f.read()
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Finding root of file!", 30)
@@ -2866,7 +2832,7 @@ class Handler:
             item_class = xml_original_root.find(".//Item")
             referent = item_class.get("referent") if item_class is not None else None
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Recreating XML Base!", 45)
-            if debug == True: printDebugMessage("Recreating XML Tree..")
+            printDebugMessage(debug, "Recreating XML Tree..")
             xml_root = ET.Element("roblox", {
                 "xmlns:xmime": "http://www.w3.org/2005/05/xmlmime",
                 "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -2885,13 +2851,13 @@ class Handler:
                     ET.SubElement(vector2_element, "Y").text = str(prop_value[1])
                 else: ET.SubElement(xml_properties, prop_type, {"name": key}).text = str(prop_value)
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Finalizing Tree!", 90)
-            if debug == True: printDebugMessage("Finalizing XML Tree..")
+            printDebugMessage(debug, "Finalizing XML Tree..")
             if flat == True: final_xml_contents = ET.tostring(xml_root, encoding="utf-8").decode()
             else: final_xml_contents = xml.dom.minidom.parseString(ET.tostring(xml_root, encoding="utf-8").decode()).toprettyxml(indent="    ")
-            if debug == True: printDebugMessage("Saving to File..")
+            printDebugMessage(debug, "Saving to File..")
             with open(os.path.join(roblox_app_location, file_name), "w", encoding="utf-8") as f: f.write(final_xml_contents)
             if submit_status: submit_status.submit("[GLOBALSETTINGS] Successfully saved Global Basic Settings!", 100)
-            if debug == True: printDebugMessage("Successfully saved Global Basic Settings!")
+            printDebugMessage(debug, "Successfully saved Global Basic Settings!")
         else:
             if submit_status: submit_status.submit(f"{submit_status.error()}[GLOBALSETTINGS] Unable to find file.", 100)
             printLog("Unable to find settings file.")
@@ -2901,11 +2867,11 @@ class Handler:
             if forceQuit == True:
                 if submit_status: submit_status.submit(f"[INSTALL] Ending Roblox {client_label} Instances..", 0)
                 self.endRoblox(studio=studio)
-                if debug == True: printDebugMessage(f"Ending Roblox {client_label} Instances..")
+                printDebugMessage(debug, f"Ending Roblox {client_label} Instances..")
         def waitForRobloxEnd():
             if disableRobloxAutoOpen == True:
                 for i in range(15):
-                    if debug == True: printDebugMessage(f"Waited: {i}/15 seconds")
+                    printDebugMessage(debug, f"Waited: {i}/15 seconds")
                     if submit_status: submit_status.submit("[INSTALL] Awaiting Roblox to Close..", 90)
                     if self.getIfRobloxIsOpen(studio=studio):
                         self.endRoblox(studio=studio)
@@ -2915,7 +2881,7 @@ class Handler:
         if self.__main_os__ == "Darwin":
             if self.getIfRobloxIsOpen(studio=studio, installer=True):
                 if submit_status: submit_status.submit("[INSTALL] Waiting for existing installer..", 10)
-                if debug == True: printDebugMessage("Installer is already opened. Waiting for installation to end..")
+                printDebugMessage(debug, "Installer is already opened. Waiting for installation to end..")
                 while True:
                     if not self.getIfRobloxIsOpen(studio=studio, installer=True): break
                     else: time.sleep(1)
@@ -2940,28 +2906,28 @@ class Handler:
                                 if os.path.exists(os.path.join((macOS_studioDir if studio == True else macOS_dir), macOS_beforeClientServices, f"Roblox{client_label}Installer.app")):
                                     try:
                                         if submit_status: submit_status.submit("[INSTALL] Downloading Roblox Installer..", 30)
-                                        if debug == True: printDebugMessage(f"Replicating Roblox {client_label} installer to path: {copyRobloxInstallerPath}")
+                                        printDebugMessage(debug, f"Replicating Roblox {client_label} installer to path: {copyRobloxInstallerPath}")
                                         pip_class.copyTreeWithMetadata(os.path.join((macOS_studioDir if studio == True else macOS_dir), macOS_beforeClientServices, f"Roblox{client_label}Installer.app"), copyRobloxInstallerPath, dirs_exist_ok=True)
                                     except Exception as e:
-                                        if debug == True: printDebugMessage("Unable to replicate installer to the designated file path.")
+                                        printDebugMessage(debug, "Unable to replicate installer to the designated file path.")
                                 else:
-                                    if debug == True: printDebugMessage("There's no version of Roblox installed. Installing from downloaded installer app.")
+                                    printDebugMessage(debug, "There's no version of Roblox installed. Installing from downloaded installer app.")
                             if submit_status: submit_status.submit("[INSTALL] Running Roblox Installer..", 50)
-                            if debug == True: printDebugMessage(f"Running Roblox{client_label}Installer executable..")
+                            printDebugMessage(debug, f"Running Roblox{client_label}Installer executable..")
                             insta = subprocess.run(os.path.join(copyRobloxInstallerPath, "Contents", "MacOS", f"Roblox{client_label}Installer"), shell=True, check=True, stdout=subprocess.DEVNULL)
                         else:
                             if submit_status: submit_status.submit("[INSTALL] Running Roblox Installer..", 50)
-                            if debug == True: printDebugMessage(f"Running Roblox{client_label}Installer executable..")
+                            printDebugMessage(debug, f"Running Roblox{client_label}Installer executable..")
                             insta = subprocess.run(os.path.join((macOS_studioDir if studio == True else macOS_dir), macOS_beforeClientServices, f"Roblox{client_label}Installer.app", "Contents", "MacOS", f"Roblox{client_label}Installer"), shell=True, check=True, stdout=subprocess.DEVNULL)
                         if insta.returncode == 0:
                             if submit_status: submit_status.submit("[INSTALL] Installer has been run successfully!", 80)
-                            if debug == True: printDebugMessage("Installer has succeeded! Awaiting Roblox closing..")
+                            printDebugMessage(debug, "Installer has succeeded! Awaiting Roblox closing..")
                             waitForRobloxEnd()
                             if submit_status: submit_status.submit("[INSTALL] Roblox is installed!", 100)
                             return {"success": True}
                         else:
                             if submit_status: submit_status.submit("[INSTALL] Installer has failed..", 80)
-                            if debug == True: printDebugMessage(f"Installer has failed. Code: {insta.returncode}")
+                            printDebugMessage(debug, f"Installer has failed. Code: {insta.returncode}")
                             return {"success": False}
                     except Exception as e:
                         printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
@@ -2987,7 +2953,7 @@ class Handler:
         elif self.__main_os__ == "Windows":
             if self.getIfRobloxIsOpen(studio=studio, installer=True):
                 if submit_status: submit_status.submit("[INSTALL] Waiting for existing installer..", 10)
-                if debug == True: printDebugMessage("Installer is already opened. Waiting for installation to end..")
+                printDebugMessage(debug, "Installer is already opened. Waiting for installation to end..")
                 while True:
                     if not self.getIfRobloxIsOpen(studio=studio, installer=True): break
                     else: time.sleep(1)
@@ -2999,14 +2965,14 @@ class Handler:
                 most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=studio)
                 if most_recent_roblox_version_dir:
                     if submit_status: submit_status.submit("[INSTALL] Running Roblox Installer..", 50)
-                    if debug == True: printDebugMessage(f"Running Roblox{client_label}Installer executable..")
+                    printDebugMessage(debug, f"Running Roblox{client_label}Installer executable..")
                     try:
                         insta = subprocess.run(os.path.join(most_recent_roblox_version_dir, f"Roblox{client_label}Installer.exe"), shell=True, stdout=subprocess.DEVNULL)
                         while True:
                             if not self.getIfRobloxIsOpen(studio=studio, installer=True): break
                             else: time.sleep(1)
                         if submit_status: submit_status.submit("[INSTALL] Installer has been run successfully!", 80)
-                        if debug == True: printDebugMessage("Installer has succeeded! Awaiting Roblox closing..")
+                        printDebugMessage(debug, "Installer has succeeded! Awaiting Roblox closing..")
                         waitForRobloxEnd()
                         return {"success": True}
                     except Exception as e:
@@ -3030,14 +2996,14 @@ class Handler:
                             return {"success": False}
                         else:
                             if submit_status: submit_status.submit(f"[INSTALL] Running Roblox {client_label} Installer..", 50)
-                            if debug == True: printDebugMessage(f"Running Roblox{client_label}Installer executable..")
+                            printDebugMessage(debug, f"Running Roblox{client_label}Installer executable..")
                             try:
                                 insta = subprocess.run(f"{copyRobloxInstallerPath}", shell=True, stdout=subprocess.DEVNULL)
                                 while True:
                                     if not self.getIfRobloxIsOpen(studio=studio, installer=True): break
                                     else: time.sleep(1)
                                 if submit_status: submit_status.submit("[INSTALL] Installer has been run successfully!", 80)
-                                if debug == True: printDebugMessage("Installer has succeeded! Awaiting Roblox closing..")
+                                printDebugMessage(debug, "Installer has succeeded! Awaiting Roblox closing..")
                                 waitForRobloxEnd()
                                 return {"success": True}
                             except Exception as e:
@@ -3090,7 +3056,7 @@ class Handler:
                 if cur_vers and cur_vers.get("success") == True:
                     if self.getIfRobloxIsOpen(studio=studio):
                         if submit_status: submit_status.submit("[BUNDLE] Closing Roblox..", 5)
-                        if debug == True: printDebugMessage(f"Closing Roblox to prevent issues during download..")
+                        printDebugMessage(debug, f"Closing Roblox to prevent issues during download..")
                         self.endRoblox(studio=studio)
                     if submit_status: submit_status.submit("[BUNDLE] Fetching Bootstrap Settings..", 15)
                     bootstrapper_settings = self.getLatestRobloxAppSettings(studio=studio, debug=debug, bootstrapper=True, bucket=channel)
@@ -3113,11 +3079,11 @@ class Handler:
                                         if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 45)
                                         while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
                                         if os.path.exists(installPath):
-                                            if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                            printDebugMessage(debug, f"Install was finished and installed!")
                                             if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
                                             return {"success": True}
                                         else:
-                                            if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                            printDebugMessage(debug, f"Install was not finished and an error might have occurred!")
                                             if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Install was not finished!", 100)
                                             return {"success": False}
                                     else:
@@ -3125,7 +3091,7 @@ class Handler:
                                 else:
                                     with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                             try:
-                                if debug == True: printDebugMessage(f"Fetching Latest Package Manifest from Roblox's servers..")
+                                printDebugMessage(debug, f"Fetching Latest Package Manifest from Roblox's servers..")
                                 rbx_manifest_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxPkgManifest.txt'
                                 rbx_hashes_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxManifest.txt'
                                 rbx_man_req = requests.get(rbx_manifest_link)
@@ -3165,7 +3131,7 @@ class Handler:
                                                         total = int(base+((top-base)*(info.percent/100)))
                                                         if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", total)
                                                 if submit_status: submit_status.submit(f"[BUNDLE] Downloading Package [{i}]..", round(((per_step-1)/(len(marked_install_files)))*100, 2))
-                                                if debug == True: printDebugMessage(f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
+                                                printDebugMessage(debug, f"Downloading from Roblox's server: {i} [{round((per_step/(len(marked_install_files)))*100, 2)}/100]")
                                                 down_req = requests.download(f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-{i}', os.path.join(installPath, i), submit_status=download_stat())
                                                 if down_req.ok: downloaded_zip_files.append(i)
                                                 else:
@@ -3181,15 +3147,15 @@ class Handler:
                                             for i in downloaded_zip_files:
                                                 per_step += 1
                                                 if submit_status: submit_status.submit(f"[BUNDLE] Verifying Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
-                                                if debug == True: printDebugMessage(f"Verifying from Roblox's server: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
+                                                printDebugMessage(debug, f"Verifying from Roblox's server: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
                                                 if rbx_hash_dict.get(i):
                                                     hash_value = rbx_hash_dict.get(i)
                                                     calculated_hash = calculate_rbx_hash(os.path.join(installPath, i))
                                                     if calculated_hash == None:
-                                                        if debug == True: printDebugMessage(f"Unable to verify file: {i}")
+                                                        printDebugMessage(debug, f"Unable to verify file: {i}")
                                                         continue
                                                     elif not (calculated_hash == hash_value):
-                                                        if debug == True: printDebugMessage(f"Unable to verify file: {hash_value} => {calculated_hash}")
+                                                        printDebugMessage(debug, f"Unable to verify file: {hash_value} => {calculated_hash}")
                                                         verified = False
                                                         break
                                             if verified == False:
@@ -3203,7 +3169,7 @@ class Handler:
                                         for i in downloaded_zip_files:
                                             per_step += 1
                                             if submit_status: submit_status.submit(f"[BUNDLE] Installing Package [{i}]..", round((per_step/(len(downloaded_zip_files)))*100, 2))
-                                            if debug == True: printDebugMessage(f"Installing package: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
+                                            printDebugMessage(debug, f"Installing package: {i} [{round((per_step/(len(downloaded_zip_files)))*100, 2)}/100]")
                                             if studio == True and self.roblox_studio_bundle_files.get(i): export_destination = self.roblox_studio_bundle_files.get(i)
                                             elif not (studio == True) and self.roblox_bundle_files.get(i): export_destination = self.roblox_bundle_files.get(i)
                                             elif i.endswith(".zip"): export_destination = "/"
@@ -3212,8 +3178,8 @@ class Handler:
                                                 zip_extract = pip_class.unzipFile(os.path.join(installPath, i), f'{installPath}{export_destination}')
                                                 if zip_extract.returncode == 0:
                                                     os.remove(os.path.join(installPath, i))
-                                                    if debug == True: printDebugMessage(f"Successfully exported {i}!")
-                                                elif debug == True: printDebugMessage(f"Unable to export: {i}")
+                                                    printDebugMessage(debug, f"Successfully exported {i}!")
+                                                else: printDebugMessage(debug, f"Unable to export: {i}")
                                             if i == "WebView2RuntimeInstaller.zip":
                                                 try:
                                                     reg_sets = [
@@ -3234,37 +3200,39 @@ class Handler:
                                                             vers = version
                                                         except Exception: pass
                                                     if vers:
-                                                        if debug == True: printDebugMessage(f"WebView2 (vers: {vers}) is currently installed!")
+                                                        printDebugMessage(debug, f"WebView2 (vers: {vers}) is currently installed!")
                                                     else: raise Exception("oranges!!")
                                                 except Exception:
                                                     try:
                                                         web2_res = subprocess.run([os.path.join(installPath, "WebView2RuntimeInstaller", "MicrosoftEdgeWebview2Setup.exe"), "/silent", "/install"])
-                                                        if web2_res.returncode == 0: printDebugMessage(f"WebView2 has been installed successfully!")
-                                                        elif web2_res.returncode == 2147747880: printDebugMessage(f"WebView2 is currently installed!")
+                                                        if web2_res.returncode == 0: 
+                                                            printDebugMessage(debug, f"WebView2 has been installed successfully!")
+                                                        elif web2_res.returncode == 2147747880: 
+                                                            printDebugMessage(debug, f"WebView2 is currently installed!")
                                                         else: printErrorMessage(f"WebView2 has failed to be installed! Code: {web2_res.returncode}")
                                                     except Exception as e: printErrorMessage(f"WebView2 has failed to be installed! Exception: {str(e)}")
                                         with open(os.path.join(installPath, "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
                                         with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>https://www.roblox.com</BaseUrl></Settings>')
                                         if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
-                                        if debug == True: printDebugMessage(f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
+                                        printDebugMessage(debug, f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
                                         return {"success": True}
                                     except Exception as e:
                                         if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
-                                        if debug == True: printDebugMessage(f"Unable to install Roblox Bundle: {str(e)}")
+                                        printDebugMessage(debug, f"Unable to install Roblox Bundle: {str(e)}")
                                         if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                         return {"success": False}
                                 else:
                                     if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
-                                    if debug == True: printDebugMessage(f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
+                                    printDebugMessage(debug, f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to fetch Roblox manifest file!", 100)
                                     if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                     return {"success": False}
                             except Exception as e:
                                 if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
-                                if debug == True: printDebugMessage(f"Unable to install Roblox Bundle: {str(e)}")
+                                printDebugMessage(debug, f"Unable to install Roblox Bundle: {str(e)}")
                                 if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                 return {"success": False}
                         elif self.__main_os__ == "Darwin":
@@ -3281,11 +3249,11 @@ class Handler:
                                         if submit_status: submit_status.submit("[BUNDLE] There's already an install in progress! Awaiting finish..", 0)
                                         while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
                                         if os.path.exists(installPath):
-                                            if debug == True: printDebugMessage(f"Install was finished and installed!")
+                                            printDebugMessage(debug, f"Install was finished and installed!")
                                             if submit_status: submit_status.submit("[BUNDLE] Installed succeeded!", 100)
                                             return {"success": True}
                                         else:
-                                            if debug == True: printDebugMessage(f"Install was not finished and an error might have occurred!")
+                                            printDebugMessage(debug, f"Install was not finished and an error might have occurred!")
                                             if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Install was not finished!", 100)
                                             return {"success": False}
                                     else:
@@ -3294,7 +3262,7 @@ class Handler:
                                     with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
                             roblox_player_down = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}mac/{"arm64/" if platform.machine() == "arm64" else ""}{cur_vers.get("client_version")}-{zip_name}'
                             if submit_status: submit_status.submit(f"[BUNDLE] Downloading Roblox App!", 0)
-                            if debug == True: printDebugMessage(f"Downloading {client_label} from Roblox's server: {roblox_player_down}")
+                            printDebugMessage(debug, f"Downloading {client_label} from Roblox's server: {roblox_player_down}")
                             try:
                                 class download_stat:
                                     def submit(self, info):
@@ -3302,52 +3270,52 @@ class Handler:
                                 down_req = requests.download(roblox_player_down, os.path.join(installPath, zip_name), submit_status=download_stat())
                                 if down_req.ok and os.path.exists(os.path.join(installPath, zip_name)):
                                     if os.path.exists(os.path.join(installPath, f"Roblox{client_label}")) or os.path.exists(appPath):
-                                        if debug == True: printDebugMessage(f"Cleaning before install..")
+                                        printDebugMessage(debug, f"Cleaning before install..")
                                         if os.path.exists(os.path.join(installPath, f"Roblox{client_label}")): shutil.rmtree(os.path.join(installPath, f"Roblox{client_label}"), ignore_errors=True)
                                         if os.path.exists(os.path.join(appPath)): shutil.rmtree(os.path.join(appPath), ignore_errors=True)
                                     if submit_status: submit_status.submit(f"[BUNDLE] Extracting Roblox App!", 30)
-                                    if debug == True: printDebugMessage(f"Extracting Player from Downloaded ZIP: {os.path.join(installPath, zip_name)}")
+                                    printDebugMessage(debug, f"Extracting Player from Downloaded ZIP: {os.path.join(installPath, zip_name)}")
                                     def zip_moving(): 
                                         if submit_status: submit_status.submit(f"[BUNDLE] Moving Roblox Files!", 55)
                                     zip_extract = pip_class.unzipFile(os.path.join(installPath, zip_name), appPath, ["Contents"], [f"Roblox{client_label}.app/Contents/*"], moving_file_func=zip_moving)
                                     if zip_extract.returncode == 0:
                                         if submit_status: submit_status.submit(f"[BUNDLE] Cleaning up {client_label}!", 80)
-                                        if debug == True: printDebugMessage(f"Cleaning up..")
+                                        printDebugMessage(debug, f"Cleaning up..")
                                         os.remove(os.path.join(installPath, zip_name))
                                         with open(os.path.join(appPath, "Contents", "MacOS", "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
-                                        if debug == True: printDebugMessage(f"Successfully installed Roblox to: {installPath} [Client: {cur_vers.get('client_version')}]")
+                                        printDebugMessage(debug, f"Successfully installed Roblox to: {installPath} [Client: {cur_vers.get('client_version')}]")
                                         if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         return {"success": True}
                                     else:
-                                        if debug == True: printDebugMessage(f"Unable to extract {client_label} due to an error!")
+                                        printDebugMessage(debug, f"Unable to extract {client_label} due to an error!")
                                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to extract Roblox {client_label}.", 100)
                                         if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
                                         if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         return {"success": False}
                                 else:
-                                    if debug == True: printDebugMessage(f"Unable to download the Roblox {client_label}.")
+                                    printDebugMessage(debug, f"Unable to download the Roblox {client_label}.")
                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to download Roblox {client_label}.", 100)
                                     if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
                                     if os.path.exists(os.path.join(installPath, zip_name)): os.remove(os.path.join(installPath, zip_name))
                                     if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                     return {"success": False}
                             except Exception as e:
-                                if debug == True: printDebugMessage(f"Unable to download and install the Roblox {client_label}."); printDebugMessage(f"Exception: {str(e)}")
+                                printDebugMessage(debug, f"Unable to download and install the Roblox {client_label}.\nException: {str(e)}")
                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to download and install Roblox {client_label}.", 100)
                                 if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
                                 if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                 return {"success": False}
                     else:
-                        if debug == True: printDebugMessage(f"Unable to fetch install bootstrapper settings from Roblox.")
+                        printDebugMessage(debug, f"Unable to fetch install bootstrapper settings from Roblox.")
                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to fetch bootstrapper settings.", 100)
                         return {"success": False}
                 else:
-                    if debug == True: printDebugMessage(f"Unable to fetch Roblox manifest file due to an http error.")
+                    printDebugMessage(debug, f"Unable to fetch Roblox manifest file due to an http error.")
                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to fetch Roblox manifest file!", 100)
                     return {"success": False}
             except Exception as e:
-                if debug == True: printDebugMessage(f"Unable to download and install Roblox Bundle. Error: {str(e)}")
+                printDebugMessage(debug, f"Unable to download and install Roblox Bundle. Error: {str(e)}")
                 if submit_status: submit_status.submit(f"{submit_status.error()}[INSTALL] Unable to download and install Roblox Bundle!", 100)
                 return {"success": False}
         else:
@@ -3357,33 +3325,33 @@ class Handler:
     def uninstallRoblox(self, studio: bool=False, clearUserData: bool=True, debug: bool=False):
         if self.getIfRobloxIsOpen(studio=studio):
             self.endRoblox(studio=studio)
-            if debug == True: printDebugMessage("Ending Roblox Instances..")
+            printDebugMessage(debug, "Ending Roblox Instances..")
                 
         if self.__main_os__ == "Darwin":
             try:
                 if studio == True and os.path.exists(macOS_studioDir):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing app..", 0)
-                    if debug == True: printDebugMessage("Removing Roblox Studio App from Applications..")
+                    printDebugMessage(debug, "Removing Roblox Studio App from Applications..")
                     shutil.rmtree(macOS_studioDir, ignore_errors=True)
                 elif os.path.exists(macOS_dir):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing app..", 0)
-                    if debug == True: printDebugMessage("Removing Roblox App from Applications..")
+                    printDebugMessage(debug, "Removing Roblox App from Applications..")
                     shutil.rmtree(macOS_dir, ignore_errors=True)
                 if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "OTAPatchBackups")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing OTA Patch Backups..", 20)
-                    if debug == True: printDebugMessage("Removing OTA Patch Backups..")
+                    printDebugMessage(debug, "Removing OTA Patch Backups..")
                     shutil.rmtree(os.path.join(user_folder, "Library", "Roblox", "OTAPatchBackups"), ignore_errors=True)
                 if os.path.exists(os.path.join(user_folder, "Library", "Roblox", "placeIDEState")):
                     if submit_status: submit_status.submit("[UNINSTALL] Place IDE States..", 40)
-                    if debug == True: printDebugMessage("Removing Place IDE States..")
+                    printDebugMessage(debug, "Removing Place IDE States..")
                     shutil.rmtree(os.path.join(user_folder, "Library", "Roblox", "placeIDEState"), ignore_errors=True)
                 if os.path.exists(os.path.join(user_folder, "Library", "Logs", "Roblox")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Logs..", 60)
-                    if debug == True: printDebugMessage("Removing Roblox Logs..")
+                    printDebugMessage(debug, "Removing Roblox Logs..")
                     shutil.rmtree(os.path.join(user_folder, "Library", "Logs", "Roblox"), ignore_errors=True)
                 if clearUserData == True and os.path.exists(os.path.join(user_folder, "Library", "Roblox")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Roblox User Data..", 80)
-                    if debug == True: printDebugMessage("Removing Roblox User Data..")
+                    printDebugMessage(debug, "Removing Roblox User Data..")
                     shutil.rmtree(os.path.join(user_folder, "Library", "Roblox"), ignore_errors=True)
                 if submit_status: submit_status.submit("[UNINSTALL] Successfully uninstalled Roblox!", 100)
             except Exception as e: printErrorMessage(f"Something went wrong deleting Roblox: {str(e)}")
@@ -3392,31 +3360,31 @@ class Handler:
                 for i in os.listdir(f"{windows_versions_dir}"):
                     if os.path.isdir(os.path.join(windows_versions_dir, i)) and os.path.exists(os.path.join(windows_versions_dir, i, "RobloxPlayerBeta.exe")):
                         if submit_status: submit_status.submit("[UNINSTALL] Removing app..", 0)
-                        if debug == True: printDebugMessage("Removing Roblox App from System..")
+                        printDebugMessage(debug, "Removing Roblox App from System..")
                         shutil.rmtree(os.path.join(windows_versions_dir, i), ignore_errors=True)
                 if os.path.exists(os.path.join(windows_dir, "OTAPatchBackups")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing OTA Patch Backups..", 45)
-                    if debug == True: printDebugMessage("Removing OTA Patch Backups..")
+                    printDebugMessage(debug, "Removing OTA Patch Backups..")
                     shutil.rmtree(os.path.join(windows_dir, "OTAPatchBackups"), ignore_errors=True)
                 if os.path.exists(os.path.join(windows_dir, "placeIDEState")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Place IDE States..", 60)
-                    if debug == True: printDebugMessage("Removing Place IDE States..")
+                    printDebugMessage(debug, "Removing Place IDE States..")
                     shutil.rmtree(os.path.join(windows_dir, "placeIDEState"), ignore_errors=True)
                 if os.path.exists(os.path.join(windows_dir, "Downloads", "roblox-player")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Roblox Downloads..", 75)
-                    if debug == True: printDebugMessage("Removing Downloads..")
+                    printDebugMessage(debug, "Removing Downloads..")
                     shutil.rmtree(os.path.join(windows_dir, "Downloads", "roblox-player"), ignore_errors=True)
                 if os.path.exists(os.path.join(windows_dir, "UniversalApp")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Universe App..", 85)
-                    if debug == True: printDebugMessage("Removing Universal App..")
+                    printDebugMessage(debug, "Removing Universal App..")
                     shutil.rmtree(os.path.join(windows_dir, "UniversalApp"), ignore_errors=True)
                 if os.path.exists(os.path.join(windows_dir, "logs")):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Logs..", 90)
-                    if debug == True: printDebugMessage("Removing Roblox Logs..")
+                    printDebugMessage(debug, "Removing Roblox Logs..")
                     shutil.rmtree(os.path.join(windows_dir, "logs"), ignore_errors=True)
                 if clearUserData == True and os.path.exists(windows_dir):
                     if submit_status: submit_status.submit("[UNINSTALL] Removing Roblox User Data..", 95)
-                    if debug == True: printDebugMessage("Removing Roblox User Data..")
+                    printDebugMessage(debug, "Removing Roblox User Data..")
                     shutil.rmtree(windows_dir, ignore_errors=True)
                 if submit_status: submit_status.submit("[UNINSTALL] Successfully uninstalled Roblox!", 100)
             except Exception as e: printErrorMessage(f"Something went wrong starting Roblox Installer: {str(e)}")
@@ -3428,7 +3396,7 @@ class Handler:
             client_label = "Studio" if studio == True else "Player"
             if self.getIfRobloxIsOpen(studio=studio):
                 self.endRoblox(studio=studio)
-                if debug == True: printDebugMessage(f"Ending Roblox {client_label} Instances..")
+                printDebugMessage(debug, f"Ending Roblox {client_label} Instances..")
             channel = "LIVE"
             if downloadInstaller == True:
                 channel_res = self.getCurrentClientVersion(studio=studio)

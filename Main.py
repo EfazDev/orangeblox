@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0h
+# v2.5.0i
 # 
 
 # Python Modules
@@ -52,7 +52,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0h"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0i"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -2437,12 +2437,7 @@ def continueToUpdatePython(): # Update Python
             else: printErrorMessage("Python Installation was may be canceled or Python was not installed!")
 def continueToUpdatePythonModules(): # Update Python Modules
     printSystemMessage(f"--- Update Python Modules ---")
-    can_be_updated_modules = ["pypresence", "psutil", "pip", "truststore"]
-    if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
-    elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
-    for mod_info in generateModsManifest().values():
-        if mod_info.get("mod_script") == True and mod_info.get("enabled") == True and mod_info.get("python_modules"): can_be_updated_modules += [str(module_needed) for module_needed in mod_info.get("python_modules", []) if not module_needed in can_be_updated_modules]
-    updating_python_modules = pip_class.updates(can_be_updated_modules)
+    updating_python_modules = pip_class.updates()
     if updating_python_modules and updating_python_modules["success"] == True:
         if len(updating_python_modules["packages"]) > 0:
             strs = []
@@ -5452,6 +5447,38 @@ def runRoblox():
                 except Exception: printDebugMessage(f"Something went wrong with setting the Roblox Runtime Icon: \n{trace()}")
                 time.sleep(2*exponential_backoff)
                 exponential_backoff *= 2
+        def startDiscordRPC(thumbnail_url: str=None):
+            global discord_rpc
+            need_new_rpc = True
+            try: 
+                if discord_rpc and discord_rpc.connected == True: need_new_rpc = False
+            except Exception as e: printDebugMessage(f"There was an error checking Discord RPC: \n{trace()}")
+            if need_new_rpc == True:
+                if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
+                    discord_rpc = Presence("1367683523338698863" if run_studio == True else "1297668920349823026")
+                    discord_rpc.set_debug_mode(main_config.get("EFlagEnableDebugMode") == True)
+                    discord_rpc.connect()
+                    if main_config.get("EFlagEnableDefaultDiscordRPC") != False:
+                        if not thumbnail_url: thumbnail_url = getRobloxThumbnailURL()
+                        start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
+                        if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
+                        discord_rpc.update(
+                            details=f"Idling Roblox{' Studio' if run_studio == True else ''}",
+                            start=start_time,
+                            large_image=thumbnail_url, 
+                            large_url="https://www.roblox.com/",
+                            large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
+                            small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
+                            small_url=main_host,
+                            small_text=obName0(), 
+                            buttons=[
+                                {
+                                    "label": ts("Go to Roblox! 🌐"), 
+                                    "url": f"https://www.roblox.com/"
+                                }
+                            ]
+                        )
+                        discord_rpc.default_presence = discord_rpc.current_presence
         def generateEmbedField(name, value, inline=True): return {"name": name, "value": str(value), "inline": inline}
         def generateDiscordPayload(title, color, fields, thumbnail_url): return {"content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>", "embeds": [{"title": title, "color": color, "fields": fields, "author": { "name": obName0(), "icon_url": main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png") }, "thumbnail": { "url": thumbnail_url }, "footer": { "text": (ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev")) + (" | Custom Theme" if obName0() != "OrangeBlox" or obName1() != "🍊" else ""), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" }, "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')}], "attachments": []}
         def getRobloxThumbnailURL(studio: bool=None):
@@ -5629,6 +5656,7 @@ def runRoblox():
                                                 global discord_rpc_info
                                                 nonlocal set_current_private_server_key
 
+                                                if not discord_rpc: startDiscordRPC()
                                                 err_count = 0
                                                 loop_key = discord_rpc.generate_loop_key()
                                                 while True:
@@ -6053,6 +6081,7 @@ def runRoblox():
                                                     global discord_rpc_info
                                                     nonlocal set_current_private_server_key
 
+                                                    if not discord_rpc: startDiscordRPC()
                                                     err_count = 0
                                                     loop_key = discord_rpc.generate_loop_key()
                                                     while True:
@@ -6307,35 +6336,7 @@ def runRoblox():
         def onRobloxAppStart(consoleLine):
             global discord_rpc
             thumbnail_url = getRobloxThumbnailURL()
-            if (run_studio == False and main_config.get("EFlagEnableDiscordRPC") == True) or (run_studio == True and main_config.get("EFlagEnableDiscordRPCStudio") == True):
-                need_new_rpc = True
-                try: 
-                    if discord_rpc and discord_rpc.connected == True: need_new_rpc = False
-                except Exception as e: printDebugMessage(f"There was an error checking Discord RPC: \n{trace()}")
-                if need_new_rpc == True:
-                    discord_rpc = Presence("1367683523338698863" if run_studio == True else "1297668920349823026")
-                    discord_rpc.set_debug_mode(main_config.get("EFlagEnableDebugMode") == True)
-                    discord_rpc.connect()
-                    if main_config.get("EFlagEnableDefaultDiscordRPC") != False:
-                        start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
-                        if main_config.get("EFlagSetDiscordRPCStart") and (type(main_config.get("EFlagSetDiscordRPCStart")) is float or type(main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = main_config.get("EFlagSetDiscordRPCStart")
-                        discord_rpc.update(
-                            details=f"Idling Roblox{' Studio' if run_studio == True else ''}",
-                            start=start_time,
-                            large_image=thumbnail_url, 
-                            large_url="https://www.roblox.com/",
-                            large_text=f"Roblox{' Studio' if run_studio == True else ''}", 
-                            small_image=f"{main_host}/Images/AppIcon{'RunStudio' if run_studio == True else 'PlayRoblox'}Discord.png", 
-                            small_url=main_host,
-                            small_text=obName0(), 
-                            buttons=[
-                                {
-                                    "label": ts("Go to Roblox! 🌐"), 
-                                    "url": f"https://www.roblox.com/"
-                                }
-                            ]
-                        )
-                        discord_rpc.default_presence = discord_rpc.current_presence
+            startDiscordRPC(thumbnail_url)
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxAppStart") == True:
                 if main_config.get("EFlagDiscordWebhookURL"):
                     embed_fields = [
@@ -6711,7 +6712,7 @@ def runRoblox():
                                 forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True), 
                                 makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True),
-                                startData=f"{'--args' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''} {url}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
+                                startData=f"{'--args' if main_os == 'Darwin' else ''} {url}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
                                 allowRobloxOtherLogDebug=(main_config.get("EFlagAllowFullDebugMode") == True)
                             )
@@ -7136,13 +7137,8 @@ def mainMenu():
                         displayNotification(ts("Python Update Available!"), ts(f'Python {latest_python_version} is now available for download! Install the update by opening the main menu, checking for Python updates and then install!'))
                     else: os.remove(generateFileKey("PythonUpdate"))
             if main_config.get("EFlagDisablePythonModuleUpdateChecks") != True:
-                can_be_updated_modules = ["pypresence", "psutil", "pip", "truststore"]
-                if main_os == "Windows": can_be_updated_modules += ["pywin32", "plyer"]
-                elif main_os == "Darwin": can_be_updated_modules += ["pyobjc-core", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa", "posix-ipc"]
-                for mod_info in generateModsManifest().values():
-                    if mod_info.get("mod_script") == True and mod_info.get("enabled") == True and mod_info.get("python_modules"): can_be_updated_modules += [str(module_needed) for module_needed in mod_info.get("python_modules", []) if not module_needed in can_be_updated_modules]
                 def python_module_update_check():
-                    updating_python_modules = pip_class.updates(can_be_updated_modules)
+                    updating_python_modules = pip_class.updates()
                     if updating_python_modules and updating_python_modules["success"] == True:
                         if len(updating_python_modules["packages"]) > 0:
                             dumped = json.dumps(updating_python_modules["packages"], ensure_ascii=False)

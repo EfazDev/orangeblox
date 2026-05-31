@@ -10,6 +10,7 @@
         "studio": ["#ff6a00"],
         "play-small": ["#ffffff"],
         "play-large": ["#ffffff"],
+        "play-xlarge": ["#ffffff"],
         "_tilt": "{main}/AppIcon.png",
         "_studio": "{main}/AppIconRunStudio.png",
         "icons/logo/block": "{main}/AppIcon.png",

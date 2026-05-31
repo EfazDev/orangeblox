@@ -6,9 +6,10 @@
     "angle": 135,
     "advanced": {
         "*": ["#648bd9", "#fa94d7"],
-        "_font": ["#d594fa"],
+        "_font": ["#648bd9", "#fa94d7"],
         "play-small": ["#ffffff"],
         "play-large": ["#ffffff"],
+        "play-xlarge": ["#ffffff"],
         "tilt": "{main}/Logo.png",
         "studio": "{main}/Logo.png",
         "icons/logo/block": "{main}/Logo.png",
