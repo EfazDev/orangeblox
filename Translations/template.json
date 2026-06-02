@@ -322,7 +322,7 @@
  "Are you sure you would like to save these FFlags in the bootstrap system? (y/n)": "",
  "Are you sure you would like to use this fast flag JSON?": "",
  "Arguments Received: (*)": "",
- "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! (*)Though, colors from custom images will be ignored as it may unoptimible to use since photos contain many more multiple colors.(*)However, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.": "",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! (*)However, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.": "",
  "Attempting Resign! Please wait!": "",
  "Aw, well, better next time! (..maybe)": "",
  "Backup Folder already exists!": "",
@@ -2250,5 +2250,6 @@
  "Successfully found log file ((*)/30). Returning with: (*)": "",
  "Unable to find a new file within 15 seconds ((*)/30). Returning with: (*)": "",
  "[(*)] = (*) [(*)]": "",
- "(*)Custom Theme of OrangeBlox 🍊": ""
+ "(*)Custom Theme of OrangeBlox 🍊": "",
+ "As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! (*)Though, colors from custom images will be ignored as it may unoptimible to use since photos contain many more multiple colors.(*)However, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.": ""
 }

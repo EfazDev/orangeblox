@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0i"}
+current_version = {"version": "2.5.0j"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -401,46 +401,27 @@ if __name__ == "__main__":
 
         applescript = f'''
         tell application "Terminal"
-            set existing_profile to false
-            repeat with s in settings sets
-                if (name of s is equal to "{obName0()}") or (name of s is equal to "OrangeBlox") then
-                    set existing_profile to true
-                    exit repeat
-                end if
-            end repeat
-            if existing_profile is false then
+            set profile_exists to (exists settings set "OrangeBlox") or (exists settings set "{obName0()}")
+            if not profile_exists then
                 open POSIX file "{os.path.join(app_path, "Images", f"OrangeBlox.terminal")}"
+                set py_tab to do script "{execute_command}" in front window
+            else
+                set py_tab to do script "{execute_command}"
             end if
-            set py_window to do script "{execute_command}"
+            set py_window to first window whose tabs contains py_tab
             set current settings of py_window to settings set "OrangeBlox"
             try
                 set terminal_id to (id of py_window) as string
             on error err_message number err_num
-                if err_num = -1728 and err_message contains "window id" then
-                    try
-                        set terminal_id to word -1 of err_message
-                    on error
-                        set terminal_id to "0"
-                    end try
-                else if err_message contains "window id" then
-                    set AppleScript's text item delimiters to "window id "
-                    set parts to text items of err_message
-                    set AppleScript's text item delimiters to space
-                    set terminal_id to text item 1 of (text items of (item 2 of parts))
-                    set AppleScript's text item delimiters to ""
-                else
-                    set terminal_id to "0"
-                end if
+                set terminal_id to "0"
             end try
             do shell script "echo " & terminal_id & " > " & quoted form of "{orangeblox_library}/Terminal_{generated_app_id}"
             activate
             repeat
-                delay 1
+                delay 0.2
                 try
-                    if (busy of py_window) is false then
-                        exit repeat
-                    end if
-                on error err_mess number err_num
+                    if not busy of py_tab then exit repeat
+                on error
                     exit repeat
                 end try
             end repeat

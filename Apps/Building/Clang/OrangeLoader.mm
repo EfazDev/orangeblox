@@ -139,7 +139,7 @@ int launchApp() {
 @end
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.5.0i";
+    std::string current_version = "2.5.0j";
     printWarnMessage("-----------");
     printWarnMessage("Welcome to OrangeBlox Loader 🍊!");
     printWarnMessage("Made by Efaz from efaz.dev!");

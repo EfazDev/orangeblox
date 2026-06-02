@@ -3,7 +3,7 @@
     "author": "TheKliko (ported by EfazDev)",
     "description": "This pack can be used to recreate UBFF Theme! This pack has been ported from Kliko's modloader to OrangeBlox.",
     "colors": ["#648bd9", "#fa94d7"],
-    "angle": 135,
+    "angle": 45,
     "advanced": {
         "*": ["#648bd9", "#fa94d7"],
         "_font": ["#648bd9", "#fa94d7"],

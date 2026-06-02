@@ -21,10 +21,12 @@ IMAGESET_IMG_NAME: str = "img_set_1x_1.png"
 IMAGESET_LUA_NAME: str = "GetImageSetData.lua"
 BUILDERFONT_ICON_NAME: str = "BuilderIcons-Regular.ttf"
 BUILDERFONT_FILLED_ICON_NAME: str = "BuilderIcons-Filled.ttf"
+CONTOUR_CACHE: dict[str, list[list[tuple]]] = {}
+SUB_GLYPH_CACHE: dict[str, list[list[tuple]]] = {}
 CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 SUPPORTED_FILETYPES: list[str] = [".png"]
 IMAGE_CACHE: dict[str, Image.Image] = {}
-BEZIER_STEPS: int = 36
+BEZIER_STEPS: int = 12
 
 logging.getLogger("fontTools").setLevel(logging.CRITICAL + 1)
 
@@ -73,6 +75,8 @@ def _clip_contours_to_band(contours: list[list[tuple]], lo: float, hi: float, x_
     pc = pyclipper.Pyclipper(); SCALE = 1000.0  
     for poly in contours:
         if len(poly) < 3: continue
+        p_ys = [pt[1] for pt in poly]
+        if max(p_ys) < lo or min(p_ys) > hi: continue
         cleaned_poly = pyclipper.CleanPolygon([(int(x * SCALE), int(y * SCALE)) for x, y in poly])
         if len(cleaned_poly) >= 3:
             try: pc.AddPath(cleaned_poly, pyclipper.PT_SUBJECT, True)
@@ -84,39 +88,55 @@ def _clip_contours_to_band(contours: list[list[tuple]], lo: float, hi: float, x_
         return [[(pt[0] / SCALE, pt[1] / SCALE) for pt in poly] for poly in pc.Execute(pyclipper.CT_INTERSECTION, pyclipper.PFT_EVENODD, pyclipper.PFT_EVENODD) if len(poly) >= 3]
     except pyclipper.ClipperException: return []
 def _write_sub_glyph(icon_name: str, band_idx: int, contours: list[list[tuple]], font: TTFont, glyf_table, orig_aw: int) -> str | None:
-    pen = TTGlyphPen(None); wrote_any = False
+    int_contours = []
     for poly in contours:
+        rounded = [(round(px), round(py)) for px, py in poly]
         dedup = []
-        for x, y in [(round(px), round(py)) for px, py in poly]:
-            if not dedup or (x, y) != dedup[-1]: dedup.append((x, y))
+        for pt in rounded:
+            if not dedup or pt != dedup[-1]: dedup.append(pt)
         if len(dedup) > 1 and dedup[0] == dedup[-1]: dedup.pop()
         if len(dedup) < 3: continue
-        xs, ys = [p[0] for p in dedup], [p[1] for p in dedup]
-        area = sum(dedup[i][0] * dedup[(i+1) % len(dedup)][1] - dedup[(i+1) % len(dedup)][0] * dedup[i][1] for i in range(len(dedup)))
+        simplified = [dedup[0]]
+        for i in range(1, len(dedup) - 1):
+            p1, p2, p3 = simplified[-1], dedup[i], dedup[i + 1]
+            cross = (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])
+            if abs(cross) > 25.0: simplified.append(p2)
+        simplified.append(dedup[-1])
+        if len(simplified) < 3: continue
+        xs, ys = [p[0] for p in simplified], [p[1] for p in simplified]
+        area = sum(simplified[i][0] * simplified[(i+1) % len(simplified)][1] - simplified[(i+1) % len(simplified)][0] * simplified[i][1] for i in range(len(simplified)))
         if max(xs) - min(xs) < 3 or max(ys) - min(ys) < 3 or abs(area) < 40.0: continue  
-        pen.moveTo(dedup[0])
-        for pt in dedup[1:]: pen.lineTo(pt)
-        pen.closePath(); wrote_any = True
-    if not wrote_any: return None
+        int_contours.append(simplified)
+    if not int_contours: return None
+    fast_tuple = tuple(tuple(pt for pt in poly) for poly in int_contours)
+    contour_hash = hash(fast_tuple)
+    cache_key = f"{orig_aw}_{contour_hash}"
+    if cache_key in SUB_GLYPH_CACHE: return SUB_GLYPH_CACHE[cache_key]
+    pen = TTGlyphPen(None)
+    for poly in int_contours:
+        pen.moveTo(poly[0])
+        for pt in poly[1:]: pen.lineTo(pt)
+        pen.closePath()
     sub_name = f"{icon_name}.g{band_idx}"
     sub_glyph = pen.glyph()
     sub_glyph.recalcBounds(glyf_table)
     glyf_table[sub_name] = sub_glyph
     font["hmtx"].metrics[sub_name] = (orig_aw, int(getattr(sub_glyph, "xMin", 0)))
+    SUB_GLYPH_CACHE[cache_key] = sub_name
     return sub_name
 def _resolve_icon_colors(icon_name: str, colors_config: dict | list) -> list[str] | None:
-    if isinstance(colors_config, list): return colors_config
-    if isinstance(colors_config, dict):
+    if type(colors_config) is list: return colors_config
+    if type(colors_config) is dict:
         for key in (icon_name, "_" + icon_name, "_font", "*"):
             val = colors_config.get(key)
-            if isinstance(val, list) and all(isinstance(v, str) for v in val): return val
+            if type(val) is list and all(type(v) is str for v in val): return val
     return None
 def _resolve_icon_image(icon_name: str, colors_config: dict | list, old_icons: dict) -> str | None:
-    if not isinstance(colors_config, dict): return None
+    if not type(colors_config) is dict: return None
     for key in (icon_name, "_" + icon_name, "_font"):
-        if isinstance(colors_config.get(key), str): return colors_config[key]
-    if colors_config.get("_old_icons") is True and isinstance(old_icons.get(icon_name), str): return old_icons[icon_name]
-    return colors_config.get("*") if isinstance(colors_config.get("*"), str) else None
+        if type(colors_config.get(key)) is str: return colors_config[key]
+    if colors_config.get("_old_icons") is True and type(old_icons.get(icon_name)) is str: return old_icons[icon_name]
+    return colors_config.get("*") if type(colors_config.get("*")) is str else None
 def _get_outline_contours(icon_name: str, font: TTFont) -> list[list[tuple]]:
     if icon_name not in font.getGlyphSet(): return []
     rec = RecordingPen()
@@ -124,37 +144,76 @@ def _get_outline_contours(icon_name: str, font: TTFont) -> list[list[tuple]]:
     except Exception: return []
     return _recording_to_polygons(rec.value)
 def _get_image_contours(image_path: str, units: int, icon_name: str, glyf_table) -> list[list[tuple]]:
+    cache_key = f"{image_path}_{units}"
+    if cache_key in CONTOUR_CACHE: return CONTOUR_CACHE[cache_key]
     try:
         with Image.open(image_path, formats=("PNG",)) as img: img = img.convert("RGBA")
         img.thumbnail((128, 128), resample=Image.Resampling.LANCZOS)
     except Exception: return []
+    arr = np.array(img); h, w = arr.shape[:2]
+    og = glyf_table.get(icon_name)
+    x_min, y_max, bbox_w, bbox_h = (float(og.xMin), float(og.yMax), float(og.xMax - og.xMin), float(og.yMax - og.yMin)) if og else (0.0, float(units), float(units), float(units))
+    scale = min(max(1.0, bbox_w) / max(1, w), max(1.0, bbox_h) / max(1, h))
+    top_x, top_y = x_min + (bbox_w - (w * scale)) / 2.0, y_max - (bbox_h - (h * scale)) / 2.0
+    contours = []
+    for py in range(h):
+        px = 0
+        while px < w:
+            if arr[py, px][3] >= 80:
+                start_x = px
+                while px < w and arr[py, px][3] >= 80: px += 1
+                fy_bot, fy_top = top_y - (py + 1) * scale, top_y - py * scale
+                x0, x1 = top_x + start_x * scale, top_x + px * scale
+                contours.append([(x0, fy_bot - 0.5), (x1 + 0.5, fy_bot - 0.5), (x1 + 0.5, fy_top + 0.5), (x0, fy_top + 0.5)])
+            else: px += 1     
+    if not contours: return []
+    pc = pyclipper.Pyclipper(); SCALE = 1000.0
+    for poly in contours: pc.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in poly], pyclipper.PT_SUBJECT, True)
+    try: 
+        result = [[(pt[0] / SCALE, pt[1] / SCALE) for pt in p] for p in pc.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)]
+        CONTOUR_CACHE[cache_key] = result
+        return result
+    except: return contours
+def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf_table, max_colors: int = 8) -> dict[str, list[list[tuple]]]:
+    try:
+        with Image.open(image_path, formats=("PNG",)) as img: 
+            img = img.convert("RGBA")
+            img.thumbnail((128, 128), resample=Image.Resampling.LANCZOS)
+            alpha = img.getchannel('A')
+            rgb = img.convert('RGB').quantize(colors=max_colors, method=Image.Quantize.MAXCOVERAGE)
+            img = rgb.convert('RGBA')
+            img.putalpha(alpha)
+    except Exception: return {}
     arr = np.array(img)
     h, w = arr.shape[:2]
     og = glyf_table.get(icon_name)
     x_min, y_max, bbox_w, bbox_h = (float(og.xMin), float(og.yMax), float(og.xMax - og.xMin), float(og.yMax - og.yMin)) if og else (0.0, float(units), float(units), float(units))
     scale = min(max(1.0, bbox_w) / max(1, w), max(1.0, bbox_h) / max(1, h))
-    top_x = x_min + (bbox_w - (w * scale)) / 2.0
-    top_y = y_max - (bbox_h - (h * scale)) / 2.0
-    contours = []
+    top_x, top_y = x_min + (bbox_w - (w * scale)) / 2.0, y_max - (bbox_h - (h * scale)) / 2.0
+    color_rects: dict[str, list[list[tuple]]] = {}
     for py in range(h):
-        for px in range(w):
-            if arr[py, px][3] >= 80:
-                fy_bot = top_y - (py + 1) * scale
-                fy_top = top_y - py * scale
-                x0 = top_x + px * scale
-                x1 = top_x + (px + 1) * scale
-                contours.append([
-                    (x0, fy_bot - 0.5), 
-                    (x1 + 0.5, fy_bot - 0.5), 
-                    (x1 + 0.5, fy_top + 0.5), 
-                    (x0, fy_top + 0.5)
-                ])
-    if not contours:  return []
-    pc = pyclipper.Pyclipper()
+        px = 0
+        while px < w:
+            r, g, b, a = arr[py, px]
+            if a >= 80:
+                start_x = px
+                hex_col = f"#{r:02x}{g:02x}{b:02x}"
+                while px < w and arr[py, px][3] >= 80 and f"#{arr[py, px][0]:02x}{arr[py, px][1]:02x}{arr[py, px][2]:02x}" == hex_col: px += 1
+                if hex_col not in color_rects: color_rects[hex_col] = []
+                fy_bot, fy_top = top_y - (py + 1) * scale, top_y - py * scale
+                x0, x1 = top_x + start_x * scale, top_x + px * scale
+                color_rects[hex_col].append([(x0, fy_bot - 0.5), (x1 + 0.5, fy_bot - 0.5), (x1 + 0.5, fy_top + 0.5), (x0, fy_top + 0.5)])
+            else: px += 1
+    final_color_contours = {}
     SCALE = 1000.0
-    for poly in contours: pc.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in poly], pyclipper.PT_SUBJECT, True)
-    try: return [[(pt[0] / SCALE, pt[1] / SCALE) for pt in p] for p in pc.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)]
-    except: return contours
+    for hex_col, rects in color_rects.items():
+        pc = pyclipper.Pyclipper()
+        for poly in rects: pc.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in poly], pyclipper.PT_SUBJECT, True)
+        try: 
+            result = [[(pt[0] / SCALE, pt[1] / SCALE) for pt in p] for p in pc.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)]
+            if result: final_color_contours[hex_col] = result
+        except: pass
+    return final_color_contours
 def hex_to_rgb(hex_color: str): hex_color = hex_color.lstrip("#"); return np.array([int(hex_color[i:i+2], 16) for i in (0, 2, 4)])
 def clear_cache() -> None: IMAGE_CACHE.clear()
 def add_watermark(mod_imagesets_directory: Path) -> None:
@@ -366,7 +425,7 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
             elif "topbar-" in filepath.name and colors.get("_topbar") == False: authorized = False
             if authorized == False: continue
         target: list[str] | None = data.get(filepath.name)
-        if not target or not isinstance(target, list): Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
+        if not target or not type(target) is list: Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
         target_path: Path = Path(base_directory, *target)
         target_path.parent.mkdir(parents=True, exist_ok=True)
         with Image.open(filepath, formats=("PNG",)) as image:
@@ -558,33 +617,54 @@ def generate_fonts_with_color(
     angle: int = 0
 ) -> None:
     max_stops = 2
-    if isinstance(colors, list): 
-        max_stops = max(2, len(colors))
-    elif isinstance(colors, dict):
-        lists = [v for v in colors.values() if isinstance(v, list) and all(isinstance(i, str) for i in v)]
-        if lists:
-            max_stops = max([len(l) for l in lists] + [2])
+    if type(colors) is list: max_stops = max(2, len(colors))
+    elif type(colors) is dict:
+        lists = [v for v in colors.values() if type(v) is list and all(type(i) is str for i in v)]
+        if lists: max_stops = max([len(l) for l in lists] + [2])
     n_bands = max(2, max_stops * 8)
     angle = angle % 360
+    use_native_colors = type(colors) is dict and colors.get("_imagecolors_font") == True
     try: old_icons = get_old_icons()
     except Exception: old_icons = {}
     for font_path in builder_fonts:
+        SUB_GLYPH_CACHE.clear()
         font = TTFont(Path(base_directory, font_path))
         units, glyf_table = font["head"].unitsPerEm, font["glyf"]
         original_order, extra_names, color_glyphs = list(font.getGlyphOrder()), [], {}
         master_palette: list[tuple[float, float, float, float]] = []
-        palette_cache: dict[tuple, int] = {}
+        palette_cache: dict[typing.Any, int] = {}
         def get_palette_start_idx(stops: list[str]) -> int:
             key = tuple(stops)
             if key not in palette_cache:
                 palette_cache[key] = len(master_palette)
                 master_palette.extend(interpolate_gradient(stops, i / (n_bands - 1)) for i in range(n_bands))
             return palette_cache[key]
+        def get_solid_color_idx(hex_col: str) -> int:
+            cache_key = f"solid_{hex_col}"
+            if cache_key not in palette_cache:
+                r, g, b = hex_to_rgb(hex_col)
+                palette_cache[cache_key] = len(master_palette)
+                master_palette.append((r / 255.0, g / 255.0, b / 255.0, 1.0))
+            return palette_cache[cache_key]
         for icon_name in original_order:
             if icon_name in DEF_BLOCK: continue
-            icon_stops = _resolve_icon_colors(icon_name, colors)
-            if not icon_stops: continue
             icon_img = _resolve_icon_image(icon_name, colors, old_icons)
+            icon_stops = _resolve_icon_colors(icon_name, colors)
+            if icon_img and use_native_colors and colors.get(icon_name):
+                native_dict = _get_native_color_contours(icon_img, units, icon_name, glyf_table)
+                if not native_dict: continue
+                orig_aw = font["hmtx"].metrics[icon_name][0]
+                layers = []
+                band_idx = 0
+                for hex_col, color_contours in native_dict.items():
+                    color_idx = get_solid_color_idx(hex_col)
+                    if sub := _write_sub_glyph(icon_name, f"n{band_idx}", color_contours, font, glyf_table, orig_aw): layers.append((sub, color_idx))
+                    band_idx += 1
+                if not layers: continue
+                extra_names.extend(s for s, _ in layers if s not in extra_names)
+                color_glyphs[icon_name] = layers
+                continue 
+            if not icon_stops: continue
             start_idx = get_palette_start_idx(icon_stops)
             contours = _get_image_contours(icon_img, units, icon_name, glyf_table) if icon_img else _get_outline_contours(icon_name, font)
             if not contours: continue
@@ -671,12 +751,10 @@ def generate_fonts_with_color_og(
                                 colors_needed[icon_name] = [index, (min(float(r / t), 1.0), min(float(g / t), 1.0), min(float(b / t), 1.0), 1.0)]
                                 index += 1
                             selected_color = True
-                        if not selected_icon and isinstance(table, str):
+                        if not selected_icon and type(table) is str:
                             blocked_icons = (".notdef", "space", "base_icon")
-                            if icon_name in blocked_icons:
-                                return
-                            with Image.open(table, formats=("PNG",)) as image:
-                                image = image.convert("RGBA")
+                            if icon_name in blocked_icons: return
+                            with Image.open(table, formats=("PNG",)) as image: image = image.convert("RGBA")
                             image.thumbnail((64, 64), resample=Image.Resampling.NEAREST)
                             arr = np.array(image)
                             h, w = arr.shape[:2]
@@ -703,16 +781,14 @@ def generate_fonts_with_color_og(
                                 bbox_height = units
                                 yMax = units
                             scale = min(bbox_width / (float(w)), bbox_height / (float(h)))*1.2
-                            if scale <= 0:
-                                scale = 1.0
+                            if scale <= 0: scale = 1.0
                             top_left_x = xMin
                             top_left_y = yMax*1.1
                             pen = TTGlyphPen(glyphset)
                             for py in range(h):
                                 for px in range(w):
                                     r, g, b, a = arr[py, px]
-                                    if a < 128:
-                                        continue
+                                    if a < 128: continue
                                     fy_top = top_left_y - (py * scale)
                                     fy_bottom = top_left_y - ((py + 1) * scale)
                                     x0 = top_left_x + (px * scale)
@@ -739,8 +815,7 @@ def generate_fonts_with_color_og(
                 handle_table(colors.get(icon_name))
                 handle_table(colors.get("_" + icon_name))
                 handle_table(colors.get("_font"))
-                if colors.get("_old_icons") == True and old_icons.get(icon_name):
-                    handle_table(old_icons.get(icon_name))
+                if colors.get("_old_icons") == True and old_icons.get(icon_name): handle_table(old_icons.get(icon_name))
                 handle_table(colors.get("*"))
                 if not selected_color:
                     colors_needed[icon_name] = [index, (1.0, 1.0, 1.0, 1.0)]

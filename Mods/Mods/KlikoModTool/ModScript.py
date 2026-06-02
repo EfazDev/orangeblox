@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.5.0
+# v1.5.5
 # 
 
 # Python Modules
@@ -59,7 +59,7 @@ if installed["success"] == True:
         # Major Update About Mod Generation..
         if not (type(OrangeAPI.getConfiguration("ReadDisclaimer2026.5")) is bool):
             printYellowMessage("--- Major Update about Mod Generation and Updating! ---")
-            printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! \nThough, colors from custom images will be ignored as it may unoptimible to use since photos contain many more multiple colors.\nHowever, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.")
+            printMainMessage("As of Roblox Versions 0.698 or higher, Roblox has implemented font based icons, preventing ways to modify color on the icons. However, introducing into v1.5.0, Font Based Gradient Coloring is now added into Kliko Mod Tool Extension, allowing you to enjoy gradients again on newer Roblox versions! \nHowever, in future Kliko Mod Tool versions, Mod Updating will be removed soon to adjust developing for Mod Generation instead. It is suggested to transform your old mods into generative mods and move to Mod Generation.")
             n = OrangeAPI.requestInput("Press enter to continue.")
             if n != None: OrangeAPI.setConfiguration("ReadDisclaimer2026.5", True)
 
