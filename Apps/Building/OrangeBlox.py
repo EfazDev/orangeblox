@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0m"}
+current_version = {"version": "2.5.0n"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -236,11 +236,9 @@ def getIfCertainPlayer():
             with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
         else: return None, None
     else: return None, None
-def generateFileKey(id: str, ext: str="", dire: str=""): 
-    if dire: return os.path.join(dire, f"{id}_{user_folder_name}{ext}")
-    if main_os == "Darwin":
-        return os.path.join(orangeblox_library, f"{id}{ext}")
-    return os.path.join(app_path, f"{id}_{user_folder_name}{ext}")
+def generateFileKey(id: str, ext: str=""):
+    if main_os == "Darwin": return os.path.join(orangeblox_library, f"{id}{ext}")
+    return os.path.join(app_path, f"{id}{ext}")
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         try:
