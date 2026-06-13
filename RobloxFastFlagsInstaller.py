@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.5.9
+# v2.6.0
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -32,7 +32,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.5.9"
+script_version = "2.6.0"
 
 # Base Functions 1
 def getLocalAppData():
@@ -482,6 +482,8 @@ class Handler:
         roblox_starter_launched = False
         audio_focused = False
         daemon = False
+        _watchdog_thread = None
+        _await_roblox_closing_thread = None
 
         def __init__(self, main_handler, pid: str="", log_file: str="", debug_mode: bool=False, allow_other_logs: bool=False, await_log_creation: bool=False, created_mutex: bool=False, studio: bool=False, one_threaded: bool=True, daemon: bool=False, start_watchdog: bool=True, clean_logs: bool=False):
             if type(main_handler) is Handler:
@@ -1491,9 +1493,12 @@ class Handler:
                                     else:
                                         res = self.handleLogLine(line)
                                         if self.handleLogEvent(res): break          
-                pip_class.startThread(func=watchDog, daemon=self.daemon)
-                pip_class.startThread(func=self.awaitRobloxClosing, daemon=self.daemon)
-        def requestThreadClosing(self): self.end_tracking = True
+                self._watchdog_thread = pip_class.startThread(func=watchDog, daemon=self.daemon)
+                self._await_roblox_closing_thread = pip_class.startThread(func=self.awaitRobloxClosing, daemon=self.daemon)
+        def requestThreadClosing(self): 
+            self.end_tracking = True
+            if self._watchdog_thread and self._watchdog_thread.is_alive(): self._watchdog_thread.join(timeout=5)
+            if self._await_roblox_closing_thread and self._await_roblox_closing_thread.is_alive(): self._await_roblox_closing_thread.join(timeout=5)
     class RobloxWindow():
         pid = None
         system_handler = None

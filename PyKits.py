@@ -1,5 +1,5 @@
 """
-PyKits v1.8.1 | Made by Efaz from efaz.dev
+PyKits v1.8.2 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -37,7 +37,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.1"
+__version__ = "1.8.2"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -746,6 +746,21 @@ class request:
             elif isinstance(e.reason, self._socket.gaierror): raise self.ResolveError(url, str(e.reason))
             elif isinstance(e.reason, ConnectionRefusedError) or isinstance(e.reason, ConnectionResetError): raise self.ConnectionRefusedException(url, str(e.reason))
             raise self.ResolveError(url, str(e.reason))
+        except self._ssl.SSLError as e:
+            if self.throw_exceptions == False: return self._create_blank_response(url)
+            raise self.SSLException(url, str(e))
+        except getattr(self._http_client, 'RemoteDisconnected', Exception) as e:
+            if self.throw_exceptions == False: return self._create_blank_response(url)
+            raise self.ConnectionRefusedException(url, str(e))
+        except (ConnectionResetError, BrokenPipeError) as e:
+            if self.throw_exceptions == False: return self._create_blank_response(url)
+            raise self.ConnectionRefusedException(url, str(e))
+        except (self._socket.timeout, TimeoutError) as e:
+            if self.throw_exceptions == False: return self._create_blank_response(url)
+            raise self.TimedOut(url, timeout)
+        except OSError as e:
+            if self.throw_exceptions == False: return self._create_blank_response(url)
+            raise self.ResolveError(url, str(e))
         except Exception as e: 
             if self.throw_exceptions == False: return self._create_blank_response(url)
             raise self.UnknownResponse(url, e)
@@ -784,7 +799,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.1")
+            headers.setdefault("user-agent", f"PyKits/1.8.2")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0j
+# v2.5.0k
 # 
 
 # Modules
@@ -98,7 +98,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.5.0j"}
+current_version = {"version": "2.5.0k"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -158,6 +158,8 @@ flag_types = {
     "EFlagEnableSkipModificationMode": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagEnableURLQuickLaunch": "bool",
+    "EFlagEnableCPUMemoryUsageViewer": "bool",
     "EFlagNotifyServerLocation": "bool",
     "EFlagEnableDiscordRPC": "bool",
     "EFlagEnableDiscordRPCStudio": "bool",

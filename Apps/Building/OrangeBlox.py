@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0j"}
+current_version = {"version": "2.5.0k"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -22,6 +22,7 @@ pip_class = PyKits.pip(find=True)
 colors_class = PyKits.Colors()
 app_path = ""
 macos_path = ""
+orangeblox_library = None
 logs = []
 
 COLOR_CODES = {
@@ -69,6 +70,8 @@ flag_types = {
     "EFlagEnableSkipModificationMode": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagEnableURLQuickLaunch": "bool",
+    "EFlagEnableCPUMemoryUsageViewer": "bool",
     "EFlagNotifyServerLocation": "bool",
     "EFlagEnableDiscordRPC": "bool",
     "EFlagEnableDiscordRPCStudio": "bool",
@@ -233,7 +236,11 @@ def getIfCertainPlayer():
             with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
         else: return None, None
     else: return None, None
-
+def generateFileKey(id: str, ext: str="", dire: str=""): 
+    if dire: return os.path.join(dire, f"{id}_{user_folder_name}{ext}")
+    if main_os == "Darwin":
+        return os.path.join(orangeblox_library, f"{id}{ext}")
+    return os.path.join(cur_path, f"{id}_{user_folder_name}{ext}")
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         try:
@@ -249,7 +256,7 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
         except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
     elif main_os == "Windows":
         try:
-            try: from plyer.platforms.win.notification import instance
+            try: from plyer.platforms.win.notification import instance # type: ignore
             except Exception as e:
                 pip_class.install(["plyer"])
                 instance = pip_class.importModule("plyer.platforms.win.notification").instance
@@ -355,6 +362,10 @@ if __name__ == "__main__":
         orangeblox_library = os.path.join(user_folder, "Library", "OrangeBlox")
 
         if not os.path.exists(orangeblox_library): os.makedirs(orangeblox_library)
+        if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")):
+            printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
+            sys.exit(0)
+
         printMainMessage("Finding Python Executable..")
         pythonExecutable = None
         if main_config.get("EFlagSpecifyPythonExecutable"): 
@@ -395,9 +406,9 @@ if __name__ == "__main__":
                 use_shell = True
                 printMainMessage(f"Creating URL Exchange file..")
                 if os.path.exists(f"{app_path}/"):
-                    with open(f"{app_path}/URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open(f"{app_path}/URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
-                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
         applescript = f'''
         tell application "Terminal"
@@ -979,7 +990,8 @@ if __name__ == "__main__":
                                 add_menu_item(file_menu, ts("Roblox Installer Options"), "openRobloxInstallerOptions_")
                                 add_menu_item(file_menu, ts("End All Roblox Windows"), "endAllRoblox_")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(file_menu, ts("End All Roblox Studio Windows"), "endAllRobloxStudio_")
-
+                                if main_config.get("EFlagEnableURLQuickLaunch") == True: add_menu_item(file_menu, ts("URL Quick Launch"), "urlQuickLaunch_")
+                                
                                 edit_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Edit", None, "")
                                 edit_menu = AppKit.NSMenu.alloc().initWithTitle_("Edit")
                                 self.top_menu.addItem_(edit_menu_item)
@@ -1091,6 +1103,7 @@ if __name__ == "__main__":
                                 add_menu_item(self.dock_menu, ts("Roblox Installer Options"), "openRobloxInstallerOptions")
                                 add_menu_item(self.dock_menu, ts("End All Roblox Windows"), "endAllRoblox")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(self.dock_menu, ts("End All Roblox Studio Windows"), "endAllRobloxStudio")
+                                if main_config.get("EFlagEnableURLQuickLaunch") == True: add_menu_item(self.dock_menu, ts("URL Quick Launch"), "urlQuickLaunch")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 if len(generated_ui_options) > 0:
                                     for p in generated_ui_options:
@@ -1104,7 +1117,7 @@ if __name__ == "__main__":
                             # OrangeBlox Management Functions
                             def new_bootstrap(self, action="", action_name=""):
                                 if not (action == "") and type(action) is str:
-                                    url_scheme_path = f"{app_path}/URLSchemeExchange"
+                                    url_scheme_path = f"{app_path}/URLLaunchExchange"
                                     with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(f"orangeblox://{action}?quick-action=true")
                                 subprocess.Popen(["/usr/bin/open", "-n", "-a", os.path.join(macos_path, "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 if not (action_name == "") and type(action_name) is str: printMainMessage(f"Launched Bootstrap with action: {action_name}")
@@ -1114,6 +1127,7 @@ if __name__ == "__main__":
                             def new_bootstrap_play_multi_roblox(self): self.new_bootstrap("new", ts("Multi-Play Roblox"))
                             def new_bootstrap_play_reconnect(self): self.new_bootstrap("reconnect", ts("Connect to Existing Roblox Window"))
                             def new_bootstrap_play_reconnect_studio(self): self.new_bootstrap("reconnect-studio", ts("Connect to Existing Roblox Studio Window"))
+                            def new_bootstrap_url_quick_launch(self): self.new_bootstrap("url-quick-launch", ts("URL Quick Launch"))
                             def new_bootstrap_clear_roblox_logs(self): self.new_bootstrap("clear-logs", ts("Clear Temporary Storage"))
                             def new_bootstrap_roblox_installer(self): self.new_bootstrap("roblox-installer-options", ts("Open Roblox Installer Options"))
                             def new_bootstrap_end_roblox(self): self.new_bootstrap("end-roblox", ts("End Roblox"))
@@ -1177,6 +1191,7 @@ if __name__ == "__main__":
                             def reconnectRoblox_(self, sender): self.new_bootstrap_play_reconnect()
                             def reconnectRobloxStudio_(self, sender): self.new_bootstrap_play_reconnect_studio()
                             def clearRobloxLogs_(self, sender): self.new_bootstrap_clear_roblox_logs()
+                            def urlQuickLaunch_(self, sender): self.new_bootstrap_url_quick_launch()
                             def clearLogs_(self, sender): self.clear_logs()
                             def forceLoadLogs_(self, sender): self.force_load_logs()
                             def unlockAppLock_(self, sender): self.unlock_app_lock()
@@ -1516,27 +1531,31 @@ if __name__ == "__main__":
                     if os.path.exists(os.path.join(app_path, "BootstrapCooldown")): os.remove(os.path.join(app_path, "BootstrapCooldown"))
                 pip_class.startThread(func=cool, daemon=True)
 
+            if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and pip_class.getAmountOfProcesses("python") > 0:
+                printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
+                sys.exit(0)
+
             if len(args) > 1:
                 if certain_player: 
                     filtered_args = f"obx-launch-{certain_type} " + " ".join(args)
                     if os.path.exists(app_path):
-                        with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                        with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                     else:
-                        with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                        with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
                     filtered_args = args[1]
                     if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
                         printMainMessage(f"Creating URL Exchange file..")
                         if os.path.exists(app_path):
-                            with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                            with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                         else:
-                            with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                            with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
             elif certain_player:
                 filtered_args = f"obx-launch-{certain_type}"
                 if os.path.exists(app_path):
-                    with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
-                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
             if pip_class.getIfRunningWindowsAdmin():
                 printErrorMessage(f"Please run {obName0()} under user permissions instead of running administrator!")

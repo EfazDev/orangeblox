@@ -174,7 +174,7 @@ def _get_image_contours(image_path: str, units: int, icon_name: str, glyf_table)
         CONTOUR_CACHE[cache_key] = result
         return result
     except: return contours
-def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf_table, max_colors: int = 8) -> dict[str, list[list[tuple]]]:
+def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf_table, max_colors: int = 32) -> dict[str, list[list[tuple]]]:
     try:
         with Image.open(image_path, formats=("PNG",)) as img: 
             img = img.convert("RGBA")
@@ -297,8 +297,8 @@ def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int, 
         gmin = float(gradient.min())
         gmax = float(gradient.max())
     denom = gmax - gmin
-    if denom == 0:  norm = np.zeros_like(gradient)
-    else:  norm = (gradient - gmin) / denom
+    if denom == 0: norm = np.zeros_like(gradient)
+    else: norm = (gradient - gmin) / denom
     norm = np.clip(norm, 0, 1)
     if num_segments <= 0:
         result = np.zeros((height, width, 3), dtype=np.uint8)

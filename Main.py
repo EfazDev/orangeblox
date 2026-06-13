@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0j
+# v2.5.0k
 # 
 
 # Python Modules
@@ -46,13 +46,15 @@ multi_instance_enabled: bool = False
 current_global_setting_type: bool = False
 modified_flags_from_mod_scripts: typing.List[str] = []
 skip_modification_mode: bool = False
+quick_url_launch: bool = False
+avoid_going_to_roblox: bool = False
 installed_update: bool = False
 connect_instead: bool = False
 run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0j"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0k"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -98,6 +100,8 @@ flag_types: typing.Dict[str, str] = {
     "EFlagEnableSkipModificationMode": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagEnableURLQuickLaunch": "bool",
+    "EFlagEnableCPUMemoryUsageViewer": "bool",
     "EFlagNotifyServerLocation": "bool",
     "EFlagEnableDiscordRPC": "bool",
     "EFlagEnableDiscordRPCStudio": "bool",
@@ -661,10 +665,12 @@ def startMessage(first: bool=False, ignore_support: bool=False):
             elif main_os == "Darwin": printErrorMessage(f"{obName0()} is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
             input("> ")
             sys.exit(0)
-        if first == False:
-            virutal_memory = psutil.virtual_memory()
-            cpu_percent = psutil.cpu_percent(interval=0.1)
-            printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+        if first == False and main_config.get("EFlagEnableCPUMemoryUsageViewer", True) == True:
+            try:
+                virutal_memory = psutil.virtual_memory()
+                cpu_percent = psutil.cpu_percent(interval=0.1)
+                printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+            except: printErrorMessage("CPU Percentage: Error | Memory Usage: Error")
         if not pip_class.pythonSupported(3, 11, 0):
             if not pip_class.pythonSupported(3, 6, 0):
                 printErrorMessage("Please update your current installation of Python above 3.11.0")
@@ -1413,6 +1419,38 @@ def syncFromFFlagConfiguration(): # Sync from Fast Flag Configuration
     else:
         printDebugMessage("Syncing was rejected by the user!")
         return ts("Syncing was rejected!")
+def urlQuickLaunch(): # URL Quick Launch
+    global connect_instead
+    global run_studio
+    global skip_modification_mode
+    global avoid_going_to_roblox
+    global quick_url_launch
+    printSystemMessage(ts("--- URL Quick Launch ---"))
+    if main_config.get("EFlagEnableURLQuickLaunch") != True:
+        printErrorMessage("URL Quick Launch is not enabled.")
+        input("> ")
+        sys.exit(0)
+    quick_launch_file = generateFileKey("URLQuickLaunch")
+    printMainMessage("Welcome to URL Quick Launch! Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. In the process, you may see the Roblox window open; just leave it open.")
+    try:
+        with open(quick_launch_file, "w", encoding="utf-8") as f: f.write("true")
+        skip_modification_mode = True
+        avoid_going_to_roblox = True
+        pip_class.startThread(runRoblox)
+        while not os.path.exists(os.path.join(cur_path, "URLLaunchExchange")): time.sleep(0.1)
+        urlArgumentExchange()
+        if len(given_args) > 1:
+            if main_os == "Darwin": handler.endRoblox()
+            printSuccessMessage("Received message to open URL!")
+            if os.path.exists(quick_launch_file): os.remove(quick_launch_file)
+            quick_url_launch = True
+            restartRoblox()
+    except Exception:
+        printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
+        printErrorMessage(f"Exception: \n{trace()}")
+        printErrorMessage(f"Location Code: 12")
+        input("> ")
+        sys.exit(0 if main_os == "Darwin" else 1) 
 def continueToSettings(): # Open Settings
     def mainSettings():
         generated_ui_options = []
@@ -1497,6 +1535,12 @@ def continueToSettings(): # Open Settings
             printYellowMessage("This is used for authentication with Roblox APIs such as Beta Programs.")
             printYellowMessage("Warning! This option will look for cookies automatically in your Roblox Data and may bring security issues.")
             d = handleBasicSetting("EFlagRobloxSecurityCookieUsage", False)
+            if d: return d
+
+            printMainMessage("Would you like to enable URL Quick Launch? (y/n)")
+            printYellowMessage("This will allow you to launch Roblox with a specific URL.")
+            printYellowMessage("Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. \nIn the process, you may see the Roblox window open; just leave it open.")
+            d = handleBasicSetting("EFlagEnableURLQuickLaunch", False)
             if d: return d
 
             if main_config.get("EFlagRobloxUnfriendCheckEnabled") == True:
@@ -1927,6 +1971,10 @@ def continueToSettings(): # Open Settings
 
             printMainMessage("Would you like to enable 429 Loops when the Roblox server gives a 429 (Too much request) response? (y/n)")
             d = handleBasicSetting("EFlagEnableLoop429Requests", False)
+            if d: return d
+
+            printMainMessage("Would you like to enable showing CPU Percentage and Memory Usage? (y/n)")
+            d = handleBasicSetting("EFlagEnableCPUMemoryUsageViewer", True)
             if d: return d
 
             printMainMessage("Would you like to disable Bootstrap Update Checks? (y/n)")
@@ -3468,7 +3516,7 @@ def continueToUpdates(): # Check for Updates
                                             filtered_args = given_args[1]
                                             if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args)):
                                                 printMainMessage(f"Creating URL Exchange file..")
-                                                with open(os.path.join(cur_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                                                with open(os.path.join(cur_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                                         silent_install = subprocess.run(f'start cmd.exe /c ""{sys.executable}" "{os.path.join(cur_path, "Install.py")}" --update-mode"', shell=True, cwd=cur_path)
                                         if silent_install.returncode != 0: printErrorMessage("Bootstrap Installer failed.")
                                         try:
@@ -3876,10 +3924,12 @@ def robloxInstallationCheck():
 def urlArgumentExchange():
     try:
         global given_args
-        if os.path.exists(os.path.join(cur_path, "URLSchemeExchange")):
-            with open(os.path.join(cur_path, "URLSchemeExchange"), "r", encoding="utf-8") as f: filtered_args = f.read()
+        quick_launch_file = generateFileKey("URLQuickLaunch")
+        if os.path.exists(quick_launch_file): os.remove(quick_launch_file)
+        if os.path.exists(os.path.join(cur_path, "URLLaunchExchange")):
+            with open(os.path.join(cur_path, "URLLaunchExchange"), "r", encoding="utf-8") as f: filtered_args = f.read()
             given_args = ["Main.py", filtered_args]
-            os.remove(os.path.join(cur_path, "URLSchemeExchange"))
+            os.remove(os.path.join(cur_path, "URLLaunchExchange"))
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
         printErrorMessage(f"Exception: \n{trace()}")
@@ -4456,7 +4506,7 @@ def validateRobloxStudioInstallation():
             if not os.path.exists(f"{os.path.join(RFFI.macOS_studioDir, 'Contents', 'Resources')}{i}"): return False
     return True
 def runRoblox():
-    global installed_update, skip_modification_mode, connect_instead, modified_flags_from_mod_scripts, given_args
+    global installed_update, skip_modification_mode, connect_instead, modified_flags_from_mod_scripts, given_args, restartRoblox
     try:
         # Check for Permissions
         if run_studio == True and main_config.get("EFlagRobloxStudioEnabled") != True:
@@ -6311,19 +6361,19 @@ def runRoblox():
                 nonlocal set_server_type
                 nonlocal set_current_private_server_key
                 set_server_type = 1
-                if main_config.get("EFlagAllowPrivateServerJoining") == True and data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
+                if data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
                 else: set_current_private_server_key = None
             def onReservedServer(data):
                 nonlocal set_server_type
                 nonlocal set_current_private_server_key
                 set_server_type = 2
-                if main_config.get("EFlagAllowPrivateServerJoining") == True and data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
+                if data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
                 else: set_current_private_server_key = None
             def onPartyServer(data):
                 nonlocal set_server_type
                 nonlocal set_current_private_server_key
                 set_server_type = 3
-                if main_config.get("EFlagAllowPrivateServerJoining") == True and data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
+                if data and data.get("data"): set_current_private_server_key = data["data"].get("accessCode")
                 else: set_current_private_server_key = None
             def onMainServer(consoleLine):
                 nonlocal set_server_type
@@ -6381,7 +6431,7 @@ def runRoblox():
                 except Exception as e: printDebugMessage(f"There was an error closing Discord RPC: \n{trace()}")
                 discord_rpc = None
                 discord_rpc_info = None
-            if run_studio == False and main_config.get("EFlagEnableMultiAutoReconnect") == True and current_place_info and current_place_info.get("place_info") and current_place_info.get("placeId"): 
+            if run_studio == False and quick_url_launch == False and main_config.get("EFlagEnableMultiAutoReconnect") == True and current_place_info and current_place_info.get("place_info") and current_place_info.get("placeId"): 
                 nonlocal set_current_private_server_key
                 global given_args
                 printYellowMessage("Reconnecting Roblox..")
@@ -6392,12 +6442,9 @@ def runRoblox():
                                 if main_os == "Darwin" and (d.startswith(os.path.join(pip_class.getLocalAppData(), "HTTPStorages", "com.roblox.")) and k.startswith(os.path.join(pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): custom_cookies[d] = k
                                 elif main_os == "Windows" and (d == os.path.join(pip_class.getLocalAppData(), "Roblox", "LocalStorage", "RobloxCookies.dat") and k.startswith(os.path.join(pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): custom_cookies[d] = k
                 if (set_server_type == 1 or set_server_type == 2 or set_server_type == 3) and set_current_private_server_key: launch_data = f'&accessCode={set_current_private_server_key}'
-                else: launch_data = f''
-                given_args = ["Main.py", f"roblox://experiences/start?placeId={current_place_info.get('placeId')}&universeId={current_place_info.get('universeId')}&gameInstanceId={current_place_info['jobId']}{launch_data}"]
-                current_place_info = None
-                connected_roblox_instance.requestThreadClosing()
-                runRobloxClient()
-                return
+                else: launch_data = ""
+                given_args = ["Main.py", f"roblox://experiences/start?placeId={current_place_info.get('placeId')}&universeId={current_place_info.get('universeId')}&gameInstanceId={current_place_info['jobId']}{launch_data}" + ()]
+                return restartRoblox()
             current_place_info = None
             if main_config.get("EFlagUseDiscordWebhook") == True and main_config.get("EFlagDiscordWebhookRobloxAppClose") == True:
                 if connected_roblox_instance and connected_roblox_instance.log_file != "" and main_config.get("EFlagDiscordWebhookURL"):
@@ -6542,7 +6589,7 @@ def runRoblox():
         def onAllRobloxEvents(data):
             if main_config.get("EFlagEnableMods") == True and main_config.get("EFlagSelectedModScripts") and len(selected_mod_scripts) > 0:
                 for s in selected_mod_scripts:
-                    if os.path.exists(os.path.join(mods_folder, "Mods", s, "Manifest.json")) and mods_manifest.get(s):
+                    if os.path.exists(os.path.join(mods_folder, "Mods", s, "Manifest.json")) and mods_manifest.get(s) and mod_script_modules.get(s):
                         if mods_manifest[s].get("mod_script") == True:
                             try:
                                 allowed_permissions = mods_manifest[s].get("permissions")
@@ -6719,8 +6766,8 @@ def runRoblox():
                         else:
                             if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                             connected_roblox_instance = handler.openRoblox(
-                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True), 
-                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
+                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True and quick_url_launch == False), 
+                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True and quick_url_launch == False), 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True),
                                 startData=f"{url}{'--args' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6772,6 +6819,11 @@ def runRoblox():
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                     else: printDebugMessage("No RobloxInstance class was registered")
                     if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
+        def restartRoblox():
+            nonlocal current_place_info
+            current_place_info = None
+            connected_roblox_instance.requestThreadClosing()
+            runRobloxClient()
         def checkIfUpdateWasNeeded():
             nonlocal updated_count
             global skip_modification_mode
@@ -7084,6 +7136,13 @@ def mainMenu():
                         "go_to_rbx": False,
                         "studio": True
                     })
+            if main_config.get("EFlagEnableURLQuickLaunch") == True:
+                generated_ui_options.append({
+                    "index": 5, 
+                    "message": ts("URL Quick Launch"), 
+                    "func": urlQuickLaunch, 
+                    "go_to_rbx": False
+                })
             if main_config.get("EFlagDisableModsManagerAccess") != True:
                 generated_ui_options.append({
                     "index": 6, 
@@ -7273,6 +7332,7 @@ def mainMenu():
                     if "obx-launch" in url: given_args[1] = given_args[1].replace("obx-launch ", "").replace("obx-launch", "")
                     if "continue" in url: continueToRoblox()
                     elif "run-studio" in url: continueToRoblox(studio=True)
+                    elif "url-quick-launch" in url: urlQuickLaunch()
                     elif "new" in url: continueToRoblox()
                     elif "reconnect-studio" in url: connectExistingRobloxWindow(studio=True)
                     elif "reconnect" in url: connectExistingRobloxWindow()
@@ -7521,7 +7581,7 @@ if __name__ == "__main__":
     try: 
         startUp() # Handle Configurations
         mainMenu() # Main Menu
-        runRoblox() # Run Roblox If Continued!
+        if avoid_going_to_roblox == False: runRoblox() # Run Roblox If Continued!
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
         printErrorMessage(f"Exception: \n{trace()}")
