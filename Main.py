@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0n
+# v2.5.0o
 # 
 
 # Python Modules
@@ -55,7 +55,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0n"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0o"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -1426,6 +1426,7 @@ def urlQuickLaunch(): # URL Quick Launch
     global skip_modification_mode
     global avoid_going_to_roblox
     global quick_url_launch
+    global roblox_launched
     printSystemMessage(ts("--- URL Quick Launch ---"))
     if main_config.get("EFlagEnableURLQuickLaunch") != True:
         printErrorMessage("URL Quick Launch is not enabled.")
@@ -6619,6 +6620,8 @@ def runRoblox():
             nonlocal connected_roblox_instance
             global connect_instead
             global custom_cookies
+            global roblox_launched
+            roblox_launched = True
             roblox_launched_affect_mod_script = True
             def connectCallEvents(cri):
                 if type(cri) is handler.RobloxInstance:
@@ -6831,8 +6834,6 @@ def runRoblox():
             nonlocal updated_count
             global skip_modification_mode
             global installed_update
-            global roblox_launched
-            roblox_launched = True
             updated_count += 1
             if updated_count < 3:
                 printMainMessage("Waiting 5 seconds to check if Roblox needs a reinstall..")
