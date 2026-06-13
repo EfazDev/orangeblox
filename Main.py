@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0o
+# v2.5.0p
 # 
 
 # Python Modules
@@ -55,7 +55,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0o"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0p"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -1444,7 +1444,7 @@ def urlQuickLaunch(): # URL Quick Launch
         while not os.path.exists(os.path.join(cur_path, "URLLaunchExchange")): time.sleep(0.1)
         urlArgumentExchange()
         if len(given_args) > 1:
-            if main_os == "Darwin": handler.endRoblox()
+            handler.endRoblox()
             printSuccessMessage("Received message to open URL!")
             if os.path.exists(quick_launch_file): os.remove(quick_launch_file)
             quick_url_launch = True
@@ -6621,7 +6621,6 @@ def runRoblox():
             global connect_instead
             global custom_cookies
             global roblox_launched
-            roblox_launched = True
             roblox_launched_affect_mod_script = True
             def connectCallEvents(cri):
                 if type(cri) is handler.RobloxInstance:
@@ -6675,6 +6674,7 @@ def runRoblox():
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                         if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                     else: printDebugMessage("No RobloxInstance class was registered")
+                    roblox_launched = True
                 elif len(given_args) > 1:
                     url = given_args[1]
                     """
@@ -6714,6 +6714,7 @@ def runRoblox():
                             printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                             if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                         else: printDebugMessage("No RobloxInstance class was registered")
+                        roblox_launched = True
                         if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                     else: printDebugMessage(f"Unable to format url scheme due to an issue.")
                 else:
@@ -6731,6 +6732,7 @@ def runRoblox():
                         connectCallEvents(connected_roblox_instance)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                     else: printDebugMessage("No RobloxInstance class was registered")
+                    roblox_launched = True
             else:
                 if connect_instead == True:
                     connected_roblox_instance = handler.RobloxInstance(handler, handler.getLatestOpenedRobloxPid(), debug_mode=(main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=False, await_log_creation=False)
@@ -6739,6 +6741,7 @@ def runRoblox():
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                         if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                     else: printDebugMessage("No RobloxInstance class was registered")
+                    roblox_launched = True
                 elif len(given_args) > 1:
                     url = given_args[1]
                     """
@@ -6784,6 +6787,7 @@ def runRoblox():
                             printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                             if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                         else: printDebugMessage("No RobloxInstance class was registered")
+                        roblox_launched = True
                         if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                     else: printDebugMessage(f"Unable to format url scheme due to an issue.")
                 elif multi_instance_enabled == True:
@@ -6803,6 +6807,7 @@ def runRoblox():
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                         if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
                     else: printDebugMessage("No RobloxInstance class was registered")
+                    roblox_launched = True
                     if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                 else:
                     if handler.getIfRobloxIsOpen():
@@ -6824,11 +6829,12 @@ def runRoblox():
                         connectCallEvents(connected_roblox_instance)
                         printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
                     else: printDebugMessage("No RobloxInstance class was registered")
+                    roblox_launched = True
                     if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
         def restartRoblox():
             nonlocal current_place_info
             current_place_info = None
-            connected_roblox_instance.requestThreadClosing()
+            if connected_roblox_instance: connected_roblox_instance.requestThreadClosing()
             runRobloxClient()
         def checkIfUpdateWasNeeded():
             nonlocal updated_count

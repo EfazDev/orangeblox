@@ -1497,8 +1497,9 @@ class Handler:
                 self._await_roblox_closing_thread = pip_class.startThread(func=self.awaitRobloxClosing, daemon=self.daemon)
         def requestThreadClosing(self): 
             self.end_tracking = True
-            if self._watchdog_thread and self._watchdog_thread.is_alive(): self._watchdog_thread.join(timeout=5)
-            if self._await_roblox_closing_thread and self._await_roblox_closing_thread.is_alive(): self._await_roblox_closing_thread.join(timeout=5)
+            self.ended_process = True
+            if self._watchdog_thread and self._watchdog_thread.is_alive(): self._watchdog_thread.join(timeout=1)
+            if self._await_roblox_closing_thread and self._await_roblox_closing_thread.is_alive(): self._await_roblox_closing_thread.join(timeout=1)
     class RobloxWindow():
         pid = None
         system_handler = None
