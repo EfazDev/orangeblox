@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0l"}
+current_version = {"version": "2.5.0m"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -240,7 +240,7 @@ def generateFileKey(id: str, ext: str="", dire: str=""):
     if dire: return os.path.join(dire, f"{id}_{user_folder_name}{ext}")
     if main_os == "Darwin":
         return os.path.join(orangeblox_library, f"{id}{ext}")
-    return os.path.join(cur_path, f"{id}_{user_folder_name}{ext}")
+    return os.path.join(app_path, f"{id}_{user_folder_name}{ext}")
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         try:
