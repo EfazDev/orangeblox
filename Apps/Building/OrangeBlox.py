@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0k"}
+current_version = {"version": "2.5.0l"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -1531,10 +1531,6 @@ if __name__ == "__main__":
                     if os.path.exists(os.path.join(app_path, "BootstrapCooldown")): os.remove(os.path.join(app_path, "BootstrapCooldown"))
                 pip_class.startThread(func=cool, daemon=True)
 
-            if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and pip_class.getAmountOfProcesses("python") > 0:
-                printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
-                sys.exit(0)
-
             if len(args) > 1:
                 if certain_player: 
                     filtered_args = f"obx-launch-{certain_type} " + " ".join(args)
@@ -1556,6 +1552,10 @@ if __name__ == "__main__":
                     with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
                     with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+
+            if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and pip_class.getAmountOfProcesses("python") > 0:
+                printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
+                sys.exit(0)
 
             if pip_class.getIfRunningWindowsAdmin():
                 printErrorMessage(f"Please run {obName0()} under user permissions instead of running administrator!")

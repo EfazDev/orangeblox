@@ -2496,5 +2496,6 @@
  "URL Launched!": "URL გაშვებულია!",
  "CPU Percentage: Error | Memory Usage: Error": "CPU პროცენტი: შეცდომა | მეხსიერების გამოყენება: შეცდომა",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "Ამ პარამეტრის გამოყენებით, OrangeBlox ავტომატურად გაუშვებს Roblox-ს, როდესაც თქვენ ცდილობთ გახსნათ Roblox თქვენი ვებ ბრაუზერიდან და შეეცადოთ იყოთ რაც შეიძლება სწრაფად გახსნა. (*)ამ პროცესში თქვენ შეგიძლიათ ნახოთ Roblox-ის ფანჯარა ღია; უბრალოდ დატოვე ღია..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Გსურთ ჩართოთ CPU პროცენტული და მეხსიერების გამოყენების ჩვენება? (y/n)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Გსურთ ჩართოთ CPU პროცენტული და მეხსიერების გამოყენების ჩვენება? (y/n)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "URL Quick Launch ელოდება Roblox-ის გაშვებას.."
 }

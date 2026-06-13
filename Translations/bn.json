@@ -2498,5 +2498,6 @@
  "URL Launched!": "URL চালু হয়েছে!",
  "CPU Percentage: Error | Memory Usage: Error": "CPU শতাংশ: ত্রুটি | মেমরি ব্যবহার: ত্রুটি",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "এই বিকল্পটি ব্যবহার করে, OrangeBlox স্বয়ংক্রিয়ভাবে Roblox চালু করবে যখন আপনি আপনার ওয়েব ব্রাউজার থেকে Roblox খোলার চেষ্টা করবেন এবং যত দ্রুত সম্ভব খোলার চেষ্টা করবেন। (*)প্রক্রিয়ায়, আপনি রবলক্স উইন্ডোটি খোলা দেখতে পারেন; শুধু এটা খোলা ছেড়ে দিন।",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "আপনি কি CPU শতাংশ এবং মেমরি ব্যবহার দেখানো সক্ষম করতে চান? (y/n)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "আপনি কি CPU শতাংশ এবং মেমরি ব্যবহার দেখানো সক্ষম করতে চান? (y/n)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "ইউআরএল কুইক লঞ্চ রোবলক্স চালু হওয়ার জন্য অপেক্ষা করছে.."
 }

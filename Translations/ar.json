@@ -2498,5 +2498,6 @@
  "URL Launched!": "تم إطلاق عنوان url!",
  "CPU Percentage: Error | Memory Usage: Error": "النسبة المئوية لوحدة المعالجة المركزية: خطأ | استخدام الذاكرة: خطأ",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "باستخدام هذا الخيار، سيقوم OrangeBlox بتشغيل Roblox تلقائيًا عندما تحاول فتح Roblox من متصفح الويب الخاص بك ويحاول أن يكون الفتح بأسرع ما يمكن. (*)في هذه العملية، قد ترى نافذة Roblox مفتوحة؛ فقط اتركه مفتوحا..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "هل ترغب في تمكين عرض النسبة المئوية لوحدة المعالجة المركزية واستخدام الذاكرة؟ (ص/ن)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "هل ترغب في تمكين عرض النسبة المئوية لوحدة المعالجة المركزية واستخدام الذاكرة؟ (ص/ن)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "التشغيل السريع لعنوان URL في انتظار إطلاق Roblox.."
 }

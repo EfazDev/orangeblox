@@ -2497,5 +2497,6 @@
  "URL Launched!": "URL이 출시되었습니다!",
  "CPU Percentage: Error | Memory Usage: Error": "CPU 백분율: 오류 | 메모리 사용량: 오류",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "이 옵션을 사용하면 웹 브라우저에서 Roblox를 열려고 할 때 OrangeBlox가 자동으로 Roblox를 실행하고 가능한 한 빨리 열려고 노력합니다. (*)이 과정에서 Roblox 창이 열리는 것을 볼 수 있습니다. 그냥 열어두세요..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Cpu 백분율 및 메모리 사용량 표시를 활성화하시겠습니까? (예/아니요)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Cpu 백분율 및 메모리 사용량 표시를 활성화하시겠습니까? (예/아니요)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "URL 빠른 실행이 Roblox 실행을 기다리고 있습니다.."
 }

@@ -2496,5 +2496,6 @@
  "URL Launched!": "Inilunsad ang URL!",
  "CPU Percentage: Error | Memory Usage: Error": "Porsyento ng CPU: Error | Paggamit ng Memory: Error",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "Gamit ang opsyong ito, awtomatikong ilulunsad ng OrangeBlox ang Roblox kapag sinubukan mong buksan ang Roblox mula sa iyong web browser at subukang maging mas mabilis hangga't maaari upang buksan. (*)Sa proseso, maaari mong makitang bukas ang window ng Roblox; hayaan mo lang na nakabukas..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Gusto mo bang paganahin ang pagpapakita ng Porsyento ng CPU at Paggamit ng Memory? (y/n)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Gusto mo bang paganahin ang pagpapakita ng Porsyento ng CPU at Paggamit ng Memory? (y/n)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "Ang Mabilis na Paglunsad ng URL ay naghihintay para sa Roblox na ilunsad.."
 }

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0k
+# v2.5.0l
 # 
 
 # Modules
@@ -98,7 +98,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.5.0k"}
+current_version = {"version": "2.5.0l"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -351,8 +351,8 @@ def getSettings(directory=""):
             req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "installer"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
             if req.ok: 
                 for i, v in req.json.items():
-                    if flag_types.get(i).startswith("path") or "_local" in flag_types.get(i): continue
-                    else: main_config[i] = v
+                    flag_type = flag_types.get(i)
+                    if flag_type and "_local" not in flag_type and not flag_type.startswith("path"): main_config[i] = v
         except: pass
     remove_items = []
     for i, v in main_config.items():

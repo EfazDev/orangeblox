@@ -2496,5 +2496,6 @@
  "URL Launched!": "URL lanceret!",
  "CPU Percentage: Error | Memory Usage: Error": "CPU-procent: Fejl | Hukommelsesbrug: Fejl",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "Ved at bruge denne mulighed vil OrangeBlox automatisk starte Roblox, når du forsøger at åbne Roblox fra din webbrowser og forsøger at åbne så hurtigt som muligt. (*)I processen kan du se Roblox-vinduet åbent; lad den bare stå åben..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Vil du aktivere visning af CPU-procent og hukommelsesforbrug? (å/n)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Vil du aktivere visning af CPU-procent og hukommelsesforbrug? (å/n)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "URL Quick Launch venter på, at Roblox bliver lanceret.."
 }

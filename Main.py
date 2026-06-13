@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0k
+# v2.5.0l
 # 
 
 # Python Modules
@@ -50,11 +50,12 @@ quick_url_launch: bool = False
 avoid_going_to_roblox: bool = False
 installed_update: bool = False
 connect_instead: bool = False
+roblox_launched: bool = False
 run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0k"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0l"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -507,8 +508,8 @@ def getSettings(updating: bool=False):
             req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "main"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
             if req.ok: 
                 for i, v in req.json.items():
-                    if flag_types.get(i).startswith("path") or "_local" in flag_types.get(i): continue
-                    main_config[i] = v
+                    flag_type = flag_types.get(i)
+                    if flag_type and "_local" not in flag_type and not flag_type.startswith("path"): main_config[i] = v
         except: pass
     remove_items = []
     for i, v in main_config.items():
@@ -1431,12 +1432,14 @@ def urlQuickLaunch(): # URL Quick Launch
         input("> ")
         sys.exit(0)
     quick_launch_file = generateFileKey("URLQuickLaunch")
-    printMainMessage("Welcome to URL Quick Launch! Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. In the process, you may see the Roblox window open; just leave it open.")
     try:
         with open(quick_launch_file, "w", encoding="utf-8") as f: f.write("true")
         skip_modification_mode = True
         avoid_going_to_roblox = True
+        printMainMessage("URL Quick Launch is waiting for Roblox to be launched..")
         pip_class.startThread(runRoblox)
+        while roblox_launched == False: time.sleep(0.1)
+        printMainMessage("Welcome to URL Quick Launch! Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. In the process, you may see the Roblox window open; just leave it open.")
         while not os.path.exists(os.path.join(cur_path, "URLLaunchExchange")): time.sleep(0.1)
         urlArgumentExchange()
         if len(given_args) > 1:
@@ -6828,6 +6831,8 @@ def runRoblox():
             nonlocal updated_count
             global skip_modification_mode
             global installed_update
+            global roblox_launched
+            roblox_launched = True
             updated_count += 1
             if updated_count < 3:
                 printMainMessage("Waiting 5 seconds to check if Roblox needs a reinstall..")

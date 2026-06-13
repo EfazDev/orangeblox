@@ -2496,5 +2496,6 @@
  "URL Launched!": "เปิดตัว Url แล้ว!",
  "CPU Percentage: Error | Memory Usage: Error": "เปอร์เซ็นต์ Cpu: ข้อผิดพลาด | การใช้หน่วยความจำ: ข้อผิดพลาด",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "เมื่อใช้ตัวเลือกนี้ OrangeBlox จะเปิด Roblox โดยอัตโนมัติเมื่อคุณพยายามเปิด Roblox จากเว็บเบราว์เซอร์ของคุณและพยายามเปิดให้เร็วที่สุด (*)ในกระบวนการนี้ คุณอาจเห็นหน้าต่าง Roblox เปิดอยู่ แค่เปิดทิ้งไว้",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "คุณต้องการเปิดใช้งานการแสดงเปอร์เซ็นต์ cpu และการใช้หน่วยความจำหรือไม่ (มี/ไม่มี)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "คุณต้องการเปิดใช้งานการแสดงเปอร์เซ็นต์ cpu และการใช้หน่วยความจำหรือไม่ (มี/ไม่มี)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "URL Quick Launch กำลังรอ Roblox เปิดตัว.."
 }

@@ -2496,5 +2496,6 @@
  "URL Launched!": "यूआरएल लॉन्च किया गया!",
  "CPU Percentage: Error | Memory Usage: Error": "सीपीयू प्रतिशत: त्रुटि | मेमोरी उपयोग: त्रुटि",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "इस विकल्प का उपयोग करते हुए, जब आप अपने वेब ब्राउज़र से Roblox खोलने का प्रयास करेंगे और जितनी जल्दी संभव हो उतनी तेजी से खोलने का प्रयास करेंगे तो OrangeBlox स्वचालित रूप से Roblox लॉन्च कर देगा। (*)इस प्रक्रिया में, आप Roblox विंडो को खुला हुआ देख सकते हैं; बस इसे खुला छोड़ दें..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "क्या आप सीपीयू प्रतिशत और मेमोरी उपयोग दिखाना सक्षम करना चाहेंगे? (य/नहीं)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "क्या आप सीपीयू प्रतिशत और मेमोरी उपयोग दिखाना सक्षम करना चाहेंगे? (य/नहीं)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "यूआरएल क्विक लॉन्च, रोबॉक्स के लॉन्च होने का इंतजार कर रहा है।"
 }

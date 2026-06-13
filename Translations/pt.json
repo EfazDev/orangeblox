@@ -2496,5 +2496,6 @@
  "URL Launched!": "URL lançada!",
  "CPU Percentage: Error | Memory Usage: Error": "Porcentagem de CPU: Erro | Uso de memória: erro",
  "Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. (*)In the process, you may see the Roblox window open; just leave it open.": "Usando esta opção, o OrangeBlox iniciará automaticamente o Roblox quando você tentar abrir o Roblox a partir do seu navegador da web e tentará ser o mais rápido possível para abrir. (*)No processo, você poderá ver a janela do Roblox aberta; apenas deixe-o aberto..",
- "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Gostaria de ativar a exibição da porcentagem de CPU e do uso de memória? (y/n)"
+ "Would you like to enable showing CPU Percentage and Memory Usage? (y/n)": "Gostaria de ativar a exibição da porcentagem de CPU e do uso de memória? (y/n)",
+ "URL Quick Launch is waiting for Roblox to be launched..": "O URL Quick Launch está aguardando o lançamento do Roblox.."
 }
