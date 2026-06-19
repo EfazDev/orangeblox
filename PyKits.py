@@ -1,5 +1,5 @@
 """
-PyKits v1.8.2 | Made by Efaz from efaz.dev
+PyKits v1.8.5 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -28,6 +28,8 @@ However! Classes may depend on other classes. Use this resource list:
     Colors: typing (module)
     (stdout, Stdout): Translator?
     ProgressBar: None
+    Socket: typing (module)
+    Lock: None
     TimerBar: ProgressBar
     InstantRequestJSONResponse: None
     FileSelector: typing (module), pip?
@@ -37,7 +39,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.2"
+__version__ = "1.8.5"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -55,7 +57,9 @@ __all__ = [
     "Colors", 
     "Translator", 
     "Stdout",
-    "stdout", 
+    "stdout",
+    "Socket",
+    "Lock",
     "ProgressBar",
     "TimerBar",
     "InstantRequestJSONResponse",
@@ -799,7 +803,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.2")
+            headers.setdefault("user-agent", f"PyKits/1.8.5")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -1631,7 +1635,7 @@ class pip:
         if not self.executable: return False
         if self._os.path.exists(self.executable) and self._os.path.exists(self._sys.executable): return self._os.path.samefile(self.executable, self._sys.executable)
         else: return False
-    def getMajorMinorVersion(self, version: str="3.14.3"): return ".".join(version.split(".")[:-1])
+    def getMajorMinorVersion(self, version: str="3.14.6"): return ".".join(version.split(".")[:-1])
 
     # Python Functions
     def getLocalAppData(self):
@@ -1660,6 +1664,13 @@ class pip:
         argv.pop(0)
         res = self._subprocess.run([self.executable, self._os.path.join(self._os.path.dirname(self._os.path.abspath(__file__)), scriptname)] + argv)
         self._sys.exit(res.returncode)
+    def clearStdin(self):
+        if self._os.name == 'nt':
+            import msvcrt
+            while msvcrt.kbhit(): msvcrt.getch()
+        else:
+            import termios
+            termios.tcflush(self._sys.stdin, termios.TCIFLUSH)
     def endProcess(self, name="", pid=""):
         main_os = self._main_os
         if pid == "":
@@ -2502,6 +2513,113 @@ class FileSelector:
         if path: return self.Response(ok=True, path=path)
         root.destroy()
         return self.Response(ok=False, path=None)
+class Socket:
+    """
+    A class that provides a simple interface for working with data between apps.
+    """
+    def __init__(self, host='127.0.0.1', port=60153):
+        import socket
+        import threading
+        import json
+        self.host = host
+        self.port = port
+        self.debug = False
+        self.topics = {}
+        self._listener_thread = None
+        self._buffer_size = 4096
+        self._running = False
+        self._json = json
+        self._socket = socket
+        self._threading = threading
+    def subscribe(self, topic_name: str, call_func: typing.Callable): self.topics[topic_name] = call_func
+    def listen(self):
+        if self._running: return
+        self._running = True
+        self._listener_thread = self._threading.Thread(target=self._listen_loop, daemon=True)
+        self._listener_thread.start()
+        self._print_debug(f"System listening on port {self.port}...")
+    def close(self):
+        self._running = False
+        if self._listener_thread and self._listener_thread.is_alive(): self._listener_thread.join()
+        self._print_debug("Socket closed as per request.")
+    def send(self, topic: str, data: typing.Any):
+        payload_dict = {
+            "topic": topic,
+            "data": data
+        }
+        payload_bytes = self._json.dumps(payload_dict).encode('utf-8')
+        try:
+            with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as s:
+                s.connect((self.host, self.port))
+                s.sendall(payload_bytes)
+        except ConnectionRefusedError: self._print_debug(f"Could not send \"{topic}\" notification. Is the server running?")
+    def _listen_loop(self):
+        with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as s:
+            s.bind((self.host, self.port))
+            s.listen()
+            s.settimeout(1)
+            while self._running:
+                try:
+                    conn, addr = s.accept()
+                    with conn:
+                        raw_bytes = conn.recv(self._buffer_size)
+                        if raw_bytes: self._proc_message(raw_bytes)
+                except self._socket.timeout: continue
+                except Exception as e: self._print_debug(f"Listener error: {e}")
+    def _proc_message(self, data: bytes):
+        try:
+            payload = self._json.loads(data.decode('utf-8'))
+            topic = payload.get("topic")
+            actual_data = payload.get("data")
+            if topic in self.topics: self.topics[topic](actual_data)
+            else: self._print_debug(f"Warning: Received message for unknown topic \"{topic}\".")
+        except self._json.JSONDecodeError: self._print_debug("Received invalid JSON data.")
+    def _print_debug(self, message):
+        if self.debug: print(f"Debug: {message}")
+class Lock:
+    """
+    A class that provides a way to create locks that clear when OS is restarted.
+    """
+    def __init__(self, file_name: str):
+        import os
+        import time
+        self.file_name = file_name
+        self.file_handle = None
+        self._os = os
+        self._is_windows = self._os.name == "nt"
+        self._time = time
+        if self._is_windows: import msvcrt; self._msvcrt = msvcrt
+        else: import fcntl; self._fcntl = fcntl
+    def acquire(self, timeout: float=None) -> bool:
+        self.file_handle = open(self.file_name, "w")
+        start_time = self._time.time()
+        while True:
+            try:
+                if self._is_windows: self._msvcrt.locking(self.file_handle.fileno(), self._msvcrt.LK_NBLCK, 1)
+                else: self._fcntl.flock(self.file_handle, self._fcntl.LOCK_EX | self._fcntl.LOCK_NB)
+                return True
+            except (IOError, OSError):
+                if timeout is not None and (self._time.time() - start_time) >= timeout:
+                    self.file_handle.close()
+                    self.file_handle = None
+                    return False
+                self._time.sleep(0.1)
+    def release(self):
+        if self.file_handle is not None:
+            try:
+                if self._is_windows:
+                    self.file_handle.seek(0)
+                    self._msvcrt.locking(self.file_handle.fileno(), self._msvcrt.LK_UNLCK, 1)
+                else: self._fcntl.flock(self.file_handle, self._fcntl.LOCK_UN)
+            finally:
+                self.file_handle.close()
+                self.file_handle = None
+                try: self._os.remove(self.file_name)
+                except OSError: pass
+    def __enter__(self):
+        if not self.acquire(timeout=10): raise TimeoutError(f"Could not acquire lock on {self.file_name}")
+        return self
+    def __exit__(self, exc_type, exc_val, exc_tb): self.release()
 class ProgressBar:
     """
     A class that allows you to work with progress bars in the console.

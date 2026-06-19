@@ -44,30 +44,32 @@ if OrangeAPI.getConfiguration("DiscordBotEnabled") == None and not OrangeAPI.get
     printMainMessage("Please select the tutorial mode you would like to use!")
     printMainMessage("[1] = Starters")
     printMainMessage("[2] = Advanced (Skip)")
-    tutorial_mode = OrangeAPI.requestInput(ts("Input tutorial mode:")).lower()
-    if tutorial_mode == "1":
-        printMainMessage("1. Alright, so, start with going to your browser!")
-        OrangeAPI.requestInput("This can be any browser such as Google Chrome, Firefox or Microsoft Edge.")
-        OrangeAPI.requestInput("2. Next, type this link in the URL tab and login to your discord account. (THIS IS THE REAL DISCORD) \nhttps://discord.com/developers/applications")
-        OrangeAPI.requestInput("3. Next up, once the page is loaded and you've logged in, press the New Application button in the top right.\nThis will put up a prompt for a name, feel free to put any name you like!")
-        OrangeAPI.requestInput("4. This will pull up the Application page. Go to the Bot tab and set the username of your choice and enable ALL intents!\nAlso, please press Reset Token to get the bot token. This is going to be important later!")
-        OrangeAPI.requestInput("5. We are now gonna add your bot to your Discord Server. Go to the OAuth2 tab and select \"bot\" and \"Administrator\" as the scopes and permissions. \nThen, take the generated link at the bottom of the page and put it in the URL tab of your webbrowser.")
-        OrangeAPI.requestInput("6. Finally, add the bot to your Discord Server and you may continue on to this installation!\nHave a great day!")
-    discord_token = OrangeAPI.requestInput(ts("Please input your Discord Bot Token below (https://discord.com/developers/applications):"))
-    if discord_token and len(discord_token) > 50:
-        printSuccessMessage("Successfully set Discord Bot Token in settings!")
-        OrangeAPI.setConfiguration("DiscordBotEnabled", True)
-        OrangeAPI.setConfiguration("DiscordBotToken", discord_token)
-    if OrangeAPI.getConfiguration("DiscordBotEnabled") == True and not OrangeAPI.getIfRobloxLaunched():
-        printMainMessage("Let's now add what users to trust!")
-        printMainMessage("Please enable developer mode in your Discord Client and right click on the user to get a user id!")
-        printMainMessage("And, for multiple users, separate by ONLY one comma between each id. (No spaces!!)")
-        discord_users = OrangeAPI.requestInput(ts("Please input the Discord User IDs to trust:"))
-        if discord_users:
-            discord_users = discord_users.split(",")
-            OrangeAPI.setConfiguration("DiscordBotUsers", discord_users)
-    printMainMessage(f"If you want to reset this setup, please reset the configuration in Mod Script Settings.")
-    OrangeAPI.setConfiguration("DiscordBotFirstTime", True)
+    tutorial_mode = OrangeAPI.requestInput(ts("Input tutorial mode:"))
+    if tutorial_mode:
+        tutorial_mode = tutorial_mode.lower()
+        if tutorial_mode == "1":
+            printMainMessage("1. Alright, so, start with going to your browser!")
+            OrangeAPI.requestInput("This can be any browser such as Google Chrome, Firefox or Microsoft Edge.")
+            OrangeAPI.requestInput("2. Next, type this link in the URL tab and login to your discord account. (THIS IS THE REAL DISCORD) \nhttps://discord.com/developers/applications")
+            OrangeAPI.requestInput("3. Next up, once the page is loaded and you've logged in, press the New Application button in the top right.\nThis will put up a prompt for a name, feel free to put any name you like!")
+            OrangeAPI.requestInput("4. This will pull up the Application page. Go to the Bot tab and set the username of your choice and enable ALL intents!\nAlso, please press Reset Token to get the bot token. This is going to be important later!")
+            OrangeAPI.requestInput("5. We are now gonna add your bot to your Discord Server. Go to the OAuth2 tab and select \"bot\" and \"Administrator\" as the scopes and permissions. \nThen, take the generated link at the bottom of the page and put it in the URL tab of your webbrowser.")
+            OrangeAPI.requestInput("6. Finally, add the bot to your Discord Server and you may continue on to this installation!\nHave a great day!")
+        discord_token = OrangeAPI.requestInput(ts("Please input your Discord Bot Token below (https://discord.com/developers/applications):"))
+        if discord_token and len(discord_token) > 50:
+            printSuccessMessage("Successfully set Discord Bot Token in settings!")
+            OrangeAPI.setConfiguration("DiscordBotEnabled", True)
+            OrangeAPI.setConfiguration("DiscordBotToken", discord_token)
+        if OrangeAPI.getConfiguration("DiscordBotEnabled") == True and not OrangeAPI.getIfRobloxLaunched():
+            printMainMessage("Let's now add what users to trust!")
+            printMainMessage("Please enable developer mode in your Discord Client and right click on the user to get a user id!")
+            printMainMessage("And, for multiple users, separate by ONLY one comma between each id. (No spaces!!)")
+            discord_users = OrangeAPI.requestInput(ts("Please input the Discord User IDs to trust:"))
+            if discord_users:
+                discord_users = discord_users.split(",")
+                OrangeAPI.setConfiguration("DiscordBotUsers", discord_users)
+        printMainMessage(f"If you want to reset this setup, please reset the configuration in Mod Script Settings.")
+        OrangeAPI.setConfiguration("DiscordBotFirstTime", True)
 
 def run_handling():
     handled = []
@@ -135,13 +137,6 @@ def run_discord_proxy():
         printSuccessMessage("Discord Proxy ended with success!")
     else:
         printErrorMessage(f"Discord Proxy ended with fail! Return code: {returncode}")
-def onRobloxExit(data):
-    clean_up_tasks()
-    if discord_thread and discord_thread.poll() is None:
-        discord_thread.terminate()
-        try: discord_thread.wait(timeout=5)
-        except subprocess.TimeoutExpired: discord_thread.kill()
-
 def full_start():
     clean_up_tasks()
     threading.Thread(target=run_discord_proxy, daemon=True).start()

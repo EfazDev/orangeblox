@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0p
+# v2.5.0q
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0p
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0q
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -19,16 +19,17 @@ import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
 """
 
 import os
-import time
+import queue
 import platform
+import threading
 import typing
 import json
 from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.5.0p", "bootstrap_version": "2.5.0p"}
-requested_functions = {}
+current_version = {"version": "2.5.0q", "bootstrap_version": "2.5.0q"}
+request_queues = {}
 cached_information = {}
 colors_class = Colors()
 translators = None
@@ -58,16 +59,7 @@ class UnusedAPI(Warning):
     def __init__(self):            
         super().__init__("This API variable/class is no longer usable! Please update your scripts!")
 class Request:
-    requested = ""
-    success = False
-    fulfilled = False
-    timed_out = False
-    code = None
-    value = None
-    args = {}
-    id = None
-
-    def __init__(self, bootstrap_api, orangeapi_details, requested_function: str, args: dict={}):
+    def __init__(self, bootstrap_api, orangeapi_details, requested_function: str, args: typing.Dict={}):
         global requested_functions
         if type(bootstrap_api) is OrangeAPI and type(orangeapi_details) is OrangeAPIDetails:
             generated_function_id = f"{orangeapi_details.mod_script_name}|{orangeapi_details.secret_key}|" + os.urandom(3).hex()
@@ -77,18 +69,28 @@ class Request:
                 elif type(args) is list: self.args = args
                 else: self.args = {}
                 self.id = generated_function_id
-                requested_functions[generated_function_id] = self
-                while (self.timed_out == False):
-                    if self.fulfilled == True:
-                        if self.code == 0: self.success = True
-                        else: self.success = False
-                        return
-                    time.sleep(0.05)
                 self.success = False
-                self.code = 5
+                self.fulfilled = False
+                self.timed_out = False
+                self.code = None
                 self.value = None
+                self._completion_event = threading.Event()
+                request_queues[orangeapi_details.mod_script_name].put(self)
+                timeout_sec = 5.0
+                if requested_function in ["reprepareRoblox", "unzipFile", "requestInput"]: timeout_sec = None
+                is_completed = self._completion_event.wait(timeout=timeout_sec)
+                if is_completed: self.success = (self.code == 0)
+                else:
+                    self.success = False
+                    self.code = 5
+                    self.value = None
             else: raise InvalidRequested()
         else: raise InvalidOrangeAPI()
+    def complete_request(self, code: int, value=None):
+        self.code = code
+        self.value = value
+        self.fulfilled = True
+        self._completion_event.set()
     def generateResponse(self): return Response(self)
 class Response:
     """This is a class used for returning data back in details such as success, code, response data, etc."""
@@ -122,7 +124,7 @@ class OrangeAPI:
     import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
     ```
     """
-    requestedFunctions: dict = {}
+    requestedFunctions: typing.Dict = {}
     """
     ## Warning!
     This variable was moved to head in v1.4.1+ for security purposes and now returns an empty array that is not usable for communicating.
@@ -172,7 +174,7 @@ class OrangeAPI:
         args = {}
         id = None
 
-        def __init__(self, bootstrap_api, requested_function: str, args: dict={}):
+        def __init__(self, bootstrap_api, requested_function: str, args: typing.Dict={}):
             raise UnusedAPI()
         def generateResponse(self):
             raise UnusedAPI()
@@ -190,7 +192,7 @@ class OrangeAPI:
         """The large image link value of the Discord Presence."""
         smallImage=None
         """The small image link value of the Discord Presence."""
-        def __init__(self, details: str=None, state: str=None, timeStart: float=None, timeEnd: float=None, largeImage: dict=None, smallImage: dict=None):
+        def __init__(self, details: str=None, state: str=None, timeStart: float=None, timeEnd: float=None, largeImage: typing.Dict=None, smallImage: typing.Dict=None):
             if type(details) is str: self.details = details
             if type(state) is str: self.state = state
             if type(timeStart) is float or type(timeStart) is int: self.timeStart = timeStart
@@ -266,7 +268,7 @@ class OrangeAPI:
 
     # Functions
     def __init__(self, orangeapi_details: OrangeAPIDetails=None): self.__orangeapi_details__ = orangeapi_details
-    def getMainConfiguration(self) -> dict | None: # Permission: getMainConfiguration
+    def getMainConfiguration(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getMainConfiguration
         """
         Get the current user's bootstrap configuration data.
 
@@ -280,7 +282,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getMainConfiguration").generateResponse().response
-    def setMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setMainConfiguration
+    def setMainConfiguration(self, configuration: typing.Dict, full: bool=False) -> typing.Optional[Response]: # Permission: setMainConfiguration
         """
         Set the current user's bootstrap configuration data in the CURRENT running bootstrap window. This will not affect the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
@@ -291,7 +293,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "setMainConfiguration", [configuration, full]).generateResponse()
-    def saveMainConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveMainConfiguration
+    def saveMainConfiguration(self, configuration: typing.Dict, full: bool=False) -> typing.Optional[Response]: # Permission: saveMainConfiguration
         """
         Set the current user's bootstrap configuration data through the current window AND the Configuration.json file. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
@@ -303,7 +305,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "saveMainConfiguration", [configuration, full]).generateResponse()
-    def getFastFlagConfiguration(self) -> dict | None: # Permission: getFastFlagConfiguration
+    def getFastFlagConfiguration(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getFastFlagConfiguration
         """
         Get the current user's Roblox Player or Studio flags.
 
@@ -315,7 +317,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getFastFlagConfiguration").generateResponse().response
-    def setFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: setFastFlagConfiguration
+    def setFastFlagConfiguration(self, configuration: typing.Optional[typing.Dict[str, typing.Any]], full: bool=False) -> typing.Optional[Response]: # Permission: setFastFlagConfiguration
         """
         Set the current user's Roblox Player or Studio flags.
         
@@ -326,7 +328,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "setFastFlagConfiguration", [configuration, full]).generateResponse()
-    def saveFastFlagConfiguration(self, configuration: dict, full: bool=False) -> Response | None: # Permission: saveFastFlagConfiguration
+    def saveFastFlagConfiguration(self, configuration: typing.Optional[typing.Dict[str, typing.Any]], full: bool=False) -> typing.Optional[Response]: # Permission: saveFastFlagConfiguration
         """
         Set the current user's Roblox Player or Studio flags and save it into Configuration.json. The full argument means it will overwrite the full configuration if true, it will not manually add keys one at a time
         
@@ -337,7 +339,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "saveFastFlagConfiguration", [configuration, full]).generateResponse()
-    def getVersion(self) -> str | None:
+    def getVersion(self) -> typing.Optional[str]:
         """
         Get the version of mod script from Manifest file!
         
@@ -350,7 +352,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getVersion").generateResponse().response
-    def getName(self) -> str | None:
+    def getName(self) -> typing.Optional[str]:
         """
         Get the name of mod script from Manifest file!
         
@@ -363,7 +365,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getName").generateResponse().response
-    def getModScriptId(self) -> str | None:
+    def getModScriptId(self) -> typing.Optional[str]:
         """
         Get the id of mod script used!
         
@@ -376,7 +378,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getModScriptId").generateResponse().response
-    def getOrangeBloxName(self) -> str | None:
+    def getOrangeBloxName(self) -> typing.Optional[str]:
         """
         Get the name of OrangeBlox set!
         
@@ -389,7 +391,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOrangeBloxName").generateResponse().response
-    def getOrangeBloxEmoji(self) -> str | None:
+    def getOrangeBloxEmoji(self) -> typing.Optional[str]:
         """
         Get the emoji set for OrangeBlox!
         
@@ -402,7 +404,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOrangeBloxEmoji").generateResponse().response
-    def getOrangeBloxColorAnsi(self) -> int | None:
+    def getOrangeBloxColorAnsi(self) -> typing.Optional[int]:
         """
         Get the ANSI color set for OrangeBlox!
         
@@ -415,7 +417,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOrangeBloxColorAnsi").generateResponse().response
-    def getOrangeBloxColorHex(self) -> str | None:
+    def getOrangeBloxColorHex(self) -> typing.Optional[str]:
         """
         Get the HEX color set for OrangeBlox!
         
@@ -428,7 +430,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOrangeBloxColorHex").generateResponse().response
-    def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> Response | None: # Permission: displayNotification
+    def displayNotification(self, title: str="Mod Script", message: str="A mod script message!") -> typing.Optional[Response]: # Permission: displayNotification
         """
         This sends a notification through the bootstrap into the current user's computer depending on the OS.
         
@@ -439,7 +441,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "displayNotification", {"title": title, "message": message}).generateResponse()
-    def generateModsManifest(self) -> dict[str, dict[str, typing.Any]] | None: # Permission: generateModsManifest
+    def generateModsManifest(self) -> typing.Optional[typing.Dict[str, typing.Dict[str, typing.Any]]]: # Permission: generateModsManifest
         """
         Get information about all the user's installed mods!
         
@@ -470,7 +472,25 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "generateModsManifest").generateResponse().response
-    def enableMod(self, mod_name: str) -> Response | None: # Permission: enableMod
+    def generateModOrder(self) -> typing.Optional[typing.List[str]]: # Permission: generateModOrder
+        """
+        Get the order in which the user's mods are installed!
+
+        Permission: generateModOrder | Level: 0 [Normal]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        mods = OrangeAPI.generateModOrder() # -> 
+        # [
+        #     "Template",
+        #     "Another Mod",
+        #     "Yet Another Mod"
+        # ]
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "generateModOrder").generateResponse().response
+    def enableMod(self, mod_name: str) -> typing.Optional[Response]: # Permission: enableMod
         """
         Enable a currently installed mod that hasn't been enabled yet!
         
@@ -483,7 +503,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "enableMod", {"mod_name": mod_name}).generateResponse()
-    def disableMod(self, mod_name: str) -> Response | None: # Permission: disableMod
+    def disableMod(self, mod_name: str) -> typing.Optional[Response]: # Permission: disableMod
         """
         Disable a currently installed mod that is enabled!
         
@@ -496,7 +516,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "disableMod", {"mod_name": mod_name}).generateResponse()
-    def getIfModIsEnabled(self, mod_name: str) -> bool | None: # Permission: getIfModIsEnabled
+    def getIfModIsEnabled(self, mod_name: str) -> typing.Optional[bool]: # Permission: getIfModIsEnabled
         """
         Get if a mod is currently enabled or not!
         
@@ -509,7 +529,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfModIsEnabled", {"mod_name": mod_name}).generateResponse().response
-    def sendBloxstrapRPC(self, command: str="SetRichPresence", data: typing.Union[BloxstrapRichPresence, dict, str]={}, disableWebhook: bool=True) -> Response | None: # Permission: sendBloxstrapRPC
+    def sendBloxstrapRPC(self, command: str="SetRichPresence", data: typing.Union[BloxstrapRichPresence, typing.Dict, str]={}, disableWebhook: bool=True) -> typing.Optional[Response]: # Permission: sendBloxstrapRPC
         """
         This changes the current Discord Presence if found using BloxstrapRPC. If disableWebhook is enabled, the Discord webhook notification is disabled. [Original Example from Bloxstrap in Roblox Lua](https://github.com/bloxstraplabs/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game#function-setrichpresence)
         
@@ -534,7 +554,7 @@ class OrangeAPI:
         elif type(data) is dict or type(data) is str: generated_rpc_data = data
         else: generated_rpc_data = {}
         return Request(self, self.__orangeapi_details__, "sendBloxstrapRPC", [{"command": command, "data": generated_rpc_data}, (disableWebhook == True)]).generateResponse()
-    def getRobloxLogFolderSize(self, static: bool=False) -> str | int | None: # Permission: getRobloxLogFolderSize
+    def getRobloxLogFolderSize(self, static: bool=False) -> typing.Optional[typing.Tuple[int, str]]: # Permission: getRobloxLogFolderSize
         """
         Get the current size of the Roblox Logs folder. If static mode is enabled, it will return the size of the Logs folder in bytes. Idk why would this be useful lol.
 
@@ -546,7 +566,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRobloxLogFolderSize", {"static": static}).generateResponse().response   
-    def getLatestRobloxVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxVersion
+    def getLatestRobloxVersion(self, channel: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestRobloxVersion
         """
         This pings the Roblox servers to get what's the latest Roblox version in a channel.
 
@@ -563,7 +583,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getLatestRobloxVersion", {"channel": channel}).generateResponse().response 
-    def getInstalledRobloxVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxVersion
+    def getInstalledRobloxVersion(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getInstalledRobloxVersion
         """
         This gets the current Roblox version installed including the channel the user is connected to.
 
@@ -580,7 +600,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getInstalledRobloxVersion").generateResponse().response
-    def getLatestOppositeRobloxVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestOppositeRobloxVersion
+    def getLatestOppositeRobloxVersion(self, channel: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestOppositeRobloxVersion
         """
         Get the latest version of the opposite application (Roblox Player -> Studio, Studio -> Player)
 
@@ -599,7 +619,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getLatestOppositeRobloxVersion", {"channel": channel}).generateResponse().response 
-    def getOppositeInstalledRobloxVersion(self) -> dict[str, typing.Any] | None: # Permission: getOppositeInstalledRobloxVersion
+    def getOppositeInstalledRobloxVersion(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getOppositeInstalledRobloxVersion
         """
         Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)
 
@@ -618,7 +638,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOppositeInstalledRobloxVersion").generateResponse().response
-    def getLatestRobloxStudioVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxStudioVersion
+    def getLatestRobloxStudioVersion(self, channel: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestRobloxStudioVersion
         """
         Get the latest version of Roblox Studio.
 
@@ -637,7 +657,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getLatestRobloxStudioVersion", {"channel": channel}).generateResponse().response 
-    def getInstalledRobloxStudioVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxStudioVersion
+    def getInstalledRobloxStudioVersion(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getInstalledRobloxStudioVersion
         """
         Get the current version of Roblox Studio.
 
@@ -656,7 +676,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getInstalledRobloxStudioVersion").generateResponse().response
-    def getLatestRobloxPlayerVersion(self, channel: str="*") -> dict[str, typing.Any] | None: # Permission: getLatestRobloxPlayerVersion
+    def getLatestRobloxPlayerVersion(self, channel: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestRobloxPlayerVersion
         """
         Get the latest version of Roblox Player.
 
@@ -675,7 +695,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getLatestRobloxPlayerVersion", {"channel": channel}).generateResponse().response 
-    def getInstalledRobloxPlayerVersion(self) -> dict[str, typing.Any] | None: # Permission: getInstalledRobloxPlayerVersion
+    def getInstalledRobloxPlayerVersion(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getInstalledRobloxPlayerVersion
         """
         Get the current version of Roblox Player.
 
@@ -694,7 +714,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getInstalledRobloxPlayerVersion").generateResponse().response
-    def getRobloxInstallFolder(self) -> str | None: # Permission: getRobloxInstallFolder
+    def getRobloxInstallFolder(self) -> typing.Optional[str]: # Permission: getRobloxInstallFolder
         """
         This gets where Roblox is installed at. This may change between versions or operating systems.
 
@@ -705,7 +725,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRobloxInstallFolder").generateResponse().response   
-    def getIfRobloxIsOpen(self, pid: str="") -> bool | None: # Permission: getIfRobloxIsOpen
+    def getIfRobloxIsOpen(self, pid: str="") -> typing.Optional[bool]: # Permission: getIfRobloxIsOpen
         """
         This gets if Roblox is currently open using the following PID provided if got or using the latest open Roblox window.
 
@@ -716,7 +736,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfRobloxIsOpen", {"pid": pid}).generateResponse().response
-    def getLatestRobloxPid(self) -> str | None: # Permission: getLatestRobloxPid
+    def getLatestRobloxPid(self) -> typing.Optional[str]: # Permission: getLatestRobloxPid
         """
         Get the latest Roblox window PID opened
 
@@ -727,7 +747,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getLatestRobloxPid").generateResponse().response
-    def getOpenedRobloxPids(self) -> list[str] | None: # Permission: getOpenedRobloxPids
+    def getOpenedRobloxPids(self) -> typing.Optional[typing.List[str]]: # Permission: getOpenedRobloxPids
         """
         Get all the currently opened Roblox PIDs
 
@@ -740,7 +760,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getOpenedRobloxPids").generateResponse().response
-    def getCurrentRobloxPid(self) -> str | None: # Permission: getCurrentRobloxPid
+    def getCurrentRobloxPid(self) -> typing.Optional[str]: # Permission: getCurrentRobloxPid
         """
         Get the current connected Roblox Pid
 
@@ -753,7 +773,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getCurrentRobloxPid").generateResponse().response
-    def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int) -> Response | None: # Permission: changeRobloxWindowSizeAndPosition
+    def changeRobloxWindowSizeAndPosition(self, size_x: int, size_y: int, position_x: int, position_y: int) -> typing.Optional[Response]: # Permission: changeRobloxWindowSizeAndPosition
         """
         Change the Roblox Window Size and Position
 
@@ -766,7 +786,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "changeRobloxWindowSizeAndPosition", {"size_x": size_x, "size_y": size_y, "position_x": position_x, "position_y": position_y}).generateResponse()
-    def setRobloxWindowTitle(self, title: str) -> Response | None: # Permission: setRobloxWindowTitle
+    def setRobloxWindowTitle(self, title: str) -> typing.Optional[Response]: # Permission: setRobloxWindowTitle
         """
         Set the Roblox Window Title [Windows Only]
 
@@ -779,7 +799,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "setRobloxWindowTitle", {"title": title}).generateResponse()
-    def setRobloxWindowIcon(self, icon: str) -> Response | None: # Permission: setRobloxWindowIcon
+    def setRobloxWindowIcon(self, icon: str) -> typing.Optional[Response]: # Permission: setRobloxWindowIcon
         """
         Set the Roblox Window Icon [Windows Only]
 
@@ -792,7 +812,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "setRobloxWindowIcon", {"icon": icon}).generateResponse()
-    def focusRobloxWindow(self) -> Response | None: # Permission: focusRobloxWindow
+    def focusRobloxWindow(self) -> typing.Optional[Response]: # Permission: focusRobloxWindow
         """
         Focus the Roblox Window to the top window
 
@@ -805,7 +825,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "focusRobloxWindow").generateResponse()
-    def reprepareRoblox(self) -> Response | None: # Permission: reprepareRoblox
+    def reprepareRoblox(self) -> typing.Optional[Response]: # Permission: reprepareRoblox
         """
         Reprepare Roblox again if not opened. It is useful if your script has changed the user's mods.
 
@@ -818,7 +838,33 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "reprepareRoblox").generateResponse()
-    def endRoblox(self, pid: str="") -> Response | None: # Permission: endRoblox
+    def restartRoblox(self) -> typing.Optional[Response]: # Permission: restartRoblox
+        """
+        Restart the Roblox Instance
+
+        Permission: restartRoblox | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        response = OrangeAPI.restartRoblox() # -> bool
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "restartRoblox").generateResponse().response
+    def joinRobloxGame(self, place_id: int, game_instance_id: str=None, launch_data: str="") -> typing.Optional[Response]: # Permission: joinRobloxGame
+        """
+        Join a Roblox Game based on a Place ID! [Roblox Player Only]
+
+        Permission: joinRobloxGame | Level: 2 [Caution]
+
+        **This function is only available in OrangeAPI v2.5.0+**
+
+        ```python
+        response = OrangeAPI.joinRobloxGame(place_id=4842364293, game_instance_id="e27f4a91-49a7-4dbf-be48-9b4c7b556c44") # -> bool
+        ```
+        """
+        return Request(self, self.__orangeapi_details__, "joinRobloxGame", {"place_id": place_id, "game_instance_id": game_instance_id, "launch_data": launch_data}).generateResponse().response
+    def endRoblox(self, pid: str="") -> typing.Optional[Response]: # Permission: endRoblox
         """
         End Roblox instances using a pid. [Warning, this may end the mod script after]
 
@@ -831,7 +877,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "endRoblox", {"pid": pid}).generateResponse()
-    def endOppositeRoblox(self, pid: str="") -> Response | None: # Permission: endRoblox
+    def endOppositeRoblox(self, pid: str="") -> typing.Optional[Response]: # Permission: endRoblox
         """
         End the opposite Roblox instances using a pid.
 
@@ -844,7 +890,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "endOppositeRoblox", {"pid": pid}).generateResponse()
-    def getRobloxThumbnailURL(self, studio: bool=None) -> str | None: # Permission: getRobloxThumbnailURL
+    def getRobloxThumbnailURL(self, studio: bool=None) -> typing.Optional[str]: # Permission: getRobloxThumbnailURL
         """
         Get the Roblox Tilt Logo based on the User's Special Mods Settings
 
@@ -858,7 +904,7 @@ class OrangeAPI:
         """
         if studio == None: studio = self.getStudioMode()
         return Request(self, self.__orangeapi_details__, "getRobloxThumbnailURL", {"studio": studio}).generateResponse().response
-    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/Images/DiscordIcon.png") -> Response | None: # Permission: sendDiscordWebhookMessage
+    def sendDiscordWebhookMessage(self, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list[DiscordWebhookField]=[], image: str="https://obx.efaz.dev/Images/DiscordIcon.png") -> typing.Optional[Response]: # Permission: sendDiscordWebhookMessage
         """
         Send a Discord Webhook message to the user's Discord webhook!
 
@@ -871,7 +917,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "sendDiscordWebhookMessage", {"title": title, "description": description, "color": color, "fields": fields, "image": image}).generateResponse()
-    def getRobloxAppSettings(self) -> dict[str, typing.Any] | None: # Permission: getRobloxAppSettings
+    def getRobloxAppSettings(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getRobloxAppSettings
         """
         Get information about the Roblox client such as the logged in user, accessible polciies and settings.
         
@@ -900,7 +946,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRobloxAppSettings").generateResponse().response
-    def getIfOSSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)) -> bool | None: # Permission: getIfOSSupported
+    def getIfOSSupported(self, windows_build: int=0, macos_version: tuple=(0,0,0)) -> typing.Optional[bool]: # Permission: getIfOSSupported
         """
         Get if your operating system version is within a certain version.
         
@@ -913,7 +959,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfOSSupported", {"windows_build": windows_build, "macos_version": macos_version}).generateResponse().response
-    def getIfPythonSupported(self, major: int=3, minor: int=13, patch: int=2) -> bool | None: # Permission: getIfPythonSupported
+    def getIfPythonSupported(self, major: int=3, minor: int=13, patch: int=2) -> typing.Optional[bool]: # Permission: getIfPythonSupported
         """
         Get if the running Python executable is supported within a version number.
         
@@ -930,7 +976,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfPythonSupported", {"major": major, "minor": minor, "patch": patch}).generateResponse().response
-    def getIfConnectedToInternet(self) -> bool | None: # Permission: getIfConnectedToInternet
+    def getIfConnectedToInternet(self) -> typing.Optional[bool]: # Permission: getIfConnectedToInternet
         """
         Get if the user is connected to the internet.
         
@@ -959,7 +1005,7 @@ class OrangeAPI:
         new_unzip_response = self.UnzipResponse()
         if response: new_unzip_response.path = response.path; new_unzip_response.returncode = response.returncode
         return new_unzip_response
-    def getRequest(self, url: str, headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: getRequest
+    def getRequest(self, url: str, headers: typing.Dict[str, str]={}, cookies: typing.Union[typing.Dict[str, str], str]={}, auth: typing.List[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: getRequest
         """
         Make a GET request to any website and retrieve data from it.
         
@@ -972,7 +1018,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRequest", {"url": url, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
-    def postRequest(self, url: str, data: typing.Union[dict, list, str], headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: postRequest
+    def postRequest(self, url: str, data: typing.Union[typing.Dict[str, typing.Any], typing.List[typing.Any], str], headers: typing.Dict[str, str]={}, cookies: typing.Union[typing.Dict[str, str], str]={}, auth: typing.List[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: postRequest
         """
         Make a POST request to any website and send data to it.
         
@@ -993,7 +1039,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "postRequest", {"url": url, "data": data, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
-    def deleteRequest(self, url: str, headers: dict[str, str]={}, cookies: typing.Union[dict[str, str], str]={}, auth: list[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: deleteRequest
+    def deleteRequest(self, url: str, headers: typing.Dict[str, str]={}, cookies: typing.Union[typing.Dict[str, str], str]={}, auth: typing.List[str]=[], timeout: float=30.0, follow_redirects: bool=False): # Permission: deleteRequest
         """
         Make a DELETE request to any website and delete data from it.
         
@@ -1014,7 +1060,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "deleteRequest", {"url": url, "headers": headers, "cookies": cookies, "auth": auth, "timeout": timeout, "follow_redirects": follow_redirects}).generateResponse().response
-    def getConnectedUserInfo(self) -> dict | None: # Permission: getConnectedUserInfo
+    def getConnectedUserInfo(self) -> typing.Optional[typing.Dict]: # Permission: getConnectedUserInfo
         """
         Get game user information from OrangeBlox
 
@@ -1027,7 +1073,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getConnectedUserInfo").generateResponse().response
-    def getIfConnectedToGame(self) -> bool | None: # Permission: getIfConnectedToGame
+    def getIfConnectedToGame(self) -> typing.Optional[bool]: # Permission: getIfConnectedToGame
         """
         Get if you connected to a Roblox game
 
@@ -1040,7 +1086,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfConnectedToGame").generateResponse().response
-    def getCurrentPlaceInfo(self) -> dict | None: # Permission: getCurrentPlaceInfo
+    def getCurrentPlaceInfo(self) -> typing.Optional[typing.Dict]: # Permission: getCurrentPlaceInfo
         """
         Get game information from internal OrangeBlox
 
@@ -1053,7 +1099,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getCurrentPlaceInfo").generateResponse().response
-    def createAppLock(self, name: str="ScriptLock") -> bool | None: # Permission: createAppLock
+    def createAppLock(self, name: str="ScriptLock") -> typing.Optional[bool]: # Permission: createAppLock
         """
         Create an app lock to use between mod script instances (where, if true, script take control, otherwise, other script instance takes control)
 
@@ -1131,7 +1177,7 @@ class OrangeAPI:
             return True
         else:
             return False
-    def requestInput(self, question: str, prompt: str="> ") -> str | None: # No Permission Needed
+    def requestInput(self, question: str, prompt: str="> ") -> typing.Optional[str]: # No Permission Needed
         """
         Request an input from the user with a question [Takes effect if Roblox is not launched.]
         
@@ -1140,7 +1186,7 @@ class OrangeAPI:
         **This function is only available in OrangeAPI/Efaz's Roblox Bootstrap API v1.5.0+**
 
         ```python
-        response = OrangeAPI.requestInput("What's your favorite ice cream?", "> ") # -> str | None
+        response = OrangeAPI.requestInput("What's your favorite ice cream?", "> ") # -> typing.Optional[str]
         ```
         """
         if Request(self, self.__orangeapi_details__, "getIfRobloxLaunched").generateResponse().response == False:
@@ -1148,7 +1194,7 @@ class OrangeAPI:
             return input(prompt)
         else:
             return None
-    def getIf32BitWindows(self) -> bool | None: # No Permission Needed
+    def getIf32BitWindows(self) -> typing.Optional[bool]: # No Permission Needed
         """
         Get if the user is running the bootstrap on a 32 bit copy of Python for Windows.
         
@@ -1161,7 +1207,7 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIf32BitWindows").generateResponse().response
-    def getIfRobloxLaunched(self) -> bool | None: # No Permission Needed
+    def getIfRobloxLaunched(self) -> typing.Optional[bool]: # No Permission Needed
         """
         Get if Roblox was launched by the bootstrap yet. [Useful for determining before interrupting the main loop]
         
@@ -1282,7 +1328,7 @@ class OrangeAPI:
         mes = str(mes)
         if translators.get(self.__orangeapi_details__.mod_script_name): mes = translators.get(self.__orangeapi_details__.mod_script_name).translate(mes)
         return mes
-    def getConfiguration(self, name: str="*") -> dict | typing.Any | None: # No Permission Needed
+    def getConfiguration(self, name: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # No Permission Needed
         """
         Get all configurations from name "*" or one configuration from name if existing.
 
@@ -1298,7 +1344,7 @@ class OrangeAPI:
             return Request(self, self.__orangeapi_details__, "getConfiguration", {"name": name}).generateResponse().response
         else:
             return None
-    def setConfiguration(self, name: str="*", data: typing.Union[None, str, dict, bool, int, float, list]=None) -> Response | None: # No Permission Needed
+    def setConfiguration(self, name: str="*", data: typing.Union[None, str, typing.Dict[str, typing.Any], bool, int, float, typing.List[typing.Any]]=None) -> typing.Optional[Response]: # No Permission Needed
         """
         Set a configuration in a name. Values must be usable in a JSON format. If the name is a "*", the data provided must be in a dictionary like {"existing": "Woah"} for example.
 
@@ -1314,7 +1360,7 @@ class OrangeAPI:
                 return Request(self, self.__orangeapi_details__, "setConfiguration", {"name": name, "data": data}).generateResponse()
             except Exception as e: raise InvalidRequest()
         else: raise InvalidRequest()
-    def about(self) -> dict[str, typing.Any] | None: # No Permission Needed
+    def about(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # No Permission Needed
         """
         Get basic info about the bootstrap such as version of both API and bootstrap itself!
         
@@ -1350,3 +1396,8 @@ class OrangeAPI:
         about = self.about()
         bootstrap_version = about["bootstrap_version"]
         return needed_version >= bootstrap_version
+class OrangeAPIProxy:
+    def __init__(self, api_ins: OrangeAPI): object.__setattr__(self, '_proxied_api', api_ins)
+    def __getattr__(self, name): return getattr(self._proxied_api, name)
+    def __setattr__(self, name, value): raise PermissionError(f"Modification of OrangeAPI is blocked.")
+    def __delattr__(self, name): raise PermissionError(f"Modification of OrangeAPI is blocked.")

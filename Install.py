@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0p
+# v2.5.0q
 # 
 
 # Modules
@@ -98,7 +98,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.5.0p"}
+current_version = {"version": "2.5.0q"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -140,6 +140,7 @@ flag_types = {
     "EFlagUpdatesAuthorizationKey": "str",
     "EFlagEnableDebugMode": "bool",
     "EFlagEnabledMods": "dict",
+    "EFlagEnabledModOrder": "list",
     "EFlagMakeMainBootstrapLogFiles": "bool",
     "EFlagCompletedTutorial": "bool",
     "EFlagVerifyRobloxHashAfterInstall": "bool",
@@ -1458,9 +1459,11 @@ if __name__ == "__main__":
         import win32con # type: ignore
 
     # CPU Usage
-    virutal_memory = psutil.virtual_memory()
-    cpu_percent = psutil.cpu_percent(interval=0.1)
-    printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+    try:
+        virutal_memory = psutil.virtual_memory()
+        cpu_percent = psutil.cpu_percent(interval=0.1)
+        printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+    except Exception as e: printErrorMessage("CPU Percentage: Error | Memory Usage: Error")
 
     # App Paths & Details
     expected_app_path, default_app_path = getInstalledAppPath()

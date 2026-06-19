@@ -103,8 +103,19 @@ async def on_ready():
     elif OrangeAPI.getVersion() != OrangeAPI.getConfiguration("ModScriptVersion"):
         await tree.sync()
         OrangeAPI.setConfiguration("ModScriptVersion", OrangeAPI.getVersion())
+    if not status_task.is_running(): status_task.start()
+    if not check_api_status.is_running(): check_api_status.start()
+@bot.event
+async def on_disconnect():
+    printErrorMessage("Bot disconnected!")
+    if status_task.is_running(): status_task.cancel()
+    if check_api_status.is_running(): check_api_status.cancel()
+@bot.event
+async def on_resumed():
+    printSuccessMessage("Bot connection resumed!")
+    if not status_task.is_running(): status_task.start()
+    if not check_api_status.is_running(): check_api_status.start()
 
-    status_task.start()
 @tasks.loop(seconds=10)
 async def status_task():
     try:
@@ -277,6 +288,78 @@ async def connectedgame(interaction: discord.Interaction):
                 16711680
             )
         )
+@tree.command(name="joingame", description="Join a Roblox game!")
+async def joingame(interaction: discord.Interaction, placeid: int, gameinstanceid: str=""):
+    ctx = interaction
+    res = ctx.response
+    if getIfUserIsTrusted(ctx.user):
+        try:
+            await asyncio.sleep(0)
+            await res.send_message(
+                embed=generateCustomEmbed(
+                    ts("Called!"),
+                    ts(f"Successfully called task for joining a Roblox game! Please wait a moment!"),
+                    16776960
+                )
+            )
+            if OrangeAPI.getStudioMode():
+                await ctx.channel.send(
+                    embed=generateCustomEmbed(
+                        ts("Uh oh!"),
+                        ts("You are in Studio mode! You cannot join a game in Studio mode."),
+                        16711680
+                    ),
+                )
+                return
+            res = OrangeAPI.joinRobloxGame(place_id=placeid, game_instance_id=gameinstanceid)
+            if res == True:
+                app_settings = OrangeAPI.getRobloxAppSettings()
+                logged_in_user = app_settings.get("loggedInUser")
+                if logged_in_user.get("name") and logged_in_user.get("id"): connected_user_info = {"name": logged_in_user.get("name"), "id": logged_in_user.get("id"), "display": logged_in_user.get("displayName")}
+                else: connected_user_info = {}
+                roblox_tilt_logo = OrangeAPI.getRobloxThumbnailURL()
+                main_embed = generateCustomEmbed(
+                    ts("Joining Game"),
+                    ts(f"You are currently joining a game now!"),
+                    65280
+                )
+                username = connected_user_info.get("name", "Unknown")
+                user_id = connected_user_info.get("id", -1)
+                user_connected_text = ts("Unknown User")
+                if connected_user_info: user_connected_text = f'[@{username} [{user_id}]](https://www.roblox.com/users/{user_id}/profile)'
+                main_embed.add_field(name=ts("Place ID"), value=str(placeid))
+                main_embed.add_field(name=ts("Game Instance ID"), value=str(gameinstanceid) if gameinstanceid else "None")
+                main_embed.add_field(name=ts("Connected User"), value=user_connected_text)
+                main_embed.set_thumbnail(url=roblox_tilt_logo)
+                await ctx.channel.send(
+                    embed=main_embed
+                )
+            else:
+                await ctx.channel.send(
+                    embed=generateCustomEmbed(
+                        ts("Uh oh!"),
+                        ts(f"Something went wrong trying to join!"),
+                        16711680
+                    ),
+                )
+        except Exception as e:
+            printErrorMessage(str(e))
+            await ctx.channel.send(
+                embed=generateCustomEmbed(
+                    ts("Uh oh!"),
+                    ts(f"Something went wrong! Exception: {str(e)}"),
+                    16711680
+                ),
+            )
+    else:
+        await asyncio.sleep(0)
+        await res.send_message(
+            embed=generateCustomEmbed(
+                ts("Uh oh!"),
+                ts("You do not have access to this command!"), 
+                16711680
+            )
+        )
 @tree.command(name="screenshot", description="Get screenshot of computer screen!")
 async def screenshot(interaction: discord.Interaction):
     ctx = interaction
@@ -351,6 +434,66 @@ async def endcurrentroblox(interaction: discord.Interaction):
             else:
                 await asyncio.sleep(0)
                 await res.send_message(
+                    embed=generateCustomEmbed(
+                        ts("Uh oh!"),
+                        ts("Unable to find current Roblox instance!"), 
+                        16711680
+                    )
+                )
+        except Exception as e:
+            printErrorMessage(str(e))
+            await ctx.channel.send(
+                embed=generateCustomEmbed(
+                    ts("Uh oh!"),
+                    ts(f"Something went wrong! Exception: {str(e)}"),
+                    16711680
+                ),
+            )
+    else:
+        await asyncio.sleep(0)
+        await res.send_message(
+            embed=generateCustomEmbed(
+                ts("Uh oh!"),
+                ts("You do not have access to this command!"), 
+                16711680
+            )
+        )
+@tree.command(name="restartroblox", description="Restart the current Roblox instance!")
+async def restartroblox(interaction: discord.Interaction):
+    ctx = interaction
+    res = ctx.response
+    if getIfUserIsTrusted(ctx.user):
+        try:
+            await asyncio.sleep(0)
+            await res.send_message(
+                embed=generateCustomEmbed(
+                    ts("Called!"),
+                    ts(f"Successfully called task for restarting Roblox! Please wait a moment!"),
+                    16776960
+                )
+            )
+            if OrangeAPI.getCurrentRobloxPid():
+                ores = OrangeAPI.restartRoblox()
+                if ores:
+                    main_embed = generateCustomEmbed(
+                        ts("Success!"),
+                        ts(f"Successfully restarted Roblox!"),
+                        65280
+                    )
+                    await ctx.channel.send(
+                        embed=main_embed
+                    )
+                else:
+                    await ctx.channel.send(
+                        embed=generateCustomEmbed(
+                            ts("Uh oh!"),
+                            ts(f"Something went wrong!"),
+                            16711680
+                        ),
+                    )
+            else:
+                await asyncio.sleep(0)
+                await ctx.channel.send(
                     embed=generateCustomEmbed(
                         ts("Uh oh!"),
                         ts("Unable to find current Roblox instance!"), 

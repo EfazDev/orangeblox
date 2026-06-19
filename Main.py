@@ -1,11 +1,12 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0p
+# v2.5.0q
 # 
 
 # Python Modules
 import os
+import queue
 import shutil
 import json
 import sys
@@ -33,11 +34,12 @@ from urllib.parse import unquote, urlparse
 # Base Variables
 main_os: str = platform.system()
 pip_class: PyKits.pip = PyKits.pip()
-requests: PyKits.request = PyKits.request()
+requests: PyKits.request = PyKits.request(throw_exceptions=False)
 plist_class: PyKits.plist = PyKits.plist()
 colors_class: PyKits.Colors = PyKits.Colors()
 submit_status: PyKits.ProgressBar = PyKits.ProgressBar()
 file_selector: PyKits.FileSelector = PyKits.FileSelector()
+notification_socket: PyKits.Socket = PyKits.Socket(port=61239)
 handler: RFFI.Handler = RFFI.Handler()
 cur_path: str = os.path.dirname(os.path.abspath(__file__))
 content_folder_paths: typing.Dict[str, str] = {}
@@ -46,7 +48,7 @@ multi_instance_enabled: bool = False
 current_global_setting_type: bool = False
 modified_flags_from_mod_scripts: typing.List[str] = []
 skip_modification_mode: bool = False
-quick_url_launch: bool = False
+preserve_roblox: bool = False
 avoid_going_to_roblox: bool = False
 installed_update: bool = False
 connect_instead: bool = False
@@ -55,7 +57,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0p"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0q"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -83,6 +85,7 @@ flag_types: typing.Dict[str, str] = {
     "EFlagUpdatesAuthorizationKey": "str",
     "EFlagEnableDebugMode": "bool",
     "EFlagEnabledMods": "dict",
+    "EFlagEnabledModOrder": "list",
     "EFlagMakeMainBootstrapLogFiles": "bool",
     "EFlagCompletedTutorial": "bool",
     "EFlagVerifyRobloxHashAfterInstall": "bool",
@@ -366,8 +369,7 @@ def checkSyncFolder(path: typing.Optional[str]=None):
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         if not os.path.exists(os.path.join(cur_path, "AppNotification")):
-            try:
-                with open(os.path.join(cur_path, "AppNotification"), "w", encoding="utf-8") as f: json.dump({"title": title, "message": message}, f)
+            try: notification_socket.send("OrangeBloxAppNotification", {"title": title, "message": message})
             except Exception as e:
                 try:
                     NSUserNotification = objc.lookUpClass("NSUserNotification")
@@ -380,8 +382,7 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
                 except Exception as e: printErrorMessage(f"There was an error sending a notification. Error: \n{trace()}")
     elif main_os == "Windows":
         if not os.path.exists(os.path.join(cur_path, "AppNotification")):
-            try:
-                with open(os.path.join(cur_path, "AppNotification"), "w", encoding="utf-8") as f: json.dump({"title": title, "message": message}, f)
+            try: notification_socket.send("OrangeBloxAppNotification", {"title": title, "message": message})
             except Exception as e:
                 try:
                     plyer.notification.notify(
@@ -427,7 +428,8 @@ def generateModsManifest():
             "list_in_normal_mods": True,
             "enabled": False,
             "permissions": [],
-            "python_modules": []
+            "python_modules": [],
+            "python_version": "3.0.0"
         }
         mod_path = os.path.join(mods_folder, "Mods", i)
         if os.path.isdir(mod_path):
@@ -450,6 +452,7 @@ def generateModsManifest():
                     if type(res_json.get("mod_script_supports")) is str and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_supports")): mod_info["mod_script_supports"] = res_json.get("mod_script_supports")
                     if type(res_json.get("mod_script_end_support")) is str and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_end_support")): mod_info["mod_script_end_support"] = res_json.get("mod_script_end_support")
                     if type(res_json.get("mod_script_end_support_reasoning")) is str and len(res_json.get("mod_script_end_support_reasoning")) < 250: mod_info["mod_script_end_support_reasoning"] = res_json.get("mod_script_end_support_reasoning")
+                    if type(res_json.get("python_version")) is str and re.match(r'^\d+\.\d+\.\d+(a\d+|b\d+|rc\d+)?$', res_json.get("python_version")): mod_info["python_version"] = res_json.get("python_version")
                     if main_os == "Darwin" and res_json.get("mod_script_does_not_support_macos") == True: mod_info["mod_script_supports_operating_system"] = False
                     elif main_os == "Windows" and res_json.get("mod_script_does_not_support_windows") == True: mod_info["mod_script_supports_operating_system"] = False
                     if res_json.get("is_studio_mod") == True: mod_info["is_studio_mod"] = True
@@ -488,6 +491,18 @@ def generateModsManifest():
             else: mod_info["mod_script"] = False
             generated_manifest[i] = mod_info
     return generated_manifest
+def generateModOrder():
+    mod_order = []
+    if not main_config.get("EFlagEnabledModOrder") or not type(main_config.get("EFlagEnabledModOrder")) is list: main_config["EFlagEnabledModOrder"] = []
+    mod_order = main_config["EFlagEnabledModOrder"]
+    mods_manifest = generateModsManifest()
+    for mod_id in mod_order:
+        if not mods_manifest.get(mod_id) or not mods_manifest[mod_id].get("enabled", False):
+            mod_order.remove(mod_id)
+    for mod_id, mod_inf in mods_manifest.items():
+        if mod_id not in mod_order and mod_inf.get("enabled", False):
+            mod_order.append(mod_id)
+    return mod_order
 def getSettings(updating: bool=False):
     global main_config
     if main_os == "Darwin":
@@ -605,7 +620,7 @@ def generateFileKey(id: str, ext: str="", dire: str=""):
         makedirs(orangeblox_library)
         return os.path.join(orangeblox_library, f"{id}{ext}")
     return os.path.join(cur_path, f"{id}_{user_folder_name}{ext}")
-def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False): 
+def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.List=[]): 
     main_ui_options = {}
     options = sorted(options, key=lambda x: x["index"])
     count = 0
@@ -616,10 +631,18 @@ def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", 
         main_ui_options[str(count)] = i
     if star_option != "": printMainMessage(f"[*] {star_option}")
     if before_input != "": printMainMessage(before_input)
-    
     res = input("> ")
     if send_input_response == True: return res
-    if main_ui_options.get(res): return main_ui_options.get(res)
+    if main_ui_options.get(res): return main_ui_options[res]
+    if scripted_responses:
+        target_mode = None
+        for mode in scripted_responses:
+            if res.endswith(mode): target_mode = mode
+        if target_mode:
+            spli = res[:-len(target_mode)]
+            if main_ui_options.get(spli):
+                main_ui_options[spli]["target_mode"] = target_mode
+                return main_ui_options[spli]
     else: return None
 def setInstalledAppPath(install_app_path):
     if main_os == "Darwin":
@@ -1377,7 +1400,7 @@ def syncToFFlagConfiguration(): # Sync to Configuration
         printMainMessage("Validating Bootstrap Install Directory..")
         if checkSyncFolder():
             if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json")):
-                printDebugMessage(f"Saving to {os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')}..")
+                printDebugMessage(f"Saving to {os.path.join(main_config.get('EFlagOrangeBloxSyncDir'), 'Configuration.json')}..")
                 with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json"), "w", encoding="utf-8") as f: json.dump(main_config, f, indent=4)
                 printSuccessMessage("Successfully synced Bootstrap Settings!")
                 return ts("Successfully synced settings!")
@@ -1400,7 +1423,7 @@ def syncFromFFlagConfiguration(): # Sync from Fast Flag Configuration
         printMainMessage("Validating Bootstrap Install Directory..")
         if checkSyncFolder():
             if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json")):
-                printDebugMessage(f"Loading from {os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')}..")
+                printDebugMessage(f"Loading from {os.path.join(main_config.get('EFlagOrangeBloxSyncDir'), 'Configuration.json')}..")
                 with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), "Configuration.json"), "r", encoding="utf-8") as f: fromFastFlagConfig = json.load(f)
                 if len(fromFastFlagConfig) < 10:
                     printYellowMessage(f"This configuration contains less than 10 items. Are you REALLY sure that you want to sync with this file? (y/n)?")
@@ -1425,7 +1448,7 @@ def urlQuickLaunch(): # URL Quick Launch
     global run_studio
     global skip_modification_mode
     global avoid_going_to_roblox
-    global quick_url_launch
+    global preserve_roblox
     global roblox_launched
     printSystemMessage(ts("--- URL Quick Launch ---"))
     if main_config.get("EFlagEnableURLQuickLaunch") != True:
@@ -1434,20 +1457,20 @@ def urlQuickLaunch(): # URL Quick Launch
         sys.exit(0)
     quick_launch_file = generateFileKey("URLQuickLaunch")
     try:
-        with open(quick_launch_file, "w", encoding="utf-8") as f: f.write("true")
-        skip_modification_mode = True
-        avoid_going_to_roblox = True
-        printMainMessage("URL Quick Launch is waiting for Roblox to be launched..")
-        pip_class.startThread(runRoblox)
-        while roblox_launched == False: time.sleep(0.1)
-        printMainMessage("Welcome to URL Quick Launch! Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. In the process, you may see the Roblox window open; just leave it open.")
-        while not os.path.exists(os.path.join(cur_path, "URLLaunchExchange")): time.sleep(0.1)
-        urlArgumentExchange()
+        app_lock = PyKits.Lock(quick_launch_file)
+        with app_lock:
+            skip_modification_mode = True
+            avoid_going_to_roblox = True
+            printMainMessage("URL Quick Launch is waiting for Roblox to be launched..")
+            pip_class.startThread(runRoblox)
+            while roblox_launched == False: time.sleep(0.1)
+            printMainMessage("Welcome to URL Quick Launch! Using this option, OrangeBlox will automatically launch Roblox when you attempt to open Roblox from your web browser and try to be as fast as possible to open. In the process, you may see the Roblox window open; just leave it open.")
+            while not os.path.exists(os.path.join(cur_path, "URLLaunchExchange")): time.sleep(0.1)
+            urlArgumentExchange()
         if len(given_args) > 1:
             handler.endRoblox()
             printSuccessMessage("Received message to open URL!")
-            if os.path.exists(quick_launch_file): os.remove(quick_launch_file)
-            quick_url_launch = True
+            preserve_roblox = True
             restartRoblox()
     except Exception:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
@@ -2010,12 +2033,12 @@ def continueToSettings(): # Open Settings
                     if k == "OrangeBlox": raise Exception("reset_theme")
                     if k: main_config["EFlagCustomBootstrapName"] = k
                     if len(main_config["EFlagCustomBootstrapName"].strip()) < 2: raise Exception(ts("Name is too short."))
-                    printMainMessage(f"Please enter the emoji for {main_config["EFlagCustomBootstrapName"]}:")
+                    printMainMessage(f"Please enter the emoji for {main_config['EFlagCustomBootstrapName']}:")
                     printMainMessage(f'Current Emoji: {main_config.get("EFlagCustomBootstrapEmoji", "🍊")}')
                     k = input("> ")
                     if k: main_config["EFlagCustomBootstrapEmoji"] = k
                     if len(main_config["EFlagCustomBootstrapEmoji"].strip()) != 1: raise Exception(ts("Invalid Emoji format."))
-                    printMainMessage(f"Please enter the HEX color for {main_config["EFlagCustomBootstrapName"]}:")
+                    printMainMessage(f"Please enter the HEX color for {main_config['EFlagCustomBootstrapName']}:")
                     printMainMessage("For selecting your color, use this Google link and use the Hex value.")
                     printMainMessage("https://www.google.com/search?q=color+picker")
                     printMainMessage(f'Current Color: {main_config.get("EFlagCustomBootstrapColor", "#ff4b00")}')
@@ -2372,7 +2395,7 @@ def continueToCredits(): # Credits
     printMainMessage(f" • {colors_class.wrap('sethmlarson (truststore) 🔌 (https://github.com/sethmlarson/truststore)', 226)}")
     printMainMessage(f"Licenses are listed in {'https://github.com/EfazDev/orangeblox/tree/main/Licenses'} or included with your installation in: {os.path.join(cur_path, 'Licenses')}")
     printMainMessage(f"6. The logo of OrangeBlox was made thanks of {colors_class.wrap('@CabledRblx 🦆', 226)}. Thanks :)")
-    printMainMessage(f"7. Server Locations was made thanks to {colors_class.wrap('ipinfo.io 🌐', 39)} as it wouldn't be possible to convert ip addresses without them!")
+    printMainMessage(f"7. Server Locations are sourced from {colors_class.wrap('freeipapi.com 🌐', 201)}")
     if main_os == "Darwin": 
         printMainMessage(f'8. macOS App was built using {colors_class.wrap("pyinstaller 📦", 39)} and {colors_class.wrap("clang 📦", 226)}. You can recreate and deploy using the following command! Use the README.md for more information.')
         printMainMessage(f"Command: \"{sys.executable}\" Install.py -r -rp -rc")
@@ -2906,9 +2929,11 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                 if main_config.get('EFlagSelectedModScripts') and len(s) > 0: printMainMessage(f"Selected Mod Scripts: {', '.join(s)}")
                 else: printMainMessage(f"Selected Mod Scripts: None")
                 printMainMessage("Select an option or a mod to enable/disable!")
+                printMainMessage("Add \"u\" or \"d\" to the end of selection number to move a mod up or down in apply order (when mod is enabled). (ex: 1u)")
                 generated_ui_options = []
                 mods_manifest = generateModsManifest()
-                for i, v in mods_manifest.items():
+                mod_order = generateModOrder()
+                for i, v in sorted(mods_manifest.items(), key=lambda x: mod_order.index(x[0]) if x[0] in mod_order else len(mod_order)):
                     if i == "Original" or i == "OldFont" or i == "GothamFont": continue
                     final_vers = "1.0.0"
                     final_name = ""
@@ -2922,27 +2947,27 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                     else: final_name = f"{i}"
                     if v.get("enabled") == False and v.get("list_in_normal_mods") == False: continue
                     generated_ui_options.append({"index": 1, "message": f"[{final_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
-                generated_ui_options.append({"index": 999998, "message": ts("Mod Script Settings")})
-                generated_ui_options.append({"index": 999998.5, "message": ts("Special Mod Settings")})
+                generated_ui_options.append({"index": 999997, "message": ts("Mod Script Settings")})
+                generated_ui_options.append({"index": 999998, "message": ts("Special Mod Settings")})
                 if checkSyncFolder(): generated_ui_options.append({"index": 999999, "message": ts("Sync Mods from Installation Folder")})
                 generated_ui_options.append({"index": 1000000, "message": ts("Open Mods Folder")})
                 generated_ui_options.append({"index": 1000001, "message": ts("Disable Appling Mods")})
                 generated_ui_options.append({"index": 1000002, "message": ts("Clear Installed Mods [Reinstall Roblox]")})
-                opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Mods Manager"))
+                opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Mods Manager"), scripted_responses=["u", "d"])
             else:
                 mods_manifest = generateModsManifest()
-                opt = {"index": 999998, "message": ts("Mod Script Settings")}
+                opt = {"index": 999997, "message": ts("Mod Script Settings")}
             if opt:
                 if reverify_mod_script == None: startMessage()
                 printSystemMessage(f"--- {opt['message']} ---")
-                if opt["index"] == 999998:
+                if opt["index"] == 999997:
                     def modScriptsLoop(se):
                         if se == 0: se += 1
                         else: printSystemMessage(f"--- Mod Script Settings ---")
                         if reverify_mod_script == None:
                             printMainMessage("Select the mod scripts you want to be used!")
                             mod_script_generated_ui_options = []
-                            for i, v in mods_manifest.items():
+                            for i, v in sorted(mods_manifest.items(), key=lambda x: mod_order.index(x[0]) if x[0] in mod_order else len(mod_order)):
                                 if v["mod_script"] == True:
                                     if i == "Original" or i == "OldFont" or i == "GothamFont": continue
                                     final_vers = "1.0.0"
@@ -2975,7 +3000,7 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                                     if v.get("name") == reverify_mod_script: final_name = f"{reverify_mod_script}"
                                     elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{reverify_mod_script}]"
                                     else: final_name = f"{reverify_mod_script}"
-                                    if v["mod_script_supports"] <= current_version["version"] and v["mod_script_end_support"] > current_version["version"] and v["mod_script_supports_operating_system"] == True: mod_script_generated_ui_options.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": reverify_mod_script})
+                                    if v["mod_script_supports"] <= current_version["version"] and v["mod_script_end_support"] > current_version["version"] and v["mod_script_supports_operating_system"] == True and v["python_version"] <= pip_class.getCurrentPythonVersion(): mod_script_generated_ui_options.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": reverify_mod_script})
                                     else: mod_script_generated_ui_options.append({"index": 2, "message": f"[🔒] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": reverify_mod_script})
                             mod_script_generated_ui_options = sorted(mod_script_generated_ui_options, key=lambda x: x["index"])
                         if len(mod_script_generated_ui_options) < 1:
@@ -3013,7 +3038,7 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                                             if v.get("name") == i: final_name = f"{i}"
                                             elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{i}]"
                                             else: final_name = f"{i}"
-                                            if v["mod_script_supports"] <= current_version["version"] and v["mod_script_end_support"] > current_version["version"] and v["mod_script_supports_operating_system"] == True: mod_script_generated_ui_options2.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
+                                            if v["mod_script_supports"] <= current_version["version"] and v["mod_script_end_support"] > current_version["version"] and v["mod_script_supports_operating_system"] == True and v["python_version"] <= pip_class.getCurrentPythonVersion(): mod_script_generated_ui_options2.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                                             else: mod_script_generated_ui_options2.append({"index": 2, "message": f"[🔒] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                                     printMainMessage("Select the mod script you want to reset!")
                                     mod_script_generated_ui_options2 = sorted(mod_script_generated_ui_options2, key=lambda x: x["index"])
@@ -3109,7 +3134,7 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                                 return
                         if reverify_mod_script == None: return modScriptsLoop(se)
                     modScriptsLoop(0)
-                elif opt["index"] == 999998.5:
+                elif opt["index"] == 999998:
                     printMainMessage("Would you like to revert the Builder Sans and Monsterrat Fonts and use the old Gotham font instead? (y/n)")
                     printMainMessage(f'Current Setting: {main_config.get("EFlagRemoveBuilderFont", False) == True}')
                     a = input("> ")
@@ -3415,12 +3440,29 @@ def continueToModsManager(reverify_mod_script=None): # Mods Manager
                 else:
                     if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
                     if opt.get("mod_info"):
-                        if opt["mod_info"]["enabled"] == True:
-                            main_config["EFlagEnabledMods"][opt["mod_id"]] = False
-                            printSuccessMessage(f"Successfully disabled mod {opt.get('final_name')}!")
+                        if opt.get("target_mode") and opt["mod_info"]["enabled"] == True:
+                            mod_order = generateModOrder()
+                            cur_org = mod_order.index(opt["mod_id"]) if opt["mod_id"] in mod_order else -1
+                            if cur_org == -1: printErrorMessage(f"Mod {opt.get('final_name')} not found in order!")
+                            else:
+                                if opt["target_mode"] == "u":
+                                    if cur_org > 0:
+                                        mod_order[cur_org], mod_order[cur_org - 1] = mod_order[cur_org - 1], mod_order[cur_org]
+                                        printSuccessMessage("Successfully moved mod up in order!")
+                                    else: printWarnMessage("Mod is already at the top!")
+                                elif opt["target_mode"] == "d":
+                                    if cur_org < len(mod_order) - 1:
+                                        mod_order[cur_org], mod_order[cur_org + 1] = mod_order[cur_org + 1], mod_order[cur_org]
+                                        printSuccessMessage("Successfully moved mod down in order!")
+                                    else: printWarnMessage("Mod is already at the bottom!")
+                                main_config["EFlagEnabledModOrder"] = mod_order
                         else:
-                            main_config["EFlagEnabledMods"][opt["mod_id"]] = True
-                            printSuccessMessage(f"Successfully enabled mod {opt.get('final_name')}!")
+                            if opt["mod_info"]["enabled"] == True:
+                                main_config["EFlagEnabledMods"][opt["mod_id"]] = False
+                                printSuccessMessage(f"Successfully disabled mod {opt.get('final_name')}!")
+                            else:
+                                main_config["EFlagEnabledMods"][opt["mod_id"]] = True
+                                printSuccessMessage(f"Successfully enabled mod {opt.get('final_name')}!")
                     saveSettings()
                 if reverify_mod_script == None: mainModManager()
                 else: printMainMessage("Exiting Mods Manager.."); return 5
@@ -3768,6 +3810,7 @@ def updateRFFIEvents():
             "configureCursors": {"message": ts("Configure your cursors"), "level": 1, "detection": "Cursors"},
             "configureAvatarMaps": {"message": ts("Configure your avatar maps"), "level": 1, "detection": "AvatarEditorMaps"},
             "generateModsManifest": {"message": ts("Get information about all your installed mods"), "level": 0},
+            "generateModOrder": {"message": ts("Get information about the install arrangement of your mods"), "level": 0},
             "displayNotification": {"message": ts("Send notifications through OrangeLoader"), "level": 1},
             "getRobloxAppSettings": {"message": ts("Get information about the Roblox client such as the logged in user, accessible policies and settings."), "level": 2},
             "getRobloxLogFolderSize": {"message": ts("Get current size of the Roblox Logs folder"), "level": 0},
@@ -3800,6 +3843,8 @@ def updateRFFIEvents():
             "getOpenedRobloxPids": {"message": ts("Get all the currently opened Roblox PIDs"), "level": 1},
             "getCurrentRobloxPid": {"message": ts("Get the current Roblox PID connected"), "level": 1},
             "getRobloxThumbnailURL": {"message": ts("Get the special logo mod image URL"), "level": 0},
+            "restartRoblox": {"message": ts("Restart the Roblox Instance"), "level": 2},
+            "joinRobloxGame": {"message": ts("Join a Roblox Game"), "level": 2},
             "changeRobloxWindowSizeAndPosition": {"message": ts("Change the Roblox Window Size and Position"), "level": 2},
             "setRobloxWindowTitle": {"message": ts("Set the Roblox Window Title [Windows Only]"), "level": 1},
             "setRobloxWindowIcon": {"message": ts("Set the Roblox Window Icon [Windows Only]"), "level": 1},
@@ -3928,8 +3973,6 @@ def robloxInstallationCheck():
 def urlArgumentExchange():
     try:
         global given_args
-        quick_launch_file = generateFileKey("URLQuickLaunch")
-        if os.path.exists(quick_launch_file): os.remove(quick_launch_file)
         if os.path.exists(os.path.join(cur_path, "URLLaunchExchange")):
             with open(os.path.join(cur_path, "URLLaunchExchange"), "r", encoding="utf-8") as f: filtered_args = f.read()
             given_args = ["Main.py", filtered_args]
@@ -4194,7 +4237,8 @@ def prepareRobloxClient():
         if main_config.get("EFlagEnableMods") == True:
             printMainMessage("Applying Mods..")
             if type(main_config.get("EFlagEnabledMods")) is dict:
-                for i, v in main_config.get("EFlagEnabledMods").items():
+                mod_order = generateModOrder()
+                for i, v in sorted(main_config.get("EFlagEnabledMods").items(), key=lambda x: mod_order.index(x[0]) if x[0] in mod_order else len(mod_order)):
                     if v == True:
                         try:
                             mod_path = os.path.join(os.path.join(mods_folder, "Mods"), i)
@@ -4258,10 +4302,11 @@ def prepareRobloxClient():
                                 else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
                             def check_codesign():
                                 try:
+                                    exe_path = os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')
+                                    if not os.path.isfile(exe_path): return False
                                     result = subprocess.run(
-                                        f"cat '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}' > /dev/null && \
-                                            codesign -v --no-strict '{os.path.join(RFFI.macOS_studioDir, 'Contents', 'MacOS', 'RobloxStudio')}'",
-                                        shell=True, cwd=cur_path
+                                        ["/usr/bin/codesign", "-v", "--no-strict", exe_path],
+                                        cwd=cur_path
                                     )   
                                     printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
                                     if result.returncode == 0: return True
@@ -4326,10 +4371,11 @@ def prepareRobloxClient():
                                 else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
                             def check_codesign():
                                 try:
+                                    exe_path = os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')
+                                    if not os.path.isfile(exe_path): return False
                                     result = subprocess.run(
-                                        f"cat {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')} > /dev/null && \
-                                            codesign -v --no-strict {os.path.join(RFFI.macOS_dir, 'Contents', 'MacOS', 'RobloxPlayer')}",
-                                        shell=True, cwd=cur_path
+                                        ["/usr/bin/codesign", "-v", "--no-strict", exe_path],
+                                        cwd=cur_path
                                     )   
                                     printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
                                     if result.returncode == 0: return True
@@ -4813,7 +4859,11 @@ def runRoblox():
         orangeapi_modules = {}
         mod_script_jsons = {}
         mods_manifest = generateModsManifest()
-        selected_mod_scripts = [i for i, v in main_config.get('EFlagSelectedModScripts', {}).items() if os.path.exists(os.path.join(mods_folder, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
+        mod_order = generateModOrder()
+        selected_mod_scripts = sorted(
+            [i for i, v in main_config.get('EFlagSelectedModScripts', {}).items() if os.path.exists(os.path.join(mods_folder, "Mods", i, "ModScript.py")) and v.get("enabled") == True],
+            key=lambda x: mod_order.index(x) if x in mod_order else len(mod_order)
+        )
         roblox_launched_affect_mod_script = False
         def loadModScripts():
             nonlocal mod_script_modules
@@ -4836,7 +4886,7 @@ def runRoblox():
                                 if mods_manifest.get(sel_mo) and mods_manifest.get(sel_mo).get("mod_script") == True:
                                     printMainMessage(f"Preparing Mod Script ({sel_mo})..")
                                     mod_manifest = mods_manifest.get(sel_mo)
-                                    if mod_manifest["mod_script_supports"] <= current_version["version"] and mod_manifest["mod_script_end_support"] > current_version["version"] and mod_manifest["mod_script_supports_operating_system"] == True:
+                                    if mod_manifest["mod_script_supports"] <= current_version["version"] and mod_manifest["mod_script_end_support"] > current_version["version"] and mod_manifest["mod_script_supports_operating_system"] == True and mod_manifest["python_version"] <= pip_class.getCurrentPythonVersion():
                                         def s(sel_mod):
                                             nonlocal mod_manifest
                                             nonlocal mod_script_modules
@@ -4863,11 +4913,11 @@ def runRoblox():
                                                     if not pip_class.installed(mod_manifest.get("python_modules", []), boolonly=True): pip_class.install(mod_manifest.get("python_modules", []))
                                                 printDebugMessage("Initalizing Components..")
                                                 script_path = os.path.join(mods_folder, "Mods", sel_mod, "ModScript.py")
-                                                api_handled_requests = {}
                                                 try:
                                                     # Create API Copy
                                                     generated_secret_keys[sel_mod] = os.urandom(3).hex()
                                                     generated_api_instances[sel_mod] = OrangeAPI.OrangeAPI(OrangeAPI.OrangeAPIDetails(sel_mod, generated_secret_keys[sel_mod]))
+                                                    OrangeAPI.request_queues[sel_mod] = queue.Queue()
                                                     
                                                     translation_path = os.path.join(mods_folder, "Mods", sel_mod, "Translations", main_config.get("EFlagSelectedBootstrapLanguage", "en") + ".json")
                                                     if os.path.exists(translation_path): OrangeAPI.translators[sel_mod] = PyKits.Translator(lang=translation_path)
@@ -4892,459 +4942,435 @@ def runRoblox():
                                                     with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
                                                     spec = importlib.util.spec_from_file_location(f"ModScript_{sel_mod}", script_path)
                                                     mod_script_modules[sel_mod] = importlib.util.module_from_spec(spec)
-                                                    setattr(mod_script_modules[sel_mod], "OrangeAPI", generated_api_instances[sel_mod])
+                                                    proxy_api = OrangeAPI.OrangeAPIProxy(generated_api_instances[sel_mod])
+                                                    setattr(mod_script_modules[sel_mod], "OrangeAPI", proxy_api)
+
+                                                    # Mod Script Functions
+                                                    def getMainConf(scri: str): 
+                                                        filtered_fflag = {}
+                                                        restricted_fflags = ["EFlagDiscordWebhookURL", "EFlagRobloxLinkShortcuts"]
+                                                        for i, v in main_config.items():
+                                                            if not (i in restricted_fflags): filtered_fflag[i] = v
+                                                        return filtered_fflag
+                                                    def getFF(scri: str): 
+                                                        if run_studio == True: return main_config.get("EFlagRobloxStudioFlags", {})
+                                                        else: return main_config.get("EFlagRobloxPlayerFlags", {})
+                                                    def setMainConf(scri: str, js: dict, full=False): 
+                                                        if type(js) is dict:
+                                                            global main_config
+                                                            before_config = main_config
+                                                            if full == True: 
+                                                                main_config = js
+                                                                for i in before_config.keys(): 
+                                                                    if not main_config.get(i): modified_flags_from_mod_scripts.append(i)
+                                                            else:
+                                                                for i, v in js.items(): main_config[i] = v
+                                                            for i in js.keys(): 
+                                                                if not i in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append(i)
+                                                    def setFF(scri: str, js: dict, full=False): 
+                                                        if type(js) is dict:
+                                                            if full == True: 
+                                                                if run_studio == True: main_config["EFlagRobloxStudioFlags"] = js
+                                                                else: main_config["EFlagRobloxPlayerFlags"] = js
+                                                            else:
+                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
+                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
+                                                                for i, v in js.items(): 
+                                                                    if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
+                                                                    else: main_config["EFlagRobloxPlayerFlags"][i] = v
+                                                            if run_studio == True and not "EFlagRobloxStudioFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append("EFlagRobloxStudioFlags")
+                                                            elif not "EFlagRobloxPlayerFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append("EFlagRobloxPlayerFlags")
+                                                            filtered_fast_flags = {}
+                                                            if run_studio == True and main_config.get("EFlagRobloxStudioFlags"):
+                                                                for i, v in main_config.get("EFlagRobloxStudioFlags").items():
+                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
+                                                            elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
+                                                                for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
+                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
+                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
+                                                    def saveMainConf(scri: str, js: dict, full=False): 
+                                                        if type(js) is dict:
+                                                            global main_config
+                                                            if full == True:
+                                                                filtered_fflag = {}
+                                                                filtered_fflag["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
+                                                                filtered_fflag["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
+                                                                for i, v in js.items():
+                                                                    if not ("EFlag" in i): 
+                                                                        if run_studio == True: filtered_fflag["EFlagRobloxStudioFlags"][i] = v
+                                                                        else: filtered_fflag["EFlagRobloxPlayerFlags"][i] = v
+                                                                    else: main_config[i] = v
+                                                                main_config = filtered_fflag
+                                                            else:
+                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
+                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
+                                                                for i, v in js.items():
+                                                                    if not ("EFlag" in i):
+                                                                        if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
+                                                                        else: main_config["EFlagRobloxPlayerFlags"][i] = v
+                                                                    else: main_config[i] = v
+                                                            if run_studio == True and "EFlagRobloxStudioFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.remove("EFlagRobloxStudioFlags")
+                                                            elif "EFlagRobloxPlayerFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.remove("EFlagRobloxPlayerFlags")
+                                                            saveSettings()
+                                                    def saveFF(scri: str, js: dict, full=False):
+                                                        if type(js) is dict:
+                                                            if full == True: 
+                                                                if run_studio == True: main_config["EFlagRobloxStudioFlags"] = js
+                                                                else: main_config["EFlagRobloxPlayerFlags"] = js
+                                                            else:
+                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
+                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
+                                                                for i, v in js.items(): 
+                                                                    if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
+                                                                    else: main_config["EFlagRobloxPlayerFlags"][i] = v
+                                                            filtered_fast_flags = {}
+                                                            if run_studio == True and main_config.get("EFlagRobloxStudioFlags"):
+                                                                for i, v in main_config.get("EFlagRobloxStudioFlags").items():
+                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
+                                                            elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
+                                                                for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
+                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
+                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
+                                                            saveSettings()
+                                                    def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
+                                                    def getDebugMode(scri: str): return (main_config.get("EFlagEnableDebugMode") == True)
+                                                    def getConfiguration(scri: str, name: str="*"):
+                                                        if type(name) is str:
+                                                            mod_script_config = {}
+                                                            config_path = os.path.join(mods_folder, "Mods", scri, f"Configuration_{user_folder_name}")
+                                                            if os.path.exists(config_path):
+                                                                try:
+                                                                    with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
+                                                                except Exception as e: printDebugMessage("Invalid mod script configuration, returned blank.")
+                                                            if name == "*": return mod_script_config
+                                                            else: return mod_script_config.get(name)
+                                                        else: return None
+                                                    def setRobloxWindowTitle(scri: str, title: str):
+                                                        if type(title) is str:
+                                                            if connected_roblox_instance:
+                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                if len(windows_opened) > 0:
+                                                                    for win in windows_opened: win.setWindowTitle(title)
+                                                                else: raise Exception("No Roblox Windows found!")
+                                                            else: raise Exception("Connected Roblox Instance is not found!")
+                                                        else: raise Exception("Provided arguments are invalid!")
+                                                    def setRobloxWindowIcon(scri: str, icon: str):
+                                                        if type(icon) is str:
+                                                            if connected_roblox_instance:
+                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                if len(windows_opened) > 0:
+                                                                    for win in windows_opened: win.setWindowIcon(icon)
+                                                                else: raise Exception("No Roblox Windows found!")
+                                                            else: raise Exception("Connected Roblox Instance is not found!")
+                                                        else: raise Exception("Provided arguments are invalid!")
+                                                    def focusRobloxWindow(scri: str):
+                                                        if connected_roblox_instance:
+                                                            windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                            if len(windows_opened) > 0:
+                                                                for win in windows_opened: win.focusWindow()
+                                                            else: raise Exception("No Roblox Windows found!")
+                                                        else: raise Exception("Connected Roblox Instance is not found!")
+                                                    def getIfRobloxLaunched(scri: str): return roblox_launched_affect_mod_script == True
+                                                    def getRobloxAppSettings(scri: str):
+                                                        a = handler.getRobloxAppSettings()
+                                                        return {
+                                                            "success": a.get("success", False),
+                                                            "loggedInUser": a.get("loggedInUser", {}),
+                                                            "policyServiceResponse": a.get("policyServiceResponse", {}),
+                                                            "outputDeviceGUID": a.get("outputDeviceGUID", None),
+                                                            "robloxLocaleId": a.get("robloxLocaleId", "en_us"),
+                                                            "appConfiguration": a.get("appConfiguration", {})
+                                                        }
+                                                    def changeRobloxWindowSizeAndPosition(scri: str, size_x: int, size_y: int, position_x: int, position_y: int):
+                                                        if type(size_x) is int and type(size_y) is int and type(position_x) is int and type(position_y) is int:
+                                                            if connected_roblox_instance:
+                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
+                                                                if len(windows_opened) > 0:
+                                                                    for win in windows_opened:
+                                                                        win.setWindowPositionAndSize(size_x, size_y, position_x, position_y)
+                                                                else: raise Exception("No Roblox Windows found!")
+                                                            else: raise Exception("Connected Roblox Instance is not found!")
+                                                        else: raise Exception("Provided arguments are invalid!")
+                                                    def setConfiguration(scri: str, name: str="*", data=None):
+                                                        if type(name) is str:
+                                                            mod_script_config = {}
+                                                            config_path = os.path.join(mods_folder, "Mods", scri, f"Configuration_{user_folder_name}")
+                                                            if os.path.exists(config_path):
+                                                                try:
+                                                                    with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
+                                                                except Exception as e: printDebugMessage("Invalid Mod Script Configuration, returned blank.")
+                                                            if name == "*":
+                                                                if type(data) is dict:
+                                                                    try:
+                                                                        dumped = json.dumps(data)
+                                                                        for i, v in data.items(): mod_script_config[i] = v
+                                                                    except Exception as e: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
+                                                                else: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
+                                                            else:
+                                                                try:
+                                                                    dumped = json.dumps(data)
+                                                                    mod_script_config[name] = data
+                                                                except Exception as e: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
+                                                            with open(config_path, "w", encoding="utf-8") as f:  json.dump(mod_script_config, f, indent=4)
+                                                        else: return None
+                                                    def unzipFile(scri: str, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True):
+                                                        path = str(path)
+                                                        path = path.replace("../", "").replace("..\\", "")
+                                                        path = os.path.join(mods_folder, "Mods", scri, path)
+                                                        output = str(output)
+                                                        output = output.replace("../", "").replace("..\\", "")
+                                                        output = os.path.join(mods_folder, "Mods", scri, output)
+                                                        if path.startswith(os.path.join(mods_folder, "Mods", scri)) and output.startswith(os.path.join(mods_folder, "Mods", scri)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
+                                                    def sendDiscordWebhookMessage(scri: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image=f"{main_host}/Images/DiscordIcon.png"):
+                                                        if main_config.get("EFlagUseDiscordWebhook") == True:
+                                                            for i in fields: 
+                                                                if not (type(i) is generated_api_instances[scri].DiscordWebhookField): return False
+                                                            if main_config.get("EFlagDiscordWebhookURL"):
+                                                                generated_body = {
+                                                                    "content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>",
+                                                                    "embeds": [
+                                                                        {
+                                                                            "title": title,
+                                                                            "description": description or "",
+                                                                            "color": color,
+                                                                            "fields": [i.convert() for i in fields],
+                                                                            "author": { "name": obName0(), "icon_url": main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png") },
+                                                                            "thumbnail": { "url": image },
+                                                                            "footer": { "text": (ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev")) + (" | Custom Theme" if obName0() != "OrangeBlox" or obName1() != "🍊" else ""), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
+                                                                            "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')
+                                                                        }
+                                                                    ],
+                                                                    "attachments": []
+                                                                }
+                                                                try:
+                                                                    def sen():
+                                                                        waitForInternet()
+                                                                        req = requests.post(main_config.get("EFlagDiscordWebhookURL"), data=generated_body)
+                                                                        if req.ok: printDebugMessage("Successfully sent webhook! Event: onModScript")
+                                                                        else: printErrorMessage(f"There was an issue sending your webhook message. Status Code: {req.status_code}")
+                                                                    if pip_class.getIfConnectedToInternet() == True: sen()
+                                                                    else: pip_class.startThread(func=sen, daemon=True)
+                                                                except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
+                                                    def startPrepareRoblox(scri: str): 
+                                                        if roblox_launched_affect_mod_script != True: prepareRobloxClient()
+                                                    def current_ver_func(scri: str): return current_version
+                                                    def modScriptName(scri: str): 
+                                                        cur_mod_manifest = generateModsManifest()
+                                                        return cur_mod_manifest.get(scri).get("name") if cur_mod_manifest.get(scri) and cur_mod_manifest.get(scri).get("name") else None
+                                                    def modScriptId(scri: str): return scri
+                                                    def modScriptVersion(scri: str): 
+                                                        cur_mod_manifest = generateModsManifest()
+                                                        return cur_mod_manifest.get(scri).get("version") if cur_mod_manifest.get(scri) and cur_mod_manifest.get(scri).get("version") else None
+                                                    def getConnectedUserInfo(scri: str): return connected_user_info
+                                                    def getIfConnectedToGame(scri: str): return connected_to_game
+                                                    def getCurrentPlaceInfo(scri: str): return current_place_info
+                                                    def createAppLock(scri: str, name: str="ScriptLock"):
+                                                        name = os.path.basename(name)
+                                                        if name == "Configuration": return
+                                                        script_lock_key = generateFileKey(name, dire=os.path.join(mods_folder, "Mods", scri))
+                                                        if os.path.exists(script_lock_key):
+                                                            with open(script_lock_key, "r", encoding="utf-8") as f: pid_str = f.read()
+                                                            if safeConvertNumber(pid_str) and pip_class.getIfProcessIsOpened(pid=pid_str):
+                                                                return False
+                                                            else:
+                                                                with open(script_lock_key, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
+                                                                return True
+                                                        else: 
+                                                            with open(script_lock_key, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
+                                                            return True
+                                                    def getIfModIsEnabled(scri: str, mod_name: str): 
+                                                        cur_mod_manifest = generateModsManifest()
+                                                        if cur_mod_manifest.get(mod_name) and cur_mod_manifest.get(mod_name).get("enabled") == True: return True
+                                                        return False
+                                                    def enableMod(scri: str, mod_name: str): 
+                                                        cur_mod_manifest = generateModsManifest()
+                                                        if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                        if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = True
+                                                        saveSettings()
+                                                    def disableMod(scri: str, mod_name: str): 
+                                                        cur_mod_manifest = generateModsManifest()
+                                                        if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
+                                                        if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = False
+                                                        saveSettings()
+                                                    def getCurrentRobloxPid(scri: str): 
+                                                        return connected_roblox_instance and connected_roblox_instance.pid
+                                                    def getRbxChannel(studio: bool=False):
+                                                        if main_config.get("EFlagRobloxSecurityCookieUsage") == True:
+                                                            requesting_channel = handler.getUserChannel(studio=run_studio, debug=(main_config.get("EFlagEnableDebugMode") == True))
+                                                            if requesting_channel.get("success") == True and requesting_channel.get("channel_name") != "LIVE": return requesting_channel.get("channel_name")
+                                                        r = handler.getCurrentClientVersion(studio=studio)
+                                                        if r and r["success"] == True: return r["channel"]
+                                                        else: return "LIVE"
+                                                    def getLatestRobloxVersion(scri: str, channel: str="*"):
+                                                        if channel == "*": channel = getRbxChannel(studio=run_studio==True)
+                                                        res = handler.getLatestClientVersion(studio=run_studio==True, channel=channel, token=createDownloadToken(run_studio==True))
+                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                        return res
+                                                    def getLatestOppositeRobloxVersion(scri: str, channel: str="*"):
+                                                        if channel == "*": channel = getRbxChannel(studio=run_studio!=True)
+                                                        res = handler.getLatestClientVersion(studio=run_studio!=True, channel=channel, token=createDownloadToken(run_studio!=True))
+                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                        return res
+                                                    def getLatestRobloxPlayerVersion(scri: str, channel: str="*"):
+                                                        if channel == "*": channel = getRbxChannel(studio=False)
+                                                        res = handler.getLatestClientVersion(studio=False, channel=channel, token=createDownloadToken(False))
+                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                        return res
+                                                    def getLatestRobloxStudioVersion(scri: str, channel: str="*"):
+                                                        if channel == "*": channel = getRbxChannel(studio=True)
+                                                        res = handler.getLatestClientVersion(studio=True, channel=channel, token=createDownloadToken(True))
+                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
+                                                        return res
+                                                    def getRobloxThumbnailURLl(scri: str, studio: bool=None): return getRobloxThumbnailURL(studio)
+                                                    def restartRbx(scri: str):
+                                                        global preserve_roblox
+                                                        if not connected_roblox_instance: return False
+                                                        printDebugMessage(f"Mod script \"{scri}\" has requested to restart Roblox.")
+                                                        handler.endRoblox(studio=run_studio)
+                                                        preserve_roblox = True
+                                                        restartRoblox()
+                                                        return True
+                                                    def joinGame(scri: str, place_id: int, game_instance_id: str=None, launch_data: str=""):
+                                                        global given_args
+                                                        global preserve_roblox
+                                                        if not connected_roblox_instance: return False
+                                                        if run_studio == True: return False
+                                                        if main_config.get("EFlagUseEfazDevAPI") == True: 
+                                                            generated_universe_id_res = requests.get(f"https://api.efaz.dev/api/roblox/universeId/{place_id}", loop_429=main_config.get("EFlagEnableLoop429Requests")==True)
+                                                            if generated_universe_id_res and generated_universe_id_res.json: generated_universe_id_res.json = generated_universe_id_res.json.get("response")
+                                                        else: generated_universe_id_res = requests.get(f"https://apis.roblox.com/universes/v1/places/{place_id}/universe", loop_429=main_config.get("EFlagEnableLoop429Requests")==True, cookies=createCookieHeader())
+                                                        universe_id = None
+                                                        if generated_universe_id_res.ok:
+                                                            generated_universe_id_json = generated_universe_id_res.json
+                                                            if generated_universe_id_json and generated_universe_id_json.get("universeId") != None:
+                                                                universe_id = generated_universe_id_json.get("universeId")
+                                                        if not universe_id: return False
+                                                        url = f"roblox://experiences/start?placeId={place_id}&universeId={universe_id}"
+                                                        if game_instance_id: url += f"&gameInstanceId={game_instance_id}"
+                                                        if launch_data: url += f"&{launch_data}"
+                                                        given_args = ["Main.py", url]
+                                                        printDebugMessage(f"Mod script \"{scri}\" has requested to join a Roblox game: {place_id}.")
+                                                        preserve_roblox = True
+                                                        restartRoblox(request_thread_close=False)
+                                                        return True
+
+                                                    defined_func = {
+                                                        "generateModsManifest": generateModsManifest,
+                                                        "generateModOrder": generateModOrder,
+                                                        "displayNotification": displayNotification,
+                                                        "getRobloxLogFolderSize": getRobloxLogFolderSize,
+                                                        "sendBloxstrapRPC": sendBloxstrapRPC,
+                                                        "unzipFile": unzipFile,
+                                                        "restartRoblox": restartRbx,
+                                                        "joinRobloxGame": joinGame,
+                                                        "changeRobloxWindowSizeAndPosition": changeRobloxWindowSizeAndPosition,
+                                                        "setRobloxWindowTitle": setRobloxWindowTitle,
+                                                        "setRobloxWindowIcon": setRobloxWindowIcon,
+                                                        "getRobloxAppSettings": getRobloxAppSettings,
+                                                        "focusRobloxWindow": focusRobloxWindow,
+                                                        "getIfRobloxLaunched": getIfRobloxLaunched,
+                                                        "sendDiscordWebhookMessage": sendDiscordWebhookMessage,
+                                                        "getLatestOppositeRobloxVersion": getLatestOppositeRobloxVersion,
+                                                        "getLatestRobloxVersion": getLatestRobloxVersion,
+                                                        "getLatestRobloxPlayerVersion": getLatestRobloxPlayerVersion,
+                                                        "getLatestRobloxStudioVersion": getLatestRobloxStudioVersion,
+                                                        "reprepareRoblox": startPrepareRoblox,
+                                                        "enableMod": enableMod,
+                                                        "disableMod": disableMod,
+                                                        "getIfModIsEnabled": getIfModIsEnabled,
+                                                        "getFastFlagConfiguration": getFF,
+                                                        "setFastFlagConfiguration": setFF,
+                                                        "saveFastFlagConfiguration": saveFF,
+                                                        "getMainConfiguration": getMainConf,
+                                                        "setMainConfiguration": setMainConf,
+                                                        "saveMainConfiguration": saveMainConf,
+                                                        "getDebugMode": getDebugMode,
+                                                        "getConfiguration": getConfiguration,
+                                                        "setConfiguration": setConfiguration,
+                                                        "getModScriptId": modScriptId,
+                                                        "getName": modScriptName,
+                                                        "getVersion": modScriptVersion,
+                                                        "getConnectedUserInfo": getConnectedUserInfo,
+                                                        "getIfConnectedToGame": getIfConnectedToGame,
+                                                        "getCurrentPlaceInfo": getCurrentPlaceInfo,
+                                                        "createAppLock": createAppLock,
+                                                        "getCurrentRobloxPid": getCurrentRobloxPid,
+                                                        "getRobloxThumbnailURL": getRobloxThumbnailURLl,
+                                                        "about": current_ver_func
+                                                    }
+                                                    undefined_func = {
+                                                        "endRoblox": handler.endRobloxStudio if run_studio==True else handler.endRoblox,
+                                                        "endOppositeRoblox": handler.endRoblox if run_studio==True else handler.endRobloxStudio,
+                                                        "getIfRobloxIsOpen": handler.getIfRobloxStudioIsOpen if run_studio==True else handler.getIfRobloxIsOpen,
+                                                        "getInstalledRobloxVersion": handler.getCurrentStudioClientVersion if run_studio==True else handler.getCurrentClientVersion,
+                                                        "getOppositeInstalledRobloxVersion": handler.getCurrentClientVersion if run_studio==True else handler.getCurrentStudioClientVersion,
+                                                        "getInstalledRobloxStudioVersion": handler.getCurrentStudioClientVersion,
+                                                        "getInstalledRobloxPlayerVersion": handler.getCurrentClientVersion,
+                                                        "getRobloxInstallFolder": handler.getRobloxInstallFolder,
+                                                        "getLatestRobloxPid": handler.getLatestOpenedRobloxStudioPid if run_studio==True else handler.getLatestOpenedRobloxPid,
+                                                        "getOpenedRobloxPids": handler.getOpenedRobloxStudioPids if run_studio==True else handler.getOpenedRobloxPids,
+                                                        "getIfOSSupported": pip_class.osSupported,
+                                                        "getIfPythonSupported": pip_class.pythonSupported,
+                                                        "getIfConnectedToInternet": pip_class.getIfConnectedToInternet,
+                                                        "getIf32BitWindows": pip_class.getIf32BitWindows,
+                                                        "getRequest": requests.get,
+                                                        "postRequest": requests.post,
+                                                        "deleteRequest": requests.delete,
+                                                        "getOrangeBloxName": obName0,
+                                                        "getOrangeBloxEmoji": obName1,
+                                                        "getOrangeBloxColorAnsi": obColorA,
+                                                        "getOrangeBloxColorHex": obColorH,
+                                                    }
+                                                    func_list = dict(defined_func)
+                                                    func_list.update(undefined_func)
                                                     
                                                     # Set and Handle API to Mod Script
-                                                    def checkGeneratedInstances(selected_mod_scriptttt, api_name):
-                                                        while True:
-                                                            try:
-                                                                if hasattr(mod_script_modules[selected_mod_scriptttt], api_name):
-                                                                    generated_api_instances[f"{selected_mod_scriptttt}"] = getattr(mod_script_modules[selected_mod_scriptttt], api_name)
-                                                                else:
-                                                                    printDebugMessage(f"Ended accepting requests from mod script {selected_mod_scriptttt} due to an issue. | Code: 2")
-                                                                    generated_api_instances[f"{selected_mod_scriptttt}"] = None
-                                                                    return
-                                                            except Exception as e:
-                                                                resulting_err = trace()
-                                                                if "dictionary changed size during iteration" in resulting_err:
-                                                                    if main_config.get("EFlagModScriptRequestTooFastMessage") == True: printDebugMessage("Mod Script is requesting data too fast!")
-                                                                else:
-                                                                    printDebugMessage(f"Error from Mod Script module: \n{resulting_err}")
-                                                                    printErrorMessage(f"Ended accepting requests from Mod Scripts ({selected_mod_scriptttt}) due to an issue. | Code: 1")
-                                                                    generated_api_instances[f"{selected_mod_scriptttt}"] = None
-                                                                    return
-                                                            time.sleep(main_config.get("EFlagModScriptAPIRefreshTime", 0.05))
                                                     def handleRequests(selected_mod_scriptt, approved_lis):
+                                                        queue_block = orangeapi_modules[selected_mod_scriptt].request_queues[selected_mod_scriptt]
                                                         while True:
                                                             try:
-                                                                for i, v in orangeapi_modules[selected_mod_scriptt].requested_functions.items():
-                                                                    if type(v) is orangeapi_modules[selected_mod_scriptt].Request:
-                                                                        identification = v.id.split("|")
-                                                                        if api_handled_requests.get(i) != True:
-                                                                            if identification[0] != selected_mod_scriptt: continue
-                                                                            try:
-                                                                                if ((v.requested in approved_lis) or (handler.roblox_event_info.get(v.requested, {"free": False}).get("free") == True)) and (v.fulfilled == False):
-                                                                                    def getMainConf(scri: str): 
-                                                                                        filtered_fflag = {}
-                                                                                        restricted_fflags = ["EFlagDiscordWebhookURL", "EFlagRobloxLinkShortcuts"]
-                                                                                        for i, v in main_config.items():
-                                                                                            if not (i in restricted_fflags): filtered_fflag[i] = v
-                                                                                        return filtered_fflag
-                                                                                    def getFF(scri: str): 
-                                                                                        if run_studio == True: return main_config.get("EFlagRobloxStudioFlags", {})
-                                                                                        else: return main_config.get("EFlagRobloxPlayerFlags", {})
-                                                                                    def setMainConf(scri: str, js: dict, full=False): 
-                                                                                        if type(js) is dict:
-                                                                                            global main_config
-                                                                                            before_config = main_config
-                                                                                            if full == True: 
-                                                                                                main_config = js
-                                                                                                for i in before_config.keys(): 
-                                                                                                    if not main_config.get(i): modified_flags_from_mod_scripts.append(i)
-                                                                                            else:
-                                                                                                for i, v in js.items(): main_config[i] = v
-                                                                                            for i in js.keys(): 
-                                                                                                if not i in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append(i)
-                                                                                    def setFF(scri: str, js: dict, full=False): 
-                                                                                        if type(js) is dict:
-                                                                                            if full == True: 
-                                                                                                if run_studio == True: main_config["EFlagRobloxStudioFlags"] = js
-                                                                                                else: main_config["EFlagRobloxPlayerFlags"] = js
-                                                                                            else:
-                                                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
-                                                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
-                                                                                                for i, v in js.items(): 
-                                                                                                    if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
-                                                                                                    else: main_config["EFlagRobloxPlayerFlags"][i] = v
-                                                                                            if run_studio == True and not "EFlagRobloxStudioFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append("EFlagRobloxStudioFlags")
-                                                                                            elif not "EFlagRobloxPlayerFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.append("EFlagRobloxPlayerFlags")
-                                                                                            filtered_fast_flags = {}
-                                                                                            if run_studio == True and main_config.get("EFlagRobloxStudioFlags"):
-                                                                                                for i, v in main_config.get("EFlagRobloxStudioFlags").items():
-                                                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
-                                                                                                for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
-                                                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
-                                                                                    def saveMainConf(scri: str, js: dict, full=False): 
-                                                                                        if type(js) is dict:
-                                                                                            global main_config
-                                                                                            if full == True:
-                                                                                                filtered_fflag = {}
-                                                                                                filtered_fflag["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
-                                                                                                filtered_fflag["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
-                                                                                                for i, v in js.items():
-                                                                                                    if not ("EFlag" in i): 
-                                                                                                        if run_studio == True: filtered_fflag["EFlagRobloxStudioFlags"][i] = v
-                                                                                                        else: filtered_fflag["EFlagRobloxPlayerFlags"][i] = v
-                                                                                                    else: main_config[i] = v
-                                                                                                main_config = filtered_fflag
-                                                                                            else:
-                                                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
-                                                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
-                                                                                                for i, v in js.items():
-                                                                                                    if not ("EFlag" in i):
-                                                                                                        if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
-                                                                                                        else: main_config["EFlagRobloxPlayerFlags"][i] = v
-                                                                                                    else: main_config[i] = v
-                                                                                            if run_studio == True and "EFlagRobloxStudioFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.remove("EFlagRobloxStudioFlags")
-                                                                                            elif "EFlagRobloxPlayerFlags" in modified_flags_from_mod_scripts: modified_flags_from_mod_scripts.remove("EFlagRobloxPlayerFlags")
-                                                                                            saveSettings()
-                                                                                    def saveFF(scri: str, js: dict, full=False):
-                                                                                        if type(js) is dict:
-                                                                                            if full == True: 
-                                                                                                if run_studio == True: main_config["EFlagRobloxStudioFlags"] = js
-                                                                                                else: main_config["EFlagRobloxPlayerFlags"] = js
-                                                                                            else:
-                                                                                                main_config["EFlagRobloxPlayerFlags"] = main_config.get("EFlagRobloxPlayerFlags", {})
-                                                                                                main_config["EFlagRobloxStudioFlags"] = main_config.get("EFlagRobloxStudioFlags", {})
-                                                                                                for i, v in js.items(): 
-                                                                                                    if run_studio == True: main_config["EFlagRobloxStudioFlags"][i] = v
-                                                                                                    else: main_config["EFlagRobloxPlayerFlags"][i] = v
-                                                                                            filtered_fast_flags = {}
-                                                                                            if run_studio == True and main_config.get("EFlagRobloxStudioFlags"):
-                                                                                                for i, v in main_config.get("EFlagRobloxStudioFlags").items():
-                                                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            elif run_studio == False and main_config.get("EFlagRobloxPlayerFlags"):
-                                                                                                for i, v in main_config.get("EFlagRobloxPlayerFlags").items():
-                                                                                                    if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
-                                                                                            handler.installFastFlags(filtered_fast_flags, debug=(main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=run_studio)
-                                                                                            saveSettings()
-                                                                                    def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
-                                                                                    def getDebugMode(scri: str): return (main_config.get("EFlagEnableDebugMode") == True)
-                                                                                    def getConfiguration(scri: str, name: str="*"):
-                                                                                        if type(name) is str:
-                                                                                            mod_script_config = {}
-                                                                                            config_path = os.path.join(mods_folder, "Mods", scri, f"Configuration_{user_folder_name}")
-                                                                                            if os.path.exists(config_path):
-                                                                                                try:
-                                                                                                    with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
-                                                                                                except Exception as e: printDebugMessage("Invalid mod script configuration, returned blank.")
-                                                                                            if name == "*": return mod_script_config
-                                                                                            else: return mod_script_config.get(name)
-                                                                                        else: return None
-                                                                                    def setRobloxWindowTitle(scri: str, title: str):
-                                                                                        if type(title) is str:
-                                                                                            if connected_roblox_instance:
-                                                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
-                                                                                                if len(windows_opened) > 0:
-                                                                                                    for win in windows_opened: win.setWindowTitle(title)
-                                                                                                else: raise Exception("No Roblox Windows found!")
-                                                                                            else: raise Exception("Connected Roblox Instance is not found!")
-                                                                                        else: raise Exception("Provided arguments are invalid!")
-                                                                                    def setRobloxWindowIcon(scri: str, icon: str):
-                                                                                        if type(icon) is str:
-                                                                                            if connected_roblox_instance:
-                                                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
-                                                                                                if len(windows_opened) > 0:
-                                                                                                    for win in windows_opened: win.setWindowIcon(icon)
-                                                                                                else: raise Exception("No Roblox Windows found!")
-                                                                                            else: raise Exception("Connected Roblox Instance is not found!")
-                                                                                        else: raise Exception("Provided arguments are invalid!")
-                                                                                    def focusRobloxWindow(scri: str):
-                                                                                        if connected_roblox_instance:
-                                                                                            windows_opened = connected_roblox_instance.getWindowsOpened()
-                                                                                            if len(windows_opened) > 0:
-                                                                                                for win in windows_opened: win.focusWindow()
-                                                                                            else: raise Exception("No Roblox Windows found!")
-                                                                                        else: raise Exception("Connected Roblox Instance is not found!")
-                                                                                    def getIfRobloxLaunched(scri: str): return roblox_launched_affect_mod_script == True
-                                                                                    def getRobloxAppSettings(scri: str):
-                                                                                        a = handler.getRobloxAppSettings()
-                                                                                        return {
-                                                                                            "success": a.get("success", False),
-                                                                                            "loggedInUser": a.get("loggedInUser", {}),
-                                                                                            "policyServiceResponse": a.get("policyServiceResponse", {}),
-                                                                                            "outputDeviceGUID": a.get("outputDeviceGUID", None),
-                                                                                            "robloxLocaleId": a.get("robloxLocaleId", "en_us"),
-                                                                                            "appConfiguration": a.get("appConfiguration", {})
-                                                                                        }
-                                                                                    def changeRobloxWindowSizeAndPosition(scri: str, size_x: int, size_y: int, position_x: int, position_y: int):
-                                                                                        if type(size_x) is int and type(size_y) is int and type(position_x) is int and type(position_y) is int:
-                                                                                            if connected_roblox_instance:
-                                                                                                windows_opened = connected_roblox_instance.getWindowsOpened()
-                                                                                                if len(windows_opened) > 0:
-                                                                                                    for win in windows_opened:
-                                                                                                        win.setWindowPositionAndSize(size_x, size_y, position_x, position_y)
-                                                                                                else: raise Exception("No Roblox Windows found!")
-                                                                                            else: raise Exception("Connected Roblox Instance is not found!")
-                                                                                        else: raise Exception("Provided arguments are invalid!")
-                                                                                    def setConfiguration(scri: str, name: str="*", data=None):
-                                                                                        if type(name) is str:
-                                                                                            mod_script_config = {}
-                                                                                            config_path = os.path.join(mods_folder, "Mods", scri, f"Configuration_{user_folder_name}")
-                                                                                            if os.path.exists(config_path):
-                                                                                                try:
-                                                                                                    with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
-                                                                                                except Exception as e: printDebugMessage("Invalid Mod Script Configuration, returned blank.")
-                                                                                            if name == "*":
-                                                                                                if type(data) is dict:
-                                                                                                    try:
-                                                                                                        dumped = json.dumps(data)
-                                                                                                        for i, v in data.items(): mod_script_config[i] = v
-                                                                                                    except Exception as e: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
-                                                                                                else: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
-                                                                                            else:
-                                                                                                try:
-                                                                                                    dumped = json.dumps(data)
-                                                                                                    mod_script_config[name] = data
-                                                                                                except Exception as e: printDebugMessage(f"Something went wrong saving Mod Script Configuration requested by mod script {scri}.")
-                                                                                            with open(config_path, "w", encoding="utf-8") as f:  json.dump(mod_script_config, f, indent=4)
-                                                                                        else: return None
-                                                                                    def unzipFile(scri: str, path: str, output: str, look_for: list=[], export_out: list=[], either: bool=False, check: bool=True):
-                                                                                        path = str(path)
-                                                                                        path = path.replace("../", "").replace("..\\", "")
-                                                                                        path = os.path.join(mods_folder, "Mods", scri, path)
-                                                                                        output = str(output)
-                                                                                        output = output.replace("../", "").replace("..\\", "")
-                                                                                        output = os.path.join(mods_folder, "Mods", scri, output)
-                                                                                        if path.startswith(os.path.join(mods_folder, "Mods", scri)) and output.startswith(os.path.join(mods_folder, "Mods", selected_mod_scriptt)): return pip_class.unzipFile(path, output, look_for=look_for, export_out=export_out, either=either, check=check)
-                                                                                    def sendDiscordWebhookMessage(scri: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image=f"{main_host}/Images/DiscordIcon.png"):
-                                                                                        if main_config.get("EFlagUseDiscordWebhook") == True:
-                                                                                            for i in fields: 
-                                                                                                if not (type(i) is generated_api_instances[scri].DiscordWebhookField): return False
-                                                                                            if main_config.get("EFlagDiscordWebhookURL"):
-                                                                                                generated_body = {
-                                                                                                    "content": f"<@{main_config.get('EFlagDiscordWebhookUserId')}>",
-                                                                                                    "embeds": [
-                                                                                                        {
-                                                                                                            "title": title,
-                                                                                                            "description": description or "",
-                                                                                                            "color": color,
-                                                                                                            "fields": [i.convert() for i in fields],
-                                                                                                            "author": { "name": obName0(), "icon_url": main_config.get("EFlagCustomBootstrapInternetURL", f"{main_host}/Images/DiscordIcon.png") },
-                                                                                                            "thumbnail": { "url": image },
-                                                                                                            "footer": { "text": (ts(f"Made by @EfazDev | PID: {connected_roblox_instance.pid}") if main_config.get("EFlagDiscordWebhookShowPidInFooter") == True and connected_roblox_instance and connected_roblox_instance.pid else ts("Made by @EfazDev")) + (" | Custom Theme" if obName0() != "OrangeBlox" or obName1() != "🍊" else ""), "icon_url": "https://cdn.efaz.dev/cdn/png/logo.png" },
-                                                                                                            "timestamp": datetime.datetime.now(tz=datetime.UTC).strftime('%Y-%m-%dT%H:%M:%S.000Z')
-                                                                                                        }
-                                                                                                    ],
-                                                                                                    "attachments": []
-                                                                                                }
-                                                                                                try:
-                                                                                                    def sen():
-                                                                                                        waitForInternet()
-                                                                                                        req = requests.post(main_config.get("EFlagDiscordWebhookURL"), data=generated_body)
-                                                                                                        if req.ok: printDebugMessage("Successfully sent webhook! Event: onModScript")
-                                                                                                        else: printErrorMessage(f"There was an issue sending your webhook message. Status Code: {req.status_code}")
-                                                                                                    if pip_class.getIfConnectedToInternet() == True: sen()
-                                                                                                    else: pip_class.startThread(func=sen, daemon=True)
-                                                                                                except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
-                                                                                    def startPrepareRoblox(scri: str): 
-                                                                                        if roblox_launched_affect_mod_script != True: prepareRobloxClient()
-                                                                                    def current_ver_func(scri: str): return current_version
-                                                                                    def modScriptName(scri: str): 
-                                                                                        cur_mod_manifest = generateModsManifest()
-                                                                                        return cur_mod_manifest.get(scri).get("name") if cur_mod_manifest.get(scri) and cur_mod_manifest.get(scri).get("name") else None
-                                                                                    def modScriptId(scri: str): return scri
-                                                                                    def modScriptVersion(scri: str): 
-                                                                                        cur_mod_manifest = generateModsManifest()
-                                                                                        return cur_mod_manifest.get(scri).get("version") if cur_mod_manifest.get(scri) and cur_mod_manifest.get(scri).get("version") else None
-                                                                                    def getConnectedUserInfo(scri: str): return connected_user_info
-                                                                                    def getIfConnectedToGame(scri: str): return connected_to_game
-                                                                                    def getCurrentPlaceInfo(scri: str): return current_place_info
-                                                                                    def createAppLock(scri: str, name: str="ScriptLock"):
-                                                                                        name = os.path.basename(name)
-                                                                                        if name == "Configuration": return
-                                                                                        script_lock_key = generateFileKey(name, dire=os.path.join(mods_folder, "Mods", scri))
-                                                                                        if os.path.exists(script_lock_key):
-                                                                                            with open(script_lock_key, "r", encoding="utf-8") as f: pid_str = f.read()
-                                                                                            if safeConvertNumber(pid_str) and pip_class.getIfProcessIsOpened(pid=pid_str):
-                                                                                                return False
-                                                                                            else:
-                                                                                                with open(script_lock_key, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
-                                                                                                return True
-                                                                                        else: 
-                                                                                            with open(script_lock_key, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
-                                                                                            return True
-                                                                                    def getIfModIsEnabled(scri: str, mod_name: str): 
-                                                                                        cur_mod_manifest = generateModsManifest()
-                                                                                        if cur_mod_manifest.get(mod_name) and cur_mod_manifest.get(mod_name).get("enabled") == True: return True
-                                                                                        return False
-                                                                                    def enableMod(scri: str, mod_name: str): 
-                                                                                        cur_mod_manifest = generateModsManifest()
-                                                                                        if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
-                                                                                        if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = True
-                                                                                        saveSettings()
-                                                                                    def disableMod(scri: str, mod_name: str): 
-                                                                                        cur_mod_manifest = generateModsManifest()
-                                                                                        if not (main_config.get("EFlagEnabledMods") and type(main_config.get("EFlagEnabledMods")) is dict): main_config["EFlagEnabledMods"] = {}
-                                                                                        if cur_mod_manifest.get(mod_name): main_config["EFlagEnabledMods"][mod_name] = False
-                                                                                        saveSettings()
-                                                                                    def getCurrentRobloxPid(scri: str): 
-                                                                                        return connected_roblox_instance and connected_roblox_instance.pid
-                                                                                    def getRbxChannel(studio: bool=False):
-                                                                                        if main_config.get("EFlagRobloxSecurityCookieUsage") == True:
-                                                                                            requesting_channel = handler.getUserChannel(studio=run_studio, debug=(main_config.get("EFlagEnableDebugMode") == True))
-                                                                                            if requesting_channel.get("success") == True and requesting_channel.get("channel_name") != "LIVE": return requesting_channel.get("channel_name")
-                                                                                        r = handler.getCurrentClientVersion(studio=studio)
-                                                                                        if r and r["success"] == True: return r["channel"]
-                                                                                        else: return "LIVE"
-                                                                                    def getLatestRobloxVersion(scri: str, channel: str="*"):
-                                                                                        if channel == "*": channel = getRbxChannel(studio=run_studio==True)
-                                                                                        res = handler.getLatestClientVersion(studio=run_studio==True, channel=channel, token=createDownloadToken(run_studio==True))
-                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
-                                                                                        return res
-                                                                                    def getLatestOppositeRobloxVersion(scri: str, channel: str="*"):
-                                                                                        if channel == "*": channel = getRbxChannel(studio=run_studio!=True)
-                                                                                        res = handler.getLatestClientVersion(studio=run_studio!=True, channel=channel, token=createDownloadToken(run_studio!=True))
-                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
-                                                                                        return res
-                                                                                    def getLatestRobloxPlayerVersion(scri: str, channel: str="*"):
-                                                                                        if channel == "*": channel = getRbxChannel(studio=False)
-                                                                                        res = handler.getLatestClientVersion(studio=False, channel=channel, token=createDownloadToken(False))
-                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
-                                                                                        return res
-                                                                                    def getLatestRobloxStudioVersion(scri: str, channel: str="*"):
-                                                                                        if channel == "*": channel = getRbxChannel(studio=True)
-                                                                                        res = handler.getLatestClientVersion(studio=True, channel=channel, token=createDownloadToken(True))
-                                                                                        if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
-                                                                                        return res
-                                                                                    def getRobloxThumbnailURLl(scri: str, studio: bool=None):
-                                                                                        return getRobloxThumbnailURL(studio)
-
-                                                                                    defined_func = {
-                                                                                        "generateModsManifest": generateModsManifest,
-                                                                                        "displayNotification": displayNotification,
-                                                                                        "getRobloxLogFolderSize": getRobloxLogFolderSize,
-                                                                                        "sendBloxstrapRPC": sendBloxstrapRPC,
-                                                                                        "unzipFile": unzipFile,
-                                                                                        "changeRobloxWindowSizeAndPosition": changeRobloxWindowSizeAndPosition,
-                                                                                        "setRobloxWindowTitle": setRobloxWindowTitle,
-                                                                                        "setRobloxWindowIcon": setRobloxWindowIcon,
-                                                                                        "getRobloxAppSettings": getRobloxAppSettings,
-                                                                                        "focusRobloxWindow": focusRobloxWindow,
-                                                                                        "getIfRobloxLaunched": getIfRobloxLaunched,
-                                                                                        "sendDiscordWebhookMessage": sendDiscordWebhookMessage,
-                                                                                        "getLatestOppositeRobloxVersion": getLatestOppositeRobloxVersion,
-                                                                                        "getLatestRobloxVersion": getLatestRobloxVersion,
-                                                                                        "getLatestRobloxPlayerVersion": getLatestRobloxPlayerVersion,
-                                                                                        "getLatestRobloxStudioVersion": getLatestRobloxStudioVersion,
-                                                                                        "reprepareRoblox": startPrepareRoblox,
-                                                                                        "enableMod": enableMod,
-                                                                                        "disableMod": disableMod,
-                                                                                        "getIfModIsEnabled": getIfModIsEnabled,
-                                                                                        "getFastFlagConfiguration": getFF,
-                                                                                        "setFastFlagConfiguration": setFF,
-                                                                                        "saveFastFlagConfiguration": saveFF,
-                                                                                        "getMainConfiguration": getMainConf,
-                                                                                        "setMainConfiguration": setMainConf,
-                                                                                        "saveMainConfiguration": saveMainConf,
-                                                                                        "getDebugMode": getDebugMode,
-                                                                                        "getConfiguration": getConfiguration,
-                                                                                        "setConfiguration": setConfiguration,
-                                                                                        "getModScriptId": modScriptId,
-                                                                                        "getName": modScriptName,
-                                                                                        "getVersion": modScriptVersion,
-                                                                                        "getConnectedUserInfo": getConnectedUserInfo,
-                                                                                        "getIfConnectedToGame": getIfConnectedToGame,
-                                                                                        "getCurrentPlaceInfo": getCurrentPlaceInfo,
-                                                                                        "createAppLock": createAppLock,
-                                                                                        "getCurrentRobloxPid": getCurrentRobloxPid,
-                                                                                        "getRobloxThumbnailURL": getRobloxThumbnailURLl,
-                                                                                        "about": current_ver_func
-                                                                                    }
-                                                                                    undefined_func = {
-                                                                                        "endRoblox": handler.endRobloxStudio if run_studio==True else handler.endRoblox,
-                                                                                        "endOppositeRoblox": handler.endRoblox if run_studio==True else handler.endRobloxStudio,
-                                                                                        "getIfRobloxIsOpen": handler.getIfRobloxStudioIsOpen if run_studio==True else handler.getIfRobloxIsOpen,
-                                                                                        "getInstalledRobloxVersion": handler.getCurrentStudioClientVersion if run_studio==True else handler.getCurrentClientVersion,
-                                                                                        "getOppositeInstalledRobloxVersion": handler.getCurrentClientVersion if run_studio==True else handler.getCurrentStudioClientVersion,
-                                                                                        "getInstalledRobloxStudioVersion": handler.getCurrentStudioClientVersion,
-                                                                                        "getInstalledRobloxPlayerVersion": handler.getCurrentClientVersion,
-                                                                                        "getRobloxInstallFolder": handler.getRobloxInstallFolder,
-                                                                                        "getLatestRobloxPid": handler.getLatestOpenedRobloxStudioPid if run_studio==True else handler.getLatestOpenedRobloxPid,
-                                                                                        "getOpenedRobloxPids": handler.getOpenedRobloxStudioPids if run_studio==True else handler.getOpenedRobloxPids,
-                                                                                        "getIfOSSupported": pip_class.osSupported,
-                                                                                        "getIfPythonSupported": pip_class.pythonSupported,
-                                                                                        "getIfConnectedToInternet": pip_class.getIfConnectedToInternet,
-                                                                                        "getIf32BitWindows": pip_class.getIf32BitWindows,
-                                                                                        "getRequest": requests.get,
-                                                                                        "postRequest": requests.post,
-                                                                                        "deleteRequest": requests.delete,
-                                                                                        "getOrangeBloxName": obName0,
-                                                                                        "getOrangeBloxEmoji": obName1,
-                                                                                        "getOrangeBloxColorAnsi": obColorA,
-                                                                                        "getOrangeBloxColorHex": obColorH,
-                                                                                    }
-                                                                                    func_list = dict(defined_func)
-                                                                                    func_list.update(undefined_func)
-                                                                                    
-                                                                                    if api_handled_requests.get(i) != True:
-                                                                                        splited_id = i.split("|")
-                                                                                        if splited_id[1] == generated_secret_keys[splited_id[0]]:
-                                                                                            if v and func_list.get(v.requested):
-                                                                                                if v and v.fulfilled == False:
-                                                                                                    try:
-                                                                                                        if undefined_func.get(v.requested):
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        else:
-                                                                                                            if type(v.args) is list: val = func_list.get(v.requested)(splited_id[0], *(v.args))
-                                                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(splited_id[0], **(v.args))
-                                                                                                            else: val = func_list.get(v.requested)()
-                                                                                                        if v:
-                                                                                                            if not type(val) is None: v.value = val
-                                                                                                            v.success = True
-                                                                                                            v.code = 0
-                                                                                                    except Exception as e:
-                                                                                                        if v:
-                                                                                                            v.success = False
-                                                                                                            v.code = 1
-                                                                                                    if v: v.fulfilled = True
-                                                                                                    orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                                    api_handled_requests[i] = True
-                                                                                            else:
-                                                                                                if v:
-                                                                                                    v.value = None
-                                                                                                    v.success = False
-                                                                                                    v.code = 3
-                                                                                                    v.fulfilled = True
-                                                                                                    orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                                    api_handled_requests[i] = True
-                                                                                        else:
-                                                                                            if v:
-                                                                                                v.value = None
-                                                                                                v.success = False
-                                                                                                v.code = 7
-                                                                                                v.fulfilled = True
-                                                                                                orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                                api_handled_requests[i] = True
-                                                                                    else:
-                                                                                        if v:
-                                                                                            v.value = None
-                                                                                            v.success = False
-                                                                                            v.code = 6
-                                                                                            v.fulfilled = True
-                                                                                            orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                            api_handled_requests[i] = True
-                                                                                else:
+                                                                v = queue_block.get()
+                                                                if v is None: break
+                                                                if type(v) is orangeapi_modules[selected_mod_scriptt].Request:
+                                                                    identification = v.id.split("|")
+                                                                    if identification[0] != selected_mod_scriptt:
+                                                                        queue_block.task_done()
+                                                                        continue
+                                                                    try:
+                                                                        if ((v.requested in approved_lis) or (handler.roblox_event_info.get(v.requested, {"free": False}).get("free") == True)) and (v.fulfilled == False):
+                                                                            if identification[1] == generated_secret_keys[identification[0]]:
+                                                                                if v and func_list.get(v.requested):
                                                                                     if v and v.fulfilled == False:
-                                                                                        v.value = None
-                                                                                        v.success = False
-                                                                                        v.code = 2
-                                                                                        v.fulfilled = True
-                                                                                        orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                        api_handled_requests[i] = True
-                                                                                        printDebugMessage(f"This mod script ({selected_mod_scriptt}) is requesting use of a function ({v.requested}) that is not permitted. Please check Manifest.json and verify using the Mod Manager!")
-                                                                            except Exception as e:
-                                                                                if v:
-                                                                                    v.value = None
-                                                                                    v.success = False
-                                                                                    v.code = 4
-                                                                                    v.fulfilled = True
-                                                                                    orangeapi_modules[selected_mod_scriptt].requested_functions[i] = v
-                                                                                    api_handled_requests[i] = True
-                                                                                    printDebugMessage(f"Something went wrong with pinging the mod script {selected_mod_scriptt}: \n{trace()}")
+                                                                                        try:
+                                                                                            if undefined_func.get(v.requested):
+                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
+                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
+                                                                                                else: val = func_list.get(v.requested)()
+                                                                                            else:
+                                                                                                if type(v.args) is list: val = func_list.get(v.requested)(identification[0], *(v.args))
+                                                                                                elif type(v.args) is dict: val = func_list.get(v.requested)(identification[0], **(v.args))
+                                                                                                else: val = func_list.get(v.requested)()
+                                                                                            v.complete_request(code=0, value=val)
+                                                                                        except Exception as e: v.complete_request(code=1)
+                                                                                        queue_block.task_done()
+                                                                                else:
+                                                                                    v.complete_request(code=3)
+                                                                                    queue_block.task_done()
+                                                                            else:
+                                                                                v.complete_request(code=7)
+                                                                                queue_block.task_done()
+                                                                        else:
+                                                                            v.complete_request(code=2)
+                                                                            queue_block.task_done()
+                                                                            printDebugMessage(f"This mod script ({selected_mod_scriptt}) is requesting use of a function ({v.requested}) that is not permitted. Please check Manifest.json and verify using the Mod Manager!")
+                                                                    except Exception as e:
+                                                                        v.complete_request(code=4)
+                                                                        queue_block.task_done()
+                                                                        printDebugMessage(f"Something went wrong with pinging the mod script {selected_mod_scriptt}: \n{trace()}")
                                                             except Exception as e:
                                                                 resulting_err = trace()
-                                                                if "dictionary changed size during iteration" in resulting_err:
-                                                                    if main_config.get("EFlagModScriptRequestTooFastMessage") == True: printDebugMessage("Mod Script is requesting data too fast!")
-                                                                else:
-                                                                    printDebugMessage(f"Error from Mod Script module: \n{resulting_err}")
-                                                                    printErrorMessage(f"Ended accepting requests from Mod Scripts ({selected_mod_scriptt}) due to an issue. | Code: 1")
-                                                                    return
-                                                            time.sleep(main_config.get("EFlagModScriptAPIRefreshTime", 0.05))
+                                                                printDebugMessage(f"Error from Mod Script module: \n{resulting_err}")
+                                                                printErrorMessage(f"Ended accepting requests from Mod Scripts ({selected_mod_scriptt}) due to an issue. | Code: 1")
                                                     def setPythonAPIs(selected_mod_scripttt, apr_li):
                                                         # Set and Handle Printing Functions
                                                         def handlePrint(mes): printMainMessage(f"[MOD SCRIPT]: {mes}")
@@ -5369,7 +5395,6 @@ def runRoblox():
                                                             setattr(mod_script_modules[selected_mod_scripttt], "__import__", empty)
 
                                                     # Launch API
-                                                    pip_class.startThread(checkGeneratedInstances, True, sel_mod, "OrangeAPI")
                                                     pip_class.startThread(setPythonAPIs, True, sel_mod, list(approved_items_list))
                                                     pip_class.startThread(handleRequests, True, sel_mod, list(approved_items_list))
                                                     printDebugMessage(f"Launched OrangeAPI v{OrangeAPI.current_version['version']}!")
@@ -5388,13 +5413,15 @@ def runRoblox():
                                                 else: mod_manifest = generateModsManifest().get(sel_mod); s(sel_mod)
                                         s(str(sel_mo))
                                     else:
-                                        if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"This mod script is not supported. Please update to {obName0()} v{mod_manifest['mod_script_supports']}")
-                                        elif mod_manifest["mod_script_supports_operating_system"] == False:
-                                            if main_os == "Darwin": printYellowMessage(f"This mod script is only supported for Windows!")
-                                            elif main_os == "Windows": printYellowMessage(f"This mod script is only supported for macOS!")
-                                            else: printYellowMessage(f"This mod script is only supported for macOS or Windows!")
-                                        else:
-                                            printYellowMessage(f"This mod script has reached their end support! Creator Note:")
+                                        printMainMessage("This mod script is no longer support because of the following reasons:")
+                                        if mod_manifest["mod_script_supports"] > current_version["version"]: printYellowMessage(f"- This mod script requests a newer version of {obName0()}. Please update to {obName0()} v{mod_manifest['mod_script_supports']}")
+                                        if mod_manifest["python_version"] > pip_class.getCurrentPythonVersion(): printYellowMessage(f"- This mod script requires a newer version of Python. Please update to {mod_manifest['python_version']}")
+                                        if mod_manifest["mod_script_supports_operating_system"] == False:
+                                            if main_os == "Darwin": printYellowMessage(f"- This mod script is only supported for Windows!")
+                                            elif main_os == "Windows": printYellowMessage(f"- This mod script is only supported for macOS!")
+                                            else: printYellowMessage(f"- This mod script is only supported for macOS or Windows!")
+                                        if mod_manifest["mod_script_supports"] > current_version["version"] or mod_manifest["mod_script_end_support"] <= current_version["version"]:
+                                            printYellowMessage(f"- This mod script has reached their end support! Creator Note:")
                                             printYellowMessage(mod_manifest["mod_script_end_support_reasoning"])
                                 else: printErrorMessage("Unable to find mod script under manifest.")
         if main_config.get("EFlagDisableModScriptsAccess", False) != True:
@@ -5404,85 +5431,78 @@ def runRoblox():
         # Extra Functions
         def unfriendCheckLoop():
             alleged_path = generateFileKey("UnfriendCheckLoopLock")
-            if os.path.exists(alleged_path):
-                with open(alleged_path, "r") as f: pid_str = f.read()
-                if safeConvertNumber(pid_str) and pip_class.getIfProcessIsOpened(pid=pid_str):
-                    while os.path.exists(alleged_path) and pip_class.getIfProcessIsOpened(pid=pid_str): time.sleep(0.5)
-                    return unfriendCheckLoop()
-                else:
-                    with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
-            else: 
-                with open(alleged_path, "w", encoding="utf-8") as f: f.write(str(os.getpid()))
-            printDebugMessage("Starting Unfriend Detector Loop..")
-            while True:
-                unfriended_friends = []
-                blank_user_ids = 0
-                friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
-                try:
-                    reached_end = False
-                    friend_list_json = {"data": []}
-                    query = {"limit": "50", "findFriendsType": "0"}
-                    while reached_end == False:
-                        try:
-                            if main_config.get("EFlagUseEfazDevAPI") == True: 
-                                if query.get("limit"): query.pop("limit")
-                                if query.get("findFriendsType"): query.pop("findFriendsType")
-                                friend_list_req = requests.get(f"https://api.efaz.dev/api/roblox/user-friends-find/{friend_check_id}/50" + requests.format_params(query), timeout=5)
-                                if friend_list_req and friend_list_req.json: friend_list_req.json = friend_list_req.json.get("response")
-                            else: friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5, cookies=createCookieHeader())
-                            friend_req_json = friend_list_req.json
-                            if friend_list_req.ok and friend_req_json.get("PageItems"):
-                                friend_list_json["data"] += friend_req_json.get("PageItems")
-                                if friend_req_json.get("NextCursor"): query["cursor"] = friend_req_json.get("NextCursor")
-                                else: reached_end = True
-                        except Exception as e: printDebugMessage(f"There was an error on getting friends! Error: {str(e)}")
-                        time.sleep(5)
-                    if friend_list_req.ok:
-                        last_pinged_friend_list = {}
-                        if os.path.exists(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json"))):
-                            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
-                        if last_pinged_friend_list.get(str(friend_check_id)):
-                            for i in last_pinged_friend_list.get(str(friend_check_id)):
-                                found_friend = False
-                                for e in friend_list_json.get("data"):
-                                    if e["id"] == i["id"]: found_friend = True; break
-                                if found_friend == False: unfriended_friends.append(i)
-                            reached_end2 = False
-                            while reached_end2 == False:
-                                try:
-                                    user_ids = []
-                                    for i in unfriended_friends: 
-                                        if i.get("id") != -1: user_ids.append(i.get("id"))
-                                        else: blank_user_ids += 1
-                                    if len(user_ids) > 150:
-                                        chunked = []
-                                        for e in range(0, len(user_ids), 150): chunked.append(user_ids[e:e + 150])
-                                        unfriended_friends = []
-                                        for e in chunked:
-                                            reached_end3 = False
-                                            while reached_end3 == False:
-                                                user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": e, "excludeBannedUsers": False}, timeout=5, cookies=createCookieHeader())
-                                                if user_info_req.ok: unfriended_friends += user_info_req.json.get("data"); reached_end3 = True
-                                                time.sleep(1)
-                                        reached_end2 = True
-                                    else:
-                                        user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5, cookies=createCookieHeader())
-                                        if user_info_req.ok: unfriended_friends = user_info_req.json.get("data"); reached_end2 = True
-                                        time.sleep(1)
-                                except Exception as e: pass
-                            last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-                        else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
-                        with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
-                except Exception as e:
-                    printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
+            loop_lock = PyKits.Lock(alleged_path)
+            with loop_lock:
+                printDebugMessage("Starting Unfriend Detector Loop..")
+                while True:
                     unfriended_friends = []
-                if len(unfriended_friends) > 0:
-                    for i in unfriended_friends:
-                        if roblox_launched_affect_mod_script == True: displayNotification(ts("Unfriend Detected!"), ts(f"Oh! @{i['name']} has unfriended you! ;("))
-                        else: displayNotification(ts("Unfriend Detected!"), ts(f"Oh! @{i['name']} has unfriended you while you were away! ;("))
-                        printDebugMessage(f"Unable to find friend @{i['name']} in list! User must be unfriended!")
-                        time.sleep(1)
-                time.sleep(main_config.get("EFlagRobloxUnfriendCheckCooldown", 600))
+                    blank_user_ids = 0
+                    friend_check_id = main_config.get('EFlagRobloxUnfriendCheckUserID', 1)
+                    try:
+                        reached_end = False
+                        friend_list_json = {"data": []}
+                        query = {"limit": "50", "findFriendsType": "0"}
+                        while reached_end == False:
+                            try:
+                                if main_config.get("EFlagUseEfazDevAPI") == True: 
+                                    if query.get("limit"): query.pop("limit")
+                                    if query.get("findFriendsType"): query.pop("findFriendsType")
+                                    friend_list_req = requests.get(f"https://api.efaz.dev/api/roblox/user-friends-find/{friend_check_id}/50" + requests.format_params(query), timeout=5)
+                                    if friend_list_req and friend_list_req.json: friend_list_req.json = friend_list_req.json.get("response")
+                                else: friend_list_req = requests.get(f"https://friends.roblox.com/v1/users/{friend_check_id}/friends/find" + requests.format_params(query), timeout=5, cookies=createCookieHeader())
+                                friend_req_json = friend_list_req.json
+                                if friend_list_req.ok and friend_req_json.get("PageItems"):
+                                    friend_list_json["data"] += friend_req_json.get("PageItems")
+                                    if friend_req_json.get("NextCursor"): query["cursor"] = friend_req_json.get("NextCursor")
+                                    else: reached_end = True
+                            except Exception as e: printDebugMessage(f"There was an error on getting friends! Error: {str(e)}")
+                            time.sleep(5)
+                        if friend_list_req.ok:
+                            last_pinged_friend_list = {}
+                            if os.path.exists(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json"))):
+                                with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "r", encoding="utf-8") as f: last_pinged_friend_list = json.load(f)
+                            if last_pinged_friend_list.get(str(friend_check_id)):
+                                for i in last_pinged_friend_list.get(str(friend_check_id)):
+                                    found_friend = False
+                                    for e in friend_list_json.get("data"):
+                                        if e["id"] == i["id"]: found_friend = True; break
+                                    if found_friend == False: unfriended_friends.append(i)
+                                reached_end2 = False
+                                while reached_end2 == False:
+                                    try:
+                                        user_ids = []
+                                        for i in unfriended_friends: 
+                                            if i.get("id") != -1: user_ids.append(i.get("id"))
+                                            else: blank_user_ids += 1
+                                        if len(user_ids) > 150:
+                                            chunked = []
+                                            for e in range(0, len(user_ids), 150): chunked.append(user_ids[e:e + 150])
+                                            unfriended_friends = []
+                                            for e in chunked:
+                                                reached_end3 = False
+                                                while reached_end3 == False:
+                                                    user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": e, "excludeBannedUsers": False}, timeout=5, cookies=createCookieHeader())
+                                                    if user_info_req.ok: unfriended_friends += user_info_req.json.get("data"); reached_end3 = True
+                                                    time.sleep(1)
+                                            reached_end2 = True
+                                        else:
+                                            user_info_req = requests.post(f"https://users.roblox.com/v1/users", {"userIds": user_ids, "excludeBannedUsers": False}, timeout=5, cookies=createCookieHeader())
+                                            if user_info_req.ok: unfriended_friends = user_info_req.json.get("data"); reached_end2 = True
+                                            time.sleep(1)
+                                    except Exception as e: pass
+                                last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
+                            else: last_pinged_friend_list[str(friend_check_id)] = friend_list_json.get("data")
+                            with open(os.path.join(cur_path, generateFileKey("CachedFriendsList", ext=".json")), "w", encoding="utf-8") as f: json.dump(last_pinged_friend_list, f, indent=4)
+                    except Exception as e:
+                        printDebugMessage(f"Unable to fetch friends list! Exception: \n{trace()}")
+                        unfriended_friends = []
+                    if len(unfriended_friends) > 0:
+                        for i in unfriended_friends:
+                            if roblox_launched_affect_mod_script == True: displayNotification(ts("Unfriend Detected!"), ts(f"Oh! @{i['name']} has unfriended you! ;("))
+                            else: displayNotification(ts("Unfriend Detected!"), ts(f"Oh! @{i['name']} has unfriended you while you were away! ;("))
+                            printDebugMessage(f"Unable to find friend @{i['name']} in list! User must be unfriended!")
+                            time.sleep(1)
+                    time.sleep(main_config.get("EFlagRobloxUnfriendCheckCooldown", 600))
         def setRuntimeIconLoop():
             exponential_backoff = 1
             while True:
@@ -5575,19 +5595,25 @@ def runRoblox():
                 generated_location = "Unknown Location"
                 if info.get("ip"):
                     printDebugMessage(f"Roblox IP Address Detected! IP: {info.get('ip')}")
-                    allocated_roblox_ip = info.get("ip")
-                    server_info_res = requests.get(f"https://ipinfo.io/{allocated_roblox_ip}/json")
-                    if server_info_res.ok:
-                        server_info_json = server_info_res.json
-                        if server_info_json.get("city") and server_info_json.get("country"):
-                            if server_info_json.get("region") != None and server_info_json.get("region") != "": generated_location = f"{server_info_json['city']}, {server_info_json['region']}, {server_info_json['country']}"
-                            else: generated_location = f"{server_info_json['city']}, {server_info_json['country']}"
+                    try:
+                        allocated_roblox_ip = info.get("ip")
+                        server_info_res = requests.get(f"https://free.freeipapi.com/api/json/{allocated_roblox_ip}")
+                        if server_info_res.ok:
+                            server_info_json = server_info_res.json
+                            if server_info_json.get("cityName") and server_info_json.get("countryCode"):
+                                server_info_json["cityName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("cityName", ""))
+                                server_info_json["regionName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("regionName", ""))
+                                if server_info_json.get("regionName") != None and server_info_json.get("regionName") != "": generated_location = f"{server_info_json['cityName']}, {server_info_json['regionName']}, {server_info_json['countryCode']}"
+                                else: generated_location = f"{server_info_json['cityName']}, {server_info_json['countryCode']}"
+                            else:
+                                printDebugMessage(server_info_res.text)
+                                printDebugMessage("Failed to get server information: IP Request resulted with no information.")
                         else:
-                            if main_config.get("EFlagEnableDebugMode"): printDebugMessage(server_info_res.text)
-                            printDebugMessage("Failed to get server information: IP Request resulted with no information.")
-                    else:
-                        if main_config.get("EFlagEnableDebugMode"): printDebugMessage(server_info_res.text)
-                        printDebugMessage("Failed to get server information: IP Request Rejected.")
+                            printDebugMessage(server_info_res.text)
+                            printDebugMessage("Failed to get server information: IP Request Rejected.")
+                    except Exception as e:
+                        printDebugMessage(f"Failed to get server information: {e}")
+                        return
                     if main_config.get("EFlagNotifyServerLocation") == True:
                         printSuccessMessage(f"Roblox is currently connecting to a studio server in: {generated_location} [{allocated_roblox_ip}]!")
                         displayNotification(ts("Joining Studio Server"), ts(f"You have connected to a studio server from {generated_location}!"))
@@ -6015,18 +6041,23 @@ def runRoblox():
                     printDebugMessage(f"Roblox IP Address Detected! IP: {info.get('ip')}")
                     allocated_roblox_ip = info.get("ip")
                     generated_location = "Unknown Location"
-                    server_info_res = requests.get(f"https://ipinfo.io/{allocated_roblox_ip}/json")
-                    if server_info_res.ok:
-                        server_info_json = server_info_res.json
-                        if server_info_json.get("city") and server_info_json.get("country"):
-                            if server_info_json.get("region") != None and server_info_json.get("region") != "": generated_location = f"{server_info_json['city']}, {server_info_json['region']}, {server_info_json['country']}"
-                            else: generated_location = f"{server_info_json['city']}, {server_info_json['country']}"
+                    try:
+                        server_info_res = requests.get(f"https://free.freeipapi.com/api/json/{allocated_roblox_ip}")
+                        if server_info_res.ok:
+                            server_info_json = server_info_res.json
+                            if server_info_json.get("cityName") and server_info_json.get("countryCode"):
+                                server_info_json["cityName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("cityName", ""))
+                                server_info_json["regionName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("regionName", ""))
+                                if server_info_json.get("regionName") != None and server_info_json.get("regionName") != "": generated_location = f"{server_info_json['cityName']}, {server_info_json['regionName']}, {server_info_json['countryCode']}"
+                                else: generated_location = f"{server_info_json['cityName']}, {server_info_json['countryCode']}"
+                            else:
+                                printDebugMessage(server_info_res.text)
+                                printDebugMessage("Failed to get server information: IP Request resulted with no information.")
                         else:
-                            if main_config.get("EFlagEnableDebugMode"): printDebugMessage(server_info_res.text)
-                            printDebugMessage("Failed to get server information: IP Request resulted with no information.")
-                    else:
-                        if main_config.get("EFlagEnableDebugMode"): printDebugMessage(server_info_res.text)
-                        printDebugMessage("Failed to get server information: IP Request Rejected.")
+                            printDebugMessage(server_info_res.text)
+                            printDebugMessage("Failed to get server information: IP Request Rejected.")
+                    except Exception as e:
+                        printDebugMessage(f"Failed to get server information: An error occurred while fetching the information. Error: {e}")
 
                     if main_config.get("EFlagNotifyServerLocation") == True:
                         if set_server_type == 0:
@@ -6435,7 +6466,7 @@ def runRoblox():
                 except Exception as e: printDebugMessage(f"There was an error closing Discord RPC: \n{trace()}")
                 discord_rpc = None
                 discord_rpc_info = None
-            if run_studio == False and quick_url_launch == False and main_config.get("EFlagEnableMultiAutoReconnect") == True and current_place_info and current_place_info.get("place_info") and current_place_info.get("placeId"): 
+            if run_studio == False and preserve_roblox == False and main_config.get("EFlagEnableMultiAutoReconnect") == True and current_place_info and current_place_info.get("place_info") and current_place_info.get("placeId"): 
                 nonlocal set_current_private_server_key
                 global given_args
                 printYellowMessage("Reconnecting Roblox..")
@@ -6775,8 +6806,8 @@ def runRoblox():
                         else:
                             if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                             connected_roblox_instance = handler.openRoblox(
-                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True and quick_url_launch == False), 
-                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True and quick_url_launch == False), 
+                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True and preserve_roblox == False), 
+                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True and preserve_roblox == False), 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True),
                                 startData=f"{url}{'--args' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6831,10 +6862,10 @@ def runRoblox():
                     else: printDebugMessage("No RobloxInstance class was registered")
                     roblox_launched = True
                     if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
-        def restartRoblox():
+        def restartRoblox(request_thread_close: bool=True):
             nonlocal current_place_info
             current_place_info = None
-            if connected_roblox_instance: connected_roblox_instance.requestThreadClosing()
+            if connected_roblox_instance and request_thread_close: connected_roblox_instance.requestThreadClosing()
             runRobloxClient()
         def checkIfUpdateWasNeeded():
             nonlocal updated_count

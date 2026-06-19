@@ -26,7 +26,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
 4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
-5. Get server locations when joining (courtesy of ipinfo.io)
+5. Get server locations when joining (based on freeipapi.com)
 6. Apply the same experience to Roblox Studio with mods!
 7. Discord Rich Presences [Includes Support for BloxstrapRPC]
 8. Roblox Studio Support with Mods and FFlags! *[FFlags may not work due to future Roblox updates]
@@ -44,7 +44,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
 2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.3 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.6 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
 4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc psutil truststore <br>
    Windows: pip install pypresence pywin32 plyer psutil truststore
@@ -69,13 +69,13 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `f044b31cefdbfa0576d45f5e415226d3` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `332687926684d7a0a4df757f3d3fa706` |
-| Installer (Install.py) | `bec260a261fb9ddf7804aab85e686e53` |
-| Bootstrap API (OrangeAPI.py) | `6132e68fdb0f80f354466c55332330fb` |
-| Bootstrap Loader (OrangeBlox.py) | `a5f02207e78ecb2fd51591c6c54362a4` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `c1cfbb0131664937e0fa225f2ec52d6c` |
-| PyKits API (PyKits.py) | `9b180f0d4c9e574c5bb0e809fc76617d` |
+| Main Bootstrap (Main.py) | `33f14c8c5db61a11c5bd5ee873a624e3` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `12b2f38da44b5ed3e51a49536330e130` |
+| Installer (Install.py) | `4d9618ac393aecf1262860a9aecba449` |
+| Bootstrap API (OrangeAPI.py) | `637abd308f183745eb7b0139cc703532` |
+| Bootstrap Loader (OrangeBlox.py) | `ecff9bdbbf1d04d8c19bf1b4aef474f5` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `dbbe55d784169c2f9f772432d88e8d1e` |
+| PyKits API (PyKits.py) | `a4e9ceb82f7a5076cae675247261e70b` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
@@ -83,7 +83,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 3. Avatar Editor Maps were from <a href="https://github.com/Mielesgames/RobloxAvatarEditorMaps"><img src="https://img.shields.io/static/v1?label=&color=ff0062&message=Mielesgames%27s%20Map%20Files%20%F0%9F%97%BA%EF%B8%8F" alt="Mielesgames's Map Files 🗺️"></a> slightly edited to be usable for the current version of Roblox (as of the time of writing this)
 4. The Kliko's Mod Tool Mod Script was edited and made from <a href="https://github.com/klikos-modloader/klikos-modloader"><img src="https://img.shields.io/static/v1?label=&color=ff0000&message=Kliko%27s%20Mod%20Tool%20and%20Kliko%27s%20modloader%20%F0%9F%8E%AE" alt="Kilko's Mod Tool & Kliko's modloader 🎮"></a>
 5. Python Module Creators: <a href="https://github.com/qwertyquerty/pypresence"><img src="https://img.shields.io/static/v1?label=&color=00b000&message=qwertyquerty%20%28pypresence%29%20%F0%9F%A6%96" alt="qwertyquerty (pypresence) 🦖"></a>, <a href="https://github.com/ronaldoussoren/pyobjc"><img src="https://img.shields.io/static/v1?label=&color=00d000&message=Ronald%20Oussoren%20(pyobjc)%20%F0%9F%94%81" alt="Ronald Oussoren (pyobjc) 🔁"></a>, <a href="https://github.com/osvenskan/posix_ipc"><img src="https://img.shields.io/static/v1?label=&color=ffec00&message=Philip%20Semanchuk%20(posix-ipc)%20%F0%9F%99%82" alt="Philip Semanchuk (posix-ipc) 🙂"></a>, <a href="https://github.com/mhammond/pywin32"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Mark%20Hammond%20(pywin32)%20%F0%9F%AA%9F" alt="Mark Hammond (pywin32) 🪟"></a>, <a href="https://github.com/kivy/plyer"><img src="https://img.shields.io/static/v1?label=&color=ffaa00&message=Kivy%20(plyer)%20%F0%9F%A7%B0" alt="Kivy (plyer) 🧰"></a>, <a href="https://github.com/giampaolo/psutil"><img src="https://img.shields.io/static/v1?label=&color=000000&message=Giampaolo%20Rodola%20(psutil)%20%F0%9F%94%8C" alt="Giampaolo Rodola (psutil) 🔌"></a>,  <a href="https://github.com/sethmlarson/truststore"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=sethmlarson%20(truststore)%20%F0%9F%94%8C" alt="sethmlarson (truststore) 🔌"></a>
-6. Server Locations was made thanks to <a href="https://ipinfo.io/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=ipinfo.io%20%F0%9F%8C%90" alt="ipinfo.io 🌐"></a> as it wouldn't be possible to get IP address locations without them!
+6. Server Locations are sourced from <a href="https://freeipapi.com/"><img src="https://img.shields.io/static/v1?label=&color=D303FC&message=freeipapi.com%20%F0%9F%8C%90" alt="freeipapi.com 🌐"></a>
 7. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" alt="@CabledRblx 🦆"></a>. Thanks :)
 8. macOS App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a> and <a href="https://clang.llvm.org/"><img src="https://img.shields.io/static/v1?label=&color=FFFF00&message=clang%20%F0%9F%93%A6" alt="clang 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp -rc`
 9. Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp`

@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.6.0
+# v2.6.1
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -32,7 +32,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.6.0"
+script_version = "2.6.1"
 
 # Base Functions 1
 def getLocalAppData():
@@ -46,11 +46,10 @@ def getUserFolder():
 def getIfLoggedInIsMacOSAdmin():
     ma_os = platform.system()
     if ma_os == "Darwin":
-        logged_in_folder = getUserFolder()
-        username = os.path.basename(logged_in_folder)
-        groups_res = subprocess.run(["/usr/bin/groups", username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if groups_res.returncode == 0: return "admin" in groups_res.stdout.decode("utf-8", errors="ignore").split(" ")
-        else: return False
+        import grp
+        username = os.path.basename(getUserFolder())
+        try: return username in grp.getgrnam("admin").gr_mem
+        except KeyError: return False
     else: return False
 def getInstallableApplicationsFolder():
     global installable_app_folder
@@ -160,7 +159,7 @@ def makedirs(a): os.makedirs(a,exist_ok=True)
 
 # PyKits Classes
 pip_class = PyKits.pip()
-requests = PyKits.request()
+requests = PyKits.request(throw_exceptions=False)
 plist_class = PyKits.plist()
 colors_class = PyKits.Colors()
 
@@ -549,9 +548,7 @@ class Handler:
             else:
                 for i in self.__events__:
                     if i and i["name"] == eventName: self.__events__.remove(i)
-        def endInstance(self): 
-            if self.is_studio == True: self.main_handler.endRobloxStudio(pid=self.pid)
-            else: self.main_handler.endRoblox(pid=self.pid)
+        def endInstance(self): self.main_handler.endRoblox(pid=self.pid, studio=self.is_studio)
         def newestFile(self, path: str):
             files = os.listdir(path)
             paths = []
@@ -624,7 +621,7 @@ class Handler:
                         else: current_log = filtered_line
                     if should_remove == False: end_lines.append(line)
                 write_file.writelines(end_lines)
-        def handleLogEvent(self, event: Handler.WatchdogLineResponse):
+        def handleLogEvent(self, event: "Handler.WatchdogLineResponse"):
             if event:
                 if event.code == 0:
                     if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
@@ -1435,7 +1432,6 @@ class Handler:
                             main_log = self.getLatestLogFile()
                             self.log_file = main_log
                         else: main_log = self.log_file
-
                         with open(main_log, "r", encoding="utf-8", errors="ignore") as file:
                             self.loading_existing_logs = True
                             while True:
@@ -1467,32 +1463,31 @@ class Handler:
                             self.loading_existing_logs = False
                             file.seek(0, os.SEEK_END)
                             while True:
-                                line = file.readline()
-                                if self.ended_process == True:
-                                    self.submitEvent(eventName="onRobloxExit", data=line)
-                                    if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
-                                    break
-                                if not line:
-                                    time.sleep(0.01)
-                                    continue
-                                if not (line in passed_lines):
-                                    timestamp_str = line.split(",")
-                                    if len(timestamp_str) > 0:
-                                        timestamp_str = timestamp_str[0]
-                                        if re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", timestamp_str):
-                                            timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-                                            current_time = datetime.datetime.now(datetime.timezone.utc)
-                                            if timestamp:
-                                                age_in_seconds = int(current_time.timestamp() - timestamp.timestamp())
-                                                if age_in_seconds < 60:
+                                try:
+                                    line = file.readline()
+                                    if self.ended_process == True:
+                                        self.submitEvent(eventName="onRobloxExit", data=line)
+                                        if self.clean_logs: pip_class.startThread(func=self.cleanLogs)
+                                        break
+                                    if not line: time.sleep(0.01); continue
+                                    if not (line in passed_lines):
+                                        timestamp_str = line.split(",")
+                                        if len(timestamp_str) > 0:
+                                            timestamp_str = timestamp_str[0]
+                                            if re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z", timestamp_str):
+                                                timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=datetime.timezone.utc)
+                                                current_time = datetime.datetime.now(datetime.timezone.utc)
+                                                if timestamp:
                                                     res = self.handleLogLine(line)
                                                     if self.handleLogEvent(res): break
+                                            else:
+                                                res = self.handleLogLine(line)
+                                                if self.handleLogEvent(res): break
                                         else:
                                             res = self.handleLogLine(line)
                                             if self.handleLogEvent(res): break
-                                    else:
-                                        res = self.handleLogLine(line)
-                                        if self.handleLogEvent(res): break          
+                                except Exception as e:
+                                    time.sleep(0.5)      
                 self._watchdog_thread = pip_class.startThread(func=watchDog, daemon=self.daemon)
                 self._await_roblox_closing_thread = pip_class.startThread(func=self.awaitRobloxClosing, daemon=self.daemon)
         def requestThreadClosing(self): 
@@ -1651,28 +1646,29 @@ class Handler:
         else: self.optimal_download_location = "setup.rbxcdn.com"
     def endRoblox(self, studio: bool=False, pid: str=""):
         if self.getIfRobloxIsOpen(studio=studio, pid=pid):
-            if pid == "":
-                if studio == True:
-                    if self.__main_os__ == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/killall"), "-9", "RobloxStudio"], stdout=subprocess.DEVNULL)
-                    elif self.__main_os__ == "Windows": subprocess.run("taskkill /IM RobloxStudioBeta.exe /F", shell=True, stdout=subprocess.DEVNULL)
-                    else: self.unsupportedFunction()
-                else:
-                    if self.__main_os__ == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/killall"), "-9", "RobloxPlayer"], stdout=subprocess.DEVNULL)
-                    elif self.__main_os__ == "Windows": subprocess.run("taskkill /IM RobloxPlayerBeta.exe /F", shell=True, stdout=subprocess.DEVNULL)
-                    else: self.unsupportedFunction()
+            if pid == "" or pid is None:
+                if self.__main_os__ == "Darwin": target_name = "RobloxStudio" if studio else "RobloxPlayer"
+                elif self.__main_os__ == "Windows": target_name = "RobloxStudioBeta.exe" if studio else "RobloxPlayerBeta.exe"
+                else: return self.unsupportedFunction()
+                for proc in psutil.process_iter(['name']):
+                    try:
+                        if proc.info.get('name') == target_name: proc.kill()
+                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
             else:
-                if self.__main_os__ == "Darwin": subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL)
-                elif self.__main_os__ == "Windows": subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=subprocess.DEVNULL)
-                else: self.unsupportedFunction()
+                try: psutil.Process(int(pid)).kill()
+                except (psutil.NoSuchProcess, psutil.AccessDenied): pass
     def endRobloxCrashHandler(self, pid: str=""):
-        if pid == "":
-            if self.__main_os__ == "Darwin": subprocess.run([pip_class.getPathFile("/usr/bin/killall"), "-9", "RobloxCrashHandler"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            elif self.__main_os__ == "Windows": subprocess.run("taskkill /IM RobloxCrashHandler.exe /F", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else: self.unsupportedFunction()
+        if pid == "" or pid is None:
+            if self.__main_os__ == "Darwin": target_name = "RobloxCrashHandler"
+            elif self.__main_os__ == "Windows": target_name = "RobloxCrashHandler.exe"
+            else: return self.unsupportedFunction()
+            for proc in psutil.process_iter(['name']):
+                try:
+                    if proc.info.get('name') == target_name: proc.kill()
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess): pass
         else:
-            if self.__main_os__ == "Darwin": subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            elif self.__main_os__ == "Windows": subprocess.run(f"taskkill /PID {pid} /F", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else: self.unsupportedFunction()
+            try: psutil.Process(int(pid)).kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied): pass
     def getIfRobloxIsOpen(self, studio: bool=False, installer: bool=False, pid: str=""):
         if self.__main_os__ == "Windows":
             exe_file_name = ("RobloxStudioInstaller.exe" if installer else "RobloxStudioBeta.exe") if studio == True else ("RobloxPlayerInstaller.exe" if installer else "RobloxPlayerBeta.exe")
@@ -1682,12 +1678,19 @@ class Handler:
                 return False
             else: 
                 try: proc = psutil.Process(int(pid)); return proc.is_running() and proc.name() == exe_file_name
-                except (psutil.NoSuchProcess, psutil.AccessDenied, ValueError): return False
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess, ValueError): return False
         elif self.__main_os__ == "Darwin":
-            if pid == "" or pid == None:
-                if installer == False: return subprocess.run(["pgrep", "-f", f"{os.path.join(macOS_beforeClientServices, ('RobloxStudio' if studio == True else 'RobloxPlayer'))}"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).returncode == 0
-                else: return subprocess.run(["pgrep", "-f", f"{os.path.join(macOS_beforeClientServices, ('RobloxStudioInstaller' if studio == True else 'RobloxPlayerInstaller'))}"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).returncode == 0
-            else: return subprocess.run(["ps", "-p", f"{pid}"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).returncode == 0
+            if not pid:
+                proc_name = "RobloxStudio" if studio else "RobloxPlayer"
+                if installer: proc_name += "Installer"
+                target_path = os.path.join(macOS_beforeClientServices, proc_name)
+                for proc in psutil.process_iter(['cmdline']):
+                    try:
+                        cmdline = proc.info.get('cmdline')
+                        if cmdline and any(target_path in cmd for cmd in cmdline): return True
+                    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess, ValueError): pass
+                return False
+            else: return psutil.pid_exists(int(pid))
         else:
             self.unsupportedFunction()
             return
@@ -1849,72 +1852,36 @@ class Handler:
             else: return None
         elif self.__main_os__ == "Darwin": return f"{macOS_studioDir}/" if studio == True else f"{macOS_dir}/"
         else: self.unsupportedFunction()
-    def getLatestOpenedRobloxPid(self, studio: bool=False):
-        if self.__main_os__ == "Darwin":
+    def get_roblox_processes(self, studio: bool=False):
+        target_name_win = "RobloxStudioBeta.exe" if studio else "RobloxPlayerBeta.exe"
+        target_path_mac = "/MacOS/RobloxStudio" if studio else "/MacOS/RobloxPlayer"
+        procs = []
+        for proc in psutil.process_iter(["name", "exe", "create_time"]):
             try:
-                result = subprocess.run(["ps", "axo", "pid,etime,command"], stdout=subprocess.PIPE, text=True)
-                processes = result.stdout
-                roblox_lines = [line for line in processes.splitlines() if ("/MacOS/RobloxStudio" if studio == True else "/MacOS/RobloxPlayer") in line]
-                if not roblox_lines: return None
-                def sort_by_etime(line):
-                    etime = line.split()[1]
-                    parts = etime.split('-') if '-' in etime else [etime]
-                    time_parts = parts[-1].split(':')
-                    total_seconds = 0
-                    if len(parts) > 1: total_seconds += int(parts[0]) * 86400
-                    if len(time_parts) == 3:
-                        total_seconds += int(time_parts[0]) * 3600
-                        total_seconds += int(time_parts[1]) * 60
-                        total_seconds += int(time_parts[2])
-                    elif len(time_parts) == 2:
-                        total_seconds += int(time_parts[0]) * 60
-                        total_seconds += int(time_parts[1])
-                    return total_seconds
-                roblox_lines.sort(key=sort_by_etime)
-                latest_process = roblox_lines[0]
-                pid = latest_process.split()[0]
-                return pid
-            except Exception as e:
-                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
-                return None
-        elif self.__main_os__ == "Windows":
-            try:
-                result = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, text=True)
-                processes = result.stdout.read()
-                program_lines = [line for line in processes.splitlines() if ("RobloxStudioBeta.exe" if studio == True else "RobloxPlayerBeta.exe") in line]
-                if not program_lines:
-                    return None
-                latest_process = program_lines[-1]
-                pid = latest_process.split()[1]
-                return pid
-            except Exception as e:
-                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
-                return None
-    def getOpenedRobloxPids(self, studio: bool=False):
-        if self.__main_os__ == "Darwin":
-            try:
-                result = subprocess.run(["ps", "axo", "pid,etime,command"], stdout=subprocess.PIPE, text=True)
-                processes = result.stdout
-                roblox_lines = [line for line in processes.splitlines() if ("/MacOS/RobloxStudio" if studio == True else "/MacOS/RobloxPlayer") in line]
-                if not roblox_lines: return None
-                pid_list = []
-                for i in roblox_lines: pid_list.append(i.split()[0])
-                return pid_list
-            except Exception as e:
-                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
-                return None
-        elif self.__main_os__ == "Windows":
-            try:
-                result = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, text=True)
-                processes = result.stdout.read()
-                program_lines = [line for line in processes.splitlines() if ("RobloxStudioBeta.exe" if studio == True else "RobloxPlayerBeta.exe") in line]
-                if not program_lines: return None
-                pid_list = []
-                for i in program_lines: pid_list.append(i.split()[1])
-                return pid_list
-            except Exception as e:
-                printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
-                return None
+                if self.__main_os__ == "Windows":
+                    if proc.info.get("name") == target_name_win: procs.append(proc)
+                elif self.__main_os__ == "Darwin":
+                    exe_path = proc.info.get("exe") or ""
+                    if target_path_mac in exe_path: procs.append(proc)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess, ValueError): pass
+        return procs
+    def getLatestOpenedRobloxPid(self, studio: bool=False) -> str:
+        try:
+            procs = self.get_roblox_processes(studio)
+            if not procs: return None
+            procs.sort(key=lambda p: p.info.get('create_time', 0), reverse=True)
+            return str(procs[0].pid)
+        except Exception as e:
+            printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
+            return None
+    def getOpenedRobloxPids(self, studio: bool=False) -> list:
+        try:
+            procs = self.get_roblox_processes(studio)
+            if not procs: return None
+            return [str(p.pid) for p in procs]
+        except Exception as e:
+            printErrorMessage(f"Error occurred while getting Roblox Instance: {e}")
+            return None
     def getAllOpenedRobloxWindows(self, studio: bool=False) -> "list[RobloxWindow]":
         pids = self.getOpenedRobloxPids(studio=studio)
         generated_window_instances = []
@@ -1925,7 +1892,7 @@ class Handler:
     def getOpenedRobloxWindows(self, pid: str):
         generated_window_instance = None
         process_windows = pip_class.getProcessWindows(pid)
-        for e in process_windows: generated_window_instance = self.RobloxWindow(int(pid), e, self)
+        generated_window_instance = self.RobloxWindow(int(pid), process_windows[-1], self)
         return generated_window_instance
     def getRobloxAppSettings(self):
         appStorage = {}
@@ -3004,7 +2971,7 @@ class Handler:
                             if submit_status: submit_status.submit(f"[INSTALL] Running Roblox {client_label} Installer..", 50)
                             printDebugMessage(debug, f"Running Roblox{client_label}Installer executable..")
                             try:
-                                insta = subprocess.run(f"{copyRobloxInstallerPath}", shell=True, stdout=subprocess.DEVNULL)
+                                insta = subprocess.run(copyRobloxInstallerPath, shell=True, stdout=subprocess.DEVNULL)
                                 while True:
                                     if not self.getIfRobloxIsOpen(studio=studio, installer=True): break
                                     else: time.sleep(1)

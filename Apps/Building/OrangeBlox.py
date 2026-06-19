@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0"}
+current_version = {"version": "2.5.0q"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -52,6 +52,7 @@ flag_types = {
     "EFlagUpdatesAuthorizationKey": "str",
     "EFlagEnableDebugMode": "bool",
     "EFlagEnabledMods": "dict",
+    "EFlagEnabledModOrder": "list",
     "EFlagMakeMainBootstrapLogFiles": "bool",
     "EFlagCompletedTutorial": "bool",
     "EFlagVerifyRobloxHashAfterInstall": "bool",
@@ -396,7 +397,7 @@ if __name__ == "__main__":
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!")
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && caffeinate -i {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -458,28 +459,17 @@ if __name__ == "__main__":
             def notificationLoop():
                 global ended
                 printMainMessage("Starting Notification Loop..")
-                while ended == False:
-                    try:
-                        if os.path.exists(f"{app_path}/AppNotification"):
-                            with open(f"{app_path}/AppNotification", "r", encoding="utf-8") as f:
-                                try:
-                                    notification = json.load(f)
-                                    if not (type(notification) is dict):
-                                        class InvalidNotificationException(Exception): pass
-                                        raise InvalidNotificationException("The following data for notification is not valid.")
-                                except Exception as e:
-                                    printDebugMessage(str(e))
-                                    notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                            if os.path.exists(f"{app_path}/AppNotification"): os.remove(f"{app_path}/AppNotification")
-                            if notification.get("title") and notification.get("message"):
-                                displayNotification(notification["title"], notification["message"])
-                                printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
-                    except Exception as e: printErrorMessage(f"There was an issue making a notification: \n{trace()}")
-                    time.sleep(0.05)
+                notifier = PyKits.Socket(port=61239)
+                def listener(payload):
+                    if payload.get("title") and payload.get("message"): 
+                        displayNotification(payload["title"], payload["message"])
+                        printSuccessMessage(f"Successfully pinged app notification! Title: {payload['title']}, Message: {payload['message']}")
+                notifier.subscribe("OrangeBloxAppNotification", listener)
+                notifier.listen()
             def terminalAwaitLoop():
                 global associated_terminal_pid
                 printMainMessage("Starting Terminal ID Loop..")
-                while ended == False:
+                while ended == False and associated_terminal_pid == None:
                     try:
                         if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"):
                             with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
@@ -505,7 +495,7 @@ if __name__ == "__main__":
                             activate
                         end tell'''
                         result = subprocess.run(
-                            ["osascript", "-e", apple_script],
+                            ["/usr/bin/osascript", "-e", apple_script],
                             check=True,
                             capture_output=True,
                             text=True
@@ -537,7 +527,7 @@ if __name__ == "__main__":
                             else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
-                        result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
+                        result = subprocess.run(args=["/usr/bin/osascript", "-e", applescript], capture_output=True)
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0:
@@ -1148,7 +1138,7 @@ if __name__ == "__main__":
                                             end tell
                                         end run'''
                                         result = subprocess.run(
-                                            ["osascript", "-e", apple_script],
+                                            ["/usr/bin/osascript", "-e", apple_script],
                                             check=True,
                                             capture_output=True,
                                             text=True
@@ -1492,18 +1482,18 @@ if __name__ == "__main__":
             pip_class.startThread(func=notificationLoop, daemon=False)
             pip_class.startThread(func=terminalAwaitLoop, daemon=True)
             pip_class.startThread(func=startBootstrap, daemon=False)
+            gui_app_lock = os.path.join(orangeblox_library, f"GUIAppLock")
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
-            if app_count < 1: 
-                with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-                createObjcAppReplication()
-                try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
-                except Exception: printMainMessage("Unable to remove GUI app holder")
-            else:
-                while ended == False and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): time.sleep(0.5)
-                if ended == False: 
-                    with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+            if app_count >= 1: 
+                while ended == False and os.path.exists(gui_app_lock): time.sleep(0.5)
+            if not ended:
+                try:
+                    with open(gui_app_lock, "x", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
                     createObjcAppReplication()
-                    try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
+                except FileExistsError: printDebugMessage("Another process grabbed lock first. Skipping.")
+                except Exception as e: printErrorMessage(f"Error occurred while creating GUI app lock: \n{trace()}")
+                finally:
+                    try: os.remove(gui_app_lock)
                     except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
@@ -1596,23 +1586,11 @@ if __name__ == "__main__":
                 ended = False
                 def awake():
                     global ended
-                    seconds = 0
-                    while True:
-                        try:
-                            if ended == True: break
-                            if os.path.exists(os.path.join(app_path, "AppNotification")):
-                                with open(os.path.join(app_path, "AppNotification"), "r", encoding="utf-8") as f:
-                                    try:
-                                        notification = json.load(f)
-                                        if type(notification) is list:
-                                            class InvalidNotificationException(Exception): pass
-                                            raise InvalidNotificationException("The following data for notification is not valid.")
-                                    except Exception as e: notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                                if os.path.exists(os.path.join(app_path, "AppNotification")): os.remove(os.path.join(app_path, "AppNotification"))
-                                if notification.get("title") and notification.get("message"): displayNotification(notification["title"], notification["message"])
-                            seconds += 1
-                        except Exception as e: pass
-                        time.sleep(0.05)
+                    notifier = PyKits.Socket(port=61239)
+                    def listener(payload):
+                        if payload.get("title") and payload.get("message"): displayNotification(payload["title"], payload["message"])
+                    notifier.subscribe("OrangeBloxAppNotification", listener)
+                    notifier.listen()
                 def startBootstrap():
                     global ended
                     try:
