@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "Attualmente ti stai unendo a un gioco adesso!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Sei in Modalità Studio! Non puoi partecipare a una partita in Modalità Studio..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Attività richiamata con successo per riavviare Roblox! Per favore aspetta un attimo!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Lo script Mod \"(*)\" ha richiesto di partecipare a un gioco roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Lo script Mod \"(*)\" ha richiesto di partecipare a un gioco roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Nota sulla multi-istanza di Roblox ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Come misura di sicurezza, abbiamo disabilitato la multi-istanza per evitare che i tuoi account vengano contrassegnati e bannati. Ci dispiace per l'inconvenienza..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Recentemente, Roblox ha dichiarato che il multi-istanza è uno sfruttamento.."
 }

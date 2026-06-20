@@ -2534,5 +2534,8 @@
  "You are currently joining a game now!": "あなたは現在ゲームに参加しています!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "スタジオモードになりました!スタジオ モードではゲームに参加できません..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Robloxを再起動するタスクの呼び出しに成功しました!ちょっと待ってください!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod スクリプト\"(*)\"が Roblox ゲームへの参加をリクエストしました: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod スクリプト\"(*)\"が Roblox ゲームへの参加をリクエストしました: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Roblox マルチインスタンス化に関する注意事項 ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "安全対策として,アカウントにフラグが立てられて禁止されるのを防ぐために,マルチインスタンスを無効にしました.ご不便をおかけして申し訳ありません..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "最近,Roblox はマルチインスタンスが悪用していると宣言しました.."
 }

@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "Αυτήν τη στιγμή συμμετέχετε σε ένα παιχνίδι τώρα!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Είστε σε λειτουργία Studio! Δεν μπορείτε να συμμετάσχετε σε ένα παιχνίδι σε λειτουργία Studio..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Έγινε επιτυχής κλήση για επανεκκίνηση του Roblox! Περιμένετε λίγο!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Το σενάριο Mod \"(*)\" ζήτησε να συμμετάσχει σε ένα παιχνίδι roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Το σενάριο Mod \"(*)\" ζήτησε να συμμετάσχει σε ένα παιχνίδι roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Σημείωση για το Roblox Multi-Instancing ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Ως μέτρο ασφαλείας, έχουμε απενεργοποιήσει την πολλαπλή παρουσίαση για να αποτρέψουμε την επισήμανση και τον αποκλεισμό των λογαριασμών σας. Συγγνώμη για την ταλαιπωρία..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Πρόσφατα, η Roblox δήλωσε ότι το multi-instancing ως εκμετάλλευση.."
 }

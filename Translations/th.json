@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "คุณกำลังเข้าร่วมเกมในขณะนี้!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "คุณอยู่ในโหมดสตูดิโอ! คุณไม่สามารถเข้าร่วมเกมในโหมดสตูดิโอได้",
  "Successfully called task for restarting Roblox! Please wait a moment!": "เรียกงานเพื่อรีสตาร์ท Roblox สำเร็จแล้ว! กรุณารอสักครู่!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "สคริปต์ Mod \"(*)\" ได้ขอเข้าร่วมเกม roblox: (*)"
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "สคริปต์ Mod \"(*)\" ได้ขอเข้าร่วมเกม roblox: (*)",
+ "--- Note about Roblox Multi-Instancing ---": "--- หมายเหตุเกี่ยวกับ Roblox Multi-Instancing ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "เพื่อเป็นมาตรการด้านความปลอดภัย เราได้ปิดการใช้งานหลายอินสแตนซ์เพื่อช่วยป้องกันไม่ให้บัญชีของคุณถูกตั้งค่าสถานะและถูกแบน ขออภัยในความไม่สะดวก",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "ล่าสุด Roblox ได้ประกาศการใช้หลายอินสแตนซ์เป็นการแสวงหาประโยชน์"
 }

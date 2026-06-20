@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "您現在正在加入遊戲!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "您正處於工作室模式!您無法在工作室模式下加入遊戲..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "成功呼叫重啟 Roblox 任務!請稍等!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod 腳本\"(*)\"已要求加入 Roblox 遊戲:(*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod 腳本\"(*)\"已要求加入 Roblox 遊戲:(*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- 關於 Roblox 多實例的注意事項 ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "作為一項安全措施,我們停用了多實例,以幫助防止您的帳戶被標記和被禁止.帶來不便敬請諒解..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "最近,Roblox 宣布多實例為利用行為.."
 }

@@ -2532,5 +2532,8 @@
  "You are currently joining a game now!": "Bạn hiện đang tham gia một trò chơi!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Bạn đang ở chế độ Studio! Bạn không thể tham gia trò chơi ở chế độ Studio..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Đã gọi thành công nhiệm vụ khởi động lại Roblox! Xin vui lòng chờ một chút!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Tập lệnh Mod \"(*)\" đã yêu cầu tham gia trò chơi roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Tập lệnh Mod \"(*)\" đã yêu cầu tham gia trò chơi roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Lưu ý về Roblox Multi-Instancing ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Để đảm bảo an toàn, chúng tôi đã tắt tính năng đa phiên bản nhằm giúp tài khoản của bạn không bị gắn cờ và bị cấm. Xin lỗi vì sự bất tiện này..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Gần đây, Roblox đã tuyên bố đa phiên bản là khai thác.."
 }

@@ -2503,8 +2503,8 @@
  "- This mod script is only supported for Windows!": "- 이 모드 스크립트는 Windows에서만 지원됩니다!",
  "- This mod script is only supported for macOS or Windows!": "- 이 모드 스크립트는 Macos 또는 Windows에서만 지원됩니다!",
  "- This mod script is only supported for macOS!": "- 이 모드 스크립트는 Macos에서만 지원됩니다!",
- "- This mod script requests a newer version of (*). Please update to (*) v(*)": "- 이 모드 스크립트는 (*)의 최신 버전을 요청합니다. (*) V(*)로 업데이트하세요......................................",
- "- This mod script requires a newer version of Python. Please update to (*)": "- 이 모드 스크립트에는 최신 버전의 Python이 필요합니다. (*)로 업데이트하세요......................................",
+ "- This mod script requests a newer version of (*). Please update to (*) v(*)": "- 이 모드 스크립트는 (*)의 최신 버전을 요청합니다. (*) V(*)로 업데이트하세요..........................................",
+ "- This mod script requires a newer version of Python. Please update to (*)": "- 이 모드 스크립트에는 최신 버전의 Python이 필요합니다. (*)로 업데이트하세요..........................................",
  "Add \"u\" or \"d\" to the end of selection number to move a mod up or down in apply order. (ex: 1u)": "모드를 적용 순서에 따라 위나 아래로 이동하려면 선택 번호 끝에 \"u\" 또는 \"d\"를 추가하세요. (예: 1u)",
  "Successfully moved mod down in order!": "모드를 순서대로 아래로 이동했습니다!",
  "Successfully moved mod up in order!": "모드를 순서대로 이동했습니다!",
@@ -2534,5 +2534,8 @@
  "You are currently joining a game now!": "귀하는 현재 게임에 참여 중입니다!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "스튜디오 모드에 있습니다! 스튜디오 모드에서는 게임에 참여할 수 없습니다..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Roblox를 다시 시작하기 위한 작업을 성공적으로 호출했습니다! 잠시만 기다려주세요!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "모드 스크립트 \"(*)\"가 Roblox 게임 참여를 요청했습니다: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "모드 스크립트 \"(*)\"가 Roblox 게임 참여를 요청했습니다: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Roblox 다중 인스턴스에 대한 참고 사항 ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "안전 조치로 귀하의 계정이 신고되거나 금지되는 것을 방지하기 위해 다중 인스턴스를 비활성화했습니다. 불편을 끼쳐드려 죄송합니다..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "최근 Roblox는 다중 인스턴스를 악용으로 선언했습니다.."
 }

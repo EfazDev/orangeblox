@@ -2524,14 +2524,17 @@
  "Mod script \"(*)\" has requested to restart Roblox.": "Ang Mod script na \"(*)\" ay humiling na i-restart ang Roblox..",
  "Restart the Roblox Instance": "I-restart ang Roblox Instance",
  "Connected User": "Konektadong User",
- "Game Instance ID": "Game Instance ID",
+ "Game Instance ID": "ID ng Game Instance",
  "Joining Game": "Pagsali sa Laro",
- "Place ID": "Place ID",
+ "Place ID": "ID ng Lugar",
  "Something went wrong trying to join!": "Nagkaproblema sa pagsubok na sumali!",
  "Successfully called task for joining a Roblox game! Please wait a moment!": "Matagumpay na natawag na gawain para sa pagsali sa isang larong Roblox! Mangyaring maghintay ng ilang sandali!",
  "Successfully restarted Roblox!": "Matagumpay na na-restart ang Roblox!",
  "You are currently joining a game now!": "Kasalukuyan kang sumasali sa isang laro ngayon!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Nasa Studio Mode ka! Hindi ka maaaring sumali sa isang laro sa Studio Mode..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Matagumpay na natawag na gawain para sa pag-restart ng Roblox! Mangyaring maghintay ng ilang sandali!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Ang Mod script na \"(*)\" ay humiling na sumali sa isang larong roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Ang Mod script na \"(*)\" ay humiling na sumali sa isang larong roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Tandaan tungkol sa Roblox Multi-Instancing ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Bilang isang hakbang sa kaligtasan, hindi namin pinagana ang multi-instancing upang makatulong na pigilan ang iyong mga account na ma-flag at ma-ban. Paumanhin para sa abala..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Kamakailan, idineklara ni Roblox ang multi-instancing bilang pagsasamantala.."
 }

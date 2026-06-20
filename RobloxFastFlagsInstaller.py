@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.6.1
+# v2.6.5
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -32,7 +32,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.6.1"
+script_version = "2.6.5"
 
 # Base Functions 1
 def getLocalAppData():
@@ -2022,69 +2022,6 @@ class Handler:
         except Exception as e:
             printDebugMessage(debug, str(e))
             return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
-    def prepareMultiInstance(self, debug: bool=False, awaitRobloxClosure: bool=True, allowReattachment: bool=True):
-        if self.__main_os__ == "Darwin":
-            try:
-                posix_ipc.unlink_semaphore("/RobloxPlayerUniq")
-                printDebugMessage(debug, f"Successfully unlinked semaphore to allow Roblox multi instance!")
-                return True
-            except posix_ipc.ExistentialError:
-                printDebugMessage(debug, f"Roblox Single Instance Semaphore does not exist. You may launch Roblox without any problems!")
-                return True
-        elif self.__main_os__ == "Windows":
-            import ctypes.wintypes
-            kernel32 = ctypes.windll.kernel32
-            mutexes_events = [["ROBLOX_singletonEvent", b"ROBLOX_singletonEvent"], ["ROBLOX_SingletonEvent", b"ROBLOX_SingletonEvent"], ["ROBLOX_singletonMutex", b"ROBLOX_singletonMutex"]]
-            is_created = False
-            for mutex_names in mutexes_events:
-                mutex_name = mutex_names[0]
-                mutex_bytename = mutex_names[1]
-                mutex = kernel32.OpenMutexA(0x1F0001, ctypes.wintypes.BOOL(True), mutex_bytename)
-                mutex2 = kernel32.OpenMutexW(0x1F0001, ctypes.wintypes.BOOL(True), mutex_name)
-                if not (mutex and mutex2): 
-                    if allowReattachment == True:
-                        if self.getIfRobloxIsOpen():
-                            printDebugMessage(debug, f"Reattaching mutexes under name: {mutex_name}.")
-                            self.endRoblox()
-                    else:
-                        if mutex: kernel32.CloseHandle(mutex)
-                        if mutex2: kernel32.CloseHandle(mutex2)
-                        printDebugMessage(debug, "Unable to attach to mutex because it's already created by Roblox or by an another script.")
-                        return False
-                    def hold_mutex(mu_name):
-                        mutexW = kernel32.CreateMutexW(None, ctypes.wintypes.BOOL(True), mu_name)
-                        if mutexW:
-                            try:
-                                if awaitRobloxClosure == True:
-                                    while self.getIfRobloxIsOpen(): time.sleep(1)
-                                else:
-                                    while True: time.sleep(1)
-                            except Exception as e: 
-                                printDebugMessage(debug, f"There was an error holding mutex W: {str(e)}")
-                            finally: kernel32.ReleaseMutex(mutexW)
-                        else:
-                            printDebugMessage(debug, f"There was an error holding mutex W due to response: {mutexW}")
-                    def hold_mutex2(mu_name):
-                        mutexA = kernel32.CreateMutexA(None, ctypes.wintypes.BOOL(True), mu_name)
-                        if mutexA:
-                            try:
-                                if awaitRobloxClosure == True:
-                                    while self.getIfRobloxIsOpen(): time.sleep(1)
-                                else:
-                                    while True: time.sleep(1)
-                                kernel32.ReleaseMutex(mutexA)
-                            except Exception as e: 
-                                printDebugMessage(debug, f"There was an error holding mutex A: {str(e)}")
-                            finally: kernel32.ReleaseMutex(mutexA)
-                        else:
-                            printDebugMessage(debug, f"There was an error holding mutex A due to response: {mutexA}")
-                    pip_class.startThread(hold_mutex, False, mutex_name)
-                    pip_class.startThread(hold_mutex2, False, mutex_bytename)
-                    is_created = True
-            return is_created
-        else:
-            self.unsupportedFunction()
-            return False
     def parseRobloxLauncherURL(self, url: str=""):
         p = url.split('+')[1:]
         data = {}
@@ -2346,7 +2283,7 @@ class Handler:
         windows_player_folder_name = ""
         windows_studio_folder_name = ""
         return self.CustomizableVariables(org_macOS_dir, org_macOS_studioDir, org_macOS_beforeClientServices, org_macOS_installedPath, org_windows_dir, org_windows_versions_dir, org_windows_player_folder_name, org_windows_studio_folder_name)
-    def openRoblox(self, studio: bool=False, forceQuit: bool=False, makeDupe: bool=False, startData: typing.Union[list, str]="", debug: bool=False, attachInstance: bool=False, allowRobloxOtherLogDebug: bool=False, mainLogFile: str="", oneThreadedInstance: bool=True) -> "RobloxInstance | None":
+    def openRoblox(self, studio: bool=False, forceQuit: bool=False, startData: typing.Union[list, str]="", debug: bool=False, attachInstance: bool=False, allowRobloxOtherLogDebug: bool=False, mainLogFile: str="", oneThreadedInstance: bool=True) -> "RobloxInstance | None":
         client_label = "Studio" if studio == True else "Player"
         if self.getIfRobloxIsOpen(studio=studio):
             if forceQuit == True:
@@ -2365,7 +2302,7 @@ class Handler:
                 for e in s: startData.remove(e)
             startData = (startData if type(startData) is list else startData.split(" "))
             while "" in startData: startData.remove("")
-            if makeDupe == True and not (studio == True):
+            if not (studio == True):
                 if self.getIfRobloxIsOpen(studio=studio) == True:
                     self.prepareMultiInstance(debug=debug)
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
@@ -2402,7 +2339,7 @@ class Handler:
                                 if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
             else:
                 # f"open -a \'{macOS_dir}\' {startData}"
-                com = ["/usr/bin/open"] + (["-n"] if makeDupe == True else []) + ["-a", tar_dir] + startData
+                com = ["/usr/bin/open", "-a", tar_dir] + startData
                 printDebugMessage(debug, f"Running Roblox using Command: {com}")
                 a = subprocess.run(com, check=True)
                 if a.returncode == 0:
@@ -2413,7 +2350,7 @@ class Handler:
                             if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
         elif self.__main_os__ == "Windows":
             created_mutex = False
-            if makeDupe == True and not (studio == True):
+            if not (studio == True):
                 try:
                     created_mutex = self.prepareMultiInstance(debug=debug)
                     if debug == True:
@@ -2430,39 +2367,22 @@ class Handler:
                 a = subprocess.run(com, shell=True, check=True, stdout=subprocess.DEVNULL)
                 if a.returncode == 0:
                     if attachInstance == True:
-                        if makeDupe == True:
+                        time.sleep(1)
+                        if self.getIfRobloxIsOpen(studio=studio) == True:
+                            cur_open_pid = self.getLatestOpenedRobloxPid(studio=studio)
+                            start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
+                            test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
+                            while True:
+                                if test_instance.ended_process == True: break
+                                elif len(test_instance.getWindowsOpened()) > 0:
+                                    time.sleep(5)
+                                    if len(test_instance.getWindowsOpened()) > 0: break
+                                elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
+                                else: time.sleep(0.5)
+                            test_instance.requestThreadClosing()
                             if self.getIfRobloxIsOpen(studio=studio) == True:
-                                cur_open_pid = self.getLatestOpenedRobloxPid(studio=studio)
-                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
-                                while True:
-                                    if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0:
-                                        time.sleep(5)
-                                        if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
-                                    else: time.sleep(0.5)
-                                test_instance.requestThreadClosing()
-                                if self.getIfRobloxIsOpen(studio=studio) == True:
-                                    pid = self.getLatestOpenedRobloxPid(studio=studio)
-                                    if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
-                        else:
-                            time.sleep(1)
-                            if self.getIfRobloxIsOpen(studio=studio) == True:
-                                cur_open_pid = self.getLatestOpenedRobloxPid(studio=studio)
-                                start_time = datetime.datetime.now(tz=datetime.UTC).timestamp()
-                                test_instance = self.RobloxInstance(self, pid=cur_open_pid, studio=studio, debug_mode=False, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=False, one_threaded=oneThreadedInstance)
-                                while True:
-                                    if test_instance.ended_process == True: break
-                                    elif len(test_instance.getWindowsOpened()) > 0:
-                                        time.sleep(5)
-                                        if len(test_instance.getWindowsOpened()) > 0: break
-                                    elif start_time+20 < datetime.datetime.now(tz=datetime.UTC).timestamp(): break
-                                    else: time.sleep(0.5)
-                                test_instance.requestThreadClosing()
-                                if self.getIfRobloxIsOpen(studio=studio) == True:
-                                    pid = self.getLatestOpenedRobloxPid(studio=studio)
-                                    if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
+                                pid = self.getLatestOpenedRobloxPid(studio=studio)
+                                if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
             else: printLog("Roblox couldn't be found.")
         else: self.unsupportedFunction()
     def downloadRobloxInstaller(self, studio: bool=False, filePath: str="", channel: str="LIVE", debug: bool=False):

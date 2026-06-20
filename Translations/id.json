@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "Anda sedang bergabung dengan permainan sekarang!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Anda berada dalam Mode Studio! Anda tidak dapat bergabung dalam permainan dalam Mode Studio..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Berhasil memanggil tugas untuk memulai ulang Roblox! Mohon tunggu sebentar!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Skrip Mod \"(*)\" telah meminta untuk bergabung dengan game roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Skrip Mod \"(*)\" telah meminta untuk bergabung dengan game roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Catatan tentang Roblox Multi-Instancing ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Sebagai tindakan keamanan, kami telah menonaktifkan multi-instancing untuk membantu mencegah akun Anda ditandai dan diblokir. Maaf atas ketidaknyamanan ini..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Baru-baru ini, Roblox menyatakan multi-instancing sebagai eksploitasi.."
 }

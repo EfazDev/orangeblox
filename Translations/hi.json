@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "आप वर्तमान में एक गेम में शामिल हो रहे हैं!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "आप स्टूडियो मोड में हैं! आप स्टूडियो मोड में किसी गेम में शामिल नहीं हो सकते..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Roblox को पुनः आरंभ करने के लिए कार्य सफलतापूर्वक बुलाया गया! कृपया कुछ देर इंतज़ार करें!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "मॉड स्क्रिप्ट \"(*)\" ने रोबॉक्स गेम में शामिल होने का अनुरोध किया है: (*)।"
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "मॉड स्क्रिप्ट \"(*)\" ने रोबॉक्स गेम में शामिल होने का अनुरोध किया है: (*)।",
+ "--- Note about Roblox Multi-Instancing ---": "--- रोबॉक्स मल्टी-इंस्टेंसिंग के बारे में नोट ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "सुरक्षा उपाय के रूप में, हमने आपके खातों को चिह्नित होने और प्रतिबंधित होने से बचाने में मदद के लिए मल्टी-इंस्टेंसिंग को अक्षम कर दिया है। असुविधा के लिए खेद है।",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "हाल ही में, Roblox ने मल्टी-इंस्टेंसिंग को शोषणकारी घोषित किया है।"
 }

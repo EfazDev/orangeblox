@@ -25,7 +25,6 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 1. Set FFlag and Global Setting Customizations on your Roblox installation!
 2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
 3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
-4. Use multiple instances directly by launching from your default web browser or the OrangeBlox app!
 5. Get server locations when joining (based on freeipapi.com)
 6. Apply the same experience to Roblox Studio with mods!
 7. Discord Rich Presences [Includes Support for BloxstrapRPC]
@@ -69,12 +68,12 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `33f14c8c5db61a11c5bd5ee873a624e3` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `12b2f38da44b5ed3e51a49536330e130` |
-| Installer (Install.py) | `4d9618ac393aecf1262860a9aecba449` |
-| Bootstrap API (OrangeAPI.py) | `637abd308f183745eb7b0139cc703532` |
-| Bootstrap Loader (OrangeBlox.py) | `ecff9bdbbf1d04d8c19bf1b4aef474f5` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `dbbe55d784169c2f9f772432d88e8d1e` |
+| Main Bootstrap (Main.py) | `389225a7665e155c9a66a9fcd89205a5` |
+| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `0817fa9097408628eb9a015b746cd57d` |
+| Installer (Install.py) | `5773b4f0047d378ba5d3ad71e3147534` |
+| Bootstrap API (OrangeAPI.py) | `cb87bf88d9e2845645064c0341864caf` |
+| Bootstrap Loader (OrangeBlox.py) | `240b5c740bc4a28b116faf88b12f35f7` |
+| Discord Presence Handler (DiscordPresenceHandler.py) | `1590230f13f9879f9d4ed3b6fd7c62c2` |
 | PyKits API (PyKits.py) | `a4e9ceb82f7a5076cae675247261e70b` |
 
 ## Credits

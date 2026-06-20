@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "Зараз ви приєднуєтеся до гри!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Ви в режимі Студії! Ви не можете приєднатися до гри в режимі Studio..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Успішно викликано завдання для перезапуску Roblox! Зачекайте, будь ласка!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Модний сценарій \"(*)\" надіслав запит на приєднання до гри roblox: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Модний сценарій \"(*)\" надіслав запит на приєднання до гри roblox: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Примітка про Multi-Instancing Roblox ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "З міркувань безпеки ми вимкнули кілька екземплярів, щоб запобігти позначенню та блокуванню ваших облікових записів. Вибачте за незручності..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Нещодавно Roblox оголосив багатоекземплярну експлуатацію.."
 }

@@ -2533,5 +2533,8 @@
  "You are currently joining a game now!": "Şu anda bir oyuna katılıyorsunuz!",
  "You are in Studio mode! You cannot join a game in Studio mode.": "Stüdyo Modundasınız! Studio Modunda bir oyuna katılamazsınız..",
  "Successfully called task for restarting Roblox! Please wait a moment!": "Roblox'u yeniden başlatmak için görev başarıyla çağrıldı! Lütfen biraz bekleyin!",
- "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod komut dosyası \"(*)\" bir Roblox oyununa katılma isteğinde bulundu: (*).."
+ "Mod script \"(*)\" has requested to join a Roblox game: (*).": "Mod komut dosyası \"(*)\" bir Roblox oyununa katılma isteğinde bulundu: (*)..",
+ "--- Note about Roblox Multi-Instancing ---": "--- Roblox Çoklu Örnekleme hakkında not ---",
+ "As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.": "Bir güvenlik önlemi olarak, hesaplarınızın işaretlenmesini ve yasaklanmasını önlemek amacıyla çoklu örneklemeyi devre dışı bıraktık. Rahatsızlıktan dolayı özür dileriz..",
+ "Recently, Roblox has declared multi-instancing as exploiting. ": "Son zamanlarda Roblox, çoklu örneklemeyi istismar olarak ilan etti.."
 }

@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0q"}
+current_version = {"version": "2.5.0r"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -966,8 +966,7 @@ if __name__ == "__main__":
                                 self.top_menu.addItem_(file_menu_item)
                                 self.top_menu.setSubmenu_forItem_(file_menu, file_menu_item)
                                 file_menu.addItem_(AppKit.NSMenuItem.separatorItem())
-                                if main_config.get("EFlagEnableDuplicationOfClients") == True: add_menu_item(file_menu, ts("Open Roblox [Multi-Instance]"), "multiRunRoblox_")
-                                else: add_menu_item(file_menu, ts("Open Roblox"), "runRoblox_")
+                                add_menu_item(file_menu, ts("Open Roblox"), "runRoblox_")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(file_menu, ts("Run Roblox Studio"), "runRobloxStudio_")
                                 file_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 if not (main_config.get("EFlagAllowActivityTracking") == False): 
@@ -1084,8 +1083,7 @@ if __name__ == "__main__":
                                 add_menu_item(self.dock_menu, ts("Open Settings"), "openSettings")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
 
-                                if main_config.get("EFlagEnableDuplicationOfClients") == True: add_menu_item(self.dock_menu, ts("Open Roblox [Multi-Instance]"), "multiRunRoblox")
-                                else: add_menu_item(self.dock_menu, ts("Open Roblox"), "runRoblox")
+                                add_menu_item(self.dock_menu, ts("Open Roblox"), "runRoblox")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(self.dock_menu, ts("Run Roblox Studio"), "runRobloxStudio")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 add_menu_item(self.dock_menu, ts("Run Fast Flags Installer"), "runFFlagInstaller")

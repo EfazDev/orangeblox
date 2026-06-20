@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0q
+# v2.5.0r
 # 
 
 # Python Modules
@@ -44,7 +44,6 @@ handler: RFFI.Handler = RFFI.Handler()
 cur_path: str = os.path.dirname(os.path.abspath(__file__))
 content_folder_paths: typing.Dict[str, str] = {}
 font_folder_paths: typing.Dict[str, str] = {}
-multi_instance_enabled: bool = False
 current_global_setting_type: bool = False
 modified_flags_from_mod_scripts: typing.List[str] = []
 skip_modification_mode: bool = False
@@ -57,7 +56,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0q"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0r"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -766,7 +765,6 @@ def setLoggingHandler(handler_name):
 
 # Handle Option Functions
 def continueToRoblox(studio=False): # Continue to Roblox
-    global multi_instance_enabled
     global run_studio
     if studio == True:
         printSystemMessage("--- Continue to Roblox Studio ---")
@@ -774,8 +772,7 @@ def continueToRoblox(studio=False): # Continue to Roblox
         run_studio = True
     else:
         printSystemMessage("--- Continue to Roblox ---")
-        if main_config.get("EFlagEnableDuplicationOfClients") == True: printMainMessage("Running Roblox with Multiple Instances!"); multi_instance_enabled = True
-        else: printMainMessage("Continuing to next stage!")
+        printMainMessage("Continuing to next stage!")
 def connectExistingRobloxWindow(studio=False): # Connect to Existing Roblox
     global connect_instead
     global run_studio
@@ -1498,23 +1495,6 @@ def continueToSettings(): # Open Settings
             d = handleBasicSetting("EFlagRobloxStudioEnabled", False)
             if d: return d
 
-            printMainMessage("Would you like to allow duplication of Roblox Clients? (y/n)")
-            printYellowMessage("Notes to keep track of:")
-            printYellowMessage("1. Make sure all currently open instances are fully loaded in a game before going to an another account.")
-            printYellowMessage("2. If you get teleported or kicked out, you may teleport into the current logged in Roblox account stored which may be the last logged in account.")
-            printYellowMessage("3. After Roblox versions 0.677+, Roblox has issued a new patch on multi-instancing that closes Roblox after a certain unknown time.")
-            printYellowMessage("4. Multi-Instances may be deflicted depending if one of your accounts are assigned to a different Roblox version.")
-            printYellowMessage("5. Please use this on your own risk!")
-            printMainMessage(f'Current Setting: {main_config.get("EFlagEnableDuplicationOfClients", False)==True}')
-            c = input("> ")
-            if isYes(c) == True:
-                main_config["EFlagEnableDuplicationOfClients"] = True
-                printDebugMessage("User selected: True")
-            elif isRequestClose(c) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
-            elif isNo(c) == True:
-                main_config["EFlagEnableDuplicationOfClients"] = False
-                printDebugMessage("User selected: False")
-
             if main_os == "Darwin":
                 printMainMessage("Would you like to remove the Dock shortcut that Roblox automatically adds? (y/n)")
                 d = handleBasicSetting("EFlagRemoveRobloxAppDockShortcut", False)
@@ -1614,11 +1594,6 @@ def continueToSettings(): # Open Settings
             printMainMessage("This may ignore when a Roblox reinstall is needed due to signing.")
             d = handleBasicSetting("EFlagDisableRobloxReinstallNeededChecks", False)
             if d: return d
-
-            if main_config.get("EFlagEnableDuplicationOfClients") == True:
-                printMainMessage("Would you like to enable Auto Reconnection for Multi-Instancing? (y/n)")
-                d = handleBasicSetting("EFlagEnableMultiAutoReconnect", False)
-                if d: return d
             
             if main_config.get("EFlagRobloxStudioEnabled") == True:
                 printMainMessage("Would you like to enable limiting Localized Studio Documentations to English (United States)? (Select your Roblox language to English (US) for this) (y/n)")
@@ -3746,6 +3721,14 @@ def adjustRobloxInstallation():
                 printErrorMessage("There is an issue while trying to install Roblox. Please try again by restarting this app!")
                 input("> ")
                 sys.exit(0)
+        if main_config.get("EFlagEnableDuplicationOfClients") == True:
+            printSystemMessage("--- Note about Roblox Multi-Instancing ---")
+            printYellowMessage("Recently, Roblox has declared multi-instancing as exploiting. ")
+            printMainMessage("As a safety measure, we have disabled multi-instancing to help prevent your accounts from being flagged and getting banned. Sorry for the inconvenience.")
+            con = input("> ")
+            if isNo(con): sys.exit(0)
+            main_config["EFlagEnableDuplicationOfClients"] = False
+            saveSettings()
         RFFI.windows_versions_dir = versions_folder
         RFFI.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         RFFI.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
@@ -4345,14 +4328,9 @@ def prepareRobloxClient():
                             printMainMessage("Editing Roblox Info.plist..")
                             plist_data["CFBundleIconFile"] = "AppIcon.icns"
                             plist_data["CFBundleIconName"] = "AppIcon.icns"
-                            if (main_config.get("EFlagEnableDuplicationOfClients") == True):
-                                if plist_data.get("LSMultipleInstancesProhibited") == True:
-                                    plist_data["LSMultipleInstancesProhibited"] = False
-                                    printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to False!")
-                            else:
-                                if plist_data.get("LSMultipleInstancesProhibited") == False:
-                                    plist_data["LSMultipleInstancesProhibited"] = True
-                                    printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to True!")
+                            if plist_data.get("LSMultipleInstancesProhibited") == False:
+                                plist_data["LSMultipleInstancesProhibited"] = True
+                                printDebugMessage(f"Successfully set plist key LSMultipleInstancesProhibited to True!")
                             if plist_data.get("CFBundleURLTypes"):
                                 plist_data["CFBundleURLTypes"] = []
                                 plist_data["NSDisableAutomaticTermination"] = True
@@ -4731,7 +4709,7 @@ def runRoblox():
                     if latest_roblox_version["success"] == True:
                         download_channel = latest_roblox_version["attempted_channel"]
                         if main_os == "Windows":
-                            if (multi_instance_enabled == True or main_config.get("EFlagEnableDuplicationOfClients") == True) and handler.getIfRobloxIsOpen(): printMainMessage("Skipping Roblox Reinstall due to Multi-Instancing enabled.")
+                            if False and handler.getIfRobloxIsOpen(): printMainMessage("Skipping Roblox Reinstall due to Multi-Instancing enabled.")
                             else:
                                 printMainMessage(f"Fresh copy was enabled! Therefore, starting Roblox install!")
                                 printSystemMessage("--- Installing Latest Roblox Version ---")
@@ -6428,7 +6406,6 @@ def runRoblox():
                         generateEmbedField(ts("Connected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
                     ]
-                    if run_studio == False and main_os == "Windows" and main_config.get("EFlagEnableDuplicationOfClients") == True: embed_fields.append(generateEmbedField(ts("Handles Roblox Multi-Instance"), str(connected_roblox_instance.created_mutex == True)))
                     generated_body = generateDiscordPayload((ts("Roblox Studio Started!") if run_studio == True else ts("Roblox Started!")), (65535 if run_studio == True else 6225823), embed_fields, thumbnail_url)
                     try: sendDiscordWebhook(generated_body, "onRobloxStart")
                     except Exception as e: printDebugMessage(f"There was an issue sending your webhook message. Exception: \n{trace()}")
@@ -6490,7 +6467,6 @@ def runRoblox():
                         generateEmbedField(ts("Disconnected PID"), connected_roblox_instance.pid),
                         generateEmbedField(ts("Log Location"), connected_roblox_instance.log_file)
                     ]
-                    if run_studio == False and main_os == "Windows" and (main_config.get("EFlagEnableDuplicationOfClients") == True): embed_fields.append(generateEmbedField(ts("Handles Roblox Multi-Instance"), str(connected_roblox_instance.created_mutex == True)))
                     if is_app_login_fail == True: title = ts("Roblox Failed Login!"); color = 13172807
                     generated_body = generateDiscordPayload(title, color, embed_fields, thumbnail_url)
                     try: sendDiscordWebhook(generated_body, "onRobloxExit")
@@ -6724,7 +6700,6 @@ def runRoblox():
                         if url.startswith("efaz-bootstrap:") or url.startswith("orangeblox:"):
                             connected_roblox_instance = handler.openRoblox(
                                 studio=True,
-                                makeDupe=True, 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True), 
                                 startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxStudioArguments', '') != '' else ''}{main_config.get('EFlagRobloxStudioArguments', '')}",
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6734,7 +6709,6 @@ def runRoblox():
                             if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                             connected_roblox_instance = handler.openRoblox(
                                 studio=True,
-                                makeDupe=False if url.startswith("roblox-studio-auth:") else True, 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True), 
                                 startData=f"{f'{url}' if main_os == 'Windows' else f'--args {url}'}{f' ' + main_config.get('EFlagRobloxStudioArguments', '') if main_config.get('EFlagRobloxStudioArguments') else ''}", 
                                 attachInstance=False if url.startswith("roblox-studio-auth:") else (main_config.get("EFlagAllowActivityTracking") != False), 
@@ -6753,7 +6727,6 @@ def runRoblox():
                         if os.path.exists(v): shutil.copy(v, i, follow_symlinks=False)
                     connected_roblox_instance = handler.openRoblox(
                         studio=True,
-                        makeDupe=True,
                         debug=(main_config.get("EFlagEnableDebugMode") == True), 
                         startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxStudioArguments', '') != '' else ''}{main_config.get('EFlagRobloxStudioArguments', '')}",
                         attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6787,8 +6760,7 @@ def runRoblox():
                             if os.path.exists(v): shutil.copy(v, i, follow_symlinks=False)
                         if url.startswith("efaz-bootstrap:") or url.startswith("orangeblox:"):
                             connected_roblox_instance = handler.openRoblox(
-                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True), 
-                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
+                                forceQuit=True, 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True), 
                                 startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{main_config.get('EFlagRobloxPlayerArguments', '')}",
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6796,8 +6768,7 @@ def runRoblox():
                             )
                         elif url.startswith("-"):
                             connected_roblox_instance = handler.openRoblox(
-                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True), 
-                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True), 
+                                forceQuit=True, 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True),
                                 startData=f"{'--args' if main_os == 'Darwin' else ''} {url}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6806,8 +6777,7 @@ def runRoblox():
                         else:
                             if main_os == "Windows" and "'" in url and os.path.exists(url): url = f"\"{url}\""
                             connected_roblox_instance = handler.openRoblox(
-                                forceQuit=(main_config.get("EFlagEnableDuplicationOfClients") != True and preserve_roblox == False), 
-                                makeDupe=(main_config.get("EFlagEnableDuplicationOfClients") == True and preserve_roblox == False), 
+                                forceQuit=preserve_roblox == False, 
                                 debug=(main_config.get("EFlagEnableDebugMode") == True),
                                 startData=f"{url}{'--args' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{f' ' + main_config.get('EFlagRobloxPlayerArguments', '') if main_config.get('EFlagRobloxPlayerArguments') else ''}", 
                                 attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6821,36 +6791,16 @@ def runRoblox():
                         roblox_launched = True
                         if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                     else: printDebugMessage(f"Unable to format url scheme due to an issue.")
-                elif multi_instance_enabled == True:
-                    printDebugMessage(f"Opening extra Roblox window..")
-                    for i, v in custom_cookies.items():
-                        if os.path.exists(v): shutil.copy(v, i, follow_symlinks=False)
-                    connected_roblox_instance = handler.openRoblox(
-                        forceQuit=False,
-                        makeDupe=True, 
-                        startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{main_config.get('EFlagRobloxPlayerArguments', '')}",
-                        debug=(main_config.get("EFlagEnableDebugMode") == True), 
-                        attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
-                        allowRobloxOtherLogDebug=(main_config.get("EFlagAllowFullDebugMode") == True)
-                    )
-                    if connected_roblox_instance:
-                        connectCallEvents(connected_roblox_instance)
-                        printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
-                        if connected_roblox_instance.created_mutex == True and main_os == "Windows": printSuccessMessage("Successfully connected for multi-instancing! Please know that this effect is active until all Roblox windows are closed or this bootstrap window is closed.")
-                    else: printDebugMessage("No RobloxInstance class was registered")
-                    roblox_launched = True
-                    if not main_config.get("EFlagDisableRobloxReinstallNeededChecks"): pip_class.startThread(func=checkIfUpdateWasNeeded)
                 else:
-                    if handler.getIfRobloxIsOpen():
-                        printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect? (y/n)")
-                        c = input("> ")
-                        if isYes(c) == True: handler.endRoblox()
-                        else: sys.exit(0)
+                    #if handler.getIfRobloxIsOpen():
+                    #    printMainMessage("An existing Roblox Window is currently open. Would you like to restart it in order for changes to take effect? (y/n)")
+                    #    c = input("> ")
+                    #    if isYes(c) == True: handler.endRoblox()
+                    #        else: sys.exit(0)
                     for i, v in custom_cookies.items():
                         if os.path.exists(v): shutil.copy(v, i, follow_symlinks=False)
                     connected_roblox_instance = handler.openRoblox(
                         forceQuit=True, 
-                        makeDupe=False,
                         startData=f"{'--args ' if main_os == 'Darwin' and main_config.get('EFlagRobloxPlayerArguments', '') != '' else ''}{main_config.get('EFlagRobloxPlayerArguments', '')}",
                         debug=(main_config.get("EFlagEnableDebugMode") == True), 
                         attachInstance=main_config.get("EFlagAllowActivityTracking") != False, 
@@ -6879,7 +6829,7 @@ def runRoblox():
                     printMainMessage(f"Uh oh! An fresh reinstall is needed. Downloading a fresh copy of Roblox{' Studio' if run_studio == True else ''}!")
                     submit_status.start()
                     if run_studio == True: res = handler.installRoblox(studio=True, debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxStudioInstaller.app") or os.path.join(cur_path, "RobloxStudioInstaller.exe")), downloadInstaller=True, downloadToken=createDownloadToken(), verifyInstall=main_config.get("EFlagVerifyRobloxHashAfterInstall")!=False)
-                    else: res = handler.installRoblox(forceQuit=(not (main_config.get("EFlagEnableDuplicationOfClients") == True)), debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadToken=createDownloadToken(), downloadInstaller=True, verifyInstall=main_config.get("EFlagVerifyRobloxHashAfterInstall")!=False)
+                    else: res = handler.installRoblox(forceQuit=True, debug=(main_config.get("EFlagEnableDebugMode") == True), copyRobloxInstallerPath=(main_os == "Darwin" and os.path.join(cur_path, "RobloxPlayerInstaller.app") or os.path.join(cur_path, "RobloxPlayerInstaller.exe")), downloadToken=createDownloadToken(), downloadInstaller=True, verifyInstall=main_config.get("EFlagVerifyRobloxHashAfterInstall")!=False)
                     submit_status.end()
                     if res and res["success"] == False:
                         printErrorMessage(f"There is an issue while trying to install Roblox{' Studio' if run_studio == True else ''}. Please try again by restarting this app!")
@@ -7151,7 +7101,7 @@ def mainMenu():
             generated_ui_options = []
             generated_ui_options.append({
                 "index": 1, 
-                "message": ts("Continue to Roblox [Multi-Instance]") if main_config.get("EFlagEnableDuplicationOfClients") == True else ts("Continue to Roblox"), 
+                "message": ts("Continue to Roblox"), 
                 "func": continueToRoblox, 
                 "go_to_rbx": False
             })
@@ -7462,8 +7412,7 @@ def mainMenu():
                 if "obx-launch-studio" in url: given_args[1] = given_args[1].replace("obx-launch-studio ", "").replace("obx-launch-studio", "")
             elif "roblox" in url or url.startswith("obx-launch-player"):
                 printSystemMessage("--- Redirecting to Roblox! ---")
-                if main_config.get("EFlagEnableDuplicationOfClients") == True: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox [Multi-Instance]..")
-                else: printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox..")
+                printMainMessage("Successfully loaded Roblox URL Scheme! Continuing to Roblox..")
                 if main_config.get("EFlagEnableSkipModificationMode") == True: skip_modification_mode = True
                 if "obx-launch-player" in url: given_args[1] = given_args[1].replace("obx-launch-player ", "").replace("obx-launch-player", "")
             elif os.path.isfile(url):
