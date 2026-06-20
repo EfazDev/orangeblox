@@ -2302,11 +2302,10 @@ class Handler:
                 for e in s: startData.remove(e)
             startData = (startData if type(startData) is list else startData.split(" "))
             while "" in startData: startData.remove("")
-            if not (studio == True):
+            if not studio:
                 if self.getIfRobloxIsOpen(studio=studio) == True:
-                    self.prepareMultiInstance(debug=debug)
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
-                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, "RobloxPlayer")] + startData
+                    com = ["/usr/bin/open", "-a", os.path.join(tar_dir, macOS_beforeClientServices, "RobloxPlayer")] + startData
                     printDebugMessage(debug, f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
@@ -2323,12 +2322,11 @@ class Handler:
                                 else: time.sleep(0.5)
                             test_instance.requestThreadClosing()
                             if self.getIfRobloxIsOpen(studio=studio) == True:
-                                self.prepareMultiInstance(debug=debug)
                                 pid = self.getLatestOpenedRobloxPid(studio=studio)
                                 if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
                 else:
                     # com = f"open -n -a \'{os.path.join(macOS_dir, macOS_beforeClientServices, 'RobloxPlayer')}\' {startData}"
-                    com = ["/usr/bin/open", "-n", "-a", os.path.join(tar_dir, macOS_beforeClientServices, 'RobloxPlayer')] + startData
+                    com = ["/usr/bin/open", "-a", os.path.join(tar_dir, macOS_beforeClientServices, 'RobloxPlayer')] + startData
                     printDebugMessage(debug, f"Running Roblox Executable using Command: {com}")
                     a = subprocess.run(com, check=True)
                     if a.returncode == 0:
@@ -2339,7 +2337,7 @@ class Handler:
                                 if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
             else:
                 # f"open -a \'{macOS_dir}\' {startData}"
-                com = ["/usr/bin/open", "-a", tar_dir] + startData
+                com = ["/usr/bin/open", "-n", "-a", tar_dir] + startData
                 printDebugMessage(debug, f"Running Roblox using Command: {com}")
                 a = subprocess.run(com, check=True)
                 if a.returncode == 0:
@@ -2349,15 +2347,6 @@ class Handler:
                             pid = self.getLatestOpenedRobloxPid(studio=studio)
                             if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, one_threaded=oneThreadedInstance)
         elif self.__main_os__ == "Windows":
-            created_mutex = False
-            if not (studio == True):
-                try:
-                    created_mutex = self.prepareMultiInstance(debug=debug)
-                    if debug == True:
-                        if created_mutex == True: printDebugMessage("Successfully attached the mutex! Once this window closes, all the other Roblox windows will close.")
-                        else: printDebugMessage("There's an issue trying to create a mutex! This may be because the mutex was already taken!")
-                except Exception:
-                    printDebugMessage(debug, "There's an issue trying to create a mutex!")
             most_recent_roblox_version_dir = self.getRobloxInstallFolder(studio=studio)
             if most_recent_roblox_version_dir:
                 startData = startData.replace("&", "^&")
@@ -2382,7 +2371,7 @@ class Handler:
                             test_instance.requestThreadClosing()
                             if self.getIfRobloxIsOpen(studio=studio) == True:
                                 pid = self.getLatestOpenedRobloxPid(studio=studio)
-                                if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=created_mutex, one_threaded=oneThreadedInstance)
+                                if pid: return self.RobloxInstance(self, pid=pid, studio=studio, log_file=mainLogFile, debug_mode=debug, allow_other_logs=allowRobloxOtherLogDebug, await_log_creation=True, created_mutex=False, one_threaded=oneThreadedInstance)
             else: printLog("Roblox couldn't be found.")
         else: self.unsupportedFunction()
     def downloadRobloxInstaller(self, studio: bool=False, filePath: str="", channel: str="LIVE", debug: bool=False):

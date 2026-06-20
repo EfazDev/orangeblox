@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.5.0r"}
+current_version = {"version": "2.5.0s"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -357,6 +357,7 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
+        gui_app_lock = None
         user_folder = pip_class.getUserFolder()
         user_folder_name = os.path.basename(pip_class.getUserFolder())
         orangeblox_library = os.path.join(user_folder, "Library", "OrangeBlox")
@@ -464,6 +465,7 @@ if __name__ == "__main__":
                     if payload.get("title") and payload.get("message"): 
                         displayNotification(payload["title"], payload["message"])
                         printSuccessMessage(f"Successfully pinged app notification! Title: {payload['title']}, Message: {payload['message']}")
+                if notifier.exists(): notifier.wait_till_free()
                 notifier.subscribe("OrangeBloxAppNotification", listener)
                 notifier.listen()
             def terminalAwaitLoop():
@@ -1023,7 +1025,7 @@ if __name__ == "__main__":
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
                                 add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
                                 add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
-                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
+                                if gui_app_lock and gui_app_lock.exists(): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
                                 view_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("View", None, "")
@@ -1228,7 +1230,7 @@ if __name__ == "__main__":
                             def force_load_logs(self): self.threadingloop_("oranges")
                             def validateMenuItem_(self, menuItem): return True
                             def unlock_app_lock(self):
-                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
+                                if gui_app_lock and gui_app_lock.exists(): gui_app_lock.release()
                             def instant_debug_window(self): self.button_click_count = 9; self.on_window_activate("oranges")
                             def show_about_menu(self):
                                 try:
@@ -1480,18 +1482,18 @@ if __name__ == "__main__":
             pip_class.startThread(func=notificationLoop, daemon=False)
             pip_class.startThread(func=terminalAwaitLoop, daemon=True)
             pip_class.startThread(func=startBootstrap, daemon=False)
-            gui_app_lock = os.path.join(orangeblox_library, f"GUIAppLock")
+            gui_app_lock = PyKits.Lock(os.path.join(orangeblox_library, f"GUIAppLock"))
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
             if app_count >= 1: 
-                while ended == False and os.path.exists(gui_app_lock): time.sleep(0.5)
+                while ended == False and gui_app_lock.exists(): time.sleep(0.5)
             if not ended:
                 try:
-                    with open(gui_app_lock, "x", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+                    gui_app_lock.acquire()
                     createObjcAppReplication()
                 except FileExistsError: printDebugMessage("Another process grabbed lock first. Skipping.")
-                except Exception as e: printErrorMessage(f"Error occurred while creating GUI app lock: \n{trace()}")
+                except Exception: printErrorMessage(f"Error occurred while creating GUI app lock: \n{trace()}")
                 finally:
-                    try: os.remove(gui_app_lock)
+                    try: gui_app_lock.release()
                     except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
@@ -1587,6 +1589,7 @@ if __name__ == "__main__":
                     notifier = PyKits.Socket(port=61239)
                     def listener(payload):
                         if payload.get("title") and payload.get("message"): displayNotification(payload["title"], payload["message"])
+                    if notifier.exists(): notifier.wait_till_free()
                     notifier.subscribe("OrangeBloxAppNotification", listener)
                     notifier.listen()
                 def startBootstrap():

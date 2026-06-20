@@ -1,5 +1,5 @@
 """
-PyKits v1.8.5 | Made by Efaz from efaz.dev
+PyKits v1.8.6 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -39,7 +39,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.5"
+__version__ = "1.8.6"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -803,7 +803,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.5")
+            headers.setdefault("user-agent", f"PyKits/1.8.6")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -2517,9 +2517,11 @@ class Socket:
     """
     A class that provides a simple interface for working with data between apps.
     """
-    def __init__(self, host='127.0.0.1', port=60153):
+    def __init__(self, host="127.0.0.1", port=60153):
         import socket
         import threading
+        import errno
+        import time
         import json
         self.host = host
         self.port = port
@@ -2530,7 +2532,9 @@ class Socket:
         self._running = False
         self._json = json
         self._socket = socket
+        self._time = time
         self._threading = threading
+        self._errno = errno
     def subscribe(self, topic_name: str, call_func: typing.Callable): self.topics[topic_name] = call_func
     def listen(self):
         if self._running: return
@@ -2553,6 +2557,23 @@ class Socket:
                 s.connect((self.host, self.port))
                 s.sendall(payload_bytes)
         except ConnectionRefusedError: self._print_debug(f"Could not send \"{topic}\" notification. Is the server running?")
+    def exists(self):
+        try:
+            with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as test: test.bind((self.host, self.port))
+            return False
+        except OSError as e:
+            if e.errno in (self._errno.EADDRINUSE, 10048): return True
+            raise e
+    def wait_till_free(self, timeout: float=None, interval: float=1.0):
+        start_time = self._time.time()
+        while self.exists():
+            self._print_debug(f"Port {self.port} is in use. Waiting for it to close...")
+            if timeout is not None and (self._time.time() - start_time) > timeout:
+                self._print_debug(f"Timeout of {timeout}s reached waiting for port {self.port}.")
+                return False
+            self._time.sleep(interval)
+        self._print_debug(f"Port {self.port} is available.")
+        return True
     def _listen_loop(self):
         with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as s:
             s.bind((self.host, self.port))
@@ -2616,6 +2637,25 @@ class Lock:
                 self.file_handle = None
                 try: self._os.remove(self.file_name)
                 except OSError: pass
+    def exists(self):
+        if not self._os.path.exists(self.file_name): return False
+        try:
+            with open(self.file_name, "a") as test_file:
+                if self._is_windows:
+                    self._msvcrt.locking(test_file.fileno(), self._msvcrt.LK_NBLCK, 1)
+                    test_file.seek(0)
+                    self._msvcrt.locking(test_file.fileno(), self._msvcrt.LK_UNLCK, 1)
+                else:
+                    self._fcntl.flock(test_file, self._fcntl.LOCK_EX | self._fcntl.LOCK_NB)
+                    self._fcntl.flock(test_file, self._fcntl.LOCK_UN)
+            return False
+        except (IOError, OSError): return True
+    def wait_till_free(self, timeout: float=None, check_interval: float=0.1):
+        start_time = self._time.time()
+        while self.exists():
+            if timeout is not None and (self._time.time() - start_time) >= timeout: return False
+            self._time.sleep(check_interval)
+        return True
     def __enter__(self):
         if not self.acquire(timeout=10): raise TimeoutError(f"Could not acquire lock on {self.file_name}")
         return self
