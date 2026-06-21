@@ -5,6 +5,7 @@
 # 
 
 # Load Bootstrap API
+import threading
 import asyncio
 import discord
 import datetime
@@ -15,6 +16,7 @@ import time
 import json
 import os
 from PIL import ImageGrab
+from Socket import Socket
 from discord.ext import tasks
 from discord import app_commands
 
@@ -26,33 +28,20 @@ except:
 
 current_path_location = os.path.dirname(os.path.abspath(__file__))
 def askForTask(func, *args, **kwargs):
-    randomized = os.urandom(3).hex()
-    path = os.path.join(current_path_location, f"OrangeBotTask_{randomized}.json")
-
-    # Start tasking
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump({
-            "func": func,
-            "args": args,
-            "kwargs": kwargs,
-            "mod_id": sys.argv[1]
-        }, f, indent=None, separators=(",", ":"))
-
-    # Awaiting loop
-    while True:
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                if f.read().endswith("🙂"): break
-        except FileNotFoundError: pass
-        time.sleep(0.05)
-
-    # Data processing
-    with open(path, "r", encoding="utf-8") as f: file_read = f.read().rstrip("🙂")
-    os.remove(path)
-    if file_read in ("True", "False", "None"): return eval(file_read)
-    if file_read.isdigit(): return int(file_read)
-    try: return json.loads(file_read)
-    except json.JSONDecodeError: return file_read
+    request_payload = {
+        "task_key": sys.argv[1] if len(sys.argv) > 1 else None,
+        "func": func,
+        "args": args,
+        "kwargs": kwargs
+    }
+    final_data = ms_socket.request("task", request_payload, timeout=10.0)
+    if final_data is None: raise TimeoutError("Timed out waiting for ModScript to reply.")
+    if isinstance(final_data, str):
+        if final_data in ["True", "False", "None"]: return eval(final_data)
+        if final_data.isdigit(): return int(final_data)
+        try: return json.loads(final_data)
+        except Exception: return final_data
+    return final_data
 
 class OrangeAPI2:
     def __getattr__(self, name):
@@ -74,6 +63,7 @@ def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.low
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 tree = app_commands.CommandTree(bot)
+ms_socket = Socket(port=61243)
 task_list = {}
 task = None
 
@@ -104,17 +94,14 @@ async def on_ready():
         await tree.sync()
         OrangeAPI.setConfiguration("ModScriptVersion", OrangeAPI.getVersion())
     if not status_task.is_running(): status_task.start()
-    if not check_api_status.is_running(): check_api_status.start()
 @bot.event
 async def on_disconnect():
     printErrorMessage("Bot disconnected!")
     if status_task.is_running(): status_task.cancel()
-    if check_api_status.is_running(): check_api_status.cancel()
 @bot.event
 async def on_resumed():
     printSuccessMessage("Bot connection resumed!")
     if not status_task.is_running(): status_task.start()
-    if not check_api_status.is_running(): check_api_status.start()
 
 @tasks.loop(seconds=10)
 async def status_task():
@@ -143,16 +130,6 @@ async def status_task():
             )
     except Exception as e:
         printErrorMessage(f"Error while loading status text! Error: {str(e)}")
-@tasks.loop(seconds=10)
-async def check_api_status():
-    try:
-        res = await asyncio.wait_for(asyncio.to_thread(askForTask, "check_api_status"), timeout=5.0)
-        if res != True:
-            printErrorMessage("Discord Proxy API is not responding! Ending Discord Proxy Process!")
-            await bot.close()
-    except asyncio.TimeoutError:
-        printErrorMessage("Discord Proxy API is not responding! Ending Discord Proxy Process!")
-        await bot.close()
 @tree.command(name="sync", description="Sync command tree to all servers!")
 async def sync(interaction: discord.Interaction):
     ctx = interaction
@@ -624,8 +601,16 @@ async def moveroblox(interaction: discord.Interaction, sizex: int, sizey: int, p
                 16711680
             )
         )
+def run_handling():
+    try:
+        while True: 
+            time.sleep(1)
+            try: askForTask("check_api_status")
+            except Exception: os._exit(0)
+    except KeyboardInterrupt: pass
 def startDiscordBot():
     try:
+        threading.Thread(target=run_handling, daemon=True).start()
         if OrangeAPI.getConfiguration("DiscordBotEnabled") == True:
             bot.run(
                 OrangeAPI.getConfiguration("DiscordBotToken"),

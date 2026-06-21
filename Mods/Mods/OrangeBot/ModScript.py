@@ -1,20 +1,21 @@
 #
 # OrangeBot
 # OrangeBlox with Discord Bot Support
-# v1.0.5
+# v1.1.0
 # 
 
 # Load Bootstrap API
 import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI()
-import traceback
 import subprocess
 import threading
 import discord
-import json
 import uuid
 import time
 import sys
 import os
+current_path_location = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_path_location)
+from Socket import Socket
 debugMode = OrangeAPI.getDebugMode()
 apiVersion = OrangeAPI.about()
     
@@ -29,15 +30,15 @@ def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.low
 def ts(text): return OrangeAPI.translate(text)
 
 # Main Handler
-current_path_location = os.path.dirname(os.path.abspath(__file__))
 mod_id = str(uuid.uuid4())
 discord_thread = None
+ms_socket = Socket(port=61243)
 
 # Setup
 printWarnMessage("--- OrangeBot Setup ---")
 printWarnMessage(f"Debug Mode: {debugMode}")
 printWarnMessage(f"Discord API Version: {discord.__version__}")
-printWarnMessage(f"OrangeAPI Version: {apiVersion.get("api_version")}")
+printWarnMessage(f"OrangeAPI Version: {apiVersion.get('api_version')}")
 printWarnMessage("-----------------------")
 if OrangeAPI.getConfiguration("DiscordBotEnabled") == None and not OrangeAPI.getIfRobloxLaunched():
     printMainMessage(f"Hello! It seems like it's your first time with setting up OrangeBot!")
@@ -71,56 +72,27 @@ if OrangeAPI.getConfiguration("DiscordBotEnabled") == None and not OrangeAPI.get
         printMainMessage(f"If you want to reset this setup, please reset the configuration in Mod Script Settings.")
         OrangeAPI.setConfiguration("DiscordBotFirstTime", True)
 
+def handling_task(data):
+    task_key = data.get("task_key")
+    func_name = data.get("func")
+    args = data.get("args", [])
+    kwargs = data.get("kwargs", {})
+    if task_key != mod_id: return None
+    if func_name == "check_api_status": res = True
+    else:
+        res = None
+        try: res = getattr(OrangeAPI, func_name)(*args, **kwargs)
+        except Exception:  res = False
+    if OrangeAPI.checkIfResponseClass(res):  formatted_res = res.success
+    elif type(res) is dict:  formatted_res = res
+    else: formatted_res = str(res)
+    return formatted_res
 def run_handling():
-    handled = []
-    while True:
-        try:
-            for file in os.listdir(current_path_location):
-                full_path = os.path.join(current_path_location, file)
-                if not file.startswith("OrangeBotTask_") or file in handled: continue
-
-                # Read Task
-                try:
-                    with open(full_path, "r", encoding="utf-8") as f: content = f.read()
-                except Exception: continue
-
-                # Already Handled
-                if content.endswith("🙂"):
-                    handled.append(file)
-                    continue
-
-                # Content Validation
-                try: task = json.loads(content)
-                except json.JSONDecodeError: continue
-                if not (type(task) is dict) or task.get("mod_id") != mod_id: continue
-
-                # Arguments
-                func_name = task.get("func")
-                args = task.get("args", [])
-                kwargs = task.get("kwargs", {})
-
-                # Execute Function
-                if func_name == "check_api_status": res = True
-                else:
-                    res = None
-                    try:
-                        res = getattr(OrangeAPI, func_name)(*args, **kwargs)
-                    except Exception:
-                        traceback.print_exc()
-                        res = False
-
-                # Write Result
-                try:
-                    with open(full_path, "w", encoding="utf-8") as f:
-                        if OrangeAPI.checkIfResponseClass(res): f.write(f"{res.success}🙂")
-                        elif type(res) is dict:
-                            json.dump(res, f, separators=(",", ":"))
-                            f.write("🙂")
-                        else: f.write(f"{res}🙂")
-                except Exception: traceback.print_exc()
-                handled.append(file)
-        except Exception: traceback.print_exc()
-        time.sleep(0.05)
+    ms_socket.subscribe("task", handling_task)
+    ms_socket.listen()
+    try:
+        while True: time.sleep(1)
+    except KeyboardInterrupt: ms_socket.close()
 def clean_up_tasks():
     for file in os.listdir(current_path_location):
         if file.startswith("OrangeBotTask_"):
@@ -139,8 +111,9 @@ def run_discord_proxy():
         printErrorMessage(f"Discord Proxy ended with fail! Return code: {returncode}")
 def full_start():
     clean_up_tasks()
+    threading.Thread(target=run_handling, daemon=True).start()
+    time.sleep(1)
     threading.Thread(target=run_discord_proxy, daemon=True).start()
-    run_handling()
 
 # Start Discord Bot
 if OrangeAPI.getConfiguration("DiscordBotEnabled") == True:

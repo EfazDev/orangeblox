@@ -1,5 +1,5 @@
 """
-PyKits v1.8.6 | Made by Efaz from efaz.dev
+PyKits v1.8.7 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -39,7 +39,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.6"
+__version__ = "1.8.7"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -803,7 +803,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.6")
+            headers.setdefault("user-agent", f"PyKits/1.8.7")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -2557,6 +2557,30 @@ class Socket:
                 s.connect((self.host, self.port))
                 s.sendall(payload_bytes)
         except ConnectionRefusedError: self._print_debug(f"Could not send \"{topic}\" notification. Is the server running?")
+    def request(self, topic: str, data: typing.Any, timeout: float = 5.0):
+        payload_dict = {
+            "topic": topic,
+            "data": data
+        }
+        payload_bytes = self._json.dumps(payload_dict).encode('utf-8')
+        try:
+            with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as s:
+                if timeout: s.settimeout(timeout)
+                s.connect((self.host, self.port))
+                s.sendall(payload_bytes)
+                s.shutdown(self._socket.SHUT_WR)
+                chunks = []
+                while True:
+                    chunk = s.recv(self._buffer_size)
+                    if not chunk: break
+                    chunks.append(chunk)
+                raw_bytes = b"".join(chunks)
+                if raw_bytes:
+                    response_payload = self._json.loads(raw_bytes.decode('utf-8'))
+                    return response_payload.get("data")
+        except ConnectionRefusedError: self._print_debug(f"Could not request \"{topic}\". Is the server running?")
+        except Exception as e: self._print_debug(f"Request error: {e}")
+        return None
     def exists(self):
         try:
             with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as test: test.bind((self.host, self.port))
@@ -2576,23 +2600,42 @@ class Socket:
         return True
     def _listen_loop(self):
         with self._socket.socket(self._socket.AF_INET, self._socket.SOCK_STREAM) as s:
+            s.setsockopt(self._socket.SOL_SOCKET, self._socket.SO_REUSEADDR, 1)
             s.bind((self.host, self.port))
             s.listen()
             s.settimeout(1)
             while self._running:
                 try:
                     conn, addr = s.accept()
-                    with conn:
-                        raw_bytes = conn.recv(self._buffer_size)
-                        if raw_bytes: self._proc_message(raw_bytes)
+                    req = self._threading.Thread(
+                        target=self._handle_responding, 
+                        args=(conn,), 
+                        daemon=True
+                    )
+                    req.start()
                 except self._socket.timeout: continue
                 except Exception as e: self._print_debug(f"Listener error: {e}")
+    def _handle_responding(self, conn):
+        with conn:
+            chunks = []
+            while True:
+                try:
+                    chunk = conn.recv(self._buffer_size)
+                    if not chunk: break
+                    chunks.append(chunk)
+                except Exception as e: self._print_debug(f"Error receiving data: {e}"); break
+            raw_bytes = b"".join(chunks)
+            if raw_bytes: 
+                response_data = self._proc_message(raw_bytes)
+                response_payload = {"topic": "_response", "data": response_data}
+                try: conn.sendall(self._json.dumps(response_payload).encode('utf-8'))
+                except Exception as e: self._print_debug(f"Could not send response back: {e}")
     def _proc_message(self, data: bytes):
         try:
             payload = self._json.loads(data.decode('utf-8'))
             topic = payload.get("topic")
             actual_data = payload.get("data")
-            if topic in self.topics: self.topics[topic](actual_data)
+            if topic in self.topics: return self.topics[topic](actual_data)
             else: self._print_debug(f"Warning: Received message for unknown topic \"{topic}\".")
         except self._json.JSONDecodeError: self._print_debug("Received invalid JSON data.")
     def _print_debug(self, message):

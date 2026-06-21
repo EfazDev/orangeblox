@@ -46,7 +46,7 @@ main_exe = EXE(
     upx=True,
     icon="../../../Images/AppIcon.ico",
     version="../../Storage/Version.txt",
-    strip=True
+    strip=False
 )
 combined_coll = COLLECT(
     main_exe,
@@ -56,6 +56,6 @@ combined_coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name="OrangeBlox",
-    strip=True,
+    strip=False,
     distpath="dist",
 )

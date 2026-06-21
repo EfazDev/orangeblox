@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0s
+# v2.5.0t
 # 
 
 # Python Modules
@@ -56,7 +56,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0s"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0t"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -450,24 +450,19 @@ def generateModsManifest():
                         if dsci.endswith(".py") and dsci != "ModScript.py":  contains_other_python_scripts = True
                 if contains_other_python_scripts == True and not ("allowAccessingPythonFiles" in mod_info["permissions"]): mod_info["mod_script"] = False
                 else:
-                    with open(mod_script_path, "r", encoding="utf-8") as f: mod_script_text = f.read()
+                    with open(mod_script_path, "r", encoding="utf-8") as f: org_content = f.read()
                     for pe, va in handler.roblox_event_info.items():
-                        if va.get("detection") and va.get("detection") in mod_script_text and not (pe in mod_info["permissions"]): mod_info["permissions"].append(pe)
-                    if ("EfazRobloxBootstrapAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
-                    elif ("OrangeAPI" in mod_script_text) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
-                    if "import OrangeAPI" in mod_script_text: 
-                        for mod_line in mod_script_text.splitlines():
-                            if mod_line.startswith("import OrangeAPI"): mod_script_text = mod_script_text.replace("import OrangeAPI", "#import OrangeAPI")
-                            elif mod_line.startswith("from OrangeAPI"): mod_script_text = mod_script_text.replace("from OrangeAPI", "#from OrangeAPI")
-                    if "from OrangeAPI import OrangeAPI;" in mod_script_text or " = OrangeAPI()" in mod_script_text: mod_script_text = mod_script_text.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
-                    if "import RobloxFastFlagsInstaller" in mod_script_text: mod_script_text = mod_script_text.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
-                    if "import PipHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import PipHandler", "import OrangeAPI")
-                    if "import PyKits" in mod_script_text: mod_script_text = mod_script_text.replace("import PyKits", "import OrangeAPI")
-                    if "import Install" in mod_script_text: mod_script_text = mod_script_text.replace("import Install", "import OrangeAPI")
-                    if "import DiscordPresenceHandler" in mod_script_text: mod_script_text = mod_script_text.replace("import DiscordPresenceHandler", "import OrangeAPI")
-                    if "import Main" in mod_script_text: mod_script_text = mod_script_text.replace("import Main", "import OrangeAPI")
-                    if "import builtins" in mod_script_text: mod_script_text = mod_script_text.replace("import builtins", "import OrangeAPI")
-                    with open(mod_script_path, "w", encoding="utf-8") as f: f.write(mod_script_text)
+                        if va.get("detection") and va.get("detection") in org_content and not (pe in mod_info["permissions"]): mod_info["permissions"].append(pe)
+                    if ("EfazRobloxBootstrapAPI" in org_content) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
+                    elif ("OrangeAPI" in org_content) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
+                    ms_contents = org_content
+                    ms_contents = re.sub(r'^(import OrangeAPI|from OrangeAPI)', r'#\1', ms_contents, flags=re.MULTILINE)
+                    ms_contents = ms_contents.replace("EfazRobloxBootstrapAPI", "OrangeAPI")
+                    ms_contents = ms_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
+                    modules_to_redirect = ["RobloxFastFlagsInstaller", "PipHandler", "PyKits", "Install", "DiscordPresenceHandler", "Main", "builtins"]
+                    for module in modules_to_redirect: ms_contents = ms_contents.replace(f"import {module}", "import OrangeAPI").replace(f"from {module}", "from OrangeAPI")
+                    if ms_contents != org_content:
+                        with open(mod_script_path, "w", encoding="utf-8") as f: f.write(ms_contents)
                     mod_info["mod_script_path"] = mod_script_path
                     mod_info["mod_script_hash"] = generateFileHash(mod_script_path)
             else: mod_info["mod_script"] = False
@@ -4889,21 +4884,15 @@ def runRoblox():
                                                     orangeapi_modules[sel_mod] = OrangeAPI
 
                                                     # Load Mod Script
-                                                    with open(script_path, "r", encoding="utf-8") as f: mod_script_contents = f.read()
-                                                    if "import OrangeAPI" in mod_script_contents: 
-                                                        for i in mod_script_contents.splitlines():
-                                                            if i.startswith("import OrangeAPI"): mod_script_contents = mod_script_contents.replace("import OrangeAPI", "#import OrangeAPI")
-                                                            elif i.startswith("from OrangeAPI"): mod_script_contents = mod_script_contents.replace("from OrangeAPI", "#from OrangeAPI")
-                                                    if "EfazRobloxBootstrapAPI()" in mod_script_contents or "import EfazRobloxBootstrapAPI" in mod_script_contents or "from EfazRobloxBootstrapAPI" in mod_script_contents: mod_script_contents = mod_script_contents.replace("EfazRobloxBootstrapAPI()", "OrangeAPI()").replace("from EfazRobloxBootstrapAPI", "from OrangeAPI").replace("import EfazRobloxBootstrapAPI", "import OrangeAPI")
-                                                    if "from OrangeAPI import OrangeAPI;" in mod_script_contents or " = OrangeAPI()" in mod_script_contents: mod_script_contents = mod_script_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
-                                                    if "import RobloxFastFlagsInstaller" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import RobloxFastFlagsInstaller", "import OrangeAPI")
-                                                    if "import PipHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import PipHandler", "import OrangeAPI")
-                                                    if "import PyKits" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import PyKits", "import OrangeAPI")
-                                                    if "import Install" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Install", "import OrangeAPI")
-                                                    if "import DiscordPresenceHandler" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import DiscordPresenceHandler", "import OrangeAPI")
-                                                    if "import Main" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import Main", "import OrangeAPI")
-                                                    if "import builtins" in mod_script_contents: mod_script_contents = mod_script_contents.replace("import builtins", "import OrangeAPI")
-                                                    with open(script_path, "w", encoding="utf-8") as f: f.write(mod_script_contents)
+                                                    with open(script_path, "r", encoding="utf-8") as f: org_content = f.read()
+                                                    ms_contents = org_content
+                                                    ms_contents = re.sub(r'^(import OrangeAPI|from OrangeAPI)', r'#\1', ms_contents, flags=re.MULTILINE)
+                                                    ms_contents = ms_contents.replace("EfazRobloxBootstrapAPI", "OrangeAPI")
+                                                    ms_contents = ms_contents.replace("from OrangeAPI import OrangeAPI;", "import OrangeAPI as orange; OrangeAPI = orange.OrangeAPI();").replace(" = OrangeAPI()", " = OrangeAPI")
+                                                    modules_to_redirect = ["RobloxFastFlagsInstaller", "PipHandler", "PyKits", "Install", "DiscordPresenceHandler", "Main", "builtins"]
+                                                    for module in modules_to_redirect: ms_contents = ms_contents.replace(f"import {module}", "import OrangeAPI").replace(f"from {module}", "from OrangeAPI")
+                                                    if ms_contents != org_content:
+                                                        with open(script_path, "w", encoding="utf-8") as f: f.write(ms_contents)
                                                     spec = importlib.util.spec_from_file_location(f"ModScript_{sel_mod}", script_path)
                                                     mod_script_modules[sel_mod] = importlib.util.module_from_spec(spec)
                                                     proxy_api = OrangeAPI.OrangeAPIProxy(generated_api_instances[sel_mod])
@@ -5189,7 +5178,7 @@ def runRoblox():
                                                         printDebugMessage(f"Mod script \"{scri}\" has requested to restart Roblox.")
                                                         handler.endRoblox(studio=run_studio)
                                                         preserve_roblox = True
-                                                        restartRoblox()
+                                                        pip_class.startThread(restartRoblox, True)
                                                         return True
                                                     def joinGame(scri: str, place_id: int, game_instance_id: str=None, launch_data: str=""):
                                                         global given_args
@@ -5212,7 +5201,7 @@ def runRoblox():
                                                         given_args = ["Main.py", url]
                                                         printDebugMessage(f"Mod script \"{scri}\" has requested to join a Roblox game: {place_id}.")
                                                         preserve_roblox = True
-                                                        restartRoblox(request_thread_close=False)
+                                                        pip_class.startThread(restartRoblox, True, False)
                                                         return True
 
                                                     defined_func = {
