@@ -8,7 +8,7 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../Images/AppIcon.icns"
-current_version = {"version": "2.4.6"}
+current_version = {"version": "2.5.0"}
 
 main_plist = {
     "CFBundleExecutable": "OrangeBlox",
@@ -49,10 +49,11 @@ main_analysis = Analysis(
 )
 
 main_pyz = PYZ(main_analysis.pure, main_analysis.zipped_data, cipher=block_cipher)
+main_script = next(s for s in main_analysis.scripts if s[0] == "OrangeBlox")
 
 main_exe = EXE(
     main_pyz,
-    [main_analysis.scripts[1]],
+    [main_script],
     exclude_binaries=True,
     name="OrangeBlox",
     debug=False,

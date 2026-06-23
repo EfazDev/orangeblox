@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6
+# v2.5.0
 # 
 
 # Modules
@@ -17,6 +17,7 @@ import time
 import stat
 import json
 import zlib
+import uuid
 import sys
 import os
 
@@ -28,6 +29,7 @@ main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
 requests = PyKits.request()
+file_selector = PyKits.FileSelector()
 plist_class = PyKits.plist()
 sma = {
     "OverallInstall": pip_class.getInstallableApplicationsFolder() if main_os == "Darwin" else pip_class.getLocalAppData(),
@@ -96,7 +98,7 @@ bootstrap_images_needed = [
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 ]
-current_version = {"version": "2.4.6"}
+current_version = {"version": "2.5.0"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -138,6 +140,7 @@ flag_types = {
     "EFlagUpdatesAuthorizationKey": "str",
     "EFlagEnableDebugMode": "bool",
     "EFlagEnabledMods": "dict",
+    "EFlagEnabledModOrder": "list",
     "EFlagMakeMainBootstrapLogFiles": "bool",
     "EFlagCompletedTutorial": "bool",
     "EFlagVerifyRobloxHashAfterInstall": "bool",
@@ -145,6 +148,7 @@ flag_types = {
     "EFlagAllowActivityTracking": "bool",
     "EFlagDisableFastFlagInstallAccess": "bool",
     "EFlagBootstrapUpdateServer": "str",
+    "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
     "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
@@ -155,6 +159,8 @@ flag_types = {
     "EFlagEnableSkipModificationMode": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagEnableURLQuickLaunch": "bool",
+    "EFlagEnableCPUMemoryUsageViewer": "bool",
     "EFlagNotifyServerLocation": "bool",
     "EFlagEnableDiscordRPC": "bool",
     "EFlagEnableDiscordRPCStudio": "bool",
@@ -346,19 +352,19 @@ def getSettings(directory=""):
             req = requests.get(main_config.get("EFlagConfigurationWebServerURL") + requests.format_params({"script": "installer"}), headers={"X-Bootstrap-Version": current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": main_config.get("EFlagConfigurationAuthorizationKey", "")})
             if req.ok: 
                 for i, v in req.json.items():
-                    if flag_types.get(i) == "path": continue
-                    else: main_config[i] = v
+                    flag_type = flag_types.get(i)
+                    if flag_type and "_local" not in flag_type and not flag_type.startswith("path"): main_config[i] = v
         except: pass
     remove_items = []
     for i, v in main_config.items():
         if not (flag_types.get(i) is None):
-            if flag_types.get(i) == "str" and type(v) is str: pass
-            elif flag_types.get(i) == "path" and type(v) is str and os.path.exists(v): pass
-            elif flag_types.get(i) == "int" and type(v) is int: pass
-            elif flag_types.get(i) == "float" and type(v) is float: pass
-            elif flag_types.get(i) == "dict" and type(v) is dict: pass
-            elif flag_types.get(i) == "bool" and type(v) is bool: pass
-            elif flag_types.get(i) == "list" and type(v) is list: pass
+            if flag_types.get(i).startswith("str") and type(v) is str: pass
+            elif flag_types.get(i).startswith("path") and type(v) is str and os.path.exists(v): pass
+            elif flag_types.get(i).startswith("int") and type(v) is int: pass
+            elif flag_types.get(i).startswith("float") and type(v) is float: pass
+            elif flag_types.get(i).startswith("dict") and type(v) is dict: pass
+            elif flag_types.get(i).startswith("bool") and type(v) is bool: pass
+            elif flag_types.get(i).startswith("list") and type(v) is list: pass
             elif flag_types.get(flag_types.get(i)): main_config[flag_types.get(i)] = v; remove_items.append(i)
             else: remove_items.append(i)
         else: remove_items.append(i)
@@ -409,20 +415,13 @@ def saveSettings(main_config, directory=""):
     return respo
 def generateFileHash(file_path):
     try:
-        tmp_path = None
-        if main_os == "Windows":
-            import tempfile
-            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-        with open(tmp_path if tmp_path else file_path, "rb") as f:
-            hasher = hashlib.md5()
-            chunk = f.read(8192)
-            while chunk: 
+        hasher = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
                 hasher.update(chunk)
-                chunk = f.read(8192)
-        if tmp_path: os.remove(tmp_path)
         return hasher.hexdigest()
-    except Exception as e: return None
+    except Exception: return None
 def getInstalledAppPath():
     if main_os == "Darwin":
         macos_preference_expected = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.orangeblox.plist")
@@ -863,6 +862,7 @@ def install():
                     printMainMessage("Configurating App Data..")
                     if not ("OrangeBlox.app" in cur_path): main_config["EFlagOrangeBloxSyncDir"] = cur_path
                     main_config["EFlagAvailableInstalledDirectories"] = sma
+                    if not main_config.get("EFlagLinkedComputerID"): main_config["EFlagLinkedComputerID"] = str(uuid.uuid4())
                     saveSettings(main_config, directory=os.path.join(resources_fold, "FastFlagConfiguration.json"))
                     with open(os.path.join(sma[main_os][2], "Contents", "Resources", "LocatedAppDirectory"), "w", encoding="utf-8") as f: f.write(os.path.join(sma[main_os][1], "Contents"))
                     with open(os.path.join(sma[main_os][3], "Contents", "Resources", "LocatedAppDirectory"), "w", encoding="utf-8") as f: f.write(os.path.join(sma[main_os][1], "Contents"))
@@ -1185,6 +1185,7 @@ def install():
                                 if working_directory: shortcut.WorkingDirectory = working_directory
                                 if icon_path: shortcut.IconLocation = icon_path
                                 shortcut.Save()
+                                del shortcut
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), "OrangeBlox.lnk"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Player.lnk"), arguments="orangeblox://continue", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconPlayRoblox.ico"))
@@ -1193,6 +1194,7 @@ def install():
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "Roblox Studio.lnk"), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs'), 'Run Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
                             create_shortcut(sma[main_os][1], os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'), arguments="orangeblox://run-studio", icon_path=os.path.join(sma[main_os][0], "Images", "AppIconRunStudio.ico"))
+                            del shell
                         finally: pythoncom.CoUninitialize()
                     except Exception as e: printYellowMessage(f"There was an issue setting shortcuts and may be caused due to OneDrive. Error: {str(e)}")
 
@@ -1227,6 +1229,7 @@ def install():
 
                     if use_installation_syncing == True and not ("/Local/OrangeBlox/" in cur_path): main_config["EFlagOrangeBloxSyncDir"] = cur_path
                     main_config["EFlagAvailableInstalledDirectories"] = sma
+                    if not main_config.get("EFlagLinkedComputerID"): main_config["EFlagLinkedComputerID"] = str(uuid.uuid4())
                     data_in_string = zlib.compress(json.dumps(main_config).encode('utf-8'))
                     with open(os.path.join(f"{sma[main_os][0]}", "Configuration.json"), "wb") as f: f.write(data_in_string)
                     if os.path.exists(os.path.join(f"{sma[main_os][0]}", "FastFlagConfiguration.json")): os.remove(os.path.join(f"{sma[main_os][0]}", "FastFlagConfiguration.json"))
@@ -1456,9 +1459,11 @@ if __name__ == "__main__":
         import win32con # type: ignore
 
     # CPU Usage
-    virutal_memory = psutil.virtual_memory()
-    cpu_percent = psutil.cpu_percent(interval=0.1)
-    printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+    try:
+        virutal_memory = psutil.virtual_memory()
+        cpu_percent = psutil.cpu_percent(interval=0.1)
+        printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
+    except Exception as e: printErrorMessage("CPU Percentage: Error | Memory Usage: Error")
 
     # App Paths & Details
     expected_app_path, default_app_path = getInstalledAppPath()
@@ -1739,50 +1744,37 @@ if __name__ == "__main__":
                     a = input("> ")
                     if isYes(a) == True:
                         try:
-                            unable_to_use_tkinter = False
-                            try:
-                                import tkinter as tk
-                                from tkinter import filedialog
-                            except Exception as e:
-                                try:
-                                    pip_class.install(["tk"])
-                                    tk = pip_class.importModule("tkinter")
-                                    filedialog = pip_class.importModule("tkinter").filedialog
-                                except Exception as e: unable_to_use_tkinter = True
-                            if unable_to_use_tkinter == False:
-                                root = tk.Tk()
-                                root.withdraw()
-                                folder_path = filedialog.askdirectory(title="Select an installation path to install the Bootstrap!", initialdir=default_app_path)
-                                if folder_path and os.path.isdir(folder_path):
-                                    printMainMessage(f"You have selected the following folder to install the bootstrap into: {folder_path}")
-                                    printMainMessage(f"Example Resemblance: {os.path.join(folder_path, 'OrangeBlox', 'OrangeBlox.exe') if main_os == 'Windows' else os.path.join(folder_path, 'OrangeBlox.app')}")
-                                    printMainMessage("Would you like to install into this folder? (y/n)")
-                                    if isYes(input("> ")):
-                                        if folder_path and os.path.isdir(folder_path):
-                                            if os.path.exists(os.path.join(folder_path, "OrangeBlox")): printErrorMessage("An OrangeBlox instance already exists in this folder!")
-                                            else:
-                                                if main_os == "Darwin":
-                                                    sma["OverallInstall"] = folder_path
-                                                    sma["Darwin"] = [
-                                                        os.path.join(folder_path, "OrangeBlox.app/Contents/MacOS/OrangeBlox.app"), 
-                                                        os.path.join(folder_path, "OrangeBlox.app"), 
-                                                        os.path.join(folder_path, "Play Roblox.app"), 
-                                                        os.path.join(folder_path, "Run Studio.app")
-                                                    ]
-                                                elif main_os == "Windows":
-                                                    sma["OverallInstall"] = folder_path
-                                                    sma["Windows"] = [
-                                                        os.path.join(folder_path, "OrangeBlox"), 
-                                                        os.path.join(folder_path, "OrangeBlox", "OrangeBlox.exe"), 
-                                                        os.path.join(folder_path, "OrangeBlox"), 
-                                                        os.path.join(folder_path, "OrangeBlox")
-                                                    ]
-                                        else: printMainMessage("Alright, it's your choice! In order to reselect, please restart setup!")
+                            folder_path = file_selector.select_folder(title="Select an installation path to install the Bootstrap!", initialdir=default_app_path)
+                            if folder_path.ok and os.path.isdir(folder_path.path):
+                                folder_path = folder_path.path
+                                printMainMessage(f"You have selected the following folder to install the bootstrap into: {folder_path}")
+                                printMainMessage(f"Example Resemblance: {os.path.join(folder_path, 'OrangeBlox', 'OrangeBlox.exe') if main_os == 'Windows' else os.path.join(folder_path, 'OrangeBlox.app')}")
+                                printMainMessage("Would you like to install into this folder? (y/n)")
+                                if isYes(input("> ")):
+                                    if folder_path and os.path.isdir(folder_path):
+                                        if os.path.exists(os.path.join(folder_path, "OrangeBlox")): printErrorMessage("An OrangeBlox instance already exists in this folder!")
+                                        else:
+                                            if main_os == "Darwin":
+                                                sma["OverallInstall"] = folder_path
+                                                sma["Darwin"] = [
+                                                    os.path.join(folder_path, "OrangeBlox.app/Contents/MacOS/OrangeBlox.app"), 
+                                                    os.path.join(folder_path, "OrangeBlox.app"), 
+                                                    os.path.join(folder_path, "Play Roblox.app"), 
+                                                    os.path.join(folder_path, "Run Studio.app")
+                                                ]
+                                            elif main_os == "Windows":
+                                                sma["OverallInstall"] = folder_path
+                                                sma["Windows"] = [
+                                                    os.path.join(folder_path, "OrangeBlox"), 
+                                                    os.path.join(folder_path, "OrangeBlox", "OrangeBlox.exe"), 
+                                                    os.path.join(folder_path, "OrangeBlox"), 
+                                                    os.path.join(folder_path, "OrangeBlox")
+                                                ]
                                     else: printMainMessage("Alright, it's your choice! In order to reselect, please restart setup!")
-                                else: printMainMessage("No folder was selected.")
-                            else: printErrorMessage("There was an error selecting a folder because tkinter may not be installed properly!")
+                                else: printMainMessage("Alright, it's your choice! In order to reselect, please restart setup!")
+                            else: printMainMessage("No folder was selected.")
                         except Exception as e: printErrorMessage("There was an error selecting a folder!")
-                    
+
                 printMainMessage("Would you like to delete other operating system versions? (This may save 30MB+ of space) (y/n)")
                 a = input("> ")
                 if isYes(a) == False: disable_remove_other_operating_systems = True
@@ -1815,8 +1807,7 @@ if __name__ == "__main__":
                         try: install()
                         except Exception as e: printErrorMessage(f"Something went wrong during installation: {str(e)}")
                         input("> ")
-                    else:
-                        if remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
+                    elif remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
                 def requestUninstall():
                     if main_os == "Darwin":
                         if not os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
@@ -1927,6 +1918,7 @@ if __name__ == "__main__":
                                         if working_directory: shortcut.WorkingDirectory = working_directory
                                         if icon_path: shortcut.IconLocation = icon_path
                                         shortcut.Save()
+                                        del shortcut
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Play Roblox.lnk'))
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Run Studio.lnk'))
                                     remove_path(os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), "OrangeBlox.lnk"))
@@ -1941,6 +1933,7 @@ if __name__ == "__main__":
                                         if cur_studio["success"] == True:
                                             create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'), 'Roblox Studio.lnk'))
                                             create_shortcut(f"{pip_class.getLocalAppData()}\\Roblox\\Versions\\{cur_studio['version']}\\RobloxStudioBeta.exe", os.path.join(os.path.join(os.path.join(os.environ['APPDATA']), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Roblox'), 'Roblox Studio.lnk'))
+                                    del shell
                                 finally: pythoncom.CoUninitialize()
                             except Exception as e: printErrorMessage(f"Unable to remove shortcuts: {str(e)}")
 

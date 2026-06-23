@@ -49,7 +49,7 @@ class Api:
                 if channel is None: return rf"https://clientsettingscdn.roblox.com/v2/client-version/{binaryType}"
                 return rf"https://clientsettingscdn.roblox.com/v2/client-version/{binaryType}/channel/{channel}"
             @staticmethod
-            def manifest(version: str, rbx_channel: str, studio: bool) -> str:
+            def manifest(version: str, rbx_channel: str, macos: bool) -> str:
                 bootstrapper_settings = getLatestRobloxStudioAppSettings(bootstrapper=True, bucket=rbx_channel)
                 if bootstrapper_settings["success"] == True:
                     starter_url = ""
@@ -59,14 +59,14 @@ class Api:
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"
                 link_start = f"https://setup.rbxcdn.com/{starter_url}"
-                #if platform.system() == "Darwin":
-                #    if platform.machine() == "arm64":
-                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
-                #    else:
-                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
+                if macos:
+                    if platform.machine() == "arm64":
+                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
+                    else:
+                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
                 return rf"{link_start}{version}-rbxPkgManifest.txt"
             @staticmethod
-            def download(version: str, file: str, rbx_channel: str, studio: bool) -> str:
+            def download(version: str, file: str, rbx_channel: str, macos: bool) -> str:
                 bootstrapper_settings = getLatestRobloxStudioAppSettings(bootstrapper=True, bucket=rbx_channel)
                 if bootstrapper_settings["success"] == True:
                     starter_url = ""
@@ -76,11 +76,11 @@ class Api:
                     else:
                         starter_url = f"channel/{rbx_channel.lower()}/"
                 link_start = f"https://setup.rbxcdn.com/{starter_url}"
-                #if platform.system() == "Darwin":
-                #    if platform.machine() == "arm64":
-                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
-                #    else:
-                #        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
+                if macos:
+                    if platform.machine() == "arm64":
+                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/arm64/"
+                    else:
+                        link_start = f"https://setup.rbxcdn.com/{starter_url}mac/"
                 return rf"{link_start}{version}-{file}"
 # region get()
 def get(url: str, attempts: int = 3, cached: bool = False, timeout: Optional[tuple[int, int]] = None, dont_log_cached_request: bool = False) -> Response:

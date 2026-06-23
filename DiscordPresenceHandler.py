@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.4.6
+# v2.5.0
 # 
 
 # Modules
@@ -22,7 +22,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.4.6"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -149,20 +149,20 @@ class Presence(pypresence.Presence):
                     import pypresence.types as pyptypes
                     self._pypresence_types = pyptypes
                 if kwargs.get("status_display_type") != None: 
-                    match kwargs.get("status_display_type").value:
-                        case 0: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.NAME
-                        case 1: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.STATE
-                        case 2: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.DETAILS
-                        case _: kwargs.pop("status_display_type")
+                    status_val = kwargs.get("status_display_type").value
+                    if status_val == 0: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.NAME
+                    elif status_val == 1: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.STATE
+                    elif status_val == 2: kwargs["status_display_type"] = self._pypresence_types.StatusDisplayType.DETAILS
+                    else: kwargs.pop("status_display_type")
                 if kwargs.get("activity_type") != None: 
-                    match kwargs.get("activity_type").value:
-                        case 0: kwargs["activity_type"] = self._pypresence_types.ActivityType.PLAYING
-                        case 1: kwargs["activity_type"] = ActivityType.STREAMING
-                        case 2: kwargs["activity_type"] = self._pypresence_types.ActivityType.LISTENING
-                        case 3: kwargs["activity_type"] = self._pypresence_types.ActivityType.WATCHING
-                        case 4: kwargs["activity_type"] = ActivityType.CUSTOM
-                        case 5: kwargs["activity_type"] = self._pypresence_types.ActivityType.COMPETING
-                        case _: kwargs.pop("activity_type")
+                    activity_val = kwargs.get("activity_type").value
+                    if activity_val == 0: kwargs["activity_type"] = self._pypresence_types.ActivityType.PLAYING
+                    elif activity_val == 1: kwargs["activity_type"] = ActivityType.STREAMING
+                    elif activity_val == 2: kwargs["activity_type"] = self._pypresence_types.ActivityType.LISTENING
+                    elif activity_val == 3: kwargs["activity_type"] = self._pypresence_types.ActivityType.WATCHING
+                    elif activity_val == 4: kwargs["activity_type"] = ActivityType.CUSTOM
+                    elif activity_val == 5: kwargs["activity_type"] = self._pypresence_types.ActivityType.COMPETING
+                    else: kwargs.pop("activity_type")
             except Exception as e:
                 if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
                 if kwargs.get("activity_type") != None: kwargs.pop("activity_type")

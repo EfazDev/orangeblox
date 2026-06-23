@@ -1,0 +1,19 @@
+{
+    "name": "Deep Blue Theme",
+    "author": "TheKliko (ported by EfazDev)",
+    "description": "This pack can be used to recreate Deep Blue Theme! This pack has been ported from Kliko's modloader to OrangeBlox.",
+    "colors": ["#153860", "#004ba7", "#006ed7"],
+    "angle": 45,
+    "advanced": {
+        "*": ["#153860", "#004ba7", "#006ed7"],
+        "_font": ["#153860", "#004ba7", "#006ed7"],
+        "play-small": ["#ffffff"],
+        "play-large": ["#ffffff"],
+        "play-xlarge": ["#ffffff"],
+        "_all_optional": true,
+        "_voice_chat": true,
+        "_loading": true,
+        "_leaderboard": false,
+        "_old_icons": true
+    }
+}

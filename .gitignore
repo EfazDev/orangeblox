@@ -1,2 +1,6 @@
 .DS_Store
 __pycache__
+.vscode
+.gitignore
+Configuration.json
+*.pyc

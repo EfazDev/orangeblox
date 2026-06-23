@@ -1,7 +1,7 @@
 {
     "name": "EfazDev Mod!",
     "author": "EfazDev",
-    "description": "This is Efaz's primary mod generation files that he uses in a daily basis!",
+    "description": "This is the OrangeBlox Mod but with the EfazDev logo instead!",
     "colors": ["#ff4b00", "#ffff00", "#00ff00"],
     "angle": 135,
     "advanced": {
@@ -10,7 +10,8 @@
         "studio": ["#ff6a00"],
         "play-small": ["#ffffff"],
         "play-large": ["#ffffff"],
-        "_tilt": "{main}/AppIcon.png",
+        "play-xlarge": ["#ffffff"],
+        "_tilt": "{main}/Logo.png",
         "_studio": "{main}/AppIconRunStudio.png",
         "icons/logo/block": "{main}/AppIcon.png",
         "icons/logo/letterform": "{main}/Banner.png",
@@ -23,6 +24,7 @@
         "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/AppIconRunStudio.png",
         "studio-studiocontent.textures.StartPage.RobloxStudioLockup.png": "{main}/Banner2.png",
         "studio-studiocontent.textures.StartPage.RobloxStudioLockup@2x.png": "{main}/Banner2.png",
+        "_imagecolors_font": true,
         "_all_optional": true,
         "_voice_chat": true,
         "_loading": true,

@@ -1,0 +1,28 @@
+{
+    "name": "Froststrap Theme",
+    "author": "EfazDev",
+    "description": "This pack can be used to recreate a theme like Froststrap!",
+    "colors": ["#3d87eb", "#0bbafc"],
+    "angle": 180,
+    "advanced": {
+        "*": ["#3d87eb", "#0bbafc"],
+        "_font": ["#3d87eb", "#0bbafc"],
+        "play-small": ["#ffffff"],
+        "play-large": ["#ffffff"],
+        "play-xlarge": ["#ffffff"],
+        "tilt": "{main}/Logo.png",
+        "studio": "{main}/Logo.png",
+        "icons/logo/block": "{main}/Logo.png",
+        "icons/logo/studiologo": "{main}/Logo.png",
+        "icons/logo/studiologo_small": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/Logo.png",
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/Logo.png",
+        "_imagecolors_font": true,
+        "_all_optional": true,
+        "_voice_chat": true,
+        "_loading": true,
+        "_leaderboard": false,
+        "_old_icons": true
+    }
+}

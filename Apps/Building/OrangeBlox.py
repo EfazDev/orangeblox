@@ -14,7 +14,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.4.6"}
+current_version = {"version": "2.5.0"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -22,6 +22,7 @@ pip_class = PyKits.pip(find=True)
 colors_class = PyKits.Colors()
 app_path = ""
 macos_path = ""
+orangeblox_library = None
 logs = []
 
 COLOR_CODES = {
@@ -51,6 +52,7 @@ flag_types = {
     "EFlagUpdatesAuthorizationKey": "str",
     "EFlagEnableDebugMode": "bool",
     "EFlagEnabledMods": "dict",
+    "EFlagEnabledModOrder": "list",
     "EFlagMakeMainBootstrapLogFiles": "bool",
     "EFlagCompletedTutorial": "bool",
     "EFlagVerifyRobloxHashAfterInstall": "bool",
@@ -58,6 +60,7 @@ flag_types = {
     "EFlagAllowActivityTracking": "bool",
     "EFlagDisableFastFlagInstallAccess": "bool",
     "EFlagBootstrapUpdateServer": "str",
+    "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
     "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
@@ -68,6 +71,8 @@ flag_types = {
     "EFlagEnableSkipModificationMode": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
+    "EFlagEnableURLQuickLaunch": "bool",
+    "EFlagEnableCPUMemoryUsageViewer": "bool",
     "EFlagNotifyServerLocation": "bool",
     "EFlagEnableDiscordRPC": "bool",
     "EFlagEnableDiscordRPCStudio": "bool",
@@ -232,7 +237,10 @@ def getIfCertainPlayer():
             with open(os.path.join(app_path, "RobloxPlayerBetaPlayRobloxRestart.txt"), "r") as f: return f.read(), "player"
         else: return None, None
     else: return None, None
-
+def generateFileKey(id: str, ext: str=""): 
+    if main_os == "Darwin": return os.path.join(orangeblox_library, f"{id}{ext}")
+    user_folder_name = os.path.basename(pip_class.getUserFolder())
+    return os.path.join(app_path, f"{id}_{user_folder_name}{ext}")
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     if main_os == "Darwin":
         try:
@@ -248,7 +256,7 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
         except Exception as e: printErrorMessage(f"Something went wrong pinging Control Center: \n{trace()}")
     elif main_os == "Windows":
         try:
-            try: from plyer.platforms.win.notification import instance
+            try: from plyer.platforms.win.notification import instance # type: ignore
             except Exception as e:
                 pip_class.install(["plyer"])
                 instance = pip_class.importModule("plyer.platforms.win.notification").instance
@@ -262,21 +270,14 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
         except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
 def generateFileHash(file_path):
     try:
-        tmp_path = None
-        if main_os == "Windows":
-            import tempfile
-            with open(file_path, "r", encoding="utf-8-sig") as f: sig_content = f.read()
-            with tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8", newline="") as tmp: tmp.write(sig_content); tmp_path = tmp.name
-        with open(tmp_path if tmp_path else file_path, "rb") as f:
-            hasher = hashlib.md5()
-            chunk = f.read(8192)
-            while chunk: 
+        hasher = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
                 hasher.update(chunk)
-                chunk = f.read(8192)
-        if tmp_path: os.remove(tmp_path)
         return hasher.hexdigest()
-    except Exception as e: return None
-if __name__ == "__main__":
+    except Exception: return None
+if __name__ == "__main__":  
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         if main_os == "Windows": app_path = os.path.dirname(sys.executable); macos_path = os.path.join(os.path.dirname(sys.executable), "MacOS")
         else: app_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "Resources"); macos_path = os.path.join(os.sep.join(os.path.dirname(sys.executable).split(os.sep)[:-4]), "MacOS")
@@ -356,11 +357,16 @@ if __name__ == "__main__":
         filtered_args = ""
         loaded_json = True
         use_shell = False
+        gui_app_lock = None
         user_folder = pip_class.getUserFolder()
         user_folder_name = os.path.basename(pip_class.getUserFolder())
         orangeblox_library = os.path.join(user_folder, "Library", "OrangeBlox")
 
         if not os.path.exists(orangeblox_library): os.makedirs(orangeblox_library)
+        if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")):
+            printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
+            sys.exit(0)
+
         printMainMessage("Finding Python Executable..")
         pythonExecutable = None
         if main_config.get("EFlagSpecifyPythonExecutable"): 
@@ -392,7 +398,7 @@ if __name__ == "__main__":
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
             else: printSuccessMessage("Found Virtual Environment!")
-        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
+        execute_command = f"unset HISTFILE && clear && cd '{app_path}/' && caffeinate -i {pythonExecutable if venv_path == '' else os.path.join(venv_path, 'bin', 'python3')} Main.py && exit"
         printMainMessage(f"Loading Runner Command: {execute_command}")
 
         if len(args) > 1:
@@ -401,55 +407,33 @@ if __name__ == "__main__":
                 use_shell = True
                 printMainMessage(f"Creating URL Exchange file..")
                 if os.path.exists(f"{app_path}/"):
-                    with open(f"{app_path}/URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open(f"{app_path}/URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
-                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
 
         applescript = f'''
         tell application "Terminal"
-            activate
-            set existing_profile to false
-            repeat with s in settings sets
-                if (name of s is equal to "{obName0()}") or (name of s is equal to "OrangeBlox") then
-                    set existing_profile to true
-                    exit repeat
-                end if
-            end repeat
-            if existing_profile is false then
+            set profile_exists to (exists settings set "OrangeBlox") or (exists settings set "{obName0()}")
+            if not profile_exists then
                 open POSIX file "{os.path.join(app_path, "Images", f"OrangeBlox.terminal")}"
+                set py_tab to do script "{execute_command}" in front window
+            else
+                set py_tab to do script "{execute_command}"
             end if
-            set py_window to do script "{execute_command}"
+            set py_window to first window whose tabs contains py_tab
             set current settings of py_window to settings set "OrangeBlox"
             try
                 set terminal_id to (id of py_window) as string
             on error err_message number err_num
-                if err_num = -1728 and err_message contains "window id" then
-                    try
-                        set terminal_id to word -1 of err_message
-                    on error
-                        set terminal_id to "0"
-                    end try
-                else if err_message contains "window id" then
-                    set AppleScript's text item delimiters to "window id "
-                    set parts to text items of err_message
-                    set AppleScript's text item delimiters to space
-                    set terminal_id to text item 1 of (text items of (item 2 of parts))
-                    set AppleScript's text item delimiters to ""
-                else
-                    set terminal_id to "0"
-                end if
+                set terminal_id to "0"
             end try
-            activate
             do shell script "echo " & terminal_id & " > " & quoted form of "{orangeblox_library}/Terminal_{generated_app_id}"
             activate
-            
             repeat
-                delay 1
+                delay 0.2
                 try
-                    if (busy of py_window) is false then
-                        exit repeat
-                    end if
-                on error err_mess number err_num
+                    if not busy of py_tab then exit repeat
+                on error
                     exit repeat
                 end try
             end repeat
@@ -476,28 +460,18 @@ if __name__ == "__main__":
             def notificationLoop():
                 global ended
                 printMainMessage("Starting Notification Loop..")
-                while ended == False:
-                    try:
-                        if os.path.exists(f"{app_path}/AppNotification"):
-                            with open(f"{app_path}/AppNotification", "r", encoding="utf-8") as f:
-                                try:
-                                    notification = json.load(f)
-                                    if not (type(notification) is dict):
-                                        class InvalidNotificationException(Exception): pass
-                                        raise InvalidNotificationException("The following data for notification is not valid.")
-                                except Exception as e:
-                                    printDebugMessage(str(e))
-                                    notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                            if os.path.exists(f"{app_path}/AppNotification"): os.remove(f"{app_path}/AppNotification")
-                            if notification.get("title") and notification.get("message"):
-                                displayNotification(notification["title"], notification["message"])
-                                printSuccessMessage(f"Successfully pinged app notification! Title: {notification['title']}, Message: {notification['message']}")
-                    except Exception as e: printErrorMessage(f"There was an issue making a notification: \n{trace()}")
-                    time.sleep(0.05)
+                notifier = PyKits.Socket(port=61239)
+                def listener(payload):
+                    if payload.get("title") and payload.get("message"): 
+                        displayNotification(payload["title"], payload["message"])
+                        printSuccessMessage(f"Successfully pinged app notification! Title: {payload['title']}, Message: {payload['message']}")
+                if notifier.exists(): notifier.wait_till_free()
+                notifier.subscribe("OrangeBloxAppNotification", listener)
+                notifier.listen()
             def terminalAwaitLoop():
                 global associated_terminal_pid
                 printMainMessage("Starting Terminal ID Loop..")
-                while ended == False:
+                while ended == False and associated_terminal_pid == None:
                     try:
                         if os.path.exists(f"{orangeblox_library}/Terminal_{generated_app_id}"):
                             with open(f"{orangeblox_library}/Terminal_{generated_app_id}", "r", encoding="utf-8") as f:
@@ -523,7 +497,7 @@ if __name__ == "__main__":
                             activate
                         end tell'''
                         result = subprocess.run(
-                            ["osascript", "-e", apple_script],
+                            ["/usr/bin/osascript", "-e", apple_script],
                             check=True,
                             capture_output=True,
                             text=True
@@ -555,7 +529,7 @@ if __name__ == "__main__":
                             else: printErrorMessage(f"Unable to build python cache. Return code: {build_cache_process.returncode}")
                         printMainMessage(f"Running Bootstrap..")
                         if main_config.get("EFlagDisableSecureHashSecurity") == True: displayNotification(ts("Security Notice"), ts("Hash Verification is currently disabled. Please check your configuration and mod scripts if you didn't disable this!"))
-                        result = subprocess.run(args=["osascript", "-e", applescript], capture_output=True)
+                        result = subprocess.run(args=["/usr/bin/osascript", "-e", applescript], capture_output=True)
                         printMainMessage("Ending Bootstrap..")
                         ended = True
                         if result.returncode == 0:
@@ -914,8 +888,8 @@ if __name__ == "__main__":
                                         if not (main_config.get("EFlagEnableGUIOptionMenus") == False): self.generate_dock_menu()
                                         self.config_reload_period = False
                                     if not ended and not (obj == "oranges"):
-                                        def delayed_loop(): time.sleep(0.1); self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
-                                        pip_class.startThread(func=delayed_loop, daemon=True)
+                                        def delayed_loop(): self.pyobjc_performSelectorOnMainThread_withObject_('threadingloop:', obj)
+                                        pip_class.delayedThread(func=delayed_loop, time=0.1, daemon=True)
                                 except Exception as e: printErrorMessage(f"There was an error loading loop! Error: \n{trace()}")
                             def scrollingLogs_(self, notification):
                                 content_view = self.output_scroll_view.contentView()
@@ -994,8 +968,7 @@ if __name__ == "__main__":
                                 self.top_menu.addItem_(file_menu_item)
                                 self.top_menu.setSubmenu_forItem_(file_menu, file_menu_item)
                                 file_menu.addItem_(AppKit.NSMenuItem.separatorItem())
-                                if main_config.get("EFlagEnableDuplicationOfClients") == True: add_menu_item(file_menu, ts("Open Roblox [Multi-Instance]"), "multiRunRoblox_")
-                                else: add_menu_item(file_menu, ts("Open Roblox"), "runRoblox_")
+                                add_menu_item(file_menu, ts("Open Roblox"), "runRoblox_")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(file_menu, ts("Run Roblox Studio"), "runRobloxStudio_")
                                 file_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 if not (main_config.get("EFlagAllowActivityTracking") == False): 
@@ -1007,7 +980,8 @@ if __name__ == "__main__":
                                 add_menu_item(file_menu, ts("Roblox Installer Options"), "openRobloxInstallerOptions_")
                                 add_menu_item(file_menu, ts("End All Roblox Windows"), "endAllRoblox_")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(file_menu, ts("End All Roblox Studio Windows"), "endAllRobloxStudio_")
-
+                                if main_config.get("EFlagEnableURLQuickLaunch") == True: add_menu_item(file_menu, ts("URL Quick Launch"), "urlQuickLaunch_")
+                                
                                 edit_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("Edit", None, "")
                                 edit_menu = AppKit.NSMenu.alloc().initWithTitle_("Edit")
                                 self.top_menu.addItem_(edit_menu_item)
@@ -1051,7 +1025,7 @@ if __name__ == "__main__":
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
                                 add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
                                 add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
-                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
+                                if gui_app_lock and gui_app_lock.exists(): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
                                 view_menu_item = AppKit.NSMenuItem.alloc().initWithTitle_action_keyEquivalent_("View", None, "")
@@ -1111,14 +1085,14 @@ if __name__ == "__main__":
                                 add_menu_item(self.dock_menu, ts("Open Settings"), "openSettings")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
 
-                                if main_config.get("EFlagEnableDuplicationOfClients") == True: add_menu_item(self.dock_menu, ts("Open Roblox [Multi-Instance]"), "multiRunRoblox")
-                                else: add_menu_item(self.dock_menu, ts("Open Roblox"), "runRoblox")
+                                add_menu_item(self.dock_menu, ts("Open Roblox"), "runRoblox")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(self.dock_menu, ts("Run Roblox Studio"), "runRobloxStudio")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 add_menu_item(self.dock_menu, ts("Run Fast Flags Installer"), "runFFlagInstaller")
                                 add_menu_item(self.dock_menu, ts("Roblox Installer Options"), "openRobloxInstallerOptions")
                                 add_menu_item(self.dock_menu, ts("End All Roblox Windows"), "endAllRoblox")
                                 if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(self.dock_menu, ts("End All Roblox Studio Windows"), "endAllRobloxStudio")
+                                if main_config.get("EFlagEnableURLQuickLaunch") == True: add_menu_item(self.dock_menu, ts("URL Quick Launch"), "urlQuickLaunch")
                                 self.dock_menu.addItem_(AppKit.NSMenuItem.separatorItem())
                                 if len(generated_ui_options) > 0:
                                     for p in generated_ui_options:
@@ -1132,7 +1106,7 @@ if __name__ == "__main__":
                             # OrangeBlox Management Functions
                             def new_bootstrap(self, action="", action_name=""):
                                 if not (action == "") and type(action) is str:
-                                    url_scheme_path = f"{app_path}/URLSchemeExchange"
+                                    url_scheme_path = f"{app_path}/URLLaunchExchange"
                                     with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(f"orangeblox://{action}?quick-action=true")
                                 subprocess.Popen(["/usr/bin/open", "-n", "-a", os.path.join(macos_path, "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 if not (action_name == "") and type(action_name) is str: printMainMessage(f"Launched Bootstrap with action: {action_name}")
@@ -1142,6 +1116,7 @@ if __name__ == "__main__":
                             def new_bootstrap_play_multi_roblox(self): self.new_bootstrap("new", ts("Multi-Play Roblox"))
                             def new_bootstrap_play_reconnect(self): self.new_bootstrap("reconnect", ts("Connect to Existing Roblox Window"))
                             def new_bootstrap_play_reconnect_studio(self): self.new_bootstrap("reconnect-studio", ts("Connect to Existing Roblox Studio Window"))
+                            def new_bootstrap_url_quick_launch(self): self.new_bootstrap("url-quick-launch", ts("URL Quick Launch"))
                             def new_bootstrap_clear_roblox_logs(self): self.new_bootstrap("clear-logs", ts("Clear Temporary Storage"))
                             def new_bootstrap_roblox_installer(self): self.new_bootstrap("roblox-installer-options", ts("Open Roblox Installer Options"))
                             def new_bootstrap_end_roblox(self): self.new_bootstrap("end-roblox", ts("End Roblox"))
@@ -1163,7 +1138,7 @@ if __name__ == "__main__":
                                             end tell
                                         end run'''
                                         result = subprocess.run(
-                                            ["osascript", "-e", apple_script],
+                                            ["/usr/bin/osascript", "-e", apple_script],
                                             check=True,
                                             capture_output=True,
                                             text=True
@@ -1205,6 +1180,7 @@ if __name__ == "__main__":
                             def reconnectRoblox_(self, sender): self.new_bootstrap_play_reconnect()
                             def reconnectRobloxStudio_(self, sender): self.new_bootstrap_play_reconnect_studio()
                             def clearRobloxLogs_(self, sender): self.new_bootstrap_clear_roblox_logs()
+                            def urlQuickLaunch_(self, sender): self.new_bootstrap_url_quick_launch()
                             def clearLogs_(self, sender): self.clear_logs()
                             def forceLoadLogs_(self, sender): self.force_load_logs()
                             def unlockAppLock_(self, sender): self.unlock_app_lock()
@@ -1254,7 +1230,7 @@ if __name__ == "__main__":
                             def force_load_logs(self): self.threadingloop_("oranges")
                             def validateMenuItem_(self, menuItem): return True
                             def unlock_app_lock(self):
-                                if os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
+                                if gui_app_lock and gui_app_lock.exists(): gui_app_lock.release()
                             def instant_debug_window(self): self.button_click_count = 9; self.on_window_activate("oranges")
                             def show_about_menu(self):
                                 try:
@@ -1506,18 +1482,18 @@ if __name__ == "__main__":
             pip_class.startThread(func=notificationLoop, daemon=False)
             pip_class.startThread(func=terminalAwaitLoop, daemon=True)
             pip_class.startThread(func=startBootstrap, daemon=False)
+            gui_app_lock = PyKits.Lock(os.path.join(orangeblox_library, f"GUIAppLock"))
             app_count = pip_class.getAmountOfProcesses(os.path.realpath(os.path.join(app_path, "..", "MacOS", "OrangeBlox")))
-            if app_count < 1: 
-                with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-                createObjcAppReplication()
-                try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
-                except Exception: printMainMessage("Unable to remove GUI app holder")
-            else:
-                while ended == False and os.path.exists(os.path.join(orangeblox_library, f"GUIAppLock")): time.sleep(0.5)
-                if ended == False: 
-                    with open(os.path.join(orangeblox_library, f"GUIAppLock"), "w", encoding="utf-8") as f: f.write(str(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+            if app_count >= 1: 
+                while ended == False and gui_app_lock.exists(): time.sleep(0.5)
+            if not ended:
+                try:
+                    gui_app_lock.acquire()
                     createObjcAppReplication()
-                    try: os.remove(os.path.join(orangeblox_library, f"GUIAppLock"))
+                except FileExistsError: printDebugMessage("Another process grabbed lock first. Skipping.")
+                except Exception: printErrorMessage(f"Error occurred while creating GUI app lock: \n{trace()}")
+                finally:
+                    try: gui_app_lock.release()
                     except Exception: printMainMessage("Unable to remove GUI app holder")
         except Exception as e:
             printErrorMessage(f"Bootstrap Run Failed: \n{trace()}")
@@ -1548,23 +1524,27 @@ if __name__ == "__main__":
                 if certain_player: 
                     filtered_args = f"obx-launch-{certain_type} " + " ".join(args)
                     if os.path.exists(app_path):
-                        with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                        with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                     else:
-                        with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                        with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
                     filtered_args = args[1]
                     if (("roblox-player:" in filtered_args) or ("roblox-studio:" in filtered_args) or ("roblox-studio-auth:" in filtered_args) or ("roblox:" in filtered_args) or ("efaz-bootstrap:" in filtered_args) or ("orangeblox:" in filtered_args) or os.path.isfile(filtered_args)):
                         printMainMessage(f"Creating URL Exchange file..")
                         if os.path.exists(app_path):
-                            with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                            with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                         else:
-                            with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                            with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
             elif certain_player:
                 filtered_args = f"obx-launch-{certain_type}"
                 if os.path.exists(app_path):
-                    with open(os.path.join(app_path, "URLSchemeExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open(os.path.join(app_path, "URLLaunchExchange"), "w", encoding="utf-8") as f: f.write(filtered_args)
                 else:
-                    with open("URLSchemeExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+                    with open("URLLaunchExchange", "w", encoding="utf-8") as f: f.write(filtered_args)
+
+            if main_config.get("EFlagEnableURLQuickLaunch") == True and os.path.exists(os.path.join(generateFileKey("URLQuickLaunch"))) and pip_class.getAmountOfProcesses("python") > 0:
+                printMainMessage(f"Detected URL Quick Launch Attempt! Stopped App Launch.")
+                sys.exit(0)
 
             if pip_class.getIfRunningWindowsAdmin():
                 printErrorMessage(f"Please run {obName0()} under user permissions instead of running administrator!")
@@ -1606,23 +1586,12 @@ if __name__ == "__main__":
                 ended = False
                 def awake():
                     global ended
-                    seconds = 0
-                    while True:
-                        try:
-                            if ended == True: break
-                            if os.path.exists(os.path.join(app_path, "AppNotification")):
-                                with open(os.path.join(app_path, "AppNotification"), "r", encoding="utf-8") as f:
-                                    try:
-                                        notification = json.load(f)
-                                        if type(notification) is list:
-                                            class InvalidNotificationException(Exception): pass
-                                            raise InvalidNotificationException("The following data for notification is not valid.")
-                                    except Exception as e: notification = {"title": "Something went wrong.", "message": "An unexpected error occurred while loading this notification."}
-                                if os.path.exists(os.path.join(app_path, "AppNotification")): os.remove(os.path.join(app_path, "AppNotification"))
-                                if notification.get("title") and notification.get("message"): displayNotification(notification["title"], notification["message"])
-                            seconds += 1
-                        except Exception as e: pass
-                        time.sleep(0.05)
+                    notifier = PyKits.Socket(port=61239)
+                    def listener(payload):
+                        if payload.get("title") and payload.get("message"): displayNotification(payload["title"], payload["message"])
+                    if notifier.exists(): notifier.wait_till_free()
+                    notifier.subscribe("OrangeBloxAppNotification", listener)
+                    notifier.listen()
                 def startBootstrap():
                     global ended
                     try:

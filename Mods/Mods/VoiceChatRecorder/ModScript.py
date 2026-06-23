@@ -1,7 +1,7 @@
 #
 # Voice Chat Recorder allows you to record your Roblox Voice Chats that are made in-game!
 # Made by EfazDev
-# v1.1.0
+# v1.1.5
 # 
 
 # Python Modules

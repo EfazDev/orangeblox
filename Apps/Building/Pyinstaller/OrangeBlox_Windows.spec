@@ -34,9 +34,10 @@ a = Analysis(
     noarchive=False,
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+main_script = next(s for s in a.scripts if s[0] == "OrangeBlox")
 main_exe = EXE(
     pyz,
-    [a.scripts[1]],
+    [main_script],
     exclude_binaries=True,
     name="OrangeBlox",
     debug=False,
@@ -45,7 +46,7 @@ main_exe = EXE(
     upx=True,
     icon="../../../Images/AppIcon.ico",
     version="../../Storage/Version.txt",
-    strip=True
+    strip=False
 )
 combined_coll = COLLECT(
     main_exe,
@@ -55,6 +56,6 @@ combined_coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name="OrangeBlox",
-    strip=True,
+    strip=False,
     distpath="dist",
 )

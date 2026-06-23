@@ -104,7 +104,7 @@ int launchApp() {
                 url_scheme = std::string([[url absoluteString] UTF8String]);
             }
             std::string app_path = getAppPath();
-            std::string url_scheme_path = app_path + "/Resources/URLSchemeExchange";
+            std::string url_scheme_path = app_path + "/Resources/URLLaunchExchange";
             std::ofstream file(url_scheme_path);
 
             if (file.is_open()) {
@@ -119,7 +119,7 @@ int launchApp() {
     for (NSString *filePath in filenames) {
         std::string url_scheme = std::string([filePath UTF8String]);
         std::string app_path = getAppPath();
-        std::string url_scheme_path = app_path + "/Resources/URLSchemeExchange";
+        std::string url_scheme_path = app_path + "/Resources/URLLaunchExchange";
         std::ofstream file(url_scheme_path);
 
         if (file.is_open()) {
@@ -139,7 +139,7 @@ int launchApp() {
 @end
 
 int main(int argc, char* argv[]) {
-    std::string current_version = "2.4.6";
+    std::string current_version = "2.5.0";
     printWarnMessage("-----------");
     printWarnMessage("Welcome to OrangeBlox Loader 🍊!");
     printWarnMessage("Made by Efaz from efaz.dev!");
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     printWarnMessage("-----------");
     printMainMessage("Determining System OS...");
     std::string app_path = getAppPath();
-    std::string url_scheme_path = app_path + "/Resources/URLSchemeExchange";
+    std::string url_scheme_path = app_path + "/Resources/URLLaunchExchange";
     std::string url_scheme;
     if (argc > 1) {
         std::ostringstream oss;
