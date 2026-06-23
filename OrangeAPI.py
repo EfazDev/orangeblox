@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0t
+# v2.5.0u
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0t
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0u
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.5.0t", "bootstrap_version": "2.5.0t"}
+current_version = {"version": "2.5.0u", "bootstrap_version": "2.5.0u"}
 request_queues = {}
 cached_information = {}
 colors_class = Colors()
@@ -59,7 +59,6 @@ class UnusedAPI(Warning):
         super().__init__("This API variable/class is no longer usable! Please update your scripts!")
 class Request:
     def __init__(self, bootstrap_api, orangeapi_details, requested_function: str, args: typing.Dict={}):
-        global requested_functions
         if type(bootstrap_api) is OrangeAPI and type(orangeapi_details) is OrangeAPIDetails:
             generated_function_id = f"{orangeapi_details.mod_script_name}|{orangeapi_details.secret_key}|" + os.urandom(3).hex()
             if type(requested_function) is str:

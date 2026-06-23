@@ -1,7 +1,7 @@
 # 
 # Roblox Fast Flags Installer
 # Made by Efaz from efaz.dev
-# v2.6.5
+# v2.6.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -32,7 +32,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.6.5"
+script_version = "2.6.6"
 
 # Base Functions 1
 def getLocalAppData():
@@ -416,11 +416,13 @@ class Handler:
         "266": "Your connection timed out. Check your internet connection and try again.",
         "267": "You were kicked from this experience.",
         "268": "You have been kicked due to unexpected client behavior.",
+        "270": "Cannot join game instance because there are no active game instances.",
         "271": "You have been kicked by server, please reconnect.",
         "272": "Lost connection due to an error.",
         "273": "Same account launched experience from different device. Reconnect if you prefer to use this device.",
         "274": "The experience's developer has temporarily shut down the experience server. Please try again.",
         "275": "Roblox has shut down the server for maintenance. Please try again.",
+        "276": "Teleport failed due to an unexpected error.",
         "277": "Please check your internet connection and try again.",
         "278": "You were disconnected for being idle 20 minutes.",
         "279": "Failed to connect to the Game. (ID = 17: Connection attempt failed.)",
@@ -429,8 +431,11 @@ class Handler:
         "284": "A fatal error occurred while running this game.",
         "285": "Client/User issued disconnect.",
         "286": "Your device does not have enough memory to run this experience. Exit back to the app.",
+        "288": "Disconnected from server. The server has shut down.",
         "291": "Player has been removed from the DataModel.",
         "292": "Your device's memory is low. Leaving now will preserve your state and prevent Roblox from crashing.",
+        "403": "An error was encountered during authentication. Please try again.",
+        "429": "You are making too many requests. Please wait and try again.",
         "517": "This game is currently unavailable. Please try again later.",
         "522": "The user you attempted to join has left the game.",
         "523": "The status of the experience has changed and you no longer have access. Please try again later.",
@@ -441,7 +446,11 @@ class Handler:
         "533": "Your privacy settings prevent you from joining this server.",
         "600": "You were banned from this experience by the creator.",
         "610": "Unable to join game instance.",
-        "770": "Game's root place is not active."
+        "769": "Teleport failed. Unknown exception.",
+        "770": "Game's root place is not active.",
+        "772": "Teleport failed. Server is full.",
+        "773": "Teleport failed. Attempted to teleport to a place that is restricted.",
+        "774": "Teleport failed. The server is currently unavailable."
     }
     optimal_download_location = "setup.rbxcdn.com"
     last_mfc_studio_version = "version-012732894899482c"

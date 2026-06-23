@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0t
+# v2.5.0u
 # 
 
 # Python Modules
@@ -56,7 +56,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.5.0t"}
+current_version: typing.Dict[str, str] = {"version": "2.5.0u"}
 given_args: typing.List[str] = list(filter(None, sys.argv))
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -263,10 +263,10 @@ def trace():
     exc_m = str(tb_v)
     lines.append(f'{colors_class.foreground(colors_class.bold(f"{exc_t}:"), color="Magenta", bright=True)} {colors_class.foreground(exc_m, color="Magenta", bright=False)}')
     return "\n".join(lines)
-def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").strip()
-def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
+def obName0(): return str(main_config.get("EFlagCustomBootstrapName", "OrangeBlox")).strip()
+def obName1(): return str(main_config.get("EFlagCustomBootstrapEmoji", "🍊")).strip()
 def obColorA(): return colors_class.hex_to_ansi2(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
-def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
+def obColorH(): return str(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
 def printMainMessage(mes): colors_class.print(ts(mes), 255)
 def printErrorMessage(mes): colors_class.print(ts(mes), 196)
 def printSuccessMessage(mes): colors_class.print(ts(mes), 82)
@@ -2569,6 +2569,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                         ur = urll()
                         printMainMessage("Enter the key to be defined for this shortcut, this will be used for a url scheme: ")
                         key = input("> ") 
+                        key = re.sub(r'[^A-Za-z0-9_\-]', '', key)
                         printMainMessage("Confirm the shortcut below? (y/n)")
                         printMainMessage(f"Name: {name}")
                         printMainMessage(f"URL: {ur}")
@@ -2638,6 +2639,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                         ur = urll()
                         printMainMessage("Enter the key to be defined for this shortcut, this will be used for a url scheme: ")
                         key = input("> ") 
+                        key = re.sub(r'[^A-Za-z0-9_\-]', '', key)
                         printMainMessage("Confirm the shortcut below? (y/n)")
                         printMainMessage(f"Name: {name}")
                         if ur != "": printMainMessage(f"URL: {ur}")
@@ -4492,7 +4494,7 @@ def validateRobloxPlayerInstallation():
         target_install_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         if not os.path.exists(os.path.join(versions_folder, target_install_name)): return False
         for i, v in handler.roblox_bundle_files.items(): 
-            if v != "/" and not os.path.exists(f"{os.path.join(versions_folder, target_install_name)}{v}"): return False
+            if v != "/" and not os.path.exists(os.path.join(versions_folder, target_install_name, v.lstrip('/\\'))): return False
     elif main_os == "Darwin":
         if not os.path.exists(RFFI.macOS_dir): return False
         roblox_bundle_folders = ["/content", "/ssl", "/PlatformContent", "/ExtraContent", "/shaders"]
@@ -4830,7 +4832,6 @@ def runRoblox():
             global main_config
             if main_config.get("EFlagEnableMods") == True:
                 if selected_mod_scripts and main_config.get("EFlagAllowActivityTracking") != False and len(selected_mod_scripts) > 0:
-                    OrangeAPI.requested_functions = {}
                     OrangeAPI.cached_information = {}
                     OrangeAPI.translators = {}
                     OrangeAPI.debug_mode = (main_config.get("EFlagEnableDebugMode")==True)
