@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0b
+# v2.6.0c
 # 
 
 # Modules
@@ -101,7 +101,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0b"}
+current_version = {"version": "2.6.0c"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False

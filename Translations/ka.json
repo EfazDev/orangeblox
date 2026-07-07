@@ -2603,7 +2603,7 @@
  "Exit without Saving": "Გასვლა შენახვის გარეშე",
  "Go to Flag Garden": "Გადადით დროშის ბაღში",
  "Hide Unallowed Flags": "Დაუშვებელი დროშების დამალვა",
- "Save & Exit": "Შენახვა და გამოსვლა",
+ "Save & Exit": "Შენახვა და გასვლა",
  "Unable to get Fast Flags Allowlist! Please check your internet connection and try again!": "Fast Flags დაშვებული სიის მიღება ვერ ხერხდება! გთხოვთ, შეამოწმოთ თქვენი ინტერნეტ კავშირი და სცადოთ ხელახლა!",
  "View Unallowed Flags": "Დაუშვებელი დროშების ნახვა",
  "(*) is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "(*)მხარდაჭერილია მხოლოდ macOS 10.15 (Catalina) ან უფრო მაღალი. გთხოვთ განაახლოთ თქვენი ოპერაციული სისტემა გასაგრძელებლად!",

@@ -2608,8 +2608,8 @@
  "Unable to get Fast Flags Allowlist! Please check your internet connection and try again!": "Kan ikke få tilladelsesliste for hurtige flag! Tjek venligst din internetforbindelse og prøv igen!",
  "View Unallowed Flags": "Se ikke tilladte flag",
  "(*) is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "(*)understøttes kun for macOS 10.15 (Catalina) eller nyere. Opdater venligst dit operativsystem for at fortsætte!",
- "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox understøttes kun til macOS 10.15 (Catalina) eller nyere. Opdater venligst dit operativsystem for at fortsætte!",
- "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager understøttes kun til macOS 10.15 (Catalina) eller nyere. Opdater venligst dit operativsystem for at fortsætte!",
+ "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox understøttes kun af macOS 10.15 (Catalina) eller nyere. Opdater venligst dit styresystem for at fortsætte!",
+ "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager understøttes kun af macOS 10.15 (Catalina) eller nyere. Opdater venligst dit styresystem for at fortsætte!",
  "Though this option may be inaccurate, it may still give a base.": "Selvom denne mulighed kan være unøjagtig, kan den stadig give en base..",
  "Allow access to use RobloxManager directly": "Tillad adgang til at bruge RobloxManager direkte"
 }

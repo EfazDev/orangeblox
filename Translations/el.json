@@ -2608,7 +2608,7 @@
  "Unable to get Fast Flags Allowlist! Please check your internet connection and try again!": "Δεν είναι δυνατή η λήψη της λίστας επιτρεπόμενων γρήγορων σημαιών! Ελέγξτε τη σύνδεσή σας στο Διαδίκτυο και δοκιμάστε ξανά!",
  "View Unallowed Flags": "Προβολή μη επιτρεπόμενων σημαιών",
  "(*) is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "το (*)υποστηρίζεται μόνο για macOS 10.15 (Catalina) ή νεότερη έκδοση. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
- "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Το OrangeBlox υποστηρίζεται μόνο για macOS 10.15 (Catalina) ή νεότερη έκδοση. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
+ "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Το OrangeBlox υποστηρίζεται μόνο από macOS 10.15 (Catalina) ή νεότερο. Παρακαλώ ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Το Roblox Manager υποστηρίζεται μόνο για macOS 10.15 (Catalina) ή νεότερη έκδοση. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
  "Though this option may be inaccurate, it may still give a base.": "Αν και αυτή η επιλογή μπορεί να είναι ανακριβής, μπορεί να εξακολουθεί να δίνει μια βάση..",
  "Allow access to use RobloxManager directly": "Επιτρέψτε την πρόσβαση για απευθείας χρήση του RobloxManager"

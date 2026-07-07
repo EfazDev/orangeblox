@@ -2609,7 +2609,7 @@
  "View Unallowed Flags": "許可されていないフラグを表示する",
  "(*) is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "(*)macOS 10.15 (Catalina) 以降でのみサポートされます.続行するにはオペレーティング システムを更新してください..",
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox は,macOS 10.15 (Catalina) 以降でのみサポートされます.続行するにはオペレーティング システムを更新してください..",
- "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager は macOS 10.15 (Catalina) 以降でのみサポートされています.続行するにはオペレーティング システムを更新してください..",
+ "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox ManagerはmacOS 10.15(Catalina)以降でのみサポートされています.続行するには,オペレーティングシステムを更新してください!",
  "Though this option may be inaccurate, it may still give a base.": "このオプションは不正確である可能性がありますが,それでも根拠が得られる可能性があります..",
  "Allow access to use RobloxManager directly": "RobloxManager を直接使用するためのアクセスを許可する"
 }

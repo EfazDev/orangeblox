@@ -2598,7 +2598,7 @@
  "Starting Roblox Manager v(*)!": "กำลังเริ่ม Roblox Manager v(*)!",
  "Welcome to Roblox Manager!": "ยินดีต้อนรับสู่ Roblox Manager!",
  "[clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Clear()]: ไม่สามารถล้าง Discord Presence ได้โดยตรง! ข้อผิดพลาด: (*)",
- "Add New Flags": "เพิ่มธงใหม่",
+ "Add New Flags": "เพิ่มแฟล็กใหม่",
  "Clear All Fast Flags": "ล้างค่าสถานะด่วนทั้งหมด",
  "Exit without Saving": "ออกโดยไม่บันทึก",
  "Go to Flag Garden": "ไปที่สวนธง",
