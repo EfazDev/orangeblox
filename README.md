@@ -12,9 +12,6 @@
     <img align="center" src="Images/Collage.png" alt="OrangeBlox Collage"><br>
 </p>
 
-> [!IMPORTANT]
-> Hello! If you were an user of Efaz's Roblox Bootstrap on v1.5.9 or lower, you might have noticed we have rebranded to OrangeBlox! Any mods and data are transferred as of this change. For more information, [click here.](https://github.com/efazdev/orangeblox/wiki/Rebranding-to-OrangeBlox)
-
 ## What is OrangeBlox?
 OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+console+terminal&udm=2) program heavily inspired by Bloxstrap made for macOS and Windows that applies modifications onto the Roblox Client using files! It also uses [Activity Tracking](https://github.com/pizzaboxer/bloxstrap/wiki/What-is-activity-tracking%3F), supports [BloxstrapRPC](https://github.com/pizzaboxer/bloxstrap/wiki/Integrating-Bloxstrap-functionality-into-your-game) and a lot more!
 
@@ -22,28 +19,53 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 > This GitHub repository, [EfazDev Project Page](https://www.efaz.dev/projects/orangeblox), [obxbeta.efaz.dev](https://obxbeta.efaz.dev) and [obx.efaz.dev](https://obx.efaz.dev) is the only official way to install OrangeBlox! Please do not trust exe or installation files that claim to be OrangeBlox from other websites.
 
 ## Features
-1. Set FFlag and Global Setting Customizations on your Roblox installation!
-2. Install Mods including a custom Avatar Map, App Icon, Cursor, and Death Sound!
-3. Customize with unlimited mods that you can download and insert an extracted folder copy into the Mods folder! *[Requires to go through bootstrap in Mods Manager]
-5. Get server locations when joining (based on freeipapi.com)
-6. Apply the same experience to Roblox Studio with mods!
-7. Discord Rich Presences [Includes Support for BloxstrapRPC]
-8. Roblox Studio Support with Mods and FFlags! *[FFlags may not work due to future Roblox updates]
-9. Discord Webhooks [Join, Disconnect, Teleport, Crash, BloxstrapRPC and More Notifications!]
-10. Run Python Scripts based on events ran on the Roblox client using Mod Scripts!
-11. Play Roblox/Run Studio app so you can run Roblox directly!
-12. Included Mods and Mod Scripts that could be used for free!
-13. Read Logs from Roblox using RobloxFastFlagsInstaller *[Requires Debug Mode]!
-14. Roblox Early Program Support with Roblox Security Cookie Usage enabled
-15. Localization from other languages! Other languages available (English may be needed for understanding installation): Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), Danish, German, Greek, French, Filipino, Georgian, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, Turkish, Ukrainian, Urdu, Vietnamese
-16. Way more features to be explored!
+1. Mods Support: Apply multiple kinds of mods that range from Cursors to full on custom colors!
+2. Mod Creation (using Kliko Mod Tool Script in Mod Scripts): Create gradient based mods visuals automatically everytime Roblox updates!
+3. Roblox Studio Support: OrangeBlox supports running Roblox Studio with FFlag Support and Mods!
+4. Native macOS and Windows Support: OrangeBlox supports running and handling Roblox on Windows and macOS!
+5. Mod Scripts: Run your own Python scripts that help automate actions using OrangeAPI!
+6. Discord RPC: OrangeBlox supports running Discord RPC using Activity Tracking!
+7. Server Locations: OrangeBlox supports getting Server Locations and Uptime using freeipapi.com and RoValra!
+8. Discord Webhooks: OrangeBlox supports sending Discord messages using Webhooks to help notify you when you disconnect from a game, join a game, when Roblox opens, etc!
+9. Bloxstrap RPC Support: OrangeBlox supports games that use Bloxstrap RPC to interact with your Discord RPC!
+10. Launcher Apps: OrangeBlox automatically adds Launcher apps to your Desktop for automatic launching Roblox or Roblox Studio
+11. Roblox Early Access Program Support: With Roblox Security Cookie Usage, OrangeBlox supports installing Early Access Roblox installations offered by Roblox's API.
+12. Localization with 23 Other Languages besides English!
+
+| Language | Native |
+| --- | --- |
+| Arabic | العربية |
+| Bengali | বাংলা |
+| Chinese (Simplified) | 简体中文 |
+| Chinese (Traditional) | 繁體中文 |
+| Danish | Dansk |
+| German | Deutsch |
+| Greek | Ελληνικά |
+| French | Français |
+| Filipino | Filipino |
+| Georgian | ქართული |
+| Hindi | हिन्दी |
+| Indonesian | Bahasa Indonesia |
+| Italian | Italiano |
+| Japanese | 日本語 |
+| Korean | 한국어 |
+| Portuguese | Português |
+| Russian | Русский |
+| Spanish | Español |
+| Thai | ไทย |
+| Turkish | Türkçe |
+| Ukrainian | Українська |
+| Urdu | اردو |
+| Vietnamese | Tiếng Việt |
+
+13. Way more features to be explored!
 > [!NOTE]
 > Features may be needed to be enabled in order to be used. Check the Settings from the main menu in order to find and enable.
 
 ## Requirements
 1. [Latest ZIP of OrangeBlox](https://github.com/EfazDev/orangeblox/releases/latest)
-2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.13+ (High Sierra)](https://apps.apple.com/us/app/macos-high-sierra/id1246284741)
-3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.6 from InstallPython.bat (Windows) or from InstallPython.sh (macOS)]
+2. [Windows 10.0.17763+ (October 2018)](https://www.microsoft.com/en-us/software-download/) or [macOS 10.15+ (Catalina)](https://apps.apple.com/us/app/macos-catalina/id1466841314)
+3. [Python 3.11+](https://www.python.org/downloads/) [You may install Python 3.14.6 from InstallPython.bat (Windows) or from InstallPython.command (macOS)]
 4. Python Modules: <br>
    macOS: pip install pypresence pyobjc-core pyobjc-framework-Quartz pyobjc-framework-Cocoa posix-ipc psutil truststore <br>
    Windows: pip install pypresence pywin32 plyer psutil truststore
@@ -68,13 +90,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `a8131339f92f8356456b9cc26bc4b4f6` |
-| Roblox FFlag Installer (RobloxFastFlagsInstaller.py) | `335eb9d7efea8884b19c92472d85bd61` |
-| Installer (Install.py) | `a319ce2c348613544ddedfb11a3c1806` |
-| Bootstrap API (OrangeAPI.py) | `a7db8a3f0d80f09902fc3813badd1efa` |
-| Bootstrap Loader (OrangeBlox.py) | `5345cc8b36359765904201bc80360102` |
-| Discord Presence Handler (DiscordPresenceHandler.py) | `845cdceec103e140fe254c366dca673f` |
-| PyKits API (PyKits.py) | `90a51d4a19a04f996cacd1716b96528e` |
+| Main Bootstrap (Main.py) | `5a41f8c78c8fd63ca91fcd66727902d6` |
+| Roblox Manager (RobloxManager.py) | `c109ef96b10be26923aaa9d592e8f8a6` |
+| Installer (Install.py) | `168710aa4420804f17503e57faff00fd` |
+| Bootstrap API (OrangeAPI.py) | `c15c457a49dad2df58cd40bfad698229` |
+| Bootstrap Loader (OrangeBlox.py) | `a663907b53ed332e23fbb057c3e90d5f` |
+| PyKits API (PyKits.py) | `734162e66131dd6c38e0529fc7609f01` |
+| Configuration Module (Modules/config.py) | `ffba388e2e71d4ede5da15492db26fa1` |
+| Menu Module (Modules/menu.py) | `ad7dbeff0852919ef968ff465d57d943` |
+| Mod Manager Module (Modules/modmanager.py) | `3c6a1fbde368fe172b7be7077649772b` |
+| Mod Scripts Module (Modules/modscripts.py) | `b896b7c685d35cb5c4ce30bb7779c274` |
+| Menu Options Module (Modules/options.py) | `c970865353d214b60066b2e7e7739065` |
+| Python Package Module (Modules/pkg.py) | `bf351bc6e10572c9ab54d0663bca4668` |
+| Printing/Logging Module (Modules/printing.py) | `c3193231613c8d19e9018a8a1a0f4893` |
+| Roblox Module (Modules/roblox.py) | `23ef5c962bd45b529affa044d01442a5` |
+| Settings Module (Modules/settings.py) | `ce3cd3d198ca005dd9c226367249a76f` |
+| Startup Module (Modules/startup.py) | `af8be5d1c276ebf80559cccbfe6c387a` |
+| Utilities Module (Modules/utils.py) | `a7c8af7b314789b51278584c55499b50` |
+| Discord RPC Module (Modules/discord.py) | `b3cbac08af9284a597942727325909ae` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>
@@ -83,8 +116,9 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 4. The Kliko's Mod Tool Mod Script was edited and made from <a href="https://github.com/klikos-modloader/klikos-modloader"><img src="https://img.shields.io/static/v1?label=&color=ff0000&message=Kliko%27s%20Mod%20Tool%20and%20Kliko%27s%20modloader%20%F0%9F%8E%AE" alt="Kilko's Mod Tool & Kliko's modloader 🎮"></a>
 5. Python Module Creators: <a href="https://github.com/qwertyquerty/pypresence"><img src="https://img.shields.io/static/v1?label=&color=00b000&message=qwertyquerty%20%28pypresence%29%20%F0%9F%A6%96" alt="qwertyquerty (pypresence) 🦖"></a>, <a href="https://github.com/ronaldoussoren/pyobjc"><img src="https://img.shields.io/static/v1?label=&color=00d000&message=Ronald%20Oussoren%20(pyobjc)%20%F0%9F%94%81" alt="Ronald Oussoren (pyobjc) 🔁"></a>, <a href="https://github.com/osvenskan/posix_ipc"><img src="https://img.shields.io/static/v1?label=&color=ffec00&message=Philip%20Semanchuk%20(posix-ipc)%20%F0%9F%99%82" alt="Philip Semanchuk (posix-ipc) 🙂"></a>, <a href="https://github.com/mhammond/pywin32"><img src="https://img.shields.io/static/v1?label=&color=bb00ff&message=Mark%20Hammond%20(pywin32)%20%F0%9F%AA%9F" alt="Mark Hammond (pywin32) 🪟"></a>, <a href="https://github.com/kivy/plyer"><img src="https://img.shields.io/static/v1?label=&color=ffaa00&message=Kivy%20(plyer)%20%F0%9F%A7%B0" alt="Kivy (plyer) 🧰"></a>, <a href="https://github.com/giampaolo/psutil"><img src="https://img.shields.io/static/v1?label=&color=000000&message=Giampaolo%20Rodola%20(psutil)%20%F0%9F%94%8C" alt="Giampaolo Rodola (psutil) 🔌"></a>,  <a href="https://github.com/sethmlarson/truststore"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=sethmlarson%20(truststore)%20%F0%9F%94%8C" alt="sethmlarson (truststore) 🔌"></a>
 6. Server Locations are sourced from <a href="https://freeipapi.com/"><img src="https://img.shields.io/static/v1?label=&color=D303FC&message=freeipapi.com%20%F0%9F%8C%90" alt="freeipapi.com 🌐"></a>
-7. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" alt="@CabledRblx 🦆"></a>. Thanks :)
-8. macOS App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a> and <a href="https://clang.llvm.org/"><img src="https://img.shields.io/static/v1?label=&color=FFFF00&message=clang%20%F0%9F%93%A6" alt="clang 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp -rc`
-9. Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp`
+7. Server Uptimes are sourced from <a href="https://www.rovalra.com/"><img src="https://img.shields.io/static/v1?label=&color=d90000&message=RoValra%20%F0%9F%8C%90" alt="RoValra 🌐"></a>
+8. The logo of OrangeBlox was made thanks of <a href="https://twitter.com/_Cabled_"><img src="https://img.shields.io/static/v1?label=&color=ffff00&message=@CabledRblx%20%F0%9F%A6%86" alt="@CabledRblx 🦆"></a>. Thanks :)
+9. macOS App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a> and <a href="https://clang.llvm.org/"><img src="https://img.shields.io/static/v1?label=&color=FFFF00&message=clang%20%F0%9F%93%A6" alt="clang 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp -rc`
+10. Windows App was built using <a href="https://pyinstaller.org/en/stable/"><img src="https://img.shields.io/static/v1?label=&color=00AFFF&message=pyinstaller%20%F0%9F%93%A6" alt="pyinstaller 📦"></a>. You can recreate and deploy using this command: `python3 Install.py -r -rp`
 > [!IMPORTANT]
 > This command can be depending on the native operating system your computer has. For example, if you're running Windows on arm64, you can rebuild full Windows OrangeBlox if you install Python in arm64, x86 and x64 while including the `--full-rebuild` argument while in normal x64, you can only rebuild x86. The argument `--rebuild-clang` is only available in macOS and requires Xcode Command Tools to be installed. Pyinstaller is more suggested for quick testing and easier rebuilds while Nuitka requires a C compiler to be installed on your computer (use Microsoft Visual Studio 2022 for compilation). For more information about Nuitka compiling, use this manual: https://nuitka.net/user-documentation/user-manual.html

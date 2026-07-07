@@ -28,12 +28,12 @@ PYINSTALLER = 3
 NUITKA = 4
 CLANGPLUSPLUS = 5
 
-args = ()
+args = []
 variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
-current_version = {"version": "2.5.0u"}
+current_version = {"version": "2.6.0a"}
 
 split_vers = current_version["version"].split(".")
 letter_version = None
@@ -43,6 +43,7 @@ if len(split_vers[2]) > 1:
     formatted_version = f"{split_vers[0]}.{split_vers[1]}.{split_vers[2]}.{ord(letter_version)}"
 else:
     formatted_version = f"{split_vers[0]}.{split_vers[1]}.{split_vers[2]}.0"
+os.environ["MACOSX_DEPLOYMENT_TARGET"] = "10.15"
 
 def init(*argv):
     global args
@@ -152,7 +153,7 @@ macos = {
         [CD, "./Apps/Building"],
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangeBlox.app"]],
         [CD, "../Storage"],
-        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
+        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Building/Nuitka/__pycache__"],
@@ -190,7 +191,7 @@ macos = {
         [CD, "./Apps/Building"],
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangeBlox.app"]],
         [CD, "../Storage"],
-        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
+        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Building/Nuitka/__pycache__"],

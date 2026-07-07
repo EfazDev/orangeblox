@@ -148,7 +148,9 @@ def _get_image_contours(image_path: str, units: int, icon_name: str, glyf_table)
     if cache_key in CONTOUR_CACHE: return CONTOUR_CACHE[cache_key]
     try:
         with Image.open(image_path, formats=("PNG",)) as img: img = img.convert("RGBA")
-        img.thumbnail((128, 128), resample=Image.Resampling.LANCZOS)
+        orig_w, orig_h = img.size
+        tar_size = 128 if max(orig_w, orig_h) < 128 else 256
+        img.thumbnail((tar_size, tar_size), resample=Image.Resampling.LANCZOS)
     except Exception: return []
     arr = np.array(img); h, w = arr.shape[:2]
     og = glyf_table.get(icon_name)
@@ -174,14 +176,22 @@ def _get_image_contours(image_path: str, units: int, icon_name: str, glyf_table)
         CONTOUR_CACHE[cache_key] = result
         return result
     except: return contours
-def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf_table, max_colors: int = 32) -> dict[str, list[list[tuple]]]:
+def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf_table, max_colors: int = 64) -> dict[str, list[list[tuple]]]:
     try:
         with Image.open(image_path, formats=("PNG",)) as img: 
             img = img.convert("RGBA")
-            img.thumbnail((128, 128), resample=Image.Resampling.LANCZOS)
-            alpha = img.getchannel('A')
-            rgb = img.convert('RGB').quantize(colors=max_colors, method=Image.Quantize.MAXCOVERAGE)
-            img = rgb.convert('RGBA')
+            orig_w, orig_h = img.size
+            tar_size = 128 if max(orig_w, orig_h) < 128 else 256
+            img.thumbnail((tar_size, tar_size), resample=Image.Resampling.LANCZOS)
+            alpha = img.getchannel("A").point(lambda p: 255 if p >= 128 else 0)
+            img.putalpha(alpha)
+            rgb = img.convert("RGB")
+            rgb = rgb.quantize(
+                colors=max_colors, 
+                method=Image.Quantize.FASTOCTREE, 
+                dither=Image.Dither.NONE
+            )
+            img = rgb.convert("RGBA")
             img.putalpha(alpha)
     except Exception: return {}
     arr = np.array(img)
@@ -202,15 +212,42 @@ def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf
                 if hex_col not in color_rects: color_rects[hex_col] = []
                 fy_bot, fy_top = top_y - (py + 1) * scale, top_y - py * scale
                 x0, x1 = top_x + start_x * scale, top_x + px * scale
-                color_rects[hex_col].append([(x0, fy_bot - 0.5), (x1 + 0.5, fy_bot - 0.5), (x1 + 0.5, fy_top + 0.5), (x0, fy_top + 0.5)])
+                color_rects[hex_col].append([(x0, fy_bot), (x1, fy_bot), (x1, fy_top), (x0, fy_top)])
             else: px += 1
     final_color_contours = {}
     SCALE = 1000.0
+    pc_master = pyclipper.Pyclipper()
+    for rects in color_rects.values():
+        for poly in rects: pc_master.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in poly], pyclipper.PT_SUBJECT, True)     
+    try: 
+        sil = pc_master.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)
+        if sil:
+            smooth_radius = int(scale * 0.5 * SCALE)
+            if smooth_radius > 0:
+                pco_smooth = pyclipper.PyclipperOffset()
+                pco_smooth.AddPaths(sil, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+                sil = pco_smooth.Execute(smooth_radius)
+                pco_smooth.Clear()
+                pco_smooth.AddPaths(sil, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+                sil = pco_smooth.Execute(-smooth_radius)
+    except Exception: sil = []
+    if not sil: return {}
+    safe_expansion = scale * 1.5
+    offset_delta = safe_expansion * SCALE
     for hex_col, rects in color_rects.items():
         pc = pyclipper.Pyclipper()
         for poly in rects: pc.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in poly], pyclipper.PT_SUBJECT, True)
         try: 
-            result = [[(pt[0] / SCALE, pt[1] / SCALE) for pt in p] for p in pc.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)]
+            unioned = pc.Execute(pyclipper.CT_UNION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)
+            if not unioned: continue
+            pco = pyclipper.PyclipperOffset()
+            pco.AddPaths(unioned, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+            dilated = pco.Execute(offset_delta)
+            pc_clip = pyclipper.Pyclipper()
+            pc_clip.AddPaths(dilated, pyclipper.PT_SUBJECT, True)
+            pc_clip.AddPaths(sil, pyclipper.PT_CLIP, True)
+            final_clipped = pc_clip.Execute(pyclipper.CT_INTERSECTION, pyclipper.PFT_NONZERO, pyclipper.PFT_NONZERO)
+            result = [[(pt[0] / SCALE, pt[1] / SCALE) for pt in p] for p in final_clipped]
             if result: final_color_contours[hex_col] = result
         except: pass
     return final_color_contours

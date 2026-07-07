@@ -18,8 +18,8 @@ def generateFileHash(file_path):
 
 # Load Version.json
 version_json = {
-    "version": "2.5.0u",
-    "latest_version": "2.5.0u",
+    "version": "2.6.0a",
+    "latest_version": "2.6.0a",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }
@@ -28,10 +28,15 @@ if os.path.exists("Version.json"):
 
 # Generate Hashes
 generated_hash_json = {}
+blocked_scripts = ["RobloxFastFlagsInstaller.py"]
 for i in os.listdir("./"):
-    if i.endswith(".py"):
+    if i.endswith(".py") and i not in blocked_scripts:
         generated_hash = generateFileHash(f"./{i}")
         generated_hash_json[i] = generated_hash
+for i in os.listdir("./Modules"):
+    if i.endswith(".py") and i not in blocked_scripts:
+        generated_hash = generateFileHash(f"./Modules/{i}")
+        generated_hash_json[f"Modules/{i}"] = generated_hash
 generated_hash2 = generateFileHash(f"./Apps/Building/OrangeBlox.py")
 generated_hash_json["OrangeBlox.py"] = generated_hash2
 previous_hashes = version_json["hashes"]

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0s
+# v2.6.0a
 # 
 
 # Modules
@@ -22,7 +22,7 @@ import sys
 import os
 
 import PyKits; PyKits.BuiltinEditor(builtins)
-try: import RobloxFastFlagsInstaller as RFFI
+try: import RobloxManager as rbx
 except: PyKits.pip().restartScript("Install.py", sys.argv)
 
 main_os = platform.system()
@@ -46,7 +46,7 @@ sma = {
         os.path.join(pip_class.getLocalAppData(), "OrangeBlox")
     ]
 }
-ignore_files = [
+ignore_files = (
     "dist", 
     ".git",
     "build",
@@ -60,11 +60,12 @@ ignore_files = [
     "__pycache__", 
     "VirtualEnvironments",
     "InstallPython.sh", 
+    "InstallPython.command", 
     "InstallPython.bat",
     "Configuration.json", 
     "RobloxFastFlagLogFilesAttached.json"
-]
-remove_found_files = [
+)
+remove_found_files = (
     "dist", 
     ".git",
     "build",
@@ -82,12 +83,14 @@ remove_found_files = [
     "LocalStorage",
     "OTAPatchBackups",
     "CachedFriendsList.json",
+    "RobloxFastFlagsInstaller.py",
     "RobloxPlayerInstaller.exe",
     "RobloxStudioInstaller.exe",
     "InstallPython.sh", 
+    "InstallPython.command",
     "InstallPython.bat",
-]
-bootstrap_images_needed = [
+)
+bootstrap_images_needed = (
     "AppIcon.icns", 
     "AppIcon.ico", 
     "AppIcon.png", 
@@ -97,8 +100,8 @@ bootstrap_images_needed = [
     "AppIconRunStudio.icns", 
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
-]
-current_version = {"version": "2.5.0s"}
+)
+current_version = {"version": "2.6.0a"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -221,7 +224,6 @@ flag_types = {
     "EFlagEnableChangePlayerSound": "bool",
     "EFlagDisableModsManagerAccess": "bool",
     "EFlagDisableModScriptsAccess": "bool",
-    "EFlagRemoveMenuAndSkipToRoblox": "bool",
     "EFlagDisableLinkShortcutsAccess": "bool",
     "EFlagReturnToMainMenuInstant": "bool",
     "EFlagRemoveCodeSigningMacOS": "bool",
@@ -236,6 +238,7 @@ flag_types = {
     "EFlagBootstrapCooldownAmount": "int",
     "EFlagSelectedBootstrapLanguage": "str",
     "EFlagUseFollowingAppIconPath": "path",
+    "EFlagEnableRoValraServerUptime": "bool",
     "EFlagUseConfigurationWebServer": "bool",
     "EFlagConfigurationWebServerURL": "str",
     "EFlagConfigurationAuthorizationKey": "str",
@@ -260,7 +263,7 @@ flag_types = {
     "EFlagCustomBootstrapIconPath": "path",
     "EFlagUseEfazDevAPI": "bool"
 }
-handler = RFFI.Handler()
+handler = rbx.Handler()
 
 def ts(mes: str):
     mes = str(mes)
@@ -462,7 +465,7 @@ def setInstalledAppPath(install_app_path):
         except Exception as e: printErrorMessage("There was an error saving the assigned installed path!")
 def formatSize(size_bytes):
     if size_bytes == 0: return "0 Bytes"
-    size_units = ["Bytes", "KB", "MB", "GB", "TB"]
+    size_units = ("Bytes", "KB", "MB", "GB", "TB")
     unit_index = 0
     while size_bytes >= 1024 and unit_index < len(size_units) - 1:
         size_bytes /= 1024
@@ -550,8 +553,8 @@ def runChartCode(chart_module, chart_code, *args, environment_variables={}, runn
                 running.append(0)
             elif code_id == 1: 
                 if chart_module.variables.get("IDs"):
-                    if not (type(chart_module.variables.get("IDs").get(code[1])) is None):
-                        running_proc = subprocess.run(chart_module.variables.get("IDs").get(code[1]) + ([code[2]] if type(code[2]) is str else code[2]), shell=type(code[2]) is str, cwd=chart_module.cwd)
+                    if chart_module.variables.get("IDs").get(code[1]) is not None:
+                        running_proc = subprocess.run(chart_module.variables.get("IDs", {}).get(code[1], "") + ([code[2]] if type(code[2]) is str else code[2]), shell=type(code[2]) is str, cwd=chart_module.cwd)
                         running.append(running_proc.returncode)
                     else: running.append(1)
                 else:
@@ -608,9 +611,9 @@ def startMessage():
         printErrorMessage("OrangeBlox is only supported for macOS and Windows.")
         input("> ")
         sys.exit(0)
-    if not pip_class.osSupported(windows_build=17763, macos_version=(10,13,0)):
+    if not pip_class.osSupported(windows_build=17763, macos_version=(10,15,0)):
         if main_os == "Windows": printErrorMessage("OrangeBlox is only supported for Windows 10.0.17763 (October 2018) or higher. Please update your operating system in order to continue!")
-        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.13 (High Sierra) or higher. Please update your operating system in order to continue!")
+        elif main_os == "Darwin": printErrorMessage("OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!")
         input("> ")
         sys.exit(0)
     if not pip_class.pythonSupported(3, 11, 0):
@@ -814,16 +817,15 @@ def install():
                 
                 # Install to /Applications/
                 printMainMessage("Installing to Applications Folder..")
-                copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeLoader.app", sma[main_os][1])
-                if os.path.exists(sma[main_os][0]): copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeBlox.app", sma[main_os][0], ignore_files=ignore_files)
-                else: copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeBlox.app", sma[main_os][0])
+                #copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeLoader.app", sma[main_os][1])
+                copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeBlox.app", sma[main_os][1], ignore_files=ignore_files)
                 copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangePlayRoblox.app", sma[main_os][2])
                 copyTreeWithSymlinks(f"{cur_path}/Apps/OrangeBloxMac/OrangeRunStudio.app", sma[main_os][3])
 
                 # Prepare Contents of .app files
                 printMainMessage("Fetching App Folder..")
                 resources_fold = f"{sma[main_os][1]}/Contents/Resources/"
-                if os.path.exists(sma[main_os][0]) and os.path.exists(resources_fold):
+                if os.path.exists(resources_fold):
                     # Removing Old Python Scripts
                     printMainMessage("Removing Old Scripts..")
                     for i in os.listdir(resources_fold):
@@ -1473,7 +1475,7 @@ if __name__ == "__main__":
         expected_app_paths["OverallInstall"] = org_expected_app_path
         if main_os == "Darwin":
             expected_app_paths["Darwin"] = [
-                os.path.join(org_expected_app_path, "OrangeBlox.app/Contents/MacOS/OrangeBlox.app"), 
+                os.path.join(org_expected_app_path, "OrangeBlox.app"), 
                 os.path.join(org_expected_app_path, "OrangeBlox.app"), 
                 os.path.join(org_expected_app_path, "Play Roblox.app"), 
                 os.path.join(org_expected_app_path, "Run Studio.app")
@@ -1490,7 +1492,7 @@ if __name__ == "__main__":
             expected_app_paths["OverallInstall"] = expected_app_path
             if main_os == "Darwin":
                 expected_app_paths["Darwin"] = [
-                    os.path.join(expected_app_path, "OrangeBlox.app/Contents/MacOS/OrangeBlox.app"), 
+                    os.path.join(expected_app_path, "OrangeBlox.app"),  
                     os.path.join(expected_app_path, "OrangeBlox.app"), 
                     os.path.join(expected_app_path, "Play Roblox.app"), 
                     os.path.join(expected_app_path, "Run Studio.app")
@@ -1503,17 +1505,17 @@ if __name__ == "__main__":
                     os.path.join(expected_app_path)
                 ]
         else: expected_app_paths = sma
-    RFFI.orangeblox_mode = True
+    rbx.orangeblox_mode = True
     if expected_app_path and (main_os == "Darwin" and os.path.exists(os.path.join(expected_app_paths[main_os][1], "Contents", "Resources", "Versions")) or os.path.exists(os.path.join(expected_app_paths[main_os][0], "Versions"))):
         versions_folder = os.path.join(expected_app_paths[main_os][0], "Versions")
         if main_os == "Darwin": versions_folder = os.path.join(pip_class.getUserFolder(), "Library", "OrangeBlox", "Versions")
         main_config = getSettings(directory=os.path.join(expected_app_paths[main_os][0], "Configuration.json"))
-        RFFI.windows_versions_dir = versions_folder
-        RFFI.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
-        RFFI.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
-        RFFI.macOS_dir = os.path.join(versions_folder, "Roblox.app")
-        RFFI.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
-        RFFI.macOS_installedPath = os.path.join(versions_folder)
+        rbx.windows_versions_dir = versions_folder
+        rbx.windows_player_folder_name = main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
+        rbx.windows_studio_folder_name = main_config.get("EFlagBootstrapRobloxStudioInstallFolderName", "com.roblox.robloxstudio")
+        rbx.macOS_dir = os.path.join(versions_folder, "Roblox.app")
+        rbx.macOS_studioDir = os.path.join(versions_folder, "Roblox Studio.app")
+        rbx.macOS_installedPath = os.path.join(versions_folder)
         installed_roblox_version = handler.getCurrentClientVersion()
         if installed_roblox_version["success"] == True:
             installed_roblox_studio_version = handler.getCurrentClientVersion(studio=True)
@@ -1581,7 +1583,7 @@ if __name__ == "__main__":
                             printMainMessage("Download Success! Extracting ZIP now!")
                             temp_installer_path = os.path.abspath(os.path.join(cur_path, "..", "OrangeBloxInstaller"))
                             makedirs(temp_installer_path)
-                            zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Installer.zip"), temp_installer_path, ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                            zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Installer.zip"), temp_installer_path, ["Main.py", "RobloxManager.py", "OrangeAPI.py", "Configuration.json", "Apps"])
                             if zip_extract.returncode == 0:
                                 printMainMessage("Extracted successfully! Running Installer!")
                                 subprocess.run(args=[sys.executable, os.path.join(temp_installer_path, "Install.py")], check=False)
@@ -1687,7 +1689,7 @@ if __name__ == "__main__":
                                     if download_update.ok:
                                         printMainMessage("Download Success! Extracting ZIP now!")
                                         makedirs(f"{cur_path}/Update/")
-                                        zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), f"{cur_path}/Update/", ["Main.py", "RobloxFastFlagsInstaller.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                                        zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Update.zip"), f"{cur_path}/Update/", ["Main.py", "RobloxManager.py", "OrangeAPI.py", "Configuration.json", "Apps"])
                                         if zip_extract.returncode == 0:
                                             printMainMessage("Extracted successfully! Installing Files!")
                                             for file in os.listdir(f"{cur_path}/Update/"):
@@ -1953,7 +1955,7 @@ if __name__ == "__main__":
                         if repair_mode == False:
                             printMainMessage("Preparing to reinstall Roblox..")
                             handler.temporaryResetCustomizableVariables()
-                            handler.installRoblox(debug=True, downloadInstaller=True, downloadChannel=None, copyRobloxInstallerPath=(f"{RFFI.windows_dir}\\RobloxPlayerInstaller.exe" if main_os == "Windows" else f"{RFFI.macOS_dir}{RFFI.macOS_beforeClientServices}RobloxPlayerInstaller.app"))
+                            handler.installRoblox(debug=True, downloadInstaller=True, downloadChannel=None, copyRobloxInstallerPath=(f"{rbx.windows_dir}\\RobloxPlayerInstaller.exe" if main_os == "Windows" else f"{rbx.macOS_dir}{rbx.macOS_beforeClientServices}RobloxPlayerInstaller.app"))
                             printSuccessMessage("Successfully uninstalled OrangeBlox and reinstalled Roblox!")
                             input("> ")
                     else:
@@ -2160,11 +2162,8 @@ if __name__ == "__main__":
     if update_mode == True:
         if main_os == "Darwin":
             if os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
-                if not pip_class.getIfProcessIsOpened("/Terminal.app/Contents/MacOS/Terminal"):
-                    printMainMessage("Opening Terminal.app in order for console to show..")
-                    subprocess.Popen(["/usr/bin/open", "-j", "-F", "-a", "/System/Applications/Utilities/Terminal.app"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 printMainMessage("Loading OrangeBlox executable!")
-                subprocess.Popen(["/usr/bin/open", "-n", "-a", os.path.join(sma[main_os][1], "Contents", "MacOS", "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox")], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                subprocess.Popen(["/usr/bin/open", "-a", sma[main_os][1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else: printErrorMessage("Bootstrap Launch Failed: App is not installed.")
         elif main_os == "Windows":
             generated_app_path = sma[main_os][0]

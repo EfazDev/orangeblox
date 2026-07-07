@@ -1,5 +1,5 @@
 """
-PyKits v1.8.7 | Made by Efaz from efaz.dev
+PyKits v1.8.8 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -20,7 +20,6 @@ colors_class = Colors()
 ```
 
 However! Classes may depend on other classes. Use this resource list:
-    curl: typing (module)
     (request, requests, Requests, Request): typing (module)
     (pip, Pip): typing (module), request
     (plist, Plist): typing (module)
@@ -39,7 +38,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.7"
+__version__ = "1.8.8"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -51,7 +50,6 @@ __all__ = [
     "request", 
     "Pip",
     "pip", 
-    "curl",
     "Plist",
     "plist", 
     "Colors", 
@@ -72,412 +70,6 @@ __all__ = [
 import typing
 
 # PyKits Classes
-class curl:
-    """
-    A class that allows you to make HTTP requests using the curl command line tool.
-    """
-    class Response:
-        text: str = ""
-        json: typing.Union[typing.Dict, typing.List, None] = None
-        ipv4: typing.List[str] = []
-        ipv6: typing.List[str] = []
-        redirected_urls: typing.List[str] = []
-        port: int = 0
-        host: str = ""
-        attempted_ip: str = ""
-        status_code: int = 0
-        ssl_verified: bool = False
-        ssl_issuer: str = ""
-        ssl_subject: str = ""
-        tls_version: str = ""
-        headers: typing.Dict[str, str] = {}
-        http_version: str = ""
-        path: str = ""
-        url: str = ""
-        method: str = ""
-        scheme: str = ""
-        redirected: bool = False
-        ok: bool = False
-        __raw_stderr__: str = ""
-    class FileDownload(Response):
-        returncode = 0
-        path = ""
-    class TimedOut(Exception):
-        def __init__(self, url: str, time: float): super().__init__(f"Connecting to URL ({url}) took too long to respond in {time}s!")
-    class ProcessError(Exception):
-        def __init__(self, url: str, exception: Exception): super().__init__(f"Something went wrong connecting to URL ({url})! This was a problem created by subprocess. Exception: {str(exception)}")
-    class DownloadError(Exception):
-        def __init__(self, path: str, proc): super().__init__(f"Unable to download file at {path} with return code {proc.returncode}!")
-    class UnknownResponse(Exception):
-        def __init__(self, url: str, exception: Exception): super().__init__(f"Something went wrong processing the response from URL ({url})! Exception: {str(exception)}")
-    class OpenContext:
-        val = None
-        def __init__(self, val): self.val = val
-        def __enter__(self): return self.val
-        def __exit__(self, exc_type, exc_val, exc_tb): pass
-    class DownloadStatus:
-        speed: str=""
-        downloaded: str=""
-        downloaded_bytes: int=0
-        total_size: str=""
-        percent: int=0
-        def __init__(self, percent: int=0, speed: str="", total_size: str="", downloaded: str="", downloaded_bytes: int=0): self.speed = speed; self.downloaded = downloaded; self.percent = percent; self.downloaded_bytes = downloaded_bytes; self.total_size = total_size
-    __DATA__ = typing.Union[typing.Dict, typing.List, str]
-    __AUTH__ = typing.List[str]
-    __HEADERS__ = typing.Dict[str, str]
-    __COOKIES__ = typing.Union[typing.Dict[str, str], str]
-    def __init__(self):
-        import subprocess
-        import json
-        import os
-        import re
-        import shutil
-        import time
-        import socket
-        import threading
-        import urllib.request
-        from urllib.parse import urlparse
-        import platform
-        self._subprocess = subprocess
-        self._json = json
-        self._os = os
-        self._re = re
-        self._shutil = shutil
-        self._socket = socket
-        self._time = time
-        self._threading = threading
-        self._urlreq = urllib.request
-        self._urlparse = urlparse
-        self._platform = platform
-        self._main_os = platform.system()
-    def __bool__(self): return self.get_if_connected()
-    def __str__(self): return self.get_curl()
-    def _make_request(self, method: str, url: str, data: __DATA__=None, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        try:
-            method = method.upper()
-            if not self.get_if_connected():
-                while not self.get_if_connected(): self._time.sleep(0.5)
-            cmd = [self.get_curl(), "-v", "--compressed"]
-            if method != "GET": cmd += ["-X", method]
-            cmd += self.format_headers(headers)
-            cmd += self.format_auth(auth)
-            cmd += self.format_cookies(cookies)
-            if method not in ["GET", "DELETE", "HEAD"] and data is not None: cmd += self.format_data(data)
-            cmd.append(url)
-            curl_res = self._subprocess.run(cmd, stdout=self._subprocess.PIPE, stderr=self._subprocess.PIPE, timeout=timeout)
-            if type(curl_res) is self._subprocess.CompletedProcess:
-                new_response = self.Response()
-                stderr = curl_res.stderr.decode("utf-8", errors="ignore").strip()
-                processed_stderr = self.process_stderr(stderr)
-                for i, v in processed_stderr.items(): setattr(new_response, i, v)
-                new_response.url = url
-                new_response.text = curl_res.stdout.decode("utf-8", errors="ignore").strip()
-                new_response.__raw_stderr__ = stderr
-                new_response.method = method
-                new_response.scheme = self.get_url_scheme(url)
-                new_response.path = self.get_url_path(url)
-                new_response.redirected_urls = [url]
-                try: new_response.json = self._json.loads(new_response.text)
-                except Exception as e: pass
-                if self.get_if_redirect(new_response.status_code) and follow_redirects == True and new_response.headers.get("location"): 
-                    req = self._make_request(method, new_response.headers.get("location"), data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-                    req.redirected = True
-                    req.redirected_urls = [url] + req.redirected_urls
-                    return req
-                elif self.get_if_cooldown(new_response.status_code) and loop_429 == True and ((1 if loop_count == -1 else loop_count) >= 1):
-                    self._time.sleep(loop_timeout)
-                    return self._make_request(method, url, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=True, loop_429=loop_429, loop_count=(loop_count-1 if loop_count != -1 else loop_count), loop_timeout=loop_timeout)
-                return new_response
-            elif type(curl_res) is self._subprocess.TimeoutExpired: raise self.TimedOut(url, timeout)
-            elif type(curl_res) is self._subprocess.SubprocessError: raise self.ProcessError(url, curl_res)
-            else: raise self.UnknownResponse(url, curl_res)
-        except self._subprocess.TimeoutExpired: raise self.TimedOut(url, timeout)
-        except self._subprocess.SubprocessError as curl_res: raise self.ProcessError(url, curl_res)
-        except Exception as e: raise self.UnknownResponse(url, e)
-    def get(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="GET", url=url, data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def post(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="POST", url=url, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def patch(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="PATCH", url=url, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def put(self, url: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="PUT", url=url, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def delete(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="DELETE", url=url, data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def head(self, url: str, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method="HEAD", url=url, data=None, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def custom(self, url: str, method: str, data: __DATA__, headers: __HEADERS__={}, cookies: __COOKIES__={}, auth: __AUTH__=[], timeout: float=30.0, follow_redirects: bool=False, loop_429: bool=False, loop_count: int=-1, loop_timeout: int=1) -> Response:
-        return self._make_request(self, method=method, url=url, data=data, headers=headers, cookies=cookies, auth=auth, timeout=timeout, follow_redirects=follow_redirects, loop_429=loop_429, loop_count=loop_count, loop_timeout=loop_timeout)
-    def open(self, *k, **s) -> OpenContext:
-        mai = self.get(*k, **s)
-        return self.OpenContext(mai)
-    def download(self, path: str, output: str, check: bool=False, delete_existing: bool=True, submit_status=None, gradual: bool=True) -> FileDownload:
-        if not self.get_if_connected():
-            while not self.get_if_connected(): self._time.sleep(0.5)
-        if self._os.path.exists(output) and delete_existing == False: raise FileExistsError(f"This file already exists in {output}!")
-        elif self._os.path.exists(output) and self._os.path.isdir(output): self._shutil.rmtree(output, ignore_errors=True)
-        elif self._os.path.exists(output) and self._os.path.isfile(output): self._os.remove(output)
-        download_proc = self._subprocess.Popen([self.get_curl(), "-v", "--progress-meter", "-L", "-o", output, path], shell=False, bufsize=1, universal_newlines=True, stderr=self._subprocess.PIPE, stdout=self._subprocess.PIPE)
-        stderr_lines = []
-        before_bytes = 0
-        new_t = 0
-        while True:
-            line = download_proc.stderr.readline()
-            if not line: break
-            stderr_lines.append(line)
-            if submit_status:
-                stripped_line = line.lstrip()
-                if stripped_line and stripped_line[0].isdigit():
-                    progress = self.process_download_status(line)
-                    if progress:
-                        if gradual == True:
-                            if progress.percent < 100:
-                                def pro(tar_prog, before_bytes, target_t):
-                                    for i in range(100):
-                                        byte_target = int(before_bytes+((tar_prog.downloaded_bytes-before_bytes)*((i+1)/100)))
-                                        total_size_bytes = self.format_size_to_bytes(tar_prog.total_size)
-                                        perc_target = int((byte_target/total_size_bytes)*100) if byte_target != 0 or total_size_bytes != 0 else 0
-                                        if new_t != target_t: return
-                                        submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=tar_prog.total_size, speed=tar_prog.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
-                                        if new_t != target_t: return
-                                        self._time.sleep(0.01)
-                                new_t += 1
-                                self._threading.Thread(target=pro, args=[progress, before_bytes, new_t], daemon=True).start()
-                                before_bytes = progress.downloaded_bytes
-                            elif before_bytes < self.format_size_to_bytes(progress.total_size):
-                                new_t += 1
-                                next_tar = self.format_size_to_bytes(progress.total_size)
-                                for i in range(10):
-                                    byte_target = int(before_bytes+((next_tar-before_bytes)*((i+1)/10)))
-                                    total_size_bytes = self.format_size_to_bytes(progress.total_size)
-                                    perc_target = int((byte_target/total_size_bytes)*100) if byte_target != 0 or total_size_bytes != 0 else 0
-                                    submit_status.submit(self.DownloadStatus(percent=perc_target, total_size=progress.total_size, speed=progress.speed, downloaded_bytes=byte_target, downloaded=self.format_bytes_to_size(byte_target)))
-                                    self._time.sleep(0.01)
-                                before_bytes = next_tar
-                            else:
-                                new_t += 1
-                                before_bytes = progress.downloaded_bytes
-                                submit_status.submit(progress)
-                        else:
-                            before_bytes = progress.downloaded_bytes
-                            submit_status.submit(progress)
-        download_proc.wait() 
-        if download_proc.returncode == 0: 
-            s = self.FileDownload()
-            s.returncode = 0
-            s.path = output
-            s.url = path
-            s.method = "GET"
-            s.scheme = self.get_url_scheme(path)
-            s.path = self.get_url_path(path)
-            s.__raw_stderr__ = "".join(stderr_lines)
-            processed_stderr = self.process_stderr(s.__raw_stderr__)
-            for i, v in processed_stderr.items(): setattr(s, i, v)
-            return s
-        else: 
-            if check == True: raise self.DownloadError(path, download_proc)
-            else: 
-                s = self.FileDownload()
-                s.returncode = download_proc.returncode
-                s.path = None
-                s.url = path
-                s.method = "GET"
-                s.scheme = self.get_url_scheme(path)
-                s.path = self.get_url_path(path)
-                s.__raw_stderr__ = "".join(stderr_lines)
-                processed_stderr = self.process_stderr(s.__raw_stderr__)
-                for i, v in processed_stderr.items(): setattr(s, i, v)
-                return s
-    def get_curl(self):
-        pos_which = self._shutil.which("curl")
-        if self._os.path.exists(pos_which): return pos_which
-        elif self._main_os == "Windows" and self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl.exe")
-        elif self._os.path.exists(self._os.path.join(cur_path, "curl")): return self._os.path.join(cur_path, "curl", "curl")
-        else: 
-            cur_path = self._os.path.dirname(self._os.path.abspath(__file__))
-            if self._main_os == "Darwin": return None
-            elif self._main_os == "Windows":
-                pip_class = pip()
-                if self._platform.architecture()[0] == "32bit": self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win32-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
-                else: self._urlreq.urlretrieve("https://curl.se/windows/latest.cgi?p=win64-mingw.zip", self._os.path.join(cur_path, "curl_download.zip"))
-                if self._os.path.exists(self._os.path.join(cur_path, "curl_download.zip")):
-                    unzip_res = pip_class.unzipFile(self._os.path.join(cur_path, "curl_download.zip"), self._os.path.join(cur_path, "curl"), ["curl.exe"])
-                    if unzip_res.returncode == 0: return self._os.path.join(cur_path, "curl", "curl.exe")
-                    else: return None 
-                else: return None 
-            else: return None
-    def get_if_ok(self, code: int): return int(code) < 300 and int(code) >= 200
-    def get_if_redirect(self, code: int): return int(code) < 400 and int(code) >= 300
-    def get_if_cooldown(self, code: int): return int(code) == 429
-    def get_if_connected(self):
-        try: self._socket.create_connection(("8.8.8.8", 443), timeout=3).close(); return True # Connect to Google failed?
-        except Exception as e: return False
-    def get_url_scheme(self, url: str): 
-        obj = self._urlparse(url)
-        return obj.scheme
-    def get_url_path(self, url: str):
-        obj = self._urlparse(url)
-        if obj.query == "": return obj.path
-        else: return obj.path + "?" + obj.query
-    def format_headers(self, headers: typing.Dict[str, str]={}):
-        formatted = []
-        for i, v in headers.items(): formatted.append("-H"); formatted.append(f"{i}: {v}")
-        return formatted
-    def format_cookies(self, cookies: typing.Union[typing.Dict[str, str], str]={}):
-        if type(cookies) is str: return ["-b", cookies]
-        else:
-            formatted = []
-            for i, v in cookies.items(): formatted.append("-b"); formatted.append(f"{i}={v}")
-            return formatted
-    def format_auth(self, auth: typing.List[str]):
-        if len(auth) == 2: return ["-u", f"{auth[0]}:{auth[1]}"]
-        else: return []
-    def format_data(self, data: typing.Union[typing.Dict, typing.List, str]):
-        is_json = False
-        if type(data) is dict or type(data) is list: data = self._json.dumps(data); is_json = True
-        if data: 
-            if is_json == True: return ["-d", data, "-H", "Content-Type: application/json"]
-            return ["-d", data]
-        else: return []
-    def format_params(self, data: typing.Dict[str, str]={}):
-        mai_query = ""
-        if len(data.keys()) > 0:
-            mai_query = "?"
-            for i, v in data.items(): mai_query = mai_query + f"{i}={v}"
-        return mai_query
-    def format_size_to_bytes(self, size_str: str):
-        size_str = size_str.upper()
-        try:
-            if size_str.endswith("K") or size_str.endswith("k"): return int(float(size_str[:-1]) * 1024)
-            if size_str.endswith("M"): return int(float(size_str[:-1]) * 1024**2)
-            if size_str.endswith("G"): return int(float(size_str[:-1]) * 1024**3)
-            if size_str.endswith("T"): return int(float(size_str[:-1]) * 1024**4)
-            return int(size_str)
-        except Exception: return 0
-    def format_bytes_to_size(self, size_bytes: int):
-        thresholds = [
-            (1024**4, "T"),
-            (1024**3, "G"),
-            (1024**2, "M"),
-            (1024, "k"),
-        ]
-        for factor, suffix in thresholds:
-            if size_bytes >= factor:
-                size = size_bytes / factor
-                return f"{size:.1f}{suffix}"
-        return str(size_bytes)
-    def process_stderr(self, stderr: str):
-        lines = stderr.split("\n")
-        data = {
-            "ipv4": [],
-            "ipv6": [],
-            "port": 0,
-            "host": "",
-            "attempted_ip": "",
-            "status_code": 0,
-            "ssl_verified": False,
-            "ssl_issuer": "",
-            "ssl_subject": "",
-            "tls_version": "",
-            "headers": {},
-            "http_version": "",
-            "ok": False
-        }
-        for i in lines:
-            i = i.rstrip("\r")
-            if self._main_os == "Windows": # Schannel based cUrl
-                status_line_match = self._re.search(r"< HTTP/([\d.]+) (\d+)", i)
-                if status_line_match:
-                    data["http_version"] = status_line_match.group(1)
-                    data["status_code"] = int(status_line_match.group(2))
-                    data["ok"] = self.get_if_ok(data["status_code"])
-                elif i.startswith("< "):
-                    sl = i.replace("< ", "", 1).split(": ")
-                    if len(sl) > 1: data["headers"][sl[0]] = sl[1].strip()
-                elif i == "* schannel: SSL/TLS connection renegotiated":
-                    data["ssl_verified"] = True
-                    data["ssl_issuer"] = "CN=Schannel Placeholder Certificate"
-                    data["ssl_subject"] = f'CN={data["host"]}'
-                    data["tls_version"] = "1.2"
-                elif i.startswith("* IPv4: "):
-                    sl = i.split("* IPv4: ")
-                    if len(sl) > 1: 
-                        sl.pop(0); data["ipv4"] = sl[0].split(", ")
-                        if data["ipv4"][0] == "(none)": data["ipv4"] = []
-                elif i.startswith("* IPv6: "):
-                    sl = i.split("* IPv6: ")
-                    if len(sl) > 1: 
-                        sl.pop(0); data["ipv6"] = sl[0].split(", ")
-                        if data["ipv6"][0] == "(none)": data["ipv6"] = []
-                elif i.startswith("* Connected to ") and "port" in i:
-                    sl = i.split("port ")
-                    if len(sl) > 1: sl.pop(0); data["port"] = int(sl[0])
-                    sl = i.split("Connected to ")
-                    if len(sl) > 1: sl.pop(0); data["host"] = sl[0].split(" ")[0]
-                    sl = i.split("(")
-                    if len(sl) > 1: sl.pop(0); data["attempted_ip"] = sl[0].split(")")[0]
-            else: # OpenSSL based cUrl
-                status_line_match = self._re.search(r"< HTTP/([\d.]+) (\d+)", i)
-                if status_line_match:
-                    data["http_version"] = status_line_match.group(1)
-                    data["status_code"] = int(status_line_match.group(2))
-                    data["ok"] = self.get_if_ok(data["status_code"])
-                elif i.startswith("< "):
-                    sl = i.replace("< ", "", 1).split(": ")
-                    if len(sl) > 1: data["headers"][sl[0]] = sl[1].strip()
-                elif i.startswith("* IPv4: "):
-                    sl = i.split("* IPv4: ")
-                    if len(sl) > 1: 
-                        sl.pop(0); data["ipv4"] = sl[0].split(", ")
-                        if data["ipv4"][0] == "(none)": data["ipv4"] = []
-                elif i.startswith("* IPv6: "):
-                    sl = i.split("* IPv6: ")
-                    if len(sl) > 1: 
-                        sl.pop(0); data["ipv6"] = sl[0].split(", ")
-                        if data["ipv6"][0] == "(none)": data["ipv6"] = []
-                elif i.startswith("* Connected to ") and "port" in i:
-                    sl = i.split("port ")
-                    if len(sl) > 1: sl.pop(0); data["port"] = int(sl[0])
-                    sl = i.split("Connected to ")
-                    if len(sl) > 1: sl.pop(0); data["host"] = sl[0].split(" ")[0]
-                    sl = i.split("(")
-                    if len(sl) > 1: sl.pop(0); data["attempted_ip"] = sl[0].split(")")[0]
-                elif "SSL certificate verify ok." in i: data["ssl_verified"] = True
-                elif "* SSL connection using TLSv" in i:
-                    sl = i.split("* SSL connection using TLSv")
-                    if len(sl) > 1: sl.pop(0); data["tls_version"] = sl[0].split(" /")[0]
-                elif "*  issuer: " in i:
-                    sl = i.split("*  issuer: ")
-                    if len(sl) > 1: sl.pop(0); data["ssl_issuer"] = sl[0]
-                elif "*  subject: " in i:
-                    sl = i.split("*  subject: ")
-                    if len(sl) > 1: sl.pop(0); data["ssl_subject"] = sl[0]
-        return data
-    def process_bytes_to_str(self, bytes: bytes): return bytes.decode("utf-8", errors="ignore")
-    def process_download_status(self, download_stat_line: str):
-        pattern = self._re.compile(
-            r"^\s*(\d{1,3})\s+"  # Percent
-            r"(\S+)\s+"          # Total size
-            r"\d{1,3}\s+"        # Percent downloaded
-            r"(\S+)\s+"          # Downloaded size
-            r"\S+\s+"            # Xferd percent
-            r"\S+\s+"            # Xferd size
-            r"\S+\s+"            # Avg Dload Speed
-            r"\S+\s+"            # Avg Upload Speed
-            r"\S+\s+"            # Total time
-            r"\S+\s+"            # Time spent
-            r"\S+\s+"            # Time left
-            r"(\S+)\s*$"         # Current speed
-        )
-        match = pattern.search(download_stat_line)
-        if match:
-            percent = int(match.group(1))
-            total_size = match.group(2)
-            downloaded = match.group(3)
-            speed = match.group(4)
-            downloaded_bytes = self.format_size_to_bytes(downloaded)
-            return self.DownloadStatus(speed=speed, downloaded=downloaded, downloaded_bytes=downloaded_bytes, percent=percent, total_size=total_size)
-        return None
 class request:
     """
     A class that allows you to make HTTP requests using the Python runtime.
@@ -803,11 +395,11 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.7")
+            headers.setdefault("user-agent", f"PyKits/1.8.8")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
-            if isinstance(data, self.__DATA__) and method in ["POST", "PUT", "PATCH"]:
+            if isinstance(data, self.__DATA__) and method in ("POST", "PUT", "PATCH"):
                 if len(files) > 0:
                     boundary = f"----WebKitFormBoundary{self._uuid.uuid4().hex}"
                     body = []

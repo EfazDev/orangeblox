@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.5.0u
+# v2.6.0a
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.5.0u
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.6.0a
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.5.0u", "bootstrap_version": "2.5.0u"}
+current_version = {"version": "2.6.0a", "bootstrap_version": "2.6.0a"}
 request_queues = {}
 cached_information = {}
 colors_class = Colors()
@@ -75,7 +75,7 @@ class Request:
                 self._completion_event = threading.Event()
                 request_queues[orangeapi_details.mod_script_name].put(self)
                 timeout_sec = 5.0
-                if requested_function in ["reprepareRoblox", "unzipFile", "requestInput"]: timeout_sec = None
+                if requested_function in ("reprepareRoblox", "unzipFile", "requestInput"): timeout_sec = None
                 is_completed = self._completion_event.wait(timeout=timeout_sec)
                 if is_completed: self.success = (self.code == 0)
                 else:
@@ -112,7 +112,7 @@ class Response:
         else: raise InvalidRequest()
 class OrangeAPI:
     """
-    The OrangeAPI is an API that Mod Scripts can use for getting or setting data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxFastFlagInstaller.py, etc.]
+    The OrangeAPI is an API that Mod Scripts can use for getting or setting data, store configurations, set a Discord presence using the BloxstrapRPC and more! It is automatically added as an variable during runtime as "OrangeAPI" For Visual Studio Code users, you may use the following line of code to get a reference! [You must have it opened to the OrangeBlox folder where it contains Main.py, RobloxManager.py, etc.]
    
     **OrangeAPI is only supported on OrangeBlox v2.0.0+. Any other versions like Efaz's Roblox Bootstrap v1.5.9 or below is unable to use this API.**
     **Please use the Efaz's Roblox Bootstrap API in order to support Efaz's Roblox Bootstrap (EfazRobloxBootstrapAPI) v1.3.0-v1.5.9.**
@@ -953,7 +953,7 @@ class OrangeAPI:
         **This function is only available in OrangeAPI v2.1.0+**
 
         ```python
-        is_supported = OrangeAPI.getIfOSSupported(windows_build=17763, macos_version=(10,13,0)) # -> True
+        is_supported = OrangeAPI.getIfOSSupported(windows_build=17763, macos_version=(10,15,0)) # -> True
         ```
         """
         return Request(self, self.__orangeapi_details__, "getIfOSSupported", {"windows_build": windows_build, "macos_version": macos_version}).generateResponse().response

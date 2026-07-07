@@ -28,12 +28,13 @@ NUITKA = 4
 CLANGPLUSPLUS = 5
 CLANG = 6
 
-args = ()
+args = []
 variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
 
+os.environ["MACOSX_DEPLOYMENT_TARGET"] = "10.15"
 def init(*argv):
     global args
     args = argv
@@ -51,15 +52,13 @@ def macos_codesign():
 macos = {
     "intel": [
         [PRINT, "Building Clang Package for OrangeLoader.."],
-        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
-        [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader"]],
+        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-mmacosx-version-min=10.15", "-arch", "x86_64", "-g0", "-o", "./Apps/Storage/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
+        [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader"]],
         [PRINT, "Building Clang Package for OrangePlayRoblox.."],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
         [PRINT, "Building Clang Package for OrangeRunStudio.."],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader", "./Apps/Storage/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"]],
         [PRINT, "Signing Package.."],
-        [SET_VAR, "pkg", "./Apps/Storage/OrangeLoader.app/"],
-        [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangePlayRoblox.app/"],
         [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],
@@ -70,15 +69,13 @@ macos = {
     ],
     "arm": [
         [PRINT, "Building Clang Package for OrangeLoader.."],
-        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-arch", "x86_64", "-g0", "-arch", "arm64", "-o", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
-        [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader"]],
+        [RUN, CLANGPLUSPLUS, ["-framework", "Cocoa", "-std=c++17", "-mmacosx-version-min=10.15", "-arch", "x86_64", "-g0", "-arch", "arm64", "-o", "./Apps/Storage/OrangeLoader", "./Apps/Building/Clang/OrangeLoader.mm"]],
+        [RUN, REGULAR, ["/usr/bin/strip", "-S", "./Apps/Storage/OrangeLoader"]],
         [PRINT, "Building Clang Package for OrangePlayRoblox.."],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader", "./Apps/Storage/OrangePlayRoblox.app/Contents/MacOS/OrangePlayRoblox"]],
         [PRINT, "Building Clang Package for OrangeRunStudio.."],
-        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader.app/Contents/MacOS/OrangeLoader", "./Apps/Storage/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"]],
+        [RUN, REGULAR, ["/bin/cp", "./Apps/Storage/OrangeLoader", "./Apps/Storage/OrangeRunStudio.app/Contents/MacOS/OrangeRunStudio"]],
         [PRINT, "Signing Package.."],
-        [SET_VAR, "pkg", "./Apps/Storage/OrangeLoader.app/"],
-        [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangePlayRoblox.app/"],
         [LOOP, macos_codesign],
         [SET_VAR, "pkg", "./Apps/Storage/OrangeRunStudio.app/"],

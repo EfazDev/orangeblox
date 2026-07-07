@@ -8,27 +8,106 @@ except:
     print("Disabled Visual Studio Code Mode")
 
 icon_file = "../../../Images/AppIcon.icns"
-current_version = {"version": "2.5.0u"}
-
+current_version = {"version": "2.6.0a"}
 main_plist = {
-    "CFBundleExecutable": "OrangeBlox",
-    "CFBundleIdentifier": "dev.efaz.orangeblox",
-    "CFBundleURLTypes": [],
-    "CFBundleName": "OrangeBlox",
+    "CFBundleDevelopmentRegion": "en-US",
     "CFBundleDisplayName": "OrangeBlox",
-    "CFBundleVersion": current_version["version"],
-    "LSMinimumSystemVersion": "10.13",
+    "CFBundleExecutable": "OrangeBlox",
     "CFBundleIconFile": "AppIcon.icns",
+    "CFBundleIdentifier": "dev.efaz.orangeblox",
+    "CFBundleInfoDictionaryVersion": "6.0",
+    "CFBundleName": "OrangeBlox",
+    "CFBundlePackageType": "APPL",
     "CFBundleShortVersionString": current_version["version"],
-    "CFBundleSignature": "????",
+    "CFBundleURLTypes": [
+        {
+            "CFBundleTypeRole": "Viewer",
+            "CFBundleURLName": "ReplicateRobloxPlayer",
+            "CFBundleURLSchemes": [
+                "roblox-player",
+                "roblox-studio",
+                "roblox-studio-auth",
+                "roblox"
+            ]
+        },
+        {
+            "CFBundleTypeRole": "Viewer",
+            "CFBundleURLName": "BootstrapURLScheme",
+            "CFBundleURLSchemes": [
+                "efaz-bootstrap",
+                "orangeblox"
+            ]
+        }
+    ],
+    "CFBundleDocumentTypes": [
+        {
+            "CFBundleTypeIconSystemGenerated": 1,
+            "CFBundleTypeName": "Roblox Place",
+            "CFBundleTypeRole": "Editor",
+            "LSHandlerRank": "Owner",
+            "LSItemContentTypes": [
+                "com.Roblox.RobloxStudio-document"
+            ],
+            "CFBundleTypeExtensions": [
+                "rbxl",
+                "rbxlx"
+            ]
+        },
+        {
+            "CFBundleTypeIconSystemGenerated": 1,
+            "CFBundleTypeName": "OrangeBlox File",
+            "CFBundleTypeRole": "Editor",
+            "LSHandlerRank": "Owner",
+            "LSItemContentTypes": [
+                "dev.efaz.orangeblox.filetype"
+            ],
+            "CFBundleTypeExtensions": [
+                "obx"
+            ]
+        }
+    ],
+    "UTExportedTypeDeclarations": [
+        {
+            "UTTypeConformsTo": [
+                "public.data"
+            ],
+            "UTTypeDescription": "Roblox Place",
+            "UTTypeIconFile": "",
+            "UTTypeIcons": {
+                "UTTypeIconText": ""
+            },
+            "UTTypeIdentifier": "com.Roblox.RobloxStudio-document",
+            "UTTypeTagSpecification": {
+                "public.filename-extension": [
+                    "rbxl",
+                    "rbxlx"
+                ]
+            }
+        },
+        {
+            "UTTypeConformsTo": [
+                "public.data"
+            ],
+            "UTTypeDescription": "OrangeBlox File",
+            "UTTypeIconFile": "",
+            "UTTypeIcons": {
+                "UTTypeIconText": ""
+            },
+            "UTTypeIdentifier": "dev.efaz.orangeblox.filetype",
+            "UTTypeTagSpecification": {
+                "public.filename-extension": [
+                    "obx"
+                ]
+            }
+        }
+    ],
+    "CFBundleVersion": current_version["version"],
     "LSApplicationCategoryType": "public.app-category.utilities",
-    "LSMultipleInstancesProhibited": False,
+    "LSMinimumSystemVersion": "10.15",
+    "LSMultipleInstancesProhibited": True,
+    "NSSupportsSuddenTermination": False,
     "NSAppSleepDisabled": True,
-    "NSAppleEventsUsageDescription": "OrangeBlox uses the Terminal to open the bootstrap with a window!",
-    "NSUserNotificationUsageDescription": "Enable Notifications for OrangeBlox in order to use Server Location notications!",
-    "NSDownloadsFolderUsageDescription": "This may be used to find your installation folder if it was installed inside the Downloads folder!",
-    "NSDocumentsFolderUsageDescription": "This may be used to find your installation folder if it was installed inside the Documents folder!",
-    "NSDesktopFolderUsageDescription": "This may be used to find your installation folder if it was installed inside the Desktop folder!"
+    "NSHighResolutionCapable": True
 }
 block_cipher = None
 
@@ -83,5 +162,5 @@ main_app = BUNDLE(
     bundle_identifier=main_plist["CFBundleIdentifier"],
     info_plist=main_plist,
     distpath="Apps/Building",
-    codesign_identity=None
+    codesign_identity="-"
 )

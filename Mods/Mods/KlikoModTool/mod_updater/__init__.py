@@ -1,2 +1,0 @@
-from mod_updater.check_for_mod_updates import check_for_mod_updates
-from mod_updater.update_mods import update_mods

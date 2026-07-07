@@ -37,7 +37,7 @@ def askForTask(func, *args, **kwargs):
     final_data = ms_socket.request("task", request_payload, timeout=10.0)
     if final_data is None: raise TimeoutError("Timed out waiting for ModScript to reply.")
     if isinstance(final_data, str):
-        if final_data in ["True", "False", "None"]: return eval(final_data)
+        if final_data in ("True", "False", "None"): return eval(final_data)
         if final_data.isdigit(): return int(final_data)
         try: return json.loads(final_data)
         except Exception: return final_data

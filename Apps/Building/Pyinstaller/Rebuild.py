@@ -28,12 +28,13 @@ PYINSTALLER = 3
 NUITKA = 4
 CLANGPLUSPLUS = 5
 
-args = ()
+args = []
 variables = {}
 cur_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../", "../", "../"))
 cwd = cur_path
 prefix_print = "Rebuild OrangeBlox @ "
 
+os.environ["MACOSX_DEPLOYMENT_TARGET"] = "10.15"
 def init(*argv):
     global args
     args = argv
@@ -51,14 +52,6 @@ def macos_clean_up():
         [RM_DIR, "./build/"],
         [PRINT, "Cleaning Up.."],
         [RUN, REGULAR, ["/bin/rm", "-rf", "./Apps/Building/OrangeBlox.app/", "./Apps/Building/OrangeBlox/", "./Apps/OrangeBloxMac/", "./__pycache__/"]],
-    ]
-def macos_codesign(): 
-    return 4, [
-        [RUN, REGULAR, ["/bin/rm", "-rf", "./Apps/Building/OrangeBlox.app/Contents/_CodeSignature/"]],
-        [RUN, REGULAR, ["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", "./Apps/Building/OrangeBlox.app"]],
-        [RUN, REGULAR, ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", "./Apps/Building/OrangeBlox.app"]],
-        [RUN, REGULAR, ["/usr/bin/xattr", "-cr", "./Apps/Building/OrangeBlox.app"]],
-        [RUN, REGULAR, ["/usr/bin/codesign", "-s", getArg(0, "-"), "--force", "--all-architectures", "--timestamp", "--deep", "./Apps/Building/OrangeBlox.app", "--entitlements", "./Apps/Storage/Entitlements.plist"]]
     ]
 def windows_rebuild():
     s = []
@@ -96,13 +89,11 @@ macos = {
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
         [RUN, PYINSTALLER, ["./Apps/Building/Pyinstaller/OrangeBlox_macOSIntel.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
-        [PRINT, "Signing Package.."],
-        [LOOP, macos_codesign],
         [PRINT, "Creating OrangeBloxMacIntel.zip.."],
         [CD, "./Apps/Building"],
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangeBlox.app"]],
         [CD, "../Storage"],
-        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
+        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMacIntel.zip", "OrangePlayRoblox.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Building/Pyinstaller/__pycache__"],
@@ -115,13 +106,11 @@ macos = {
         [FUNCTION, generate_script_hash],
         [PRINT, "Building Pyinstaller Package.."],
         [RUN, PYINSTALLER, ["./Apps/Building/Pyinstaller/OrangeBlox_macOS.spec", "--clean", "--distpath", "Apps/Building", "--noconfirm"]],
-        [PRINT, "Signing Package.."],
-        [LOOP, macos_codesign],
         [PRINT, "Creating OrangeBloxMac.zip.."],
         [CD, "./Apps/Building"],
         [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangeBlox.app"]],
         [CD, "../Storage"],
-        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeLoader.app", "OrangeRunStudio.app"]],
+        [RUN, REGULAR, ["/usr/bin/zip", "-r", "-y", "../OrangeBloxMac.zip", "OrangePlayRoblox.app", "OrangeRunStudio.app"]],
         [RESET_CD],
         [FUNCTION, macos_clean_up],
         [RM_DIR, "./Apps/Building/Pyinstaller/__pycache__"],
