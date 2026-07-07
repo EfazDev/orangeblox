@@ -90,24 +90,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `5a41f8c78c8fd63ca91fcd66727902d6` |
+| Main Bootstrap (Main.py) | `e3db033db1d024427a90280001eea2a2` |
 | Roblox Manager (RobloxManager.py) | `c109ef96b10be26923aaa9d592e8f8a6` |
 | Installer (Install.py) | `168710aa4420804f17503e57faff00fd` |
 | Bootstrap API (OrangeAPI.py) | `c15c457a49dad2df58cd40bfad698229` |
 | Bootstrap Loader (OrangeBlox.py) | `a663907b53ed332e23fbb057c3e90d5f` |
 | PyKits API (PyKits.py) | `734162e66131dd6c38e0529fc7609f01` |
 | Configuration Module (Modules/config.py) | `ffba388e2e71d4ede5da15492db26fa1` |
-| Menu Module (Modules/menu.py) | `ad7dbeff0852919ef968ff465d57d943` |
+| Menu Module (Modules/menu.py) | `7d37b376ce3ba8016b1cf0d0c0822a13` |
 | Mod Manager Module (Modules/modmanager.py) | `3c6a1fbde368fe172b7be7077649772b` |
 | Mod Scripts Module (Modules/modscripts.py) | `b896b7c685d35cb5c4ce30bb7779c274` |
 | Menu Options Module (Modules/options.py) | `c970865353d214b60066b2e7e7739065` |
-| Python Package Module (Modules/pkg.py) | `bf351bc6e10572c9ab54d0663bca4668` |
-| Printing/Logging Module (Modules/printing.py) | `c3193231613c8d19e9018a8a1a0f4893` |
+| Python Package Module (Modules/pkg.py) | `dfc708c8c38b3ff779de0069416e4e6e` |
+| Printing/Logging Module (Modules/printing.py) | `f43d6dced6d5ea4394ac70ce9f7439a8` |
 | Roblox Module (Modules/roblox.py) | `23ef5c962bd45b529affa044d01442a5` |
-| Settings Module (Modules/settings.py) | `ce3cd3d198ca005dd9c226367249a76f` |
+| Settings Module (Modules/settings.py) | `64caba68d251a2507d6d9593f5936b30` |
 | Startup Module (Modules/startup.py) | `af8be5d1c276ebf80559cccbfe6c387a` |
 | Utilities Module (Modules/utils.py) | `a7c8af7b314789b51278584c55499b50` |
-| Discord RPC Module (Modules/discord.py) | `b3cbac08af9284a597942727325909ae` |
+| Discord RPC Module (Modules/discord.py) | `6e37e76f4233107bd435eef1dba92834` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

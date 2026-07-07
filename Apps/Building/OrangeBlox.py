@@ -3,7 +3,6 @@ import subprocess
 import json
 import os
 import re
-import pty
 import threading
 import codecs
 import select
@@ -20,7 +19,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0a"}
+current_version = {"version": "2.6.0b"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -360,6 +359,7 @@ if __name__ == "__main__":
         f.close()
 
     if main_os == "Darwin":
+        import pty
         filtered_args = ""
         loaded_json = True
         use_shell = False
