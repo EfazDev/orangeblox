@@ -1,7 +1,7 @@
 # 
 # Roblox Manager
 # Made by Efaz from efaz.dev
-# v2.7.0
+# v2.7.1
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -33,7 +33,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.7.0"
+script_version = "2.7.1"
 
 # Base Functions 1
 def getLocalAppData():
@@ -3067,7 +3067,6 @@ class Handler:
                                                 if down_req.ok: downloaded_zip_files.append(i)
                                                 else:
                                                     printErrorMessage(f"Unable to install Roblox due to a download error.")
-                                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to install Roblox due to a download error.", 80)
                                                     if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                                     if cur_lock: cur_lock.release()
@@ -3092,7 +3091,6 @@ class Handler:
                                                         break
                                             if verified == False:
                                                 printErrorMessage(f"Unable to install Roblox due to a verification error.")
-                                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to install Roblox due to a verification error.", 80)
                                                 if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                                 if cur_lock: cur_lock.release()
@@ -3146,27 +3144,23 @@ class Handler:
                                                     except Exception as e: printErrorMessage(f"WebView2 has failed to be installed! Exception: {str(e)}")
                                         with open(os.path.join(installPath, "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
                                         with open(os.path.join(installPath, "AppSettings.xml"), "w", encoding="utf-8") as f: f.write('<?xml version="1.0" encoding="UTF-8"?><Settings><ContentFolder>content</ContentFolder><BaseUrl>https://www.roblox.com</BaseUrl></Settings>')
-                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
                                         printDebugMessage(debug, f"Successfully installed Roblox {client_label} to: {installPath} [Client: {cur_vers.get('client_version')}]")
                                         if cur_lock: cur_lock.release()
                                         return {"success": True}
                                     except Exception as e:
-                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
                                         printDebugMessage(debug, f"Unable to install Roblox Bundle: {str(e)}")
                                         if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                         if cur_lock: cur_lock.release()
                                         return {"success": False}
                                 else:
-                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                     printDebugMessage(debug, f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to fetch Roblox manifest file!", 100)
                                     if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                     if cur_lock: cur_lock.release()
                                     return {"success": False}
                             except Exception as e:
-                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to download and install Roblox {client_label} Bundle!", 100)
                                 printDebugMessage(debug, f"Unable to install Roblox Bundle: {str(e)}")
                                 if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
@@ -3219,14 +3213,12 @@ class Handler:
                                         with open(os.path.join(appPath, "Contents", "MacOS", "RobloxVersion.json"), "w", encoding="utf-8") as f: json.dump({"ClientVersion": cur_vers.get("client_version", "version-000000000000"), "AppVersion": cur_vers.get("hash", "0.000.0.0000000")}, f, indent=4)
                                         if submit_status: submit_status.submit(f"[BUNDLE] Successfully installed Roblox {client_label} Bundle!", 100)
                                         printDebugMessage(debug, f"Successfully installed Roblox to: {installPath} [Client: {cur_vers.get('client_version')}]")
-                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if cur_lock: cur_lock.release()
                                         return {"success": True}
                                     else:
                                         printDebugMessage(debug, f"Unable to extract {client_label} due to an error!")
                                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to extract Roblox {client_label}.", 100)
                                         if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
-                                        if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                         if cur_lock: cur_lock.release()
                                         return {"success": False}
                                 else:
@@ -3234,14 +3226,12 @@ class Handler:
                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to download Roblox {client_label}.", 100)
                                     if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
                                     if os.path.exists(os.path.join(installPath, zip_name)): os.remove(os.path.join(installPath, zip_name))
-                                    if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                     if cur_lock: cur_lock.release()
                                     return {"success": False}
                             except Exception as e:
                                 printDebugMessage(debug, f"Unable to download and install the Roblox {client_label}.\nException: {str(e)}")
                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Failed to download and install Roblox {client_label}.", 100)
                                 if os.path.exists(appPath): shutil.rmtree(appPath, ignore_errors=True)
-                                if alleged_path and os.path.exists(alleged_path): os.remove(alleged_path)
                                 if cur_lock: cur_lock.release()
                                 return {"success": False}
                     else:

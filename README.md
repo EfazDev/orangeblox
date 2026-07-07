@@ -90,24 +90,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Main Bootstrap (Main.py) | `93734d355da6c4a0612bafd6c1648977` |
+| Main Bootstrap (Main.py) | `0fe76b4b0268044f6729753e1b2e1614` |
 | Roblox Manager (RobloxManager.py) | `c109ef96b10be26923aaa9d592e8f8a6` |
 | Installer (Install.py) | `168710aa4420804f17503e57faff00fd` |
 | Bootstrap API (OrangeAPI.py) | `c15c457a49dad2df58cd40bfad698229` |
 | Bootstrap Loader (OrangeBlox.py) | `a663907b53ed332e23fbb057c3e90d5f` |
 | PyKits API (PyKits.py) | `734162e66131dd6c38e0529fc7609f01` |
-| Configuration Module (Modules/config.py) | `dd255f8fd3624e69448a32e8941cc511` |
-| Menu Module (Modules/menu.py) | `8db60a55f0b931e2492e3dbcf7a2ed6e` |
+| Configuration Module (Modules/config.py) | `7ba94b348c5e806f9881872bffccd05e` |
+| Menu Module (Modules/menu.py) | `fc3b730f9df468245bb59e694471b0c7` |
 | Mod Manager Module (Modules/modmanager.py) | `3c6a1fbde368fe172b7be7077649772b` |
 | Mod Scripts Module (Modules/modscripts.py) | `b896b7c685d35cb5c4ce30bb7779c274` |
 | Menu Options Module (Modules/options.py) | `c970865353d214b60066b2e7e7739065` |
-| Python Package Module (Modules/pkg.py) | `f5131a0785b349a90347bbd039158418` |
-| Printing/Logging Module (Modules/printing.py) | `504bd548d40260e938367a9f4daa6ed6` |
+| Python Package Module (Modules/pkg.py) | `e196446f0fd93fac19d0a068da7166e8` |
+| Printing/Logging Module (Modules/printing.py) | `3e54c15b8e01b4ff3a294be98a5e1147` |
 | Roblox Module (Modules/roblox.py) | `23ef5c962bd45b529affa044d01442a5` |
-| Settings Module (Modules/settings.py) | `47075b152bf381041f3e7f5263174fbd` |
+| Settings Module (Modules/settings.py) | `48968ef8e7ef3d317f7c161545ef7b4f` |
 | Startup Module (Modules/startup.py) | `af8be5d1c276ebf80559cccbfe6c387a` |
 | Utilities Module (Modules/utils.py) | `a7c8af7b314789b51278584c55499b50` |
-| Discord RPC Module (Modules/discord.py) | `299515b1de76f516a3c900390b34dc87` |
+| Discord RPC Module (Modules/discord.py) | `7775f2f3facc167875ca432ffa9c7852` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

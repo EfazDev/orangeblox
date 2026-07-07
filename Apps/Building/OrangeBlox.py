@@ -19,7 +19,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0c"}
+current_version = {"version": "2.6.0d"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
