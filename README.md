@@ -90,24 +90,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | MD5 Hash |
 | --- | --- |
-| Bootstrap API (OrangeAPI.py) | `10bc305131a67419f3edc1e682133754` |
+| Bootstrap API (OrangeAPI.py) | `5ef0b5f53e2e3c4380ec1f436dccffdd` |
 | PyKits API (PyKits.py) | `f4f1cf442988b03f883af3e73ec88c4d` |
 | Roblox Manager (RobloxManager.py) | `7f6b4e437e69c616fddfd35577a85eec` |
-| Installer (Install.py) | `0e8b2a2748c495cdfd59e16f7fe3a7af` |
-| Main Bootstrap (Main.py) | `dcf93b79d6c4eff158cff99833ec7ca4` |
-| Mod Manager Module (Modules/modmanager.py) | `c617774baf61a599b40e9689d0bb5baf` |
-| Menu Options Module (Modules/options.py) | `646cadfb9d19e783c4baafce7b5241f0` |
-| Startup Module (Modules/startup.py) | `5cf61b85cebee4e963b637da1159662e` |
-| Configuration Module (Modules/config.py) | `81b278ab5c2556428bdc5b1e2608499b` |
-| Mod Scripts Module (Modules/modscripts.py) | `af94e737282fdb9c3e80c5cf44d8172e` |
-| Discord RPC Module (Modules/discord.py) | `47d99f0dc71986576f1ff6a1a3d2eed6` |
-| Roblox Module (Modules/roblox.py) | `9e554e3f3195f579c45a5672b89d06d9` |
-| Menu Module (Modules/menu.py) | `170e58225b5ce3349827a1ed22662551` |
-| Utilities Module (Modules/utils.py) | `3f41b636a2270ee9846db740fc3b7a52` |
-| Settings Module (Modules/settings.py) | `48a2035b08c9af462aeeb7fc951658c3` |
-| Python Package Module (Modules/pkg.py) | `e3a5e339d1a97f269bea5651d9f2e3f0` |
-| Printing/Logging Module (Modules/printing.py) | `7c2f485914ca0b543448fd6296e346a3` |
-| Bootstrap Loader (OrangeBlox.py) | `188a0878804a44b61a416dbcddce34b2` |
+| Installer (Install.py) | `7e10bdc97b4db3795c801c0841bcab68` |
+| Main Bootstrap (Main.py) | `90761070facb25e1e28832fda041aac3` |
+| Mod Manager Module (Modules/modmanager.py) | `a57c91e99850d861cd6f8d1c01666ae8` |
+| Menu Options Module (Modules/options.py) | `00977deb5fdc729d877a9c8d5375ac40` |
+| Startup Module (Modules/startup.py) | `c5693418a48bdfaa7cbd0063445b782c` |
+| Configuration Module (Modules/config.py) | `a05ac932f0ec466c64a95d78800093bd` |
+| Mod Scripts Module (Modules/modscripts.py) | `7c4a2305d39310a2017c918dbfbe5641` |
+| Discord RPC Module (Modules/discord.py) | `4c8b8479489ce4add8630504db2ff480` |
+| Roblox Module (Modules/roblox.py) | `0b275d6d7ff464b8a2feb0c800c6b51e` |
+| Menu Module (Modules/menu.py) | `02647669822d1bb49a1451d54ccf5aae` |
+| Utilities Module (Modules/utils.py) | `2f8cd081caf62b89c2b013954c08a2c7` |
+| Settings Module (Modules/settings.py) | `f94fa6b63fa89acb62e018f882dac8f1` |
+| Python Package Module (Modules/pkg.py) | `ef919c0711f002fd1257dc9a99a183a3` |
+| Printing/Logging Module (Modules/printing.py) | `d43feb407f2e3b38899cf144500d09e5` |
+| Bootstrap Loader (OrangeBlox.py) | `6353a3269ddcaddefe2a72dfa2100054` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

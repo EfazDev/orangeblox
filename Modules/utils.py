@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0e
+# v2.6.0f
 # 
 
 import os
@@ -32,6 +32,7 @@ def makedirs(a: str): os.makedirs(a,exist_ok=True,mode=511)
 # Awaiting Functions
 if os.name == "nt":
     import msvcrt
+    import ctypes
     def getNextKeyboardKey():
         key = msvcrt.getch()
         if key in (b'\x00', b'\xe0'):
