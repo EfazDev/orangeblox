@@ -2610,5 +2610,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "ऑरेंजब्लॉक्स केवल macOS 10.15 (कैटालिना) या उच्चतर के लिए समर्थित है। जारी रखने के लिए कृपया अपना ऑपरेटिंग सिस्टम अपडेट करें!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox प्रबंधक केवल macOS 10.15 (कैटालिना) या उच्चतर के लिए समर्थित है। जारी रखने के लिए कृपया अपना ऑपरेटिंग सिस्टम अपडेट करें!",
  "Though this option may be inaccurate, it may still give a base.": "हालाँकि यह विकल्प गलत हो सकता है, फिर भी यह एक आधार दे सकता है।",
- "Allow access to use RobloxManager directly": "सीधे RobloxManager का उपयोग करने की अनुमति दें"
+ "Allow access to use RobloxManager directly": "सीधे RobloxManager का उपयोग करने की अनुमति दें",
+ "Download & Create": "डाउनलोड करें और बनाएं",
+ "Download & Run": "डाउनलोड करें और चलाएं",
+ "No": "नहीं",
+ "Now, try for yourself by using the arrow keys or typing the number!": "अब, तीर कुंजियों का उपयोग करके या नंबर टाइप करके स्वयं प्रयास करें!",
+ "Return to Main Menu": "मुख्य मेनू पर लौटें",
+ "Select an option from the list above!": "उपरोक्त सूची में से एक विकल्प चुनें!",
+ "Yes": "हाँ",
+ "[>] = Do push-ups": "[>] = पुश-अप्स करें",
+ "Disabling Roblox Reopen..": "Roblox को फिर से खोलने को अक्षम किया जा रहा है..",
+ "This will only apply to Roblox Player.": "यह केवल Roblox प्लेयर पर लागू होगा।",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "क्या आप macOS स्लीप/रीस्टार्ट के बाद Roblox को फिर से खोलने की अनुमति देना अक्षम करना चाहेंगे? (य/नहीं)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "किसी मॉड को क्रम में ऊपर या नीचे ले जाने के लिए शिफ्ट को दबाए रखें और ऊपर/नीचे तीर कुंजियाँ दबाएँ! (शीर्ष पहले है, नीचे अंतिम है)"
 }

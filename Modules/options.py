@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf
@@ -53,18 +53,39 @@ def continueToFFlagInstaller(): # Run Fast Flag Installer
     saveSettings()
 def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
     printSystemMessage(f"--- Run {obName0()} Installer ---")
+    generated_ui_options = []
     if checkSyncFolder():
         printMainMessage(f"Are you sure you want to run {obName0()} installer from installation folder?")
-        printMainMessage("[y/t] = Yes")
-        printMainMessage("[r] = Download & Run")
-        printMainMessage("[c] = Download & Create")
-        printMainMessage("[n/*] = No")
+        generated_ui_options.append({
+            "index": 1, 
+            "message": ts(f"Yes"), 
+            "func": lambda: None,
+        })
+        generated_ui_options.append({
+            "index": 2, 
+            "message": ts(f"Download & Run"), 
+            "func": lambda: None,
+        })
+        generated_ui_options.append({
+            "index": 3, 
+            "message": ts(f"Download & Create"), 
+            "func": lambda: None,
+        })
     else:
         printMainMessage(f"Are you sure you want to run {obName0()} installer?")
-        printMainMessage("[y/t] = Yes")
-        printMainMessage("[c] = Download & Create")
-        printMainMessage("[n/*] = No")
-    op = input("> ")
+        generated_ui_options.append({
+            "index": 1, 
+            "message": ts(f"Yes"), 
+            "func": lambda: None,
+        })
+        generated_ui_options.append({
+            "index": 3, 
+            "message": ts(f"Download & Create"), 
+            "func": lambda: None,
+        })
+    op = generateMenuSelection(generated_ui_options, star_option=ts("No"))
+    if not op: op = 0
+    else: op = op["index"]
     def download_option():
         if cf.pip_class.getIfConnectedToInternet():
             printDebugMessage("Setting Installed App Path to Local User..") 
@@ -160,7 +181,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
         else:
             printErrorMessage("Please connect to your internet in order to use this action!")
             return ts(f"{obName0()} Installer task was canceled!")
-    if isYes(op) == True:
+    if op == 1:
         if checkSyncFolder():
             printMainMessage("Running Installer..")
             cf.stdout.clear()
@@ -172,7 +193,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
             sys.exit(0)
             return
         else: return download_option()
-    elif op == "r" or op == "c": return download_option()
+    elif op == 2 or op == 3: return download_option()
     else: return ts(f"{obName0()} Installer task was canceled!")
 def continueToClearTemporaryStorage(): # Clear Temporary Storage
     installer_paths = [os.path.join(cf.cur_path, 'RobloxPlayerInstaller.exe'), os.path.join(cf.cur_path, 'RobloxStudioInstaller.exe'), os.path.join(cf.orangeblox_library, 'RobloxPlayerInstaller.app'), os.path.join(cf.orangeblox_library, 'RobloxStudioInstaller.app')]

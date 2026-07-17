@@ -2610,5 +2610,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox yalnızca macOS 10.15 (Catalina) veya üzeri için desteklenir. Devam etmek için lütfen işletim sisteminizi güncelleyin!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Yöneticisi yalnızca macOS 10.15 (Catalina) veya üzeri için desteklenir. Devam etmek için lütfen işletim sisteminizi güncelleyin!",
  "Though this option may be inaccurate, it may still give a base.": "Bu seçenek hatalı olsa da yine de bir temel oluşturabilir..",
- "Allow access to use RobloxManager directly": "RobloxManager'ı doğrudan kullanmak için erişime izin ver"
+ "Allow access to use RobloxManager directly": "RobloxManager'ı doğrudan kullanmak için erişime izin ver",
+ "Download & Create": "İndir ve Oluştur",
+ "Download & Run": "İndir ve Çalıştır",
+ "No": "Hayir",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Şimdi ok tuşlarını kullanarak veya numarayı yazarak kendiniz deneyin!",
+ "Return to Main Menu": "Ana Menüye Dön",
+ "Select an option from the list above!": "Yukarıdaki listeden bir seçenek seçin!",
+ "Yes": "Evet",
+ "[>] = Do push-ups": "[>] = Şınav çekin",
+ "Disabling Roblox Reopen..": "Roblox'un Yeniden Açılması Devre Dışı Bırakılıyor..",
+ "This will only apply to Roblox Player.": "Bu yalnızca Roblox Player için geçerli olacaktır..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "macOS uyku Moduna geçtikten/yeniden başlatıldıktan sonra Roblox'un yeniden açılmasına izin vermeyi devre dışı bırakmak ister misiniz? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Bir Modu sırayla yukarı veya aşağı taşımak için Shift tuşunu basılı tutun ve yukarı/aşağı ok tuşlarına basın! (Üst ilktir, Alt sondur)"
 }

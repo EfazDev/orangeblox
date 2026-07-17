@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 # Modules
@@ -101,7 +101,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0d"}
+current_version = {"version": "2.6.0e"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -160,6 +160,7 @@ flag_types = {
     "EFlagRobloxUnfriendCheckEnabled": "bool",
     "EFlagRobloxUnfriendCheckUserID": "int",
     "EFlagEnableSkipModificationMode": "bool",
+    "EFlagDisableRobloxReopenAfterRestart": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
     "EFlagEnableURLQuickLaunch": "bool",

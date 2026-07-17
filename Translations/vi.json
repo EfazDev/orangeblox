@@ -2609,5 +2609,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox chỉ được hỗ trợ cho macOS 10.15 (Catalina) trở lên. Vui lòng cập nhật hệ điều hành của bạn để tiếp tục!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Trình quản lý Roblox chỉ được hỗ trợ cho macOS 10.15 (Catalina) trở lên. Vui lòng cập nhật hệ điều hành của bạn để tiếp tục!",
  "Though this option may be inaccurate, it may still give a base.": "Mặc dù lựa chọn này có thể không chính xác nhưng nó vẫn có thể đưa ra cơ sở..",
- "Allow access to use RobloxManager directly": "Cho phép truy cập để sử dụng trực tiếp RobloxManager"
+ "Allow access to use RobloxManager directly": "Cho phép truy cập để sử dụng trực tiếp RobloxManager",
+ "Download & Create": "Tải xuống và tạo",
+ "Download & Run": "Tải xuống và chạy",
+ "No": "Không",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Bây giờ, hãy tự mình thử bằng cách sử dụng các phím mũi tên hoặc gõ số!",
+ "Return to Main Menu": "Quay lại Menu chính",
+ "Select an option from the list above!": "Chọn một tùy chọn từ danh sách trên!",
+ "Yes": "Đúng",
+ "[>] = Do push-ups": "[>] = Chống đẩy",
+ "Disabling Roblox Reopen..": "Vô hiệu hóa Roblox Mở lại..",
+ "This will only apply to Roblox Player.": "Điều này sẽ chỉ áp dụng cho Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Bạn có muốn tắt việc cho phép Roblox mở lại sau khi macOS ngủ/khởi động lại không? (có/không)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Giữ shift và nhấn phím mũi tên lên/xuống để di chuyển Mod lên hoặc xuống theo thứ tự! (Trên cùng là đầu tiên, Dưới cùng là cuối cùng)"
 }

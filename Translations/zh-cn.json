@@ -2612,5 +2612,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox 仅支持 macOS 10.15 (Catalina) 或更高版本.请更新您的操作系统才能继续!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager 仅支持 macOS 10.15 (Catalina) 或更高版本.请更新您的操作系统才能继续!",
  "Though this option may be inaccurate, it may still give a base.": "尽管这个选项可能不准确,但它仍然可以提供一个基础..",
- "Allow access to use RobloxManager directly": "允许访问直接使用 RobloxManager"
+ "Allow access to use RobloxManager directly": "允许访问直接使用 RobloxManager",
+ "Download & Create": "下载并创建",
+ "Download & Run": "下载并运行",
+ "No": "不",
+ "Now, try for yourself by using the arrow keys or typing the number!": "现在,使用箭头键或输入数字来亲自尝试一下!",
+ "Return to Main Menu": "返回主菜单",
+ "Select an option from the list above!": "从上面的列表中选择一个选项!",
+ "Yes": "是的",
+ "[>] = Do push-ups": "[>] = 做俯卧撑",
+ "Disabling Roblox Reopen..": "禁用 Roblox 重新打开..",
+ "This will only apply to Roblox Player.": "这仅适用于 Roblox 玩家..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "您想禁止 Roblox 在 macOS 睡眠/重启后重新打开吗? (是/否)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "按住 Shift 键并按向上/向下箭头键可按顺序向上或向下移动模组! (顶部在前,底部在最后)"
 }

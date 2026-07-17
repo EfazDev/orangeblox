@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf
@@ -190,8 +190,8 @@ def applyAppIcons():
             if os.path.exists(os.path.join(cf.content_folder_paths[cf.main_os], "../", "MacOS", "RobloxStudio.app" if cf.run_studio == True else "Roblox.app")): copyFile(os.path.join(brand_fold, "AppIcon.icns"), os.path.join(cf.content_folder_paths[cf.main_os], "../", "MacOS", "RobloxStudio.app" if cf.run_studio == True else "Roblox.app", "Contents", "Resources", "AppIcon.icns"))
             targ_app = os.path.join(cf.content_folder_paths[cf.main_os], '../', '../')
             try:
-                subprocess.run([cf.pip_class.getPathFile("/usr/bin/touch"), targ_app], stdout=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
-                subprocess.run(["/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", targ_app], stdout=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                subprocess.run([cf.pip_class.getPathFile("/usr/bin/touch"), targ_app], stdout=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL, stderr=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL)
+                subprocess.run(["/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", targ_app], stdout=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL, stderr=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL)
             except Exception: printDebugMessage("Something went wrong trying to set icon fully!")
             printSuccessMessage("Successfully changed current app icon! It may take a moment for macOS to identify it!")
     elif cf.main_os == "Windows":
@@ -345,7 +345,7 @@ def applyOSRegistration():
                         cf.submit_status.submit(ts("Successfully removed all URL Schemes for Roblox Studio.app!"), 20)
                         s = cf.plist_class.writePListFile(os.path.join(rbx.macOS_studioDir, "Contents", "Info.plist"), plist_data)
                         if s["success"] == True:
-                            subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(cf.content_folder_paths[cf.main_os], '../', '../')], stdout=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                            subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(cf.content_folder_paths[cf.main_os], '../', '../')], stdout=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL, stderr=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL)
                             cf.submit_status.submit(ts("Successfully wrote to Info.plist!"), 25)
                         else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
                         if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True:
@@ -355,7 +355,7 @@ def applyOSRegistration():
                                 printSuccessMessage("Removed Code-signing on Roblox Studio.app!")
                             else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
                         cf.submit_status.submit(ts("Validating code-sign.."), 45)
-                        if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True or checkMacOSCodesign(os.path.join(rbx.macOS_studioDir, "Contents", "MacOS", "RobloxStudio")) == False:
+                        if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True or checkMacOSCodesign(os.path.join(rbx.macOS_studioDir, "Contents", "MacOS", "RobloxStudio"), silent=cf.main_config.get("EFlagEnableDebugMode", False)) == False:
                             cf.submit_status.submit(ts("Signing Roblox Studio.app.."), 50)
                             def req_codesign(co=0):
                                 cf.plist_class.writePListFile(os.path.join(cf.orangeblox_library, "RbxStudioEntitlements.plist"), {
@@ -395,9 +395,12 @@ def applyOSRegistration():
                             printDebugMessage(f"Successfully removed all URL Schemes for Roblox.app!")
                         s = cf.plist_class.writePListFile(os.path.join(rbx.macOS_dir, "Contents", "Info.plist"), plist_data)
                         if s["success"] == True:
-                            subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(cf.content_folder_paths[cf.main_os], '../', '../')], stdout=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL, stderr=not cf.main_config.get("EFlagEnableDebugMode") and subprocess.DEVNULL)
+                            subprocess.run([f"/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister", "-f", os.path.join(cf.content_folder_paths[cf.main_os], '../', '../')], stdout=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL, stderr=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL)
                             printSuccessMessage("Successfully wrote to Info.plist!")
                         else: printErrorMessage(f"Something went wrong saving Roblox Info.plist: {s['message']}")
+                        if cf.main_config.get("EFlagDisableRobloxReopenAfterRestart") == True:
+                            cf.submit_status.submit(ts("Disabling Roblox Reopen.."), 20)
+                            subprocess.run([f"/usr/bin/defaults", "write", "com.roblox.RobloxPlayer", "NSQuitAlwaysKeepsWindows", "-bool", "false"], stdout=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL, stderr=None if cf.main_config.get("EFlagEnableDebugMode") else subprocess.DEVNULL)
                         if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True:
                             cf.submit_status.submit(ts("Checking for Code Signatures.."), 30)
                             if os.path.exists(os.path.join(rbx.macOS_dir, "Contents", "_CodeSignature")):
@@ -405,7 +408,7 @@ def applyOSRegistration():
                                 printSuccessMessage("Removed Code-signing on Roblox.app!")
                             else: printSuccessMessage("Removing Code-signing is not needed because it doesn't exist!")
                         cf.submit_status.submit(ts("Validating code-sign.."), 45)
-                        if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True or checkMacOSCodesign(os.path.join(rbx.macOS_dir, "Contents", "MacOS", "RobloxPlayer")) == False:
+                        if cf.main_config.get("EFlagRemoveCodeSigningMacOS") == True or checkMacOSCodesign(os.path.join(rbx.macOS_dir, "Contents", "MacOS", "RobloxPlayer"), silent=cf.main_config.get("EFlagEnableDebugMode", False)) == False:
                             cf.submit_status.submit(ts("Signing Roblox.app.."), 50)
                             def req_codesign(co=0):
                                 cf.plist_class.writePListFile(os.path.join(cf.orangeblox_library, "RbxEntitlements.plist"), {
@@ -1244,11 +1247,17 @@ def onGameJoinedStudio(info):
             server_info_res = cf.requests.get(f"https://free.freeipapi.com/api/json/{allocated_roblox_ip}")
             if server_info_res.ok:
                 server_info_json = server_info_res.json
-                if server_info_json.get("cityName") and server_info_json.get("countryCode"):
-                    server_info_json["cityName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("cityName", ""))
-                    server_info_json["regionName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("regionName", ""))
-                    if server_info_json.get("regionName") != None and server_info_json.get("regionName") != "": generated_location = f"{server_info_json['cityName']}, {server_info_json['regionName']}, {server_info_json['countryCode']}"
-                    else: generated_location = f"{server_info_json['cityName']}, {server_info_json['countryCode']}"
+                city_name = server_info_json.get("cityName", "")
+                region_name = server_info_json.get("regionName", "")
+                country_code = server_info_json.get("countryCode", "")
+                if not city_name: city_name = ""
+                if not region_name: region_name = ""
+                if not country_code: country_code = ""
+                if city_name and country_code:
+                    city_name = re.sub(r'\s*\([^)]*\)', '', city_name)
+                    region_name = re.sub(r'\s*\([^)]*\)', '', region_name if region_name else "")
+                    if region_name != None and region_name != "": generated_location = f"{city_name}, {region_name}, {country_code}"
+                    else: generated_location = f"{city_name}, {country_code}"
                 else:
                     printDebugMessage(server_info_res.text)
                     printDebugMessage("Failed to get server information: IP Request resulted with no information.")
@@ -1671,11 +1680,17 @@ def onGameJoined(info):
             server_info_res = cf.requests.get(f"https://free.freeipapi.com/api/json/{allocated_roblox_ip}")
             if server_info_res.ok:
                 server_info_json = server_info_res.json
-                if server_info_json.get("cityName") and server_info_json.get("countryCode"):
-                    server_info_json["cityName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("cityName", ""))
-                    server_info_json["regionName"] = re.sub(r'\s*\([^)]*\)', '', server_info_json.get("regionName", ""))
-                    if server_info_json.get("regionName") != None and server_info_json.get("regionName") != "": generated_location = f"{server_info_json['cityName']}, {server_info_json['regionName']}, {server_info_json['countryCode']}"
-                    else: generated_location = f"{server_info_json['cityName']}, {server_info_json['countryCode']}"
+                city_name = server_info_json.get("cityName", "")
+                region_name = server_info_json.get("regionName", "")
+                country_code = server_info_json.get("countryCode", "")
+                if not city_name: city_name = ""
+                if not region_name: region_name = ""
+                if not country_code: country_code = ""
+                if city_name and country_code:
+                    city_name = re.sub(r'\s*\([^)]*\)', '', city_name)
+                    region_name = re.sub(r'\s*\([^)]*\)', '', region_name if region_name else "")
+                    if region_name != None and region_name != "": generated_location = f"{city_name}, {region_name}, {country_code}"
+                    else: generated_location = f"{city_name}, {country_code}"
                 else:
                     printDebugMessage(server_info_res.text)
                     printDebugMessage("Failed to get server information: IP Request resulted with no information.")

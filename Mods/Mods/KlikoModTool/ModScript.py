@@ -1,7 +1,7 @@
 #
 # Kliko Mod Generator
 # Originally Made by TheKliko, Reedited by EfazDev
-# v1.6.0
+# v1.6.1
 # 
 
 # Python Modules

@@ -2611,5 +2611,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox understøttes kun af macOS 10.15 (Catalina) eller nyere. Opdater venligst dit styresystem for at fortsætte!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager understøttes kun af macOS 10.15 (Catalina) eller nyere. Opdater venligst dit styresystem for at fortsætte!",
  "Though this option may be inaccurate, it may still give a base.": "Selvom denne mulighed kan være unøjagtig, kan den stadig give en base..",
- "Allow access to use RobloxManager directly": "Tillad adgang til at bruge RobloxManager direkte"
+ "Allow access to use RobloxManager directly": "Tillad adgang til at bruge RobloxManager direkte",
+ "Download & Create": "Download & Opret",
+ "Download & Run": "Download og kør",
+ "No": "Ingen",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Prøv nu selv ved at bruge piletasterne eller indtaste nummeret!",
+ "Return to Main Menu": "Vend tilbage til hovedmenuen",
+ "Select an option from the list above!": "Vælg en mulighed fra listen ovenfor!",
+ "Yes": "Ja",
+ "[>] = Do push-ups": "[>] = Lav push-ups",
+ "Disabling Roblox Reopen..": "Deaktiverer Roblox Reopen..",
+ "This will only apply to Roblox Player.": "Dette gælder kun for Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Vil du deaktivere at tillade Roblox at genåbne efter macOS dvale/genstart? (å/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Hold shift nede og tryk på op/ned piletasterne for at flytte en Mod op eller ned i rækkefølgen! (Top er først, bund er sidst)"
 }

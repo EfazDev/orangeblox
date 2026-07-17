@@ -19,7 +19,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0d"}
+current_version = {"version": "2.6.0e"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -74,6 +74,7 @@ flag_types = {
     "EFlagRobloxUnfriendCheckEnabled": "bool",
     "EFlagRobloxUnfriendCheckUserID": "int",
     "EFlagEnableSkipModificationMode": "bool",
+    "EFlagDisableRobloxReopenAfterRestart": "bool",
     "EFlagDisableRobloxReinstallNeededChecks": "bool",
     "EFlagEnableMultiAutoReconnect": "bool",
     "EFlagEnableURLQuickLaunch": "bool",
@@ -532,6 +533,7 @@ if __name__ == "__main__":
                                 char = event.characters()
                                 kc = event.keyCode()
                                 CMD_MASK = 1 << 20
+                                SHIFT_MASK = 1 << 17
                                 if (mod & CMD_MASK) and char_unmod_low == "c":
                                     sel_range = self.selectedRange()
                                     if sel_range.length > 0:
@@ -554,12 +556,13 @@ if __name__ == "__main__":
                                     return
                                 if mod & CMD_MASK: return
                                 try:
+                                    is_shift = bool(mod & SHIFT_MASK)
                                     if kc == 51: os.write(self.delegate.master_fd, b"\x7f") # Backspace
                                     elif kc == 36: os.write(self.delegate.master_fd, b"\r") # Return
-                                    elif kc == 126: os.write(self.delegate.master_fd, b"\x1b[A") # Up Arrow
-                                    elif kc == 125: os.write(self.delegate.master_fd, b"\x1b[B") # Down Arrow
-                                    elif kc == 124: os.write(self.delegate.master_fd, b"\x1b[C") # Right Arrow
-                                    elif kc == 123: os.write(self.delegate.master_fd, b"\x1b[D") # Left Arrow
+                                    elif kc == 126: os.write(self.delegate.master_fd, b"\x1b[1;2A" if is_shift else b"\x1b[A") # Up Arrow
+                                    elif kc == 125: os.write(self.delegate.master_fd, b"\x1b[1;2B" if is_shift else b"\x1b[B") # Down Arrow
+                                    elif kc == 124: os.write(self.delegate.master_fd, b"\x1b[1;2C" if is_shift else b"\x1b[C") # Right Arrow
+                                    elif kc == 123: os.write(self.delegate.master_fd, b"\x1b[1;2D" if is_shift else b"\x1b[D") # Left Arrow
                                     elif char: os.write(self.delegate.master_fd, char.encode("utf-8"))
                                 except OSError: pass
                             def replaceCharactersInRange_withString_(self, affectedCharRange, replacementString): return False
@@ -720,6 +723,12 @@ if __name__ == "__main__":
                                     if len(active_list) == 0 and not getattr(app_delegate, "debug_mode_window_enabled", False): NSApp().terminate_(None)
                                 except Exception as e: printErrorMessage(f"forceCloseApp Error: \n{trace()}")
                             def processOutputChunk_(self, text):
+                                is_at_bottom = False
+                                try:
+                                    doc_vis = self.scroll_view.documentVisibleRect()
+                                    doc_bounds = self.scroll_view.documentView().bounds()
+                                    if NSMaxY(doc_vis) >= NSMaxY(doc_bounds) - 40.0: is_at_bottom = True
+                                except Exception: pass
                                 storage = self.text_view.textStorage()
                                 storage.beginEditing() 
                                 try:
@@ -734,7 +743,13 @@ if __name__ == "__main__":
                                 finally:
                                     storage.endEditing() 
                                     self.text_view.setSelectedRange_((self.cursor_id, 0))
-                                    self.scrollToBottomIfNeeded()
+                                    if is_at_bottom:
+                                        try:
+                                            layout_mgr = self.text_view.layoutManager()
+                                            text_container = self.text_view.textContainer()
+                                            layout_mgr.ensureLayoutForTextContainer_(text_container)
+                                            self.text_view.scrollRangeToVisible_((storage.length(), 0))
+                                        except Exception: pass
                             @objc.python_method
                             def get_color(self, hex_str):
                                 hex_str = str(hex_str).upper()
@@ -868,9 +883,12 @@ if __name__ == "__main__":
                             @objc.python_method
                             def scrollToBottomIfNeeded(self):
                                 try:
+                                    layout_mgr = self.text_view.layoutManager()
+                                    text_container = self.text_view.textContainer()
+                                    layout_mgr.ensureLayoutForTextContainer_(text_container)
                                     doc_vis = self.scroll_view.documentVisibleRect()
                                     doc_bounds = self.scroll_view.documentView().bounds()
-                                    if NSMaxY(doc_vis) >= NSMaxY(doc_bounds) - 20.0:
+                                    if NSMaxY(doc_vis) >= NSMaxY(doc_bounds) - 40.0:
                                         self.text_view.scrollToEndOfDocument_(None)
                                 except Exception: pass
                         class AppDelegate(NSObject):
@@ -1572,12 +1590,12 @@ if __name__ == "__main__":
                                     content_view.addSubview_(about_frame)
                                     
                                     icon_nsimage = self.app_icon
-                                    icon_view = NSImageView.alloc().initWithFrame_(((140, 100), (70, 70)))
+                                    icon_view = NSImageView.alloc().initWithFrame_(((140, 105), (70, 70)))
                                     icon_view.setImage_(icon_nsimage)
                                     icon_view.setImageScaling_(NSImageScaleProportionallyUpOrDown)
                                     about_frame.addSubview_(icon_view)
                                     
-                                    label1 = NSTextField.alloc().initWithFrame_(((100, 70), (150, 24)))
+                                    label1 = NSTextField.alloc().initWithFrame_(((100, 75), (150, 24)))
                                     label1.setStringValue_(obName0())
                                     label1.setFont_(NSFont.boldSystemFontOfSize_(16))
                                     label1.setBezeled_(False)
@@ -1592,7 +1610,7 @@ if __name__ == "__main__":
                                     if obName0() != "OrangeBlox" or obName1() != "🍊":
                                         version_text += "\n" + ts(f"Custom Theme of OrangeBlox 🍊")
                                         version_lines += 1
-                                    label2 = NSTextField.alloc().initWithFrame_(((50, 50-15*version_lines), (250, 20*version_lines)))
+                                    label2 = NSTextField.alloc().initWithFrame_(((50, 55-15*version_lines), (250, 20*version_lines)))
                                     label2.setStringValue_(version_text)
                                     label2.setFont_(NSFont.systemFontOfSize_(12))
                                     label2.setBezeled_(False)
@@ -1610,7 +1628,7 @@ if __name__ == "__main__":
                                     printErrorMessage(f"Unable to show about menu: \n{trace()}")
                             def show_validation_failed_menu(self):
                                 try:
-                                    width, height = 500, 350
+                                    width, height = 500, 360
                                     screen_frame = NSScreen.mainScreen().frame()
                                     origin_x = (screen_frame.size.width - width) / 2
                                     origin_y = (screen_frame.size.height - height) / 2
@@ -1636,12 +1654,14 @@ if __name__ == "__main__":
                                     content_view.addSubview_(self.validation_frame)
                                     
                                     icon_nsimage = self.app_icon
-                                    icon_view = NSImageView.alloc().initWithFrame_(((220, 255), (70, 70)))
+                                    icon_view = NSImageView.alloc().initWithFrame_(((215, 255), (70, 70)))
+                                    icon_view.setTranslatesAutoresizingMaskIntoConstraints_(False)
                                     icon_view.setImage_(icon_nsimage)
                                     icon_view.setImageScaling_(NSImageScaleProportionallyUpOrDown)
                                     self.validation_frame.addSubview_(icon_view)
                                     
                                     label1 = NSTextField.alloc().initWithFrame_(((175, 205), (150, 30)))
+                                    label1.setTranslatesAutoresizingMaskIntoConstraints_(False)
                                     label1.setStringValue_(obName0())
                                     label1.setFont_(NSFont.boldSystemFontOfSize_(20))
                                     label1.setBezeled_(False)
@@ -1652,27 +1672,42 @@ if __name__ == "__main__":
                                     self.validation_frame.addSubview_(label1)
                                     
                                     label2 = NSTextField.alloc().initWithFrame_(((75, 105), (350, 90)))
+                                    label2.setTranslatesAutoresizingMaskIntoConstraints_(False)
                                     label2.setStringValue_(ts("Uh oh! There was an issue trying to validate hashes for the following files:"))
                                     label2.setFont_(NSFont.systemFontOfSize_(15))
                                     label2.setBezeled_(False)
                                     label2.setDrawsBackground_(False)
                                     label2.setEditable_(False)
                                     label2.setSelectable_(False)
+                                    label2.cell().setWraps_(True)
+                                    label2.setPreferredMaxLayoutWidth_(440)
                                     label2.setAlignment_(NSCenterTextAlignment)
                                     self.validation_frame.addSubview_(label2)
                                     
                                     file_list = ", ".join(unable_to_validate2)
-                                    label3 = NSTextField.alloc().initWithFrame_(((75, 70), (350, 60)))
-                                    label3.setStringValue_(file_list)
-                                    label3.setFont_(NSFont.systemFontOfSize_(15))
-                                    label3.setBezeled_(False)
-                                    label3.setDrawsBackground_(False)
-                                    label3.setEditable_(False)
-                                    label3.setSelectable_(False)
-                                    label3.setAlignment_(NSCenterTextAlignment)
-                                    self.validation_frame.addSubview_(label3)
+                                    scroll_view = NSScrollView.alloc().initWithFrame_(((0, 0), (0, 0)))
+                                    scroll_view.setTranslatesAutoresizingMaskIntoConstraints_(False)
+                                    scroll_view.setHasVerticalScroller_(True)
+                                    scroll_view.setDrawsBackground_(False)
+                                    scroll_view.setAutohidesScrollers_(True)
+                                    scroll_view.setWantsLayer_(True)
+                                    content_size = scroll_view.contentSize()
+                                    text_view = NSTextView.alloc().initWithFrame_(((0, 0), content_size))
+                                    text_view.setVerticallyResizable_(True)
+                                    text_view.setHorizontallyResizable_(False)
+                                    text_view.setAutoresizingMask_(NSViewWidthSizable)
+                                    text_view.textContainer().setWidthTracksTextView_(True)
+                                    text_view.setString_(file_list)
+                                    text_view.setFont_(NSFont.systemFontOfSize_(15))
+                                    text_view.setDrawsBackground_(False)
+                                    text_view.setEditable_(False)
+                                    text_view.setSelectable_(True)
+                                    text_view.setAlignment_(NSCenterTextAlignment)
+                                    scroll_view.setDocumentView_(text_view)
+                                    self.validation_frame.addSubview_(scroll_view)
                                     
                                     button = NSButton.alloc().initWithFrame_(((150, 45), (200, 40)))
+                                    button.setTranslatesAutoresizingMaskIntoConstraints_(False)
                                     button.setTitle_(ts("Continue without validation"))
                                     button.setTarget_(self)
                                     button.setAction_(objc.selector(self.startBootstrapWithoutValidation_, signature=b"v@:@"))
@@ -1680,47 +1715,44 @@ if __name__ == "__main__":
 
                                     constraints = [
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            icon_view, NSLayoutAttributeCenterX,
-                                            NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
+                                            icon_view, NSLayoutAttributeCenterX, NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            icon_view, NSLayoutAttributeTop,
-                                            NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeTop, 1, 20),
+                                            icon_view, NSLayoutAttributeTop, NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeTop, 1, 20),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            icon_view, NSLayoutAttributeWidth,
-                                            NSLayoutRelationEqual, None, 0, 1, 64),
+                                            icon_view, NSLayoutAttributeWidth, NSLayoutRelationEqual, None, 0, 1, 64),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            icon_view, NSLayoutAttributeHeight,
-                                            NSLayoutRelationEqual, None, 0, 1, 64),
+                                            icon_view, NSLayoutAttributeHeight, NSLayoutRelationEqual, None, 0, 1, 64),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label1, NSLayoutAttributeTop,
-                                            NSLayoutRelationEqual, icon_view, NSLayoutAttributeBottom, 1, 20),
+                                            label1, NSLayoutAttributeTop, NSLayoutRelationEqual, icon_view, NSLayoutAttributeBottom, 1, 20),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label1, NSLayoutAttributeCenterX,
-                                            NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
+                                            label1, NSLayoutAttributeCenterX, NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label2, NSLayoutAttributeTop,
-                                            NSLayoutRelationEqual, label1, NSLayoutAttributeBottom, 1, 15),
+                                            label2, NSLayoutAttributeTop, NSLayoutRelationEqual, label1, NSLayoutAttributeBottom, 1, 15),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label2, NSLayoutAttributeCenterX,
-                                            NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
+                                            label2, NSLayoutAttributeCenterX, NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label3, NSLayoutAttributeTop,
+                                            label2, NSLayoutAttributeWidth, NSLayoutRelationEqual, None, 0, 1, 440),
+                                        NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
+                                            scroll_view, NSLayoutAttributeTop,
                                             NSLayoutRelationEqual, label2, NSLayoutAttributeBottom, 1, 15),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            label3, NSLayoutAttributeCenterX,
+                                            scroll_view, NSLayoutAttributeCenterX,
                                             NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
+                                        NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
+                                            scroll_view, NSLayoutAttributeWidth,
+                                            NSLayoutRelationEqual, None, 0, 1, 440),
+                                        NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
+                                            scroll_view, NSLayoutAttributeHeight,
+                                            NSLayoutRelationEqual, None, 0, 1, 80),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
                                             button, NSLayoutAttributeTop,
-                                            NSLayoutRelationEqual, label3, NSLayoutAttributeBottom, 1, 15),
+                                            NSLayoutRelationEqual, scroll_view, NSLayoutAttributeBottom, 1, 25),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            button, NSLayoutAttributeCenterX,
-                                            NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
+                                            button, NSLayoutAttributeCenterX, NSLayoutRelationEqual, self.validation_frame, NSLayoutAttributeCenterX, 1, 0),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            button, NSLayoutAttributeWidth,
-                                            NSLayoutRelationEqual, None, 0, 1, 260),
+                                            button, NSLayoutAttributeWidth, NSLayoutRelationEqual, None, 0, 1, 260),
                                         NSLayoutConstraint.constraintWithItem_attribute_relatedBy_toItem_attribute_multiplier_constant_(
-                                            button, NSLayoutAttributeHeight,
-                                            NSLayoutRelationEqual, None, 0, 1, 30)
+                                            button, NSLayoutAttributeHeight, NSLayoutRelationEqual, None, 0, 1, 30)
                                     ]
                                     self.validation_failed_window.orderFrontRegardless()
                                     self.validation_frame.addConstraints_(constraints)

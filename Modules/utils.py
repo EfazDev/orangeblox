@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import os
@@ -30,6 +30,49 @@ def isRequestClose(text: str): text = text.strip(); return text.lower() == "exit
 def makedirs(a: str): os.makedirs(a,exist_ok=True,mode=511)
     
 # Awaiting Functions
+if os.name == "nt":
+    import msvcrt
+    def getNextKeyboardKey():
+        key = msvcrt.getch()
+        if key in (b'\x00', b'\xe0'):
+            sub_key = msvcrt.getch()
+            is_shift = bool(ctypes.windll.user32.GetAsyncKeyState(0x10) & 0x8000)
+            if sub_key == b'H': return '_shift_up' if is_shift else '_up'
+            elif sub_key == b'P': return '_shift_down' if is_shift else '_down'    
+            elif sub_key == b'K': return '_shift_left' if is_shift else '_left'
+            elif sub_key == b'M': return '_shift_right' if is_shift else '_right'
+        elif key in (b'\r', b'\n'): return '_enter'
+        elif key == b'\x03': raise KeyboardInterrupt
+        elif key == b'\x08': return '_backspace'
+        elif key == b'*': return '*'
+        elif b'0' <= key <= b'9': return key.decode('utf-8')
+        return None
+else:
+    import tty
+    import termios
+    import select
+    def getNextKeyboardKey():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd) 
+            select.select([fd], [], [])
+            data = os.read(fd, 1024)
+            if b'\x1b[1;2A' in data: return '_shift_up'
+            if b'\x1b[1;2B' in data: return '_shift_down'
+            if b'\x1b[1;2C' in data: return '_shift_right'
+            if b'\x1b[1;2D' in data: return '_shift_left'
+            if b'\x1b[A' in data: return '_up'
+            if b'\x1b[B' in data: return '_down'
+            if b'\x1b[C' in data: return '_right'
+            if b'\x1b[D' in data: return '_left'
+            if b'\r' in data or b'\n' in data: return '_enter'
+            if b'\x03' in data: raise KeyboardInterrupt
+            if b'\x7f' in data or b'\x08' in data: return '_backspace'
+            if b'*' in data: return '*'
+            if len(data) == 1 and b'0' <= data <= b'9': return data.decode('utf-8')
+        finally: termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return None
 def copyFile(pa, de):
     try:
         if os.path.exists(pa):
@@ -343,7 +386,7 @@ def generateFileKey(id: str, ext: str="", dire: str=""):
         makedirs(cf.orangeblox_library)
         return os.path.join(cf.orangeblox_library, f"{id}{ext}")
     return os.path.join(cf.cur_path, f"{id}_{cf.user_folder_name}{ext}")
-def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.List=[]): 
+def _generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.List=[]): 
     main_ui_options = {}
     options = sorted(options, key=lambda x: x["index"])
     count = 0
@@ -367,6 +410,81 @@ def generateMenuSelection(options: typing.Dict[str, str], before_input: str="", 
                 main_ui_options[spli]["target_mode"] = target_mode
                 return main_ui_options[spli]
     else: return None
+def generateMenuSelection(options: typing.List[typing.Dict[str, str]], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.Dict[str, str]=None, start_index: int=None): 
+    if scripted_responses is None: scripted_responses = {}
+    options = sorted(options, key=lambda x: x.get("index", 0))
+    sel_index = start_index if start_index is not None else (0 if star_option == "" else len(options))
+    total_options = len(options)
+    max_index = total_options if star_option != "" else total_options - 1
+    sel_buffer = ""
+    first_run = True
+    if start_index is not None: sel_buffer = str(start_index + 1)
+    while True:
+        output_lines = []
+        if before_input != "":
+            output_lines.append(before_input)
+            output_lines.append("") 
+        for i, opt in enumerate(options):
+            prefix = "[>] " if i == sel_index else f"[{i+1}] "
+            output_lines.append(f"{prefix}{opt['message']}")
+        if star_option != "":
+            if sel_index == total_options: output_lines.append(f"[>] {star_option}")
+            else: output_lines.append(f"[*] {star_option}")
+        output_lines.append(f"> {sel_buffer}")
+        lines_printed = len(output_lines) - 1 
+        menu_text = "\n".join([f"\r\033[2K{line}" for line in output_lines])
+        if not first_run: cf.stdout._sys.__stdout__.write(f"\033[{lines_printed}A")
+        first_run = False
+        cf.stdout._sys.__stdout__.write(menu_text)
+        cf.stdout._sys.__stdout__.flush()
+        key = getNextKeyboardKey()
+        if isinstance(key, bytes):
+            try: key = key.decode("utf-8")
+            except Exception: pass
+        if key in scripted_responses:
+            cf.stdout._sys.__stdout__.write("\n")
+            cf.stdout._sys.__stdout__.flush()
+            mode = scripted_responses[key]
+            if sel_index == total_options:
+                if send_input_response: return "*"
+                return None
+            else:
+                if send_input_response: return str(sel_index + 1)
+                ret = options[sel_index].copy()
+                ret["target_mode"] = mode
+                ret["current_index"] = sel_index
+                return ret
+        if key == "*":
+            if star_option != "":
+                sel_buffer = "*"
+                sel_index = total_options
+        elif key and key.isdigit():
+            sel_buffer += key
+            val = int(sel_buffer)
+            sel_index = min(max_index, max(0, val - 1))
+            if sel_buffer == "0":
+                sel_buffer = ""
+                sel_index = total_options
+        elif key in ("_backspace", "\x7f", "\x08"):
+            if sel_buffer:
+                sel_buffer = sel_buffer[:-1]
+                if sel_buffer:
+                    val = int(sel_buffer)
+                    sel_index = min(max_index, max(0, val - 1))
+                else: sel_index = total_options
+        if key == "_up": sel_index = max(0, sel_index - 1)
+        elif key == "_down": sel_index = min(max_index, sel_index + 1)
+        elif key == "_enter":
+            cf.stdout._sys.__stdout__.write("\n")
+            cf.stdout._sys.__stdout__.flush()
+            if sel_index == total_options:
+                if send_input_response: return "*"
+                return None
+            else:
+                if send_input_response: return str(sel_index + 1)
+                options[sel_index]["current_index"] = sel_index
+                return options[sel_index]    
+        sel_buffer = str(sel_index + 1) if sel_index < total_options else ""  
 def setInstalledAppPath(install_app_path):
     if cf.main_os == "Darwin":
         if os.path.exists(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist")): os.remove(os.path.join(os.path.expanduser("~"), "Library", "Preferences", "dev.efaz.robloxbootstrap.plist"))
@@ -497,12 +615,14 @@ def createWindowsShortcut(shell, target_path, shortcut_path, working_directory=N
     if icon_path: shortcut.IconLocation = icon_path
     shortcut.Save()
     del shortcut
-def checkMacOSCodesign(app_path: str=None):
+def checkMacOSCodesign(app_path: str=None, silent: bool=False):
     try:
         if not os.path.isfile(app_path): return False
         result = subprocess.run(
             ["/usr/bin/codesign", "-v", "--no-strict", app_path],
-            cwd=cf.cur_path
+            cwd=cf.cur_path,
+            stdout=subprocess.DEVNULL if silent else subprocess.PIPE,
+            stderr=subprocess.DEVNULL if silent else subprocess.PIPE
         )   
         printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
         if result.returncode == 0: return True

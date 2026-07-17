@@ -2610,5 +2610,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox მხარდაჭერილია მხოლოდ macOS 10.15 (Catalina) ან უფრო მაღალი ვერსიისთვის. გთხოვთ განაახლოთ თქვენი ოპერაციული სისტემა გასაგრძელებლად!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager მხარდაჭერილია მხოლოდ macOS 10.15 (Catalina) ან უფრო მაღალი ვერსიისთვის. გთხოვთ განაახლოთ თქვენი ოპერაციული სისტემა გასაგრძელებლად!",
  "Though this option may be inaccurate, it may still give a base.": "Მიუხედავად იმისა, რომ ეს ვარიანტი შეიძლება იყოს არაზუსტი, ის მაინც შეიძლება იყოს საფუძველი..",
- "Allow access to use RobloxManager directly": "Დაუშვით წვდომა RobloxManager-ის პირდაპირ გამოყენებაზე"
+ "Allow access to use RobloxManager directly": "Დაუშვით წვდომა RobloxManager-ის პირდაპირ გამოყენებაზე",
+ "Download & Create": "Ჩამოტვირთვა და შექმნა",
+ "Download & Run": "Ჩამოტვირთეთ და გაუშვით",
+ "No": "Არა",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Ახლა სცადეთ ისრის ღილაკების გამოყენებით ან ნომრის აკრეფით!",
+ "Return to Main Menu": "Დაბრუნება მთავარ მენიუში",
+ "Select an option from the list above!": "Აირჩიეთ ვარიანტი ზემოთ მოცემული სიიდან!",
+ "Yes": "Დიახ",
+ "[>] = Do push-ups": "[>] = Გააკეთე ბიძგები",
+ "Disabling Roblox Reopen..": "Რობლოქსის ხელახლა გახსნის გამორთვა..",
+ "This will only apply to Roblox Player.": "Ეს ეხება მხოლოდ Roblox Player-ს..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Გსურთ გამორთოთ Roblox-ის ხელახლა გახსნის უფლება macOS-ის ძილის/გადატვირთვის შემდეგ? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Გეჭიროთ Shift და დააჭირეთ ზევით/ქვემოთ ისრიანი ღილაკებით მოდიფიკაციის გადაადგილების მიზნით ზევით ან ქვევით! (ზემო პირველია, ქვედა ბოლო)"
 }

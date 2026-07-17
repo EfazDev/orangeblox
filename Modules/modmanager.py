@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf
@@ -468,10 +468,11 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
             printSuccessMessage("Successfully saved Mod Script settings!")
             return
     if reverify_mod_script == None: return modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order)
-def mainModManager(reverify_mod_script=None):
+def mainModManager(reverify_mod_script=None, mods_manifest=None, mod_order=None, start_index=None, use_already=False):
     if reverify_mod_script == None:
-        printSystemMessage("--- Mods Manager ---")
-        printSuccessMessage(f"Mods Enabled: Yes")
+        if not use_already:
+            printSystemMessage("--- Mods Manager ---")
+            printSuccessMessage(f"Mods Enabled: Yes")
         if cf.main_config.get("EFlagAllowActivityTracking") == False:
             printMainMessage("Would you like to allow Activity Tracking on the Roblox client? (y/n)")
             printMainMessage("This will allow features like:")
@@ -492,13 +493,14 @@ def mainModManager(reverify_mod_script=None):
                 return
         if not cf.main_config.get("EFlagSelectedModScripts"): cf.main_config["EFlagSelectedModScripts"] = {}; saveSettings()
         s = [i for i, v in cf.main_config.get('EFlagSelectedModScripts').items() if os.path.exists(os.path.join(cf.mods_folder, "Mods", i, "ModScript.py")) and v.get("enabled") == True]
-        if cf.main_config.get('EFlagSelectedModScripts') and len(s) > 0: printMainMessage(f"Selected Mod Scripts: {', '.join(s)}")
-        else: printMainMessage(f"Selected Mod Scripts: None")
-        printMainMessage("Select an option or a mod to enable/disable!")
-        printMainMessage("Add \"u\" or \"d\" to the end of selection number to move a mod up or down in apply order (when mod is enabled). (ex: 1u)")
+        if not use_already:
+            if cf.main_config.get('EFlagSelectedModScripts') and len(s) > 0: printMainMessage(f"Selected Mod Scripts: {', '.join(s)}")
+            else: printMainMessage(f"Selected Mod Scripts: None")
+            printMainMessage("Select an option or a mod to enable/disable!")
+            printMainMessage("Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)")
         generated_ui_options = []
-        mods_manifest = generateModsManifest()
-        mod_order = generateModOrder()
+        if not mods_manifest: mods_manifest = generateModsManifest()
+        if not mod_order: mod_order = generateModOrder()
         for i, v in sorted(mods_manifest.items(), key=lambda x: mod_order.index(x[0]) if x[0] in mod_order else len(mod_order)):
             if i == "Original" or i == "OldFont" or i == "GothamFont": continue
             final_vers = "1.0.0"
@@ -519,14 +521,16 @@ def mainModManager(reverify_mod_script=None):
         generated_ui_options.append({"index": 1000003, "message": ts("Open Mods Folder")})
         generated_ui_options.append({"index": 1000004, "message": ts("Disable Applying Mods")})
         generated_ui_options.append({"index": 1000005, "message": ts("Clear Installed Mods [Reinstall Roblox]")})
-        opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Mods Manager"), scripted_responses=["u", "d"])
+        opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Mods Manager"), scripted_responses={"_shift_up": "u", "_shift_down": "d"}, start_index=start_index)
     else:
+        generated_ui_options = []
         mods_manifest = generateModsManifest()
         mod_order = generateModOrder()
         opt = {"index": 1000000, "message": ts("Mod Script Settings")}
     if opt:
-        if reverify_mod_script == None: startMessage()
-        printSystemMessage(f"--- {opt['message']} ---")
+        if not use_already and not (opt["index"] < 1000000 and opt.get("target_mode")):
+            if reverify_mod_script == None: startMessage()
+            printSystemMessage(f"--- {opt['message']} ---")
         if opt["index"] == 1000000: modScriptSettings(0, reverify_mod_script, mods_manifest, mod_order)
         elif opt["index"] == 1000001: specialMods()
         elif opt["index"] == 1000002: syncMods()
@@ -558,17 +562,21 @@ def mainModManager(reverify_mod_script=None):
                     cur_org = mod_order.index(opt["mod_id"]) if opt["mod_id"] in mod_order else -1
                     if cur_org == -1: printErrorMessage(f"Mod {opt.get('final_name')} not found in order!")
                     else:
+                        org_adjust = 0
                         if opt["target_mode"] == "u":
-                            if cur_org > 0:
+                            if cur_org > 0: 
                                 mod_order[cur_org], mod_order[cur_org - 1] = mod_order[cur_org - 1], mod_order[cur_org]
-                                printSuccessMessage("Successfully moved mod up in order!")
-                            else: printWarnMessage("Mod is already at the top!")
+                                org_adjust -= 1
                         elif opt["target_mode"] == "d":
                             if cur_org < len(mod_order) - 1:
                                 mod_order[cur_org], mod_order[cur_org + 1] = mod_order[cur_org + 1], mod_order[cur_org]
-                                printSuccessMessage("Successfully moved mod down in order!")
-                            else: printWarnMessage("Mod is already at the bottom!")
+                                org_adjust += 1
+                        next_start_index = opt.get("current_index", 0)+org_adjust
+                        cf.stdout._sys.__stdout__.write(f"\033[{len(generated_ui_options)+2}A")
+                        cf.stdout._sys.__stdout__.flush()
                         cf.main_config["EFlagEnabledModOrder"] = mod_order
+                        saveSettings()
+                        return mainModManager(reverify_mod_script=reverify_mod_script, mods_manifest=mods_manifest, mod_order=mod_order, start_index=next_start_index, use_already=True)
                 else:
                     if opt["mod_info"]["enabled"] == True:
                         cf.main_config["EFlagEnabledMods"][opt["mod_id"]] = False
@@ -577,7 +585,7 @@ def mainModManager(reverify_mod_script=None):
                         cf.main_config["EFlagEnabledMods"][opt["mod_id"]] = True
                         printSuccessMessage(f"Successfully enabled mod {opt.get('final_name')}!")
             saveSettings()
-        if reverify_mod_script == None: mainModManager()
+        if reverify_mod_script == None: mainModManager(start_index=opt.get("current_index", 0))
         else: printMainMessage("Exiting Mods Manager.."); return 5
     else: return
 def continueToModsManager(reverify_mod_script=None): # Mods Manager

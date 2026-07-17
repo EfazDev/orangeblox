@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf
@@ -123,6 +123,11 @@ def robloxSettings():
         elif isNo(d) == True:
             cf.main_config["EFlagEnableSkipModificationMode"] = False
             printDebugMessage("User selected: False")
+        
+        printMainMessage("Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)")
+        printYellowMessage("This will only apply to Roblox Player.")
+        d = handleBasicSetting("EFlagDisableRobloxReopenAfterRestart", False)
+        if d: return d
 
     printMainMessage("Would you like to disable Roblox Reinstall checks? (y/n)")
     printMainMessage("This may ignore when a Roblox reinstall is needed due to signing.")

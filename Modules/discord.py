@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 # Modules
@@ -25,7 +25,7 @@ except Exception as e: pypresence = PyKits.pip().importModule("pypresence", inst
 main_os = platform.system()
 pip_class = PyKits.pip()
 colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.6.0d"}
+current_version: typing.Dict[str, str] = {"version": "2.6.0e"}
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -70,17 +70,21 @@ class Presence(pypresence.Presence):
         self._presence = super(Presence, self)
         self._presence.__init__(*args, **kwargs)
     def get_if_socket_is_available(self):
-        if self.get_ipc_path(): return True
+        try:
+            if self.get_ipc_path(): return True
+        except: return False
         return False
     def test_ipc_path(self, path):
         "Tests an IPC pipe to ensure that it actually works | Sourced from pypresence"
-        if sys.platform == "win32":
-            with open(path):
-                return True
-        else:
-            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
-                client.connect(path)
-                return True
+        try:
+            if sys.platform == "win32":
+                with open(path):
+                    return True
+            else:
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                    client.connect(path)
+                    return True
+        except Exception: return False
     def get_ipc_path(self, pipe=None):
         "Sourced from pypresence"
         ipc = "discord-ipc-"

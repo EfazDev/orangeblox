@@ -2615,5 +2615,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox مدعوم فقط لنظام التشغيل macOS 10.15 (Catalina) أو أعلى. يرجى تحديث نظام التشغيل الخاص بك للمتابعة!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "يتم دعم Roblox Manager فقط لنظام التشغيل macOS 10.15 (Catalina) أو الإصدارات الأحدث. يرجى تحديث نظام التشغيل الخاص بك للمتابعة!",
  "Though this option may be inaccurate, it may still give a base.": "على الرغم من أن هذا الخيار قد يكون غير دقيق، إلا أنه قد يعطي قاعدة..",
- "Allow access to use RobloxManager directly": "السماح بالوصول لاستخدام RobloxManager مباشرة"
+ "Allow access to use RobloxManager directly": "السماح بالوصول لاستخدام RobloxManager مباشرة",
+ "Download & Create": "تنزيل وإنشاء",
+ "Download & Run": "تحميل وتشغيل",
+ "No": "لا",
+ "Now, try for yourself by using the arrow keys or typing the number!": "الآن، جرب بنفسك باستخدام مفاتيح الأسهم أو كتابة الرقم!",
+ "Return to Main Menu": "العودة إلى القائمة الرئيسية",
+ "Select an option from the list above!": "حدد خيارًا من القائمة أعلاه!",
+ "Yes": "نعم",
+ "[>] = Do push-ups": "[>] = قم بتمارين الضغط",
+ "Disabling Roblox Reopen..": "تعطيل إعادة فتح Roblox..",
+ "This will only apply to Roblox Player.": "سينطبق هذا فقط على Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "هل ترغب في تعطيل السماح بإعادة فتح Roblox بعد سكون/إعادة تشغيل macOS؟ (ص/ن)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "استمر في الضغط على مفتاح Shift واضغط على مفاتيح الأسهم لأعلى/لأسفل لتحريك تعديل لأعلى أو لأسفل بالترتيب! (الأعلى هو الأول، والأسفل هو الأخير)"
 }

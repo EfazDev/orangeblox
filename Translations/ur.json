@@ -2609,5 +2609,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox صرف macOS 10.15 (Catalina) یا اس سے اعلیٰ ورژن پر سپورٹ کرتا ہے۔ جاری رکھنے کے لیے براہ کرم اپنا آپریٹنگ سسٹم اپ ڈیٹ کریں!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager صرف macOS 10.15 (Catalina) یا اس سے اعلیٰ ورژن پر سپورٹ کرتا ہے۔ جاری رکھنے کے لیے براہ کرم اپنا آپریٹنگ سسٹم اپ ڈیٹ کریں!",
  "Though this option may be inaccurate, it may still give a base.": "اگرچہ یہ آپشن غلط ہو سکتا ہے، پھر بھی یہ ایک بنیاد دے سکتا ہے۔",
- "Allow access to use RobloxManager directly": "RobloxManager کو براہ راست استعمال کرنے کی اجازت دیں۔"
+ "Allow access to use RobloxManager directly": "RobloxManager کو براہ راست استعمال کرنے کی اجازت دیں۔",
+ "Download & Create": "ڈاؤن لوڈ اور تخلیق کریں۔",
+ "Download & Run": "ڈاؤن لوڈ کریں اور چلائیں۔",
+ "No": "نہیں",
+ "Now, try for yourself by using the arrow keys or typing the number!": "اب، تیر والے بٹنوں کا استعمال کرکے یا نمبر ٹائپ کرکے خود کوشش کریں!",
+ "Return to Main Menu": "مین مینو پر واپس جائیں۔",
+ "Select an option from the list above!": "اوپر کی فہرست میں سے ایک آپشن منتخب کریں!",
+ "Yes": "جی ہاں",
+ "[>] = Do push-ups": "[>] = پش اپس کرو",
+ "Disabling Roblox Reopen..": "روبلوکس کو دوبارہ کھولنے کو غیر فعال کیا جا رہا ہے۔",
+ "This will only apply to Roblox Player.": "یہ صرف Roblox Player پر لاگو ہوگا۔",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "کیا آپ میکوس سلیپ/ری سٹارٹ کے بعد روبلوکس کو دوبارہ کھولنے کی اجازت کو غیر فعال کرنا چاہیں گے؟ (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "ایک موڈ کو ترتیب میں اوپر یا نیچے منتقل کرنے کے لیے شفٹ کو دبائیں اور اوپر/نیچے تیر والے بٹنوں کو دبائیں! (اوپر پہلے ہے، نیچے آخری ہے)"
 }

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0d
+# v2.6.0e
 # 
 
 import Modules.config as cf
@@ -103,36 +103,21 @@ def tutorial():
     printMainMessage("--------------------")
     printMainMessage("What option to choose? (y/n)")
     printMainMessage("[1] = Do jumping-jacks")
-    printMainMessage("[2] = Do push-ups")
+    printMainMessage("[>] = Do push-ups")
     printMainMessage("[3] = Do all of the above")
     printMainMessage("> 2")
     printMainMessage("Selected Do push-ups!")
     printMainMessage("--------------------")
-    printMainMessage("Now, try for yourself!")
+    printMainMessage("Now, try for yourself by using the arrow keys or typing the number!")
     generated_ui_options = []
-    main_ui_options = {}
     generated_ui_options.append({"index": 1, "message": ts("Do jumping-jacks")})
     generated_ui_options.append({"index": 2, "message": ts("Do push-ups")})
     generated_ui_options.append({"index": 3, "message": ts("Do curl-ups")})
     generated_ui_options.append({"index": 4, "message": ts("Do weight-lifting")})
     generated_ui_options.append({"index": 5, "message": ts("Do neither")})
     generated_ui_options.append({"index": 6, "message": ts("Do all of the above")})
-    generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-    printSystemMessage("--- Select Option ---")
-    count = 1
-    for i in generated_ui_options:
-        printMainMessage(f"[{str(count)}] {i['message']}")
-        main_ui_options[str(count)] = i
-        count += 1
-    def a():
-        res = input("> ")
-        if main_ui_options.get(res):
-            opt = main_ui_options[res]
-            printSuccessMessage(f"You have selected {opt.get('message')}!")
-        else:
-            printErrorMessage("Uhm, not quite an option here, try again!")
-            return a()
-    a()
+    res = generateMenuSelection(generated_ui_options, before_input=ts("Select an option from the list above!"))
+    if res: printSuccessMessage(f"You have selected {res.get('message')}!")
     printSystemMessage("--- Step 4 ---")
     if os.path.exists(os.path.join(cf.cur_path, "Translations")):
         printMainMessage("Alright! Now, select the bootstrap language you want to use! (English is default, you can just continue)")
@@ -714,24 +699,58 @@ def optionSelection(mes=None, isRedirectedFromApp=False): # Handle Continue to R
         if mes == "": mes = ts(f"Would you like to return to the main menu or would you like to continue to Roblox?")
         else: mes = ts(f"{mes} Would you like to return to the main menu or would you like to continue to Roblox?")
     if cf.main_config.get("EFlagReturnToMainMenuInstant") != True:
+        printSystemMessage(mes)
+        generated_ui_options = []
         if isRedirectedFromApp == False:
-            printSystemMessage(mes)
-            printMainMessage("[1] Return to Main Menu")
-            printMainMessage("[2] Exit Bootstrap")
-            if cf.main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[3] Continue to Roblox Studio")
-            printMainMessage("[*] Continue to Roblox")
-            a = input("> ")
-            if a == "1": launch()
-            elif a == "2": sys.exit(0)
-            elif a == "3" and cf.main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
+            generated_ui_options.append({
+                "index": 1, 
+                "message": ts("Return to Main Menu"), 
+                "func": launch
+            })
+            generated_ui_options.append({
+                "index": 2, 
+                "message": ts("Exit Bootstrap"), 
+                "func": lambda: sys.exit(0)
+            })
+            if cf.main_config.get("EFlagRobloxStudioEnabled") == True:
+                generated_ui_options.append({
+                    "index": 3, 
+                    "message": ts("Continue to Roblox Studio"), 
+                    "func": lambda: continueToRoblox(studio=True)
+                })
+            a = generateMenuSelection(generated_ui_options, star_option=ts("Continue to Roblox"))
+            if a:
+                try:
+                    if a.get("func"): a["func"]()
+                except BaseException as e:
+                    if type(e) is SystemExit: raise e
+                    printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
+                    printErrorMessage(f"Exception: \n{trace()}")
+                    printErrorMessage(f"Location Code: 3")
+                    optionSelection(ts("An error occurred!"))
+            else: continueToRoblox()
         else:
-            printSystemMessage(mes)
-            printMainMessage("[1] Continue to Roblox")
-            if cf.main_config.get("EFlagRobloxStudioEnabled") == True: printMainMessage("[2] Continue to Roblox Studio")
-            printMainMessage("[*] Exit Bootstrap")
-            a = input("> ")
-            if a == "1": continueToRoblox()
-            elif a == "2" and cf.main_config.get("EFlagRobloxStudioEnabled") == True: continueToRoblox(studio=True)
+            generated_ui_options.append({
+                "index": 1, 
+                "message": ts("Continue to Roblox"), 
+                "func": lambda: continueToRoblox()
+            })
+            if cf.main_config.get("EFlagRobloxStudioEnabled") == True:
+                generated_ui_options.append({
+                    "index": 2, 
+                    "message": ts("Continue to Roblox Studio"), 
+                    "func": lambda: continueToRoblox(studio=True)
+                })
+            a = generateMenuSelection(generated_ui_options, star_option=ts("Exit Bootstrap"))
+            if a:
+                try:
+                    if a.get("func"): a["func"]()
+                except BaseException as e:
+                    if type(e) is SystemExit: raise e
+                    printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
+                    printErrorMessage(f"Exception: \n{trace()}")
+                    printErrorMessage(f"Location Code: 3")
+                    optionSelection(ts("An error occurred!"))
             else: sys.exit(0)
     elif isRedirectedFromApp == False: launch()
     else: cf.given_args = ["Main.py"]; launch()

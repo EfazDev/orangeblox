@@ -2611,5 +2611,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Ang OrangeBlox ay sinusuportahan lamang para sa macOS 10.15 (Catalina) o mas mataas. Mangyaring i-update ang iyong operating system upang magpatuloy!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Ang Roblox Manager ay sinusuportahan lamang para sa macOS 10.15 (Catalina) o mas mataas. Mangyaring i-update ang iyong operating system upang magpatuloy!",
  "Though this option may be inaccurate, it may still give a base.": "Bagama't maaaring hindi tumpak ang opsyong ito, maaari pa rin itong magbigay ng batayan..",
- "Allow access to use RobloxManager directly": "Pahintulutan ang access na gamitin ang RobloxManager nang direkta"
+ "Allow access to use RobloxManager directly": "Pahintulutan ang access na gamitin ang RobloxManager nang direkta",
+ "Download & Create": "Mag-download at Gumawa",
+ "Download & Run": "I-download at Patakbuhin",
+ "No": "Hindi",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Ngayon, subukan para sa iyong sarili sa pamamagitan ng paggamit ng mga arrow key o pag-type ng numero!",
+ "Return to Main Menu": "Bumalik sa Main Menu",
+ "Select an option from the list above!": "Pumili ng opsyon mula sa listahan sa itaas!",
+ "Yes": "Oo",
+ "[>] = Do push-ups": "[>] = Mag-push-up",
+ "Disabling Roblox Reopen..": "Hindi pagpapagana sa Roblox Muling Buksan..",
+ "This will only apply to Roblox Player.": "Malalapat lang ito sa Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Gusto mo bang i-disable ang pagpayag sa Roblox na muling magbukas pagkatapos ng macOS sleep/restart? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Pindutin ang shift at pindutin ang pataas/pababang mga arrow key upang ilipat ang isang Mod pataas o pababa sa pagkakasunud-sunod! (Nauna ang tuktok, huli ang ibaba)"
 }

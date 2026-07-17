@@ -18,10 +18,30 @@ def generateFileHash(file_path):
 
 # Load Version.json
 version_json = {
-    "version": "2.6.0d",
-    "latest_version": "2.6.0d",
+    "version": "2.6.0e",
+    "latest_version": "2.6.0e",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
+}
+display_names = {
+    "Main.py": "Main Bootstrap",
+    "RobloxManager.py": "Roblox Manager",
+    "Install.py": "Installer",
+    "OrangeAPI.py": "Bootstrap API",
+    "OrangeBlox.py": "Bootstrap Loader",
+    "PyKits.py": "PyKits API",
+    "Modules/config.py": "Configuration Module",
+    "Modules/menu.py": "Menu Module",
+    "Modules/modmanager.py": "Mod Manager Module",
+    "Modules/modscripts.py": "Mod Scripts Module",
+    "Modules/options.py": "Menu Options Module",
+    "Modules/pkg.py": "Python Package Module",
+    "Modules/printing.py": "Printing/Logging Module",
+    "Modules/roblox.py": "Roblox Module",
+    "Modules/settings.py": "Settings Module",
+    "Modules/startup.py": "Startup Module",
+    "Modules/utils.py": "Utilities Module",
+    "Modules/discord.py": "Discord RPC Module"
 }
 if os.path.exists("Version.json"):
     with open("Version.json", "r", encoding="utf-8") as f: version_json = json.load(f)
@@ -62,7 +82,13 @@ with open("Apps/Storage/Version.txt", "w", encoding="utf-8") as f: f.write(versi
 
 # Build README.md
 try:
-    with open("README.md", "r", encoding="utf-8") as f: read_me_contents = f.read()
-    for i, v in previous_hashes.items(): read_me_contents = read_me_contents.replace(v, generated_hash_json[i])
+    table_md = "| File | MD5 Hash |\n| --- | --- |\n"
+    for file_key, file_hash in generated_hash_json.items():
+        display = display_names.get(file_key, file_key)
+        table_md += f"| {display} ({file_key}) | `{file_hash}` |\n" 
+    with open("README.md", "r", encoding="utf-8") as f:  read_me_contents = f.read()
+    pattern = r"(## Hashes)\n+(.*?)\n+(## Credits)"
+    replacement = rf"\1\n{table_md}\n\3"
+    read_me_contents = re.sub(pattern, replacement, read_me_contents, flags=re.DOTALL)
     with open("README.md", "w", encoding="utf-8") as f: f.write(read_me_contents)
 except Exception as e: print("Failed to build README.md, ignored.")

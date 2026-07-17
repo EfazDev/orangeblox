@@ -2611,5 +2611,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox n'est pris en charge que pour macOS 10.15 (Catalina) ou version ultérieure. Veuillez mettre à jour votre système d'exploitation pour continuer !",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager n'est pris en charge que pour macOS 10.15 (Catalina) ou version ultérieure. Veuillez mettre à jour votre système d'exploitation pour continuer !",
  "Though this option may be inaccurate, it may still give a base.": "Même si cette option peut être inexacte, elle peut néanmoins fournir une base..",
- "Allow access to use RobloxManager directly": "Autoriser l'accès pour utiliser RobloxManager directement"
+ "Allow access to use RobloxManager directly": "Autoriser l'accès pour utiliser RobloxManager directement",
+ "Download & Create": "Télécharger et créer",
+ "Download & Run": "Téléchargez et exécutez",
+ "No": "Non",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Maintenant, essayez par vous-même en utilisant les touches fléchées ou en tapant le numéro !",
+ "Return to Main Menu": "Retour au menu principal",
+ "Select an option from the list above!": "Sélectionnez une option dans la liste ci-dessus !",
+ "Yes": "Oui",
+ "[>] = Do push-ups": "[>] = Faire des pompes",
+ "Disabling Roblox Reopen..": "Désactivation de la réouverture de Roblox..",
+ "This will only apply to Roblox Player.": "Cela ne s'appliquera qu'à Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Souhaitez-vous désactiver l'autorisation de réouverture de Roblox après la mise en veille/redémarrage de macOS ? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Maintenez Shift et appuyez sur les touches fléchées haut/bas pour déplacer un Mod vers le haut ou vers le bas dans l'ordre ! (Le haut est le premier, le bas est le dernier)"
 }

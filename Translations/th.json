@@ -2610,5 +2610,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox รองรับเฉพาะ macOS 10.15 (Catalina) หรือสูงกว่าเท่านั้น โปรดอัปเดตระบบปฏิบัติการของคุณเพื่อดำเนินการต่อ!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager รองรับเฉพาะ macOS 10.15 (Catalina) หรือสูงกว่าเท่านั้น โปรดอัปเดตระบบปฏิบัติการของคุณเพื่อดำเนินการต่อ!",
  "Though this option may be inaccurate, it may still give a base.": "แม้ว่าตัวเลือกนี้อาจไม่ถูกต้อง แต่ก็ยังอาจให้พื้นฐานได้",
- "Allow access to use RobloxManager directly": "อนุญาตให้เข้าถึงเพื่อใช้ RobloxManager โดยตรง"
+ "Allow access to use RobloxManager directly": "อนุญาตให้เข้าถึงเพื่อใช้ RobloxManager โดยตรง",
+ "Download & Create": "ดาวน์โหลดและสร้าง",
+ "Download & Run": "ดาวน์โหลดและเรียกใช้",
+ "No": "เลขที่",
+ "Now, try for yourself by using the arrow keys or typing the number!": "ตอนนี้ลองด้วยตัวเองโดยใช้ปุ่มลูกศรหรือพิมพ์ตัวเลข!",
+ "Return to Main Menu": "กลับไปที่เมนูหลัก",
+ "Select an option from the list above!": "เลือกตัวเลือกจากรายการด้านบน!",
+ "Yes": "ใช่",
+ "[>] = Do push-ups": "[>] = วิดพื้น",
+ "Disabling Roblox Reopen..": "ปิดการใช้งาน Roblox เปิดใหม่..",
+ "This will only apply to Roblox Player.": "สิ่งนี้จะใช้ได้กับ Roblox Player เท่านั้น",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "คุณต้องการปิดการใช้งานการอนุญาตให้ Roblox เปิดอีกครั้งหลังจาก macOS เข้าสู่โหมดสลีป/รีสตาร์ทหรือไม่? (มี/ไม่มี)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "กด shift ค้างไว้แล้วกดปุ่มลูกศรขึ้น/ลงเพื่อเลื่อน Mod ขึ้นหรือลงตามลำดับ! (บนอยู่ก่อน ล่างอยู่หลัง)"
 }

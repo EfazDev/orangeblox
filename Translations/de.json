@@ -2611,5 +2611,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox wird nur für macOS 10.15 (Catalina) oder höher unterstützt. Bitte aktualisieren Sie Ihr Betriebssystem, um fortzufahren!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager wird nur für macOS 10.15 (Catalina) oder höher unterstützt. Bitte aktualisieren Sie Ihr Betriebssystem, um fortzufahren!",
  "Though this option may be inaccurate, it may still give a base.": "Obwohl diese Option möglicherweise ungenau ist, kann sie dennoch eine Grundlage liefern..",
- "Allow access to use RobloxManager directly": "Erlauben Sie den Zugriff, um RobloxManager direkt zu verwenden"
+ "Allow access to use RobloxManager directly": "Erlauben Sie den Zugriff, um RobloxManager direkt zu verwenden",
+ "Download & Create": "Herunterladen und erstellen",
+ "Download & Run": "Herunterladen und ausführen",
+ "No": "Nein",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Probieren Sie es jetzt selbst aus, indem Sie die Pfeiltasten verwenden oder die Nummer eingeben!",
+ "Return to Main Menu": "Zurück zum Hauptmenü",
+ "Select an option from the list above!": "Wählen Sie eine Option aus der Liste oben!",
+ "Yes": "Ja",
+ "[>] = Do push-ups": "[>] = Liegestütze machen",
+ "Disabling Roblox Reopen..": "Roblox-Wiedereröffnung deaktivieren..",
+ "This will only apply to Roblox Player.": "Dies gilt nur für Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Möchten Sie deaktivieren, dass Roblox nach dem Ruhezustand/Neustart von macOS wieder geöffnet wird? (j/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Halten Sie die Umschalttaste gedrückt und drücken Sie die Auf-/Ab-Pfeiltasten, um einen Mod in der Reihenfolge nach oben oder unten zu verschieben! (Oben ist zuerst, unten ist zuletzt)"
 }

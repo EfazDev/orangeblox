@@ -2610,5 +2610,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox hanya didukung untuk macOS 10.15 (Catalina) atau lebih tinggi. Harap perbarui sistem operasi Anda untuk melanjutkan!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager hanya didukung untuk macOS 10.15 (Catalina) atau lebih tinggi. Harap perbarui sistem operasi Anda untuk melanjutkan!",
  "Though this option may be inaccurate, it may still give a base.": "Meskipun opsi ini mungkin tidak akurat, opsi ini mungkin masih memberikan dasar..",
- "Allow access to use RobloxManager directly": "Izinkan akses untuk menggunakan RobloxManager secara langsung"
+ "Allow access to use RobloxManager directly": "Izinkan akses untuk menggunakan RobloxManager secara langsung",
+ "Download & Create": "Unduh & Buat",
+ "Download & Run": "Unduh & Jalankan",
+ "No": "Tidak",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Sekarang, coba sendiri dengan menggunakan tombol panah atau mengetikkan nomornya!",
+ "Return to Main Menu": "Kembali ke Menu Utama",
+ "Select an option from the list above!": "Pilih salah satu opsi dari daftar di atas!",
+ "Yes": "Ya",
+ "[>] = Do push-ups": "[>] = Lakukan push-up",
+ "Disabling Roblox Reopen..": "Menonaktifkan Roblox Buka Kembali..",
+ "This will only apply to Roblox Player.": "Ini hanya berlaku untuk Pemain Roblox..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Apakah Anda ingin menonaktifkan izin Roblox untuk dibuka kembali setelah macOS sleep/restart? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Tahan shift dan tekan tombol panah atas/bawah untuk memindahkan Mod ke atas atau ke bawah secara berurutan! (Yang atas adalah yang pertama, yang bawah adalah yang terakhir)"
 }

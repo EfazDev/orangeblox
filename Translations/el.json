@@ -2611,5 +2611,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Το OrangeBlox υποστηρίζεται μόνο από macOS 10.15 (Catalina) ή νεότερο. Παρακαλώ ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Το Roblox Manager υποστηρίζεται μόνο για macOS 10.15 (Catalina) ή νεότερη έκδοση. Ενημερώστε το λειτουργικό σας σύστημα για να συνεχίσετε!",
  "Though this option may be inaccurate, it may still give a base.": "Αν και αυτή η επιλογή μπορεί να είναι ανακριβής, μπορεί να εξακολουθεί να δίνει μια βάση..",
- "Allow access to use RobloxManager directly": "Επιτρέψτε την πρόσβαση για απευθείας χρήση του RobloxManager"
+ "Allow access to use RobloxManager directly": "Επιτρέψτε την πρόσβαση για απευθείας χρήση του RobloxManager",
+ "Download & Create": "Λήψη & Δημιουργία",
+ "Download & Run": "Λήψη & Εκτέλεση",
+ "No": "Οχι",
+ "Now, try for yourself by using the arrow keys or typing the number!": "Τώρα, δοκιμάστε μόνοι σας χρησιμοποιώντας τα πλήκτρα βέλους ή πληκτρολογώντας τον αριθμό!",
+ "Return to Main Menu": "Επιστροφή στο Κύριο Μενού",
+ "Select an option from the list above!": "Επιλέξτε μια επιλογή από την παραπάνω λίστα!",
+ "Yes": "Ναί",
+ "[>] = Do push-ups": "[>] = Κάντε push-ups",
+ "Disabling Roblox Reopen..": "Απενεργοποίηση Roblox Reopen..",
+ "This will only apply to Roblox Player.": "Αυτό θα ισχύει μόνο για το Roblox Player..",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Θέλετε να απενεργοποιήσετε το να επιτρέπεται στο Roblox να ανοίξει ξανά μετά την αναστολή λειτουργίας/επανεκκίνηση του macOS; (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Κρατήστε πατημένο το shift και πατήστε τα πλήκτρα βέλους πάνω/κάτω για να μετακινήσετε ένα Mod πάνω ή κάτω με τη σειρά! (Η κορυφή είναι πρώτη, η κάτω είναι η τελευταία)"
 }

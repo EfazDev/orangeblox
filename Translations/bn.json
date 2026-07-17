@@ -2614,5 +2614,17 @@
  "OrangeBlox is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "OrangeBlox শুধুমাত্র macOS 10.15 (Catalina) বা উচ্চতর জন্য সমর্থিত। চালিয়ে যেতে আপনার অপারেটিং সিস্টেম আপডেট করুন!",
  "Roblox Manager is only supported for macOS 10.15 (Catalina) or higher. Please update your operating system in order to continue!": "Roblox Manager শুধুমাত্র macOS 10.15 (Catalina) বা উচ্চতর সংস্করণের জন্য সমর্থিত। চালিয়ে যেতে আপনার অপারেটিং সিস্টেম আপডেট করুন!",
  "Though this option may be inaccurate, it may still give a base.": "যদিও এই বিকল্পটি ভুল হতে পারে, তবুও এটি একটি ভিত্তি দিতে পারে।",
- "Allow access to use RobloxManager directly": "সরাসরি RobloxManager ব্যবহার করার অনুমতি দিন"
+ "Allow access to use RobloxManager directly": "সরাসরি RobloxManager ব্যবহার করার অনুমতি দিন",
+ "Download & Create": "ডাউনলোড করুন এবং তৈরি করুন",
+ "Download & Run": "ডাউনলোড করুন এবং চালান",
+ "No": "না",
+ "Now, try for yourself by using the arrow keys or typing the number!": "এখন, তীর কী ব্যবহার করে বা নম্বর টাইপ করে নিজের জন্য চেষ্টা করুন!",
+ "Return to Main Menu": "মূল মেনুতে ফিরে যান",
+ "Select an option from the list above!": "উপরের তালিকা থেকে একটি বিকল্প নির্বাচন করুন!",
+ "Yes": "হ্যাঁ",
+ "[>] = Do push-ups": "[>] = পুশ-আপ করুন",
+ "Disabling Roblox Reopen..": "Roblox পুনরায় খোলা অক্ষম করা হচ্ছে..",
+ "This will only apply to Roblox Player.": "এটি শুধুমাত্র Roblox Player এর ক্ষেত্রে প্রযোজ্য হবে।",
+ "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "আপনি কি macOS স্লিপ/পুনরায় চালু করার পরে Roblox পুনরায় খোলার অনুমতি অক্ষম করতে চান? (y/n)",
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "ক্রমানুসারে একটি মোডকে উপরে বা নিচে সরাতে শিফট ধরে রাখুন এবং উপরে/নীচের তীর কী টিপুন! (শীর্ষ প্রথম, নীচে শেষ)"
 }
