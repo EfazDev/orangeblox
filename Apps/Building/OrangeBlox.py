@@ -19,7 +19,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0f"}
+current_version = {"version": "2.6.0g"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -399,8 +399,7 @@ if __name__ == "__main__":
             venv_path = os.path.join(orangeblox_library, "VirtualEnvironment")
             venv_class = PyKits.pip(executable=os.path.join(venv_path, "bin", "python3"))
             if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
-                    shutil.rmtree(venv_path, ignore_errors=True)
+                if os.path.exists(venv_path): shutil.rmtree(venv_path, ignore_errors=True)
                 generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", venv_path], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 if generate_venv_process.returncode == 0: printSuccessMessage("Generated Virtual Environment!")
                 else: printErrorMessage(f"Failed to create virtual environment. Response Code: {generate_venv_process.returncode}"); venv_path = None
@@ -1915,8 +1914,7 @@ if __name__ == "__main__":
                 venv_path = os.path.join(venv_path, user_folder_name)
                 venv_class = PyKits.pip(executable=os.path.join(venv_path, "Scripts", "python.exe"))
                 if not os.path.exists(venv_path) or not (venv_class.getArchitecture() == pip_class.getArchitecture() and venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion()):
-                    if os.path.exists(venv_path) and not venv_class.getCurrentPythonVersion() == pip_class.getCurrentPythonVersion():
-                        shutil.rmtree(venv_path, ignore_errors=True)
+                    if os.path.exists(venv_path): shutil.rmtree(venv_path, ignore_errors=True)
                     generate_venv_process = subprocess.run([pythonExecutable, "-m", "venv", "--upgrade", f"VirtualEnvironments/{user_folder_name}"], cwd=app_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     if generate_venv_process.returncode == 0: 
                         printSuccessMessage("Generated Virtual Environment!"); pythonExecutable = os.path.join(venv_path, "Scripts", "python.exe")

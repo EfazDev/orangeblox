@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0f
+# v2.6.0g
 # 
 
 # Modules
@@ -34,7 +34,7 @@ plist_class = PyKits.plist()
 sma = {
     "OverallInstall": pip_class.getInstallableApplicationsFolder() if main_os == "Darwin" else pip_class.getLocalAppData(),
     "Darwin": [
-        os.path.join(pip_class.getInstallableApplicationsFolder(), "OrangeBlox.app", "Contents", "MacOS", "OrangeBlox.app"), 
+        os.path.join(pip_class.getInstallableApplicationsFolder(), "OrangeBlox.app"), 
         os.path.join(pip_class.getInstallableApplicationsFolder(), "OrangeBlox.app"),
         os.path.join(pip_class.getInstallableApplicationsFolder(), "Play Roblox.app"),
         os.path.join(pip_class.getInstallableApplicationsFolder(), "Run Studio.app")
@@ -101,7 +101,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0f"}
+current_version = {"version": "2.6.0g"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -763,19 +763,9 @@ def install():
                 elif os.path.exists(os.path.join(sma[main_os][1], "Contents", "MacOS", "OrangeBlox.app")):
                     printMainMessage("Clearing Bootstrap App..")
                     shutil.rmtree(os.path.join(sma[main_os][1], "Contents", "MacOS", "OrangeBlox.app"), ignore_errors=True)
-                
-                # Remove Installed Bootstrap
-                if os.path.exists(sma[main_os][0]):
-                    try:
-                        printMainMessage("Removing Installed Bootstrap..")
-                        shutil.rmtree(sma[main_os][0])
-                    except Exception as e: printErrorMessage("Something went wrong removing installed bootstrap!")
 
                 # Delete frameworks if there's extra
                 del_fram = False
-                if os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/Contents/Frameworks/"):
-                    if del_fram == False: printMainMessage("Clearing App Frameworks.."); del_fram = True
-                    shutil.rmtree(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/Contents/Frameworks/", ignore_errors=True)
                 if os.path.exists(f"{sma[main_os][1]}/Contents/Frameworks/"):
                     if del_fram == False: printMainMessage("Clearing App Frameworks.."); del_fram = True
                     shutil.rmtree(f"{sma[main_os][1]}/Contents/Frameworks/", ignore_errors=True)
@@ -856,7 +846,6 @@ def install():
                     
                     # Remove Apps Folder in /Contents/Resources/
                     printMainMessage("Cleaning App..")
-                    if os.path.exists(os.path.join(sma[main_os][0], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(sma[main_os][0], "Contents", "Resources", "Apps"))
                     if os.path.exists(os.path.join(sma[main_os][1], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(sma[main_os][1], "Contents", "Resources", "Apps"))
                     if os.path.exists(os.path.join(sma[main_os][2], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(sma[main_os][2], "Contents", "Resources", "Apps"))
                     if os.path.exists(os.path.join(sma[main_os][3], "Contents", "Resources", "Apps")): shutil.rmtree(os.path.join(sma[main_os][3], "Contents", "Resources", "Apps"))
@@ -1813,7 +1802,7 @@ if __name__ == "__main__":
                     elif remove_unneeded_messages == False: printMainMessage("Aw, well, better next time! (..maybe)")
                 def requestUninstall():
                     if main_os == "Darwin":
-                        if not os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
+                        if not os.path.exists(f"{sma[main_os][1]}"):
                             printMainMessage("OrangeBlox is not installed on this system.")
                             input("> ")
                             sys.exit(0)
@@ -2162,7 +2151,7 @@ if __name__ == "__main__":
                     elif res == "4": requestBackup()
     if update_mode == True:
         if main_os == "Darwin":
-            if os.path.exists(f"{sma[main_os][1]}/Contents/MacOS/OrangeBlox.app/"):
+            if os.path.exists(f"{sma[main_os][1]}"):
                 printMainMessage("Loading OrangeBlox executable!")
                 subprocess.Popen(["/usr/bin/open", "-a", sma[main_os][1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else: printErrorMessage("Bootstrap Launch Failed: App is not installed.")
