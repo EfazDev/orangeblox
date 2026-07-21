@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Roblox को फिर से खोलने को अक्षम किया जा रहा है..",
  "This will only apply to Roblox Player.": "यह केवल Roblox प्लेयर पर लागू होगा।",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "क्या आप macOS स्लीप/रीस्टार्ट के बाद Roblox को फिर से खोलने की अनुमति देना अक्षम करना चाहेंगे? (य/नहीं)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "किसी मॉड को क्रम में ऊपर या नीचे ले जाने के लिए शिफ्ट को दबाए रखें और ऊपर/नीचे तीर कुंजियाँ दबाएँ! (शीर्ष पहले है, नीचे अंतिम है)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "किसी मॉड को क्रम में ऊपर या नीचे ले जाने के लिए शिफ्ट को दबाए रखें और ऊपर/नीचे तीर कुंजियाँ दबाएँ! (शीर्ष पहले है, नीचे अंतिम है)",
+ "Are you sure you want to continue?": "क्या आप वाकई जारी रखना चाहते हैं?",
+ "Continue with Changes": "परिवर्तन जारी रखें",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "जारी रखने से ऑरेंजब्लॉक्स इंस्टॉलेशन की अखंडता से समझौता हो सकता है और अप्रत्याशित व्यवहार हो सकता है। कृपया जारी रखने से पहले सुनिश्चित करें कि आप इस पर भरोसा करते हैं।",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "उह ओह! ऐसा लगता है कि किसी चीज़ ने आपके ऑरेंजब्लॉक्स इंस्टॉलेशन को संशोधित कर दिया है। प्रभावित फ़ाइलें हैं:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "उह ओह! ऐसा लगता है कि किसी चीज़ ने आपके ऑरेंजब्लॉक्स इंस्टॉलेशन को संशोधित कर दिया है। प्रभावित फ़ाइलें हैं: (*)",
+ "--- Fast Flags Configurations ---": "--- फ़ास्ट फ़्लैग कॉन्फ़िगरेशन ---",
+ "Fast Flags Configuration": "फ़ास्ट फ़्लैग कॉन्फ़िगरेशन",
+ "--- Link Shortcuts ---": "--- लिंक शॉर्टकट ---",
+ "Link Shortcuts": "लिंक शॉर्टकट",
+ "Option finished!": "विकल्प ख़त्म!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "क्या आप रोबॉक्स क्लाइंट और (*)के लिए यूआरएल योजनाएं सेट करना चाहेंगे? [लिंक शॉर्टकट के लिए आवश्यक और जब Roblox अपडेट हो] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "क्या आप रोबॉक्स क्लाइंट और बूटस्ट्रैप के लिए यूआरएल योजनाएं सेट करना चाहेंगे? [लिंक शॉर्टकट के लिए आवश्यक और जब Roblox अपडेट हो] (y/n)"
 }

@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Desativando a reabertura do Roblox..",
  "This will only apply to Roblox Player.": "Isso se aplicará apenas ao Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Você gostaria de desativar a permissão de reabertura do Roblox após a suspensão/reinicialização do macOS? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Segure shift e pressione as teclas de seta para cima/para baixo para mover um Mod para cima ou para baixo na ordem! (O topo é o primeiro, o fundo é o último)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Segure shift e pressione as teclas de seta para cima/para baixo para mover um Mod para cima ou para baixo na ordem! (O topo é o primeiro, o fundo é o último)",
+ "Are you sure you want to continue?": "Tem certeza de que deseja continuar?",
+ "Continue with Changes": "Continuar com as alterações",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Continuar pode comprometer a integridade da instalação do OrangeBlox e causar comportamento inesperado. Certifique-se de confiar nisso antes de continuar..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Ah, ah! Parece que algo Modificou sua instalação do OrangeBlox. Os arquivos afetados são:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Ah, ah! Parece que algo Modificou sua instalação do OrangeBlox. Os arquivos afetados são: (*)",
+ "--- Fast Flags Configurations ---": "--- Configurações de sinalizadores rápidos ---",
+ "Fast Flags Configuration": "Configuração de sinalizadores rápidos",
+ "--- Link Shortcuts ---": "--- Atalhos de links ---",
+ "Link Shortcuts": "Atalhos de links",
+ "Option finished!": "Opção finalizada!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Gostaria de definir os esquemas de URL para o cliente Roblox e (*)? [Necessário para atalhos de link e quando o Roblox atualiza] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Gostaria de definir os esquemas de URL para o cliente Roblox e o bootstrap? [Necessário para atalhos de link e quando o Roblox atualiza] (y/n)"
 }

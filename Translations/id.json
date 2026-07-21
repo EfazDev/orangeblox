@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Menonaktifkan Roblox Buka Kembali..",
  "This will only apply to Roblox Player.": "Ini hanya berlaku untuk Pemain Roblox..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Apakah Anda ingin menonaktifkan izin Roblox untuk dibuka kembali setelah macOS sleep/restart? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Tahan shift dan tekan tombol panah atas/bawah untuk memindahkan Mod ke atas atau ke bawah secara berurutan! (Yang atas adalah yang pertama, yang bawah adalah yang terakhir)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Tahan shift dan tekan tombol panah atas/bawah untuk memindahkan Mod ke atas atau ke bawah secara berurutan! (Yang atas adalah yang pertama, yang bawah adalah yang terakhir)",
+ "Are you sure you want to continue?": "Apakah Anda yakin ingin melanjutkan?",
+ "Continue with Changes": "Lanjutkan dengan Perubahan",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Melanjutkan dapat membahayakan integritas instalasi OrangeBlox dan dapat menyebabkan perilaku yang tidak diharapkan. Harap pastikan Anda memercayai ini sebelum melanjutkan..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Uh oh! Tampaknya ada sesuatu yang mengubah instalasi OrangeBlox Anda. File yang terpengaruh adalah:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Uh oh! Tampaknya ada sesuatu yang mengubah instalasi OrangeBlox Anda. File yang terpengaruh adalah: (*)",
+ "--- Fast Flags Configurations ---": "--- Konfigurasi Bendera Cepat ---",
+ "Fast Flags Configuration": "Konfigurasi Bendera Cepat",
+ "--- Link Shortcuts ---": "--- Tautan Pintasan ---",
+ "Link Shortcuts": "Tautan Pintasan",
+ "Option finished!": "Opsi selesai!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Apakah Anda ingin mengatur Skema URL untuk Klien Roblox dan (*)? [Diperlukan untuk pintasan tautan dan saat Roblox diperbarui] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Apakah Anda ingin mengatur Skema URL untuk Klien Roblox dan bootstrap? [Diperlukan untuk pintasan tautan dan saat Roblox diperbarui] (y/n)"
 }

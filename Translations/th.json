@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "ปิดการใช้งาน Roblox เปิดใหม่..",
  "This will only apply to Roblox Player.": "สิ่งนี้จะใช้ได้กับ Roblox Player เท่านั้น",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "คุณต้องการปิดการใช้งานการอนุญาตให้ Roblox เปิดอีกครั้งหลังจาก macOS เข้าสู่โหมดสลีป/รีสตาร์ทหรือไม่? (มี/ไม่มี)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "กด shift ค้างไว้แล้วกดปุ่มลูกศรขึ้น/ลงเพื่อเลื่อน Mod ขึ้นหรือลงตามลำดับ! (บนอยู่ก่อน ล่างอยู่หลัง)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "กด shift ค้างไว้แล้วกดปุ่มลูกศรขึ้น/ลงเพื่อเลื่อน Mod ขึ้นหรือลงตามลำดับ! (บนอยู่ก่อน ล่างอยู่หลัง)",
+ "Are you sure you want to continue?": "คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?",
+ "Continue with Changes": "ดำเนินการต่อด้วยการเปลี่ยนแปลง",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "การดำเนินการต่ออาจทำให้ความสมบูรณ์ของการติดตั้ง OrangeBlox ลดลง และอาจทำให้เกิดลักษณะการทำงานที่ไม่คาดคิด โปรดตรวจสอบให้แน่ใจว่าคุณเชื่อถือสิ่งนี้ก่อนที่จะดำเนินการต่อ",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "เอ่อโอ้! ดูเหมือนว่ามีบางอย่างแก้ไขการติดตั้ง OrangeBlox ของคุณ ไฟล์ที่ได้รับผลกระทบคือ:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "เอ่อโอ้! ดูเหมือนว่ามีบางอย่างแก้ไขการติดตั้ง OrangeBlox ของคุณ ไฟล์ที่ได้รับผลกระทบคือ: (*)",
+ "--- Fast Flags Configurations ---": "--- การกำหนดค่าแฟล็กด่วน ---",
+ "Fast Flags Configuration": "การกำหนดค่าแฟล็กด่วน",
+ "--- Link Shortcuts ---": "--- ทางลัดลิงค์ ---",
+ "Link Shortcuts": "ลิงก์ทางลัด",
+ "Option finished!": "ตัวเลือกเสร็จแล้ว!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "คุณต้องการตั้งค่าโครงร่าง URL สำหรับไคลเอนต์ Roblox และ (*)หรือไม่ [จำเป็นสำหรับทางลัดลิงก์และเมื่อมีการอัปเดต Roblox] (มี/ไม่มี)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "คุณต้องการตั้งค่าโครงร่าง URL สำหรับไคลเอนต์ Roblox และบูตสแตรปหรือไม่ [จำเป็นสำหรับทางลัดลิงก์และเมื่อมีการอัปเดต Roblox] (มี/ไม่มี)"
 }

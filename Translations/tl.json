@@ -2623,5 +2623,17 @@
  "Disabling Roblox Reopen..": "Hindi pagpapagana sa Roblox Muling Buksan..",
  "This will only apply to Roblox Player.": "Malalapat lang ito sa Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Gusto mo bang i-disable ang pagpayag sa Roblox na muling magbukas pagkatapos ng macOS sleep/restart? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Pindutin ang shift at pindutin ang pataas/pababang mga arrow key upang ilipat ang isang Mod pataas o pababa sa pagkakasunud-sunod! (Nauna ang tuktok, huli ang ibaba)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Pindutin ang shift at pindutin ang pataas/pababang mga arrow key upang ilipat ang isang Mod pataas o pababa sa pagkakasunud-sunod! (Nauna ang tuktok, huli ang ibaba)",
+ "Are you sure you want to continue?": "Sigurado ka bang gusto mong magpatuloy?",
+ "Continue with Changes": "Magpatuloy sa Mga Pagbabago",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Ang pagpapatuloy ay maaaring makompromiso ang integridad ng pag-install ng OrangeBlox at maaaring magdulot ng hindi inaasahang pag-uugali. Pakitiyak na pinagkakatiwalaan mo ito bago ka magpatuloy..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Uh oh! Mukhang may nagbago sa iyong pag-install ng OrangeBlox. Ang mga apektadong file ay:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Uh oh! Mukhang may nagbago sa iyong pag-install ng OrangeBlox. Ang mga apektadong file ay: (*)",
+ "--- Fast Flags Configurations ---": "--- Mga Configuration ng Mabilis na Flag ---",
+ "Fast Flags Configuration": "Fast Flags Configuration",
+ "--- Link Shortcuts ---": "--- Link Shortcut ---",
+ "Link Shortcuts": "Mga Shortcut sa Link",
+ "Option finished!": "Tapos na ang opsyon!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Gusto mo bang itakda ang URL Scheme para sa Roblox Client at (*)? [Kailangan para sa mga link shortcut at kapag nag-update si Roblox] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Gusto mo bang itakda ang URL Scheme para sa Roblox Client at sa bootstrap? [Kailangan para sa mga link shortcut at kapag nag-update si Roblox] (y/n)"
 }

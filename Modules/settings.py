@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 import Modules.config as cf
@@ -29,16 +29,11 @@ def robloxSettings():
     d = handleBasicSetting("EFlagRobloxStudioEnabled", False)
     if d: return d
 
-    if cf.main_os == "Darwin":
-        printMainMessage("Would you like to remove the Dock shortcut that Roblox automatically adds? (y/n)")
-        d = handleBasicSetting("EFlagRemoveRobloxAppDockShortcut", False)
-        if d: return d
-
     printMainMessage("Would you like to reinstall a fresh copy of Roblox every launch? (y/n)")
     d = handleBasicSetting("EFlagFreshCopyRoblox", False)
     if d: return d
 
-    printMainMessage(f"Would you like to set the URL Schemes for the Roblox Client and {obName0()}? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
+    printMainMessage(f"Would you like to set the URL Schemes for the Roblox Client and {obName0()}? [Needed for Link Shortcuts and when Roblox updates] (y/n)")
     d = handleBasicSetting("EFlagDisableURLSchemeInstall", False, False)
     if d: return d
 
@@ -765,18 +760,6 @@ def debugging():
             cf.main_config["EFlagDisableRobloxUpdateChecks"] = False
             printDebugMessage("User selected: False")
 
-    printMainMessage("Would you like to disable Hash Verification in the OrangeLoader backend? (y/n)")
-    printMainMessage(f'Current Setting: {(cf.main_config.get("EFlagDisableSecureHashSecurity")==True)}')
-    printYellowMessage("This is a security measure used to validate bootstrap scripts.")
-    d = input("> ")
-    if isYes(d) == True:
-        cf.main_config["EFlagDisableSecureHashSecurity"] = True
-        printDebugMessage("User selected: True")
-    elif isRequestClose(d) == True: printMainMessage("Closing settings.."); return ts("Settings was closed.")
-    elif isNo(d) == True:
-        cf.main_config["EFlagDisableSecureHashSecurity"] = False
-        printDebugMessage("User selected: False")
-
     printMainMessage("Would you like to enable Hash Verification on Roblox Player and Studio after updates? (y/n)")
     printMainMessage(f'Current Setting: {cf.main_config.get("EFlagVerifyRobloxHashAfterInstall")!=False}')
     printYellowMessage("This is a security measure that be used to validate Roblox in case of insecure downloads.")
@@ -800,7 +783,7 @@ def mainSettings():
     generated_ui_options.append({
         "index": 1.5, 
         "message": ts("Roblox Fast Flag Configurations"), 
-        "func": continueToFFlagInstaller,
+        "func": continueToRobloxManager,
         "clear_console": True
     })
     generated_ui_options.append({

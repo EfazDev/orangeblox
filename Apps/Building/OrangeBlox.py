@@ -19,7 +19,7 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0g"}
+current_version = {"version": "2.6.0h"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -67,7 +67,6 @@ flag_types = {
     "EFlagBootstrapUpdateServer": "str",
     "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
-    "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
     "EFlagRobloxPlayerArguments": "str",
     "EFlagRobloxStudioArguments": "str",
@@ -116,7 +115,6 @@ flag_types = {
     "EFlagRobloxClientChannel": "str",
     "EFlagDisableRobloxUpdateChecks": "bool",
     "EFlagRobloxStudioClientChannel": "str",
-    "EFlagDisableSecureHashSecurity": "bool",
     "EFlagDisableSettingsAccess": "bool",
     "EFlagRobloxLinkShortcuts": "dict",
     "EFlagRobloxCodesigningName": "str",
@@ -470,6 +468,7 @@ if __name__ == "__main__":
                             NSForegroundColorAttributeName, 
                             NSParagraphStyleAttributeName,
                             NSMutableParagraphStyle,
+                            NSAlertStyleWarning,
                             NSFontAttributeName, 
                             NSFont, 
                             NSWindow, 
@@ -675,7 +674,7 @@ if __name__ == "__main__":
                                         threading.Thread(target=self.read_output, daemon=True).start()
                                     else:
                                         displayNotification(ts("Uh oh!"), ts(f"Your copy of {obName0()} was unable to be validated and might be tampered with!"))
-                                        printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
+                                        printErrorMessage(f"Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: {', '.join(unable_to_validate2)}")
                                         for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
                                         printErrorMessage(f"Requested validation failed window from pyobjc.")
                                 except Exception as e: printErrorMessage(f"Failed to start process: {e}")
@@ -949,12 +948,12 @@ if __name__ == "__main__":
                                     try:
                                         pip_class.startThread(func=self.config_reload_period_func, daemon=True)
                                         if validated == False: self.show_validation_failed_menu()
-                                        self.threadingloop_(None)
+                                        self.debugLogsLoop_(None)
                                     except Exception as e: printErrorMessage(f"Something went wrong with running functions! Error: \n{trace()}")
                                     printMainMessage(f"PyObjc app finished launching!")
                                 except Exception: printErrorMessage(f"PyObjc App Failed! Error: \n{trace()}")
-                            def applicationShouldTerminate_(self, sender): return self.on_close(should=True)
-                            def windowWillMiniaturize_(self, notification): self.prevent_minimize()
+                            def applicationShouldTerminate_(self, sender): return self.onAppClose(should=True)
+                            def windowWillMiniaturize_(self, notification): self.preventMinimize()
                             def onButtonClick_(self, sender): self.createNewTerminal()
                             def application_openURLs_(self, application, urls):
                                 try:
@@ -986,9 +985,9 @@ if __name__ == "__main__":
                                 if sender == self.debug_win:
                                     self.disable_debug_mode_window()
                                     return False 
-                                elif self.validation_frame and sender == self.validation_failed_window: return self.on_close(should=True)
+                                elif self.validation_frame and sender == self.validation_failed_window: return self.onAppClose(should=True)
                                 return True
-                            def windowDidMiniaturize_(self, notification): self.debug_win.deminiaturize_(None); self.prevent_minimize()
+                            def windowDidMiniaturize_(self, notification): self.debug_win.deminiaturize_(None); self.preventMinimize()
                             def appendBatchLogs_(self, batch_string):
                                 storage = self.debug_output_area.textStorage()
                                 storage.beginEditing()
@@ -999,8 +998,8 @@ if __name__ == "__main__":
                                 tc = self.debug_output_area.textContainer()
                                 lm.ensureLayoutForTextContainer_(tc)
                                 if self.debug_is_at_bottom: self.debug_output_area.scrollRangeToVisible_((storage.length(), 0))
-                                self.updateScrollingLogsHeight()
-                            def threadingloop_(self, obj):
+                                self.updateDebugScrollHeight()
+                            def debugLogsLoop_(self, obj):
                                 try:
                                     COLOR_CODES[5] = obColorH()
                                     new_logs = logs[self.debug_last_checked_index:]
@@ -1034,6 +1033,16 @@ if __name__ == "__main__":
                                 if max_y <= 0: self.debug_is_at_bottom = True
                                 elif abs(current_y - max_y) < 8.0: self.debug_is_at_bottom = True
                                 else: self.debug_is_at_bottom = False
+                            def showWarningPopup_(self, sender):
+                                alert = NSAlert.alloc().init()
+                                alert.setMessageText_(ts("Are you sure you want to continue?"))
+                                alert.setInformativeText_(ts("Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue."))
+                                alert.addButtonWithTitle_("Continue Anyway")
+                                alert.addButtonWithTitle_("Cancel")
+                                alert.setAlertStyle_(NSAlertStyleWarning)
+                                response = alert.runModal()
+                                if response == 1000: self.startBootstrapWithoutValidation_(sender)
+                                else: pass
                             def debugWindowInit(self):
                                 try:
                                     self.debug_win = NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
@@ -1214,14 +1223,14 @@ if __name__ == "__main__":
                                     self.debug_holding_frame.layoutSubtreeIfNeeded()
                                     self.debug_win.display()
                                 except Exception: printErrorMessage(f"PyObjc Debug App Failed! Error: \n{trace()}")
-                            def prevent_minimize(self): printDebugMessage("Prevented minimizing main window in order to keep app running smoothly.")
-                            def updateScrollingLogsHeight(self):
+                            def preventMinimize(self): printDebugMessage("Prevented minimizing main window in order to keep app running smoothly.")
+                            def updateDebugScrollHeight(self):
                                 layout_manager = self.debug_output_area.layoutManager()
                                 text_container = self.debug_output_area.textContainer()
                                 used_rect = layout_manager.usedRectForTextContainer_(text_container)
                                 content_height = used_rect.size.height + 20
                                 self.debug_output_area.setFrameSize_((800, content_height))
-                            def on_close(self, should: bool=False):
+                            def onAppClose(self, should: bool=False):
                                 try:
                                     if self.terminating == True or self.closing_approved == True: return True
                                     running_terminals = [t for t in getattr(self, "active_terminals", []) if t.process and t.process.poll() is None]
@@ -1295,7 +1304,7 @@ if __name__ == "__main__":
                                     add_menu_item(file_menu, ts("Connect to Existing Roblox"), "reconnectRoblox_")
                                     if main_config.get("EFlagRobloxStudioEnabled") == True: add_menu_item(file_menu, ts("Connect to Existing Roblox Studio"), "reconnectRobloxStudio_")
                                 file_menu.addItem_(NSMenuItem.separatorItem())
-                                add_menu_item(file_menu, ts("Run Fast Flags Installer"), "runFFlagInstaller_")
+                                add_menu_item(file_menu, ts("Fast Flags Configuration"), "runRBXManager_")
                                 add_menu_item(file_menu, ts("Clear Temporary Storage"), "clearRobloxLogs_")
                                 add_menu_item(file_menu, ts("Roblox Installer Options"), "openRobloxInstallerOptions_")
                                 add_menu_item(file_menu, ts("End All Roblox Windows"), "endAllRoblox_")
@@ -1353,14 +1362,14 @@ if __name__ == "__main__":
                                         self.shortcut_options.append((shortcuts_menu, item))
                                         shortcuts_menu.addItem_(item)
                                     shortcuts_menu.addItem_(NSMenuItem.separatorItem())
-                                self.shortcut_options.append((shortcuts_menu, add_menu_item(shortcuts_menu, ts("Open Shortcuts Menu"), "shortcutmenu_")))
+                                self.shortcut_options.append((shortcuts_menu, add_menu_item(shortcuts_menu, ts("Open Shortcuts Menu"), "shortcutMenu_")))
 
                                 options_menu = NSMenu.alloc().initWithTitle_(ts("Options"))
                                 options_menu_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(ts("Options"), None, "")
                                 self.top_menu.addItem_(options_menu_item)
                                 self.top_menu.setSubmenu_forItem_(options_menu, options_menu_item)
-                                add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs_")
-                                add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs_")
+                                add_menu_item(options_menu, ts("Clear Debug Window Logs"), "clearLogs")
+                                add_menu_item(options_menu, ts("Force Load Debug Window Logs"), "forceLoadLogs")
                                 if gui_app_lock and gui_app_lock.exists(): add_menu_item(options_menu, ts("Unlock App Lock"), "unlockAppLock_")
                                 add_menu_item(options_menu, ts("Close App"), "closeApp_")
 
@@ -1457,7 +1466,7 @@ if __name__ == "__main__":
                             def new_bootstrap_roblox_installer(self): self.new_bootstrap("roblox-installer-options", ts("Open Roblox Installer Options"))
                             def new_bootstrap_end_roblox(self): self.new_bootstrap("end-roblox", ts("End Roblox"))
                             def new_bootstrap_end_roblox_studio(self): self.new_bootstrap("end-roblox-studio", ts("End Roblox Studio"))
-                            def new_bootstrap_run_fflag_installer(self): self.new_bootstrap("fflag-install", ts("Run Fast Flag Installer"))
+                            def new_bootstrap_run_roblox_manager(self): self.new_bootstrap("roblox-manager", ts("Fast Flags Configuration"))
                             def new_bootstrap_open_settings(self): self.new_bootstrap("settings", ts("Open Settings"))
                             def new_bootstrap_open_mods_manager(self): self.new_bootstrap("mods", ts("Open Mods Manager"))
                             def new_bootstrap_open_credits(self): self.new_bootstrap("credits", ts("Open Credits"))
@@ -1496,25 +1505,19 @@ if __name__ == "__main__":
                             def openRobloxInstallerOptions_(self, sender): self.new_bootstrap_roblox_installer()
                             def endAllRoblox_(self, sender): self.new_bootstrap_end_roblox()
                             def endAllRobloxStudio_(self, sender): self.new_bootstrap_end_roblox_studio()
-                            def runFFlagInstaller_(self, sender): self.new_bootstrap_run_fflag_installer()
+                            def runRBXManager_(self, sender): self.new_bootstrap_run_roblox_manager()
                             def reconnectRoblox_(self, sender): self.new_bootstrap_play_reconnect()
                             def reconnectRobloxStudio_(self, sender): self.new_bootstrap_play_reconnect_studio()
                             def clearRobloxLogs_(self, sender): self.new_bootstrap_clear_roblox_logs()
                             def urlQuickLaunch_(self, sender): self.new_bootstrap_url_quick_launch()
-                            def clearLogs_(self, sender): self.clear_logs()
-                            def forceLoadLogs_(self, sender): self.force_load_logs()
+                            def clearLogs(self, sender): self.clearLogs()
+                            def forceLoadLogs(self, sender): self.forceLoadLogs()
                             def unlockAppLock_(self, sender): self.unlock_app_lock()
-                            def closeApp_(self, sender): self.on_close()
+                            def closeApp_(self, sender): self.onAppClose()
                             def showHelpMenu_(self, sender): self.show_help_menu()
                             def showGitHubIssuesMenu_(self, sender): self.show_github_issues_menu()
                             def enterDebugWindowMode_(self, sender): self.instant_debug_window()
-                            def shortcutmenu_(self, sender): self.new_bootstrap_open_shortcuts()
-                            def menu_copy(self, sender): self.debug_output_area.copy_(sender)
-                            def menu_cut(self, sender): pass
-                            def menu_paste(self, sender): pass
-                            def menu_select_all(self, sender): self.debug_output_area.selectAll_(sender)
-                            def menu_undo(self, sender): self.debug_output_area.undoManager().undo()
-                            def menu_redo(self, sender): self.debug_output_area.undoManager().redo()
+                            def shortcutMenu_(self, sender): self.new_bootstrap_open_shortcuts()
                             def refreshConfig_(self, sender):
                                 loadConfiguration()
                                 self.config_reload_period = True
@@ -1546,13 +1549,13 @@ if __name__ == "__main__":
                                 new_terminal.terminalAppInit()
                                 pip_class.startThread(func=new_terminal.start_process, daemon=True)
                                 self.active_terminals.append(new_terminal)
-                            def clear_logs(self):
+                            def clearLogs(self):
                                 global logs
                                 logs = []
                                 self.debug_output_area.setEditable_(True)
                                 self.debug_output_area.setString_("")
                                 self.debug_output_area.setEditable_(False)
-                            def force_load_logs(self): self.threadingloop_("oranges")
+                            def forceLoadLogs(self): self.debugLogsLoop_("oranges")
                             def validateMenuItem_(self, menuItem): return True
                             def unlock_app_lock(self):
                                 if gui_app_lock and gui_app_lock.exists(): gui_app_lock.release()
@@ -1672,7 +1675,7 @@ if __name__ == "__main__":
                                     
                                     label2 = NSTextField.alloc().initWithFrame_(((75, 105), (350, 90)))
                                     label2.setTranslatesAutoresizingMaskIntoConstraints_(False)
-                                    label2.setStringValue_(ts("Uh oh! There was an issue trying to validate hashes for the following files:"))
+                                    label2.setStringValue_(ts("Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:"))
                                     label2.setFont_(NSFont.systemFontOfSize_(15))
                                     label2.setBezeled_(False)
                                     label2.setDrawsBackground_(False)
@@ -1707,9 +1710,9 @@ if __name__ == "__main__":
                                     
                                     button = NSButton.alloc().initWithFrame_(((150, 45), (200, 40)))
                                     button.setTranslatesAutoresizingMaskIntoConstraints_(False)
-                                    button.setTitle_(ts("Continue without validation"))
+                                    button.setTitle_(ts("Continue with Changes"))
                                     button.setTarget_(self)
-                                    button.setAction_(objc.selector(self.startBootstrapWithoutValidation_, signature=b"v@:@"))
+                                    button.setAction_(objc.selector(self.showWarningPopup_, signature=b"v@:@"))
                                     self.validation_frame.addSubview_(button)
 
                                     constraints = [
@@ -1807,7 +1810,6 @@ if __name__ == "__main__":
                                 while True:
                                     time.sleep(20)
                                     self.refreshConfig_(None)
-                            @objc.python_method
                             def get_color(self, hex_str):
                                 hex_str = str(hex_str).upper()
                                 r, g, b = 255, 255, 255
@@ -1945,7 +1947,7 @@ if __name__ == "__main__":
                             file_hash = generateFileHash(os.path.join(app_path, i))
                             if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
                         if validated == False and not (main_config.get("EFlagDisableSecureHashSecurity") == True):
-                            printErrorMessage(f"Uh oh! There was an issue trying to validate hashes for the following files: {', '.join(unable_to_validate2)}")
+                            printErrorMessage(f"Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: {', '.join(unable_to_validate2)}")
                             printErrorMessage(f"Would you like to skip verification? Hashes that are unable to be validated are listed below:")
                             for i in unable_to_validate: printErrorMessage(f"{i[0]} | {i[2]} => {i[1]}")
                             if isYes(input("> ")) == False: ended = True; sys.exit(0); return

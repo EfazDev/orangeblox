@@ -2623,5 +2623,17 @@
  "Disabling Roblox Reopen..": "Deaktiverer Roblox Reopen..",
  "This will only apply to Roblox Player.": "Dette gælder kun for Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Vil du deaktivere at tillade Roblox at genåbne efter macOS dvale/genstart? (å/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Hold shift nede og tryk på op/ned piletasterne for at flytte en Mod op eller ned i rækkefølgen! (Top er først, bund er sidst)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Hold shift nede og tryk på op/ned piletasterne for at flytte en Mod op eller ned i rækkefølgen! (Top er først, bund er sidst)",
+ "Are you sure you want to continue?": "Er du sikker på, at du vil fortsætte?",
+ "Continue with Changes": "Fortsæt med ændringer",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "At fortsætte kan kompromittere integriteten af ​​OrangeBlox-installationen og kan forårsage uventet adfærd. Sørg for, at du stoler på dette, før du fortsætter..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Åh åh! Det ser ud til, at noget har ændret din OrangeBlox-installation. De berørte filer er:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Åh åh! Det ser ud til, at noget har ændret din OrangeBlox-installation. De berørte filer er: (*)",
+ "--- Fast Flags Configurations ---": "--- Hurtige flag konfigurationer ---",
+ "Fast Flags Configuration": "Hurtig konfiguration af flag",
+ "--- Link Shortcuts ---": "--- Linkgenveje ---",
+ "Link Shortcuts": "Linkgenveje",
+ "Option finished!": "Option færdig!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Vil du indstille URL-skemaerne for Roblox-klienten og (*)? [Nødvendig for linkgenveje, og når Roblox opdaterer] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Vil du indstille URL-skemaerne for Roblox-klienten og bootstrappen? [Nødvendig for linkgenveje, og når Roblox opdaterer] (y/n)"
 }

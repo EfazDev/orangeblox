@@ -1,5 +1,5 @@
 """
-PyKits v1.8.8 | Made by Efaz from efaz.dev
+PyKits v1.8.9 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -38,7 +38,7 @@ However! Classes may depend on other classes. Use this resource list:
 """
 
 # Module Information
-__version__ = "1.8.8"
+__version__ = "1.8.9"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -395,7 +395,7 @@ class request:
             if type(cookies) is self.CookieJar: cookie_jar = cookies._generate_http_cookiejar(url)
             elif type(cookies) is dict: cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.8.8")
+            headers.setdefault("user-agent", f"PyKits/1.8.9")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -541,9 +541,10 @@ class request:
                     self._site = site
                     s = self._subprocess.run([self._sys.executable, "-m", "pip", "install"] + (["--user"] if (not virt and self._site.ENABLE_USER_SITE) else []) + ["--upgrade", "truststore"], stdout=self._subprocess.DEVNULL)
                     if s.returncode == 0:
-                        site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
-                        for path in site_packages_paths:
-                            if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
+                        if not virt:
+                            site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]
+                            for path in site_packages_paths:
+                                if path not in self._sys.path and self._os.path.exists(path): self._sys.path.append(path)
                         self._importlib.invalidate_caches()
                     else: return self.ensure_python_certs(certifi_only=True)
                 import truststore # type: ignore
@@ -1310,6 +1311,7 @@ class pip:
     def uncacheLoadedModules(self):
         if getattr(self._sys, "frozen", False): pass
         else:
+            if self.isSameRunningPythonExecutable() and self.getIfVirtualEnvironment(): return
             import site
             self._site = site
             site_packages_paths = self._site.getsitepackages() + [self._site.getusersitepackages()]

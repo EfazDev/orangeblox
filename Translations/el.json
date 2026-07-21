@@ -2623,5 +2623,17 @@
  "Disabling Roblox Reopen..": "Απενεργοποίηση Roblox Reopen..",
  "This will only apply to Roblox Player.": "Αυτό θα ισχύει μόνο για το Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Θέλετε να απενεργοποιήσετε το να επιτρέπεται στο Roblox να ανοίξει ξανά μετά την αναστολή λειτουργίας/επανεκκίνηση του macOS; (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Κρατήστε πατημένο το shift και πατήστε τα πλήκτρα βέλους πάνω/κάτω για να μετακινήσετε ένα Mod πάνω ή κάτω με τη σειρά! (Η κορυφή είναι πρώτη, η κάτω είναι η τελευταία)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Κρατήστε πατημένο το shift και πατήστε τα πλήκτρα βέλους πάνω/κάτω για να μετακινήσετε ένα Mod πάνω ή κάτω με τη σειρά! (Η κορυφή είναι πρώτη, η κάτω είναι η τελευταία)",
+ "Are you sure you want to continue?": "Είστε βέβαιοι ότι θέλετε να συνεχίσετε;",
+ "Continue with Changes": "Συνεχίστε με τις Αλλαγές",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Η συνέχιση μπορεί να θέσει σε κίνδυνο την ακεραιότητα της εγκατάστασης OrangeBlox και μπορεί να προκαλέσει απροσδόκητη συμπεριφορά. Βεβαιωθείτε ότι το εμπιστεύεστε πριν συνεχίσετε..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Ωχ! Φαίνεται ότι κάτι έχει τροποποιήσει την εγκατάσταση του OrangeBlox. Τα αρχεία που επηρεάζονται είναι:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Ωχ! Φαίνεται ότι κάτι έχει τροποποιήσει την εγκατάσταση του OrangeBlox. Τα αρχεία που επηρεάζονται είναι: (*)",
+ "--- Fast Flags Configurations ---": "--- Γρήγορες διαμορφώσεις σημαιών ---",
+ "Fast Flags Configuration": "Γρήγορη διαμόρφωση σημαιών",
+ "--- Link Shortcuts ---": "--- Συντομεύσεις συνδέσμων ---",
+ "Link Shortcuts": "Συντομεύσεις συνδέσμων",
+ "Option finished!": "Η επιλογή ολοκληρώθηκε!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Θέλετε να ορίσετε τα σχήματα URL για τον πελάτη Roblox και (*); [Απαιτείται για συντομεύσεις συνδέσμων και όταν ενημερώνεται το Roblox] (ε/δ)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Θέλετε να ορίσετε τα σχήματα URL για το Roblox Client και το bootstrap; [Απαιτείται για συντομεύσεις συνδέσμων και όταν ενημερώνεται το Roblox] (ε/δ)"
 }

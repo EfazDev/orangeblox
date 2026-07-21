@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Отключение повторного открытия Roblox..",
  "This will only apply to Roblox Player.": "Это применимо только к Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Хотите ли вы отключить возможность повторного открытия Roblox после сна или перезапуска macOS? (да/нет)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Удерживайте клавишу Shift и нажимайте клавиши со стрелками вверх/вниз, чтобы переместить мод вверх или вниз по порядку! (Верх первый, низ последний)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Удерживайте клавишу Shift и нажимайте клавиши со стрелками вверх/вниз, чтобы переместить мод вверх или вниз по порядку! (Верх первый, низ последний)",
+ "Are you sure you want to continue?": "Вы уверены, что хотите продолжить?",
+ "Continue with Changes": "Продолжить изменения",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Продолжение может поставить под угрозу целостность установки OrangeBlox и привести к неожиданному поведению. Пожалуйста, убедитесь, что вы доверяете этому, прежде чем продолжить..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Ой-ой! Кажется, что-то изменило вашу установку OrangeBlox. Затронутые файлы:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Ой-ой! Кажется, что-то изменило вашу установку OrangeBlox. Затронутые файлы: (*)",
+ "--- Fast Flags Configurations ---": "--- Конфигурации быстрых флагов ---",
+ "Fast Flags Configuration": "Конфигурация быстрых флагов",
+ "--- Link Shortcuts ---": "--- Ярлыки ссылок ---",
+ "Link Shortcuts": "Ярлыки ссылок",
+ "Option finished!": "Вариант готов!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Хотите установить схемы URL-адресов для клиента Roblox и (*)? [Необходимо для ярлыков ссылок и при обновлении Roblox] (да/нет)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Хотите установить схемы URL-адресов для клиента Roblox и начальной загрузки? [Необходимо для ярлыков ссылок и при обновлении Roblox] (да/нет)"
 }

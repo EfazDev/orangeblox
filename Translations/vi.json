@@ -2621,5 +2621,17 @@
  "Disabling Roblox Reopen..": "Vô hiệu hóa Roblox Mở lại..",
  "This will only apply to Roblox Player.": "Điều này sẽ chỉ áp dụng cho Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Bạn có muốn tắt việc cho phép Roblox mở lại sau khi macOS ngủ/khởi động lại không? (có/không)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Giữ shift và nhấn phím mũi tên lên/xuống để di chuyển Mod lên hoặc xuống theo thứ tự! (Trên cùng là đầu tiên, Dưới cùng là cuối cùng)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Giữ shift và nhấn phím mũi tên lên/xuống để di chuyển Mod lên hoặc xuống theo thứ tự! (Trên cùng là đầu tiên, Dưới cùng là cuối cùng)",
+ "Are you sure you want to continue?": "Bạn có chắc chắn muốn tiếp tục không?",
+ "Continue with Changes": "Tiếp tục với những thay đổi",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Việc tiếp tục có thể ảnh hưởng đến tính toàn vẹn của cài đặt OrangeBlox và có thể gây ra hành vi không mong muốn. Hãy đảm bảo bạn tin tưởng điều này trước khi tiếp tục..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Ờ ồ! Có vẻ như có gì đó đã sửa đổi cài đặt OrangeBlox của bạn. Các tập tin bị ảnh hưởng là:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Ờ ồ! Có vẻ như có gì đó đã sửa đổi cài đặt OrangeBlox của bạn. Các tập tin bị ảnh hưởng là: (*)",
+ "--- Fast Flags Configurations ---": "--- Cấu hình cờ nhanh ---",
+ "Fast Flags Configuration": "Cấu hình cờ nhanh",
+ "--- Link Shortcuts ---": "--- Phím tắt liên kết ---",
+ "Link Shortcuts": "Phím tắt liên kết",
+ "Option finished!": "Tùy chọn đã hoàn tất!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Bạn có muốn đặt Lược đồ URL cho Máy khách Roblox và (*)không? [Cần thiết cho các phím tắt liên kết và khi Roblox cập nhật] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Bạn có muốn đặt Lược đồ URL cho Máy khách Roblox và bootstrap không? [Cần thiết cho các phím tắt liên kết và khi Roblox cập nhật] (y/n)"
 }

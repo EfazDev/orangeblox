@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 import Modules.config as cf
@@ -41,9 +41,9 @@ def connectExistingRobloxWindow(studio=False): # Connect to Existing Roblox
         printErrorMessage("Activity Tracking is not enabled.")
         input("> ")
         sys.exit(0)
-def continueToFFlagInstaller(): # Run Fast Flag Installer
+def continueToRobloxManager(): # Run Fast Flag Installer
     if cf.main_config.get("EFlagDisableFastFlagInstallAccess") == True:
-        printSystemMessage("--- Fast Flags Installer ---")
+        printSystemMessage("--- Fast Flags Configurations ---")
         printErrorMessage("Access to editing FFlags settings was disabled by file. Please try again later!")
         input("> ")
         return ts("FFlag Settings was not saved!")
@@ -896,9 +896,9 @@ def continueToUpdatePythonModules(): # Update Python Modules
             printMainMessage("No Python module updates are available right now!"); return ts("No updates for Python Modules were available!")
         else: printMainMessage("No Python module updates are available right now!"); return ts("No updates for Python Modules were available!")
     else: printErrorMessage("There was an issue trying to fetch for module updates!"); return ts("Python Module updating was canceled!")
-def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
+def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
     from Modules.menu import optionSelection
-    printSystemMessage("--- Roblox Link Shortcuts ---")
+    printSystemMessage("--- Link Shortcuts ---")
     if cf.main_config.get("EFlagDisableSettingsAccess") == True:
         printErrorMessage("Access to using Link Shortcuts was disabled by file. Please try again later!")
         input("> ")
@@ -1205,7 +1205,7 @@ def continueToLinkShortcuts(url_scheme=None): # Roblox Link Shortcuts
                             printMainMessage(", ".join([f"{shortcut_name} [{shortcut_id}] [@{cookie_user}]{'' if client == 1 else ' [STUDIO]'}" for client, shortcut_id, shortcut_name, cookie_user in failed]))
                         else: printMainMessage("Your shortcuts are valid and don't contain invalid cookies. :D")
                     except Exception: printErrorMessage(f"Unable to validate due to an Python exception: \n{trace()}")
-                    printSystemMessage("--- Roblox Link Shortcuts ---")
+                    printSystemMessage("--- Link Shortcuts ---")
                     linkLoop()
                 elif opt["index"] == 1000005:
                     if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:

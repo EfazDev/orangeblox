@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Roblox'un Yeniden Açılması Devre Dışı Bırakılıyor..",
  "This will only apply to Roblox Player.": "Bu yalnızca Roblox Player için geçerli olacaktır..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "macOS uyku Moduna geçtikten/yeniden başlatıldıktan sonra Roblox'un yeniden açılmasına izin vermeyi devre dışı bırakmak ister misiniz? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Bir Modu sırayla yukarı veya aşağı taşımak için Shift tuşunu basılı tutun ve yukarı/aşağı ok tuşlarına basın! (Üst ilktir, Alt sondur)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Bir Modu sırayla yukarı veya aşağı taşımak için Shift tuşunu basılı tutun ve yukarı/aşağı ok tuşlarına basın! (Üst ilktir, Alt sondur)",
+ "Are you sure you want to continue?": "Devam etmek istediğinizden emin misiniz?",
+ "Continue with Changes": "Değişikliklere Devam Et",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Devam edilmesi OrangeBlox kurulumunun bütünlüğünü tehlikeye atabilir ve beklenmeyen davranışlara neden olabilir. Lütfen devam etmeden önce buna güvendiğinizden emin olun..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Ah ah! OrangeBlox kurulumunuzu değiştiren bir şey var gibi görünüyor. Etkilenen dosyalar şunlardır:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Ah ah! OrangeBlox kurulumunuzu değiştiren bir şey var gibi görünüyor. Etkilenen dosyalar şunlardır: (*)",
+ "--- Fast Flags Configurations ---": "--- Hızlı Bayrak Yapılandırmaları ---",
+ "Fast Flags Configuration": "Hızlı Bayraklar Yapılandırması",
+ "--- Link Shortcuts ---": "--- Bağlantı Kısayolları ---",
+ "Link Shortcuts": "Bağlantı Kısayolları",
+ "Option finished!": "Seçenek bitti!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Roblox İstemcisi ve (*)için URL Şemalarını ayarlamak ister misiniz? [Bağlantı kısayolları için ve Roblox güncellendiğinde gereklidir] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Roblox İstemcisi ve önyükleme için URL Şemalarını ayarlamak ister misiniz? [Bağlantı kısayolları için ve Roblox güncellendiğinde gereklidir] (y/n)"
 }

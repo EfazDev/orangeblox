@@ -2622,5 +2622,17 @@
  "Disabling Roblox Reopen..": "Რობლოქსის ხელახლა გახსნის გამორთვა..",
  "This will only apply to Roblox Player.": "Ეს ეხება მხოლოდ Roblox Player-ს..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "Გსურთ გამორთოთ Roblox-ის ხელახლა გახსნის უფლება macOS-ის ძილის/გადატვირთვის შემდეგ? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Გეჭიროთ Shift და დააჭირეთ ზევით/ქვემოთ ისრიანი ღილაკებით მოდიფიკაციის გადაადგილების მიზნით ზევით ან ქვევით! (ზემო პირველია, ქვედა ბოლო)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Გეჭიროთ Shift და დააჭირეთ ზევით/ქვემოთ ისრიანი ღილაკებით მოდიფიკაციის გადაადგილების მიზნით ზევით ან ქვევით! (ზემო პირველია, ქვედა ბოლო)",
+ "Are you sure you want to continue?": "Დარწმუნებული ხართ, რომ გსურთ გაგრძელება?",
+ "Continue with Changes": "Განაგრძეთ ცვლილებები",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "Გაგრძელებამ შეიძლება ზიანი მიაყენოს OrangeBlox-ის ინსტალაციის მთლიანობას და გამოიწვიოს მოულოდნელი ქცევა. გთხოვთ, დარწმუნდეთ, რომ ენდობით ამას, სანამ გააგრძელებთ..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "Უჰ ოჰ! როგორც ჩანს, რაღაცამ შეცვალა თქვენი OrangeBlox ინსტალაცია. დაზარალებული ფაილებია:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "Უჰ ოჰ! როგორც ჩანს, რაღაცამ შეცვალა თქვენი OrangeBlox ინსტალაცია. დაზარალებული ფაილებია: (*)",
+ "--- Fast Flags Configurations ---": "--- Სწრაფი დროშების კონფიგურაციები ---",
+ "Fast Flags Configuration": "Სწრაფი დროშების კონფიგურაცია",
+ "--- Link Shortcuts ---": "--- Ბმულის მალსახმობები ---",
+ "Link Shortcuts": "Ბმულის მალსახმობები",
+ "Option finished!": "Ვარიანტი დასრულდა!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Გსურთ დააყენოთ URL სქემები Roblox Client-ისთვის და (*)? [საჭიროა ბმულის მალსახმობებისთვის და როცა Roblox განახლდება] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Გსურთ დააყენოთ URL სქემები Roblox Client-ისთვის და bootstrap-ისთვის? [საჭიროა ბმულის მალსახმობებისთვის და როცა Roblox განახლდება] (y/n)"
 }

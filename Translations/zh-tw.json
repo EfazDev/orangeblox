@@ -2623,5 +2623,17 @@
  "Disabling Roblox Reopen..": "禁用 Roblox 重新開啟..",
  "This will only apply to Roblox Player.": "這僅適用於 Roblox 玩家..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "您想禁止 Roblox 在 macOS 睡眠/重啟後重新開啟嗎? (是/否)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "按住 Shift 鍵並按向上/向下箭頭鍵可依序向上或向下移動模組! (頂部在前,底部在最後)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "按住 Shift 鍵並按向上/向下箭頭鍵可依序向上或向下移動模組! (頂部在前,底部在最後)",
+ "Are you sure you want to continue?": "您確定要繼續嗎?",
+ "Continue with Changes": "繼續更改",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "繼續可能會損害 OrangeBlox 安裝的完整性,並可能導致意外行為.在繼續之前請確保您信任這一點..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "呃哦!您的 OrangeBlox 安裝似乎已被某些內容修改.受影響的文件有:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "呃哦!您的 OrangeBlox 安裝似乎已被某些內容修改.受影響的文件是:(*)",
+ "--- Fast Flags Configurations ---": "--- 快速標誌配置 ---",
+ "Fast Flags Configuration": "快速標誌配置",
+ "--- Link Shortcuts ---": "--- 連結快捷方式 ---",
+ "Link Shortcuts": "連結快捷方式",
+ "Option finished!": "選項完成!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "您想設定 Roblox 用戶端的 URL 方案和 (*)嗎? [連結快捷方式和 Roblox 更新時需要](y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "您想為 Roblox 用戶端和引導程式設定 URL 方案嗎? [連結快捷方式和 Roblox 更新時需要](y/n)"
 }

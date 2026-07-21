@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 import os
@@ -39,7 +39,7 @@ run_studio: bool = False
 main_config: typing.Dict[str, typing.Union[str, int, bool, float, typing.Dict, typing.List]] = {}
 custom_cookies: typing.Dict[str, str] = {}
 stdout: PyKits.stdout = None
-current_version: typing.Dict[str, str] = {"version": "2.6.0g"}
+current_version: typing.Dict[str, str] = {"version": "2.6.0h"}
 given_args: typing.List[str] = []
 user_folder_name: str = os.path.basename(pip_class.getUserFolder())
 mods_folder: str = os.path.join(cur_path, "Mods")
@@ -79,7 +79,6 @@ flag_types: typing.Dict[str, str] = {
     "EFlagBootstrapUpdateServer": "str",
     "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
-    "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
     "EFlagRobloxPlayerArguments": "str",
     "EFlagRobloxStudioArguments": "str",
@@ -128,7 +127,6 @@ flag_types: typing.Dict[str, str] = {
     "EFlagRobloxClientChannel": "str",
     "EFlagDisableRobloxUpdateChecks": "bool",
     "EFlagRobloxStudioClientChannel": "str",
-    "EFlagDisableSecureHashSecurity": "bool",
     "EFlagDisableSettingsAccess": "bool",
     "EFlagRobloxLinkShortcuts": "dict",
     "EFlagRobloxCodesigningName": "str",

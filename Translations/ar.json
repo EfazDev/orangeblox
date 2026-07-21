@@ -2627,5 +2627,18 @@
  "Disabling Roblox Reopen..": "تعطيل إعادة فتح Roblox..",
  "This will only apply to Roblox Player.": "سينطبق هذا فقط على Roblox Player..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "هل ترغب في تعطيل السماح بإعادة فتح Roblox بعد سكون/إعادة تشغيل macOS؟ (ص/ن)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "استمر في الضغط على مفتاح Shift واضغط على مفاتيح الأسهم لأعلى/لأسفل لتحريك تعديل لأعلى أو لأسفل بالترتيب! (الأعلى هو الأول، والأسفل هو الأخير)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "استمر في الضغط على مفتاح Shift واضغط على مفاتيح الأسهم لأعلى/لأسفل لتحريك تعديل لأعلى أو لأسفل بالترتيب! (الأعلى هو الأول، والأسفل هو الأخير)",
+ "Are you sure you want to continue?": "هل أنت متأكد أنك تريد الاستمرار؟",
+ "Continue with Changes": "تابع التغييرات",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "قد يؤدي الاستمرار إلى تعريض سلامة تثبيت OrangeBlox للخطر وقد يتسبب في حدوث سلوك غير متوقع. يرجى التأكد من ثقتك بهذا قبل المتابعة..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "اه اه! يبدو أن شيئًا ما قد قام بتعديل تثبيت OrangeBlox الخاص بك. الملفات المتضررة هي:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "اه اه! يبدو أن شيئًا ما قد قام بتعديل تثبيت OrangeBlox الخاص بك. الملفات المتأثرة هي: (*)",
+ "--- Fast Flags Configurations ---": "--- تكوينات الأعلام السريعة ---",
+ "Fast Flags Configuration": "تكوين الأعلام السريعة",
+ "(*) (*)": "(*)(*)",
+ "--- Link Shortcuts ---": "--- اختصارات الروابط ---",
+ "Link Shortcuts": "اختصارات الارتباط",
+ "Option finished!": "انتهى الخيار!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "هل ترغب في تعيين أنظمة URL لعميل Roblox و(*)؟ [مطلوب لاختصارات الارتباط وعندما يتم تحديث Roblox] (ص/لا)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "هل ترغب في تعيين أنظمة URL لعميل Roblox وbootstrap؟ [مطلوب لاختصارات الارتباط وعندما يتم تحديث Roblox] (ص/لا)"
 }

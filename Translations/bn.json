@@ -2626,5 +2626,17 @@
  "Disabling Roblox Reopen..": "Roblox পুনরায় খোলা অক্ষম করা হচ্ছে..",
  "This will only apply to Roblox Player.": "এটি শুধুমাত্র Roblox Player এর ক্ষেত্রে প্রযোজ্য হবে।",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "আপনি কি macOS স্লিপ/পুনরায় চালু করার পরে Roblox পুনরায় খোলার অনুমতি অক্ষম করতে চান? (y/n)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "ক্রমানুসারে একটি মোডকে উপরে বা নিচে সরাতে শিফট ধরে রাখুন এবং উপরে/নীচের তীর কী টিপুন! (শীর্ষ প্রথম, নীচে শেষ)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "ক্রমানুসারে একটি মোডকে উপরে বা নিচে সরাতে শিফট ধরে রাখুন এবং উপরে/নীচের তীর কী টিপুন! (শীর্ষ প্রথম, নীচে শেষ)",
+ "Are you sure you want to continue?": "আপনি কি চালিয়ে যেতে চান?",
+ "Continue with Changes": "পরিবর্তনের সাথে চালিয়ে যান",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "চালিয়ে যাওয়া OrangeBlox ইনস্টলেশনের অখণ্ডতার সাথে আপস করতে পারে এবং অপ্রত্যাশিত আচরণের কারণ হতে পারে। আপনি চালিয়ে যাওয়ার আগে দয়া করে নিশ্চিত করুন যে আপনি এটি বিশ্বাস করেন।",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "ওহ! মনে হচ্ছে কিছু আপনার OrangeBlox ইনস্টলেশন পরিবর্তন করেছে। প্রভাবিত ফাইলগুলি হল:",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "ওহ! মনে হচ্ছে কিছু আপনার OrangeBlox ইনস্টলেশন পরিবর্তন করেছে। প্রভাবিত ফাইলগুলি হল: (*)",
+ "--- Fast Flags Configurations ---": "--- দ্রুত পতাকা কনফিগারেশন ---",
+ "Fast Flags Configuration": "দ্রুত পতাকা কনফিগারেশন",
+ "--- Link Shortcuts ---": "--- লিঙ্ক শর্টকাট ---",
+ "Link Shortcuts": "লিঙ্ক শর্টকাট",
+ "Option finished!": "বিকল্প সমাপ্ত!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "আপনি কি Roblox ক্লায়েন্ট এবং (*)এর জন্য URL স্কিম সেট করতে চান? [লিঙ্ক শর্টকাটের জন্য প্রয়োজন এবং যখন রবলক্স আপডেট হয়] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "আপনি কি Roblox ক্লায়েন্ট এবং বুটস্ট্র্যাপের জন্য URL স্কিম সেট করতে চান? [লিঙ্ক শর্টকাটের জন্য প্রয়োজন এবং যখন রবলক্স আপডেট হয়] (y/n)"
 }

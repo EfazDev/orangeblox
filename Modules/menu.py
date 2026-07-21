@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 import Modules.config as cf
@@ -150,7 +150,7 @@ def tutorial():
         printMainMessage("Now, let's get more customizable! Next, you will be able to select your fast flags.")
         printYellowMessage("But before, prepare yourself your Roblox User ID (if you're not currently logged in). It will be used for some settings depending on what you select.")
         input("> ")
-        continueToFFlagInstaller()
+        continueToRobloxManager()
     if cf.main_config.get("EFlagDisableModsManagerAccess") != True:
         printSystemMessage("--- Step 7 ---")
         printMainMessage("Hey! You made it through the list again!")
@@ -250,7 +250,11 @@ def urlSchemeHandler():
                 if not ("?quick-action=true" in url): optionSelection()
                 else: optionSelection(isRedirectedFromApp=True)
             elif "fflag-install" in url:
-                continueToFFlagInstaller()
+                continueToRobloxManager()
+                if not ("?quick-action=true" in url): optionSelection()
+                else: optionSelection(isRedirectedFromApp=True)
+            elif "roblox-manager" in url:
+                continueToRobloxManager()
                 if not ("?quick-action=true" in url): optionSelection()
                 else: optionSelection(isRedirectedFromApp=True)
             elif "settings" in url:
@@ -515,7 +519,7 @@ def mainMenu():
     if cf.main_config.get("EFlagDisableLinkShortcutsAccess") != True:
         generated_ui_options.append({
             "index": 8, 
-            "message": ts("Roblox Link Shortcuts"), 
+            "message": ts("Link Shortcuts"), 
             "func": continueToLinkShortcuts, 
             "go_to_rbx": False, 
             "end_mes": ts("Roblox Link Shortcut Settings are now saved!"),
@@ -694,12 +698,11 @@ def launch():
         mainMenu()
     elif len(cf.given_args) > 1: urlSchemeHandler()
 def optionSelection(mes=None, isRedirectedFromApp=False): # Handle Continue to Roblox
-    if mes == None: mes = ts("Option finished! Would you like to return to the main menu or would you like to continue to Roblox?")
-    else:
-        if mes == "": mes = ts(f"Would you like to return to the main menu or would you like to continue to Roblox?")
-        else: mes = ts(f"{mes} Would you like to return to the main menu or would you like to continue to Roblox?")
+    cur_mes = ts(f"Would you like to return to the main menu or would you like to continue to Roblox?")
+    if mes == None: cur_mes = ts("Option finished!") + " " + cur_mes
+    elif mes != "": cur_mes = mes + " " + cur_mes
     if cf.main_config.get("EFlagReturnToMainMenuInstant") != True:
-        printSystemMessage(mes)
+        printSystemMessage(cur_mes)
         generated_ui_options = []
         if isRedirectedFromApp == False:
             generated_ui_options.append({

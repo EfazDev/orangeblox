@@ -2623,5 +2623,17 @@
  "Disabling Roblox Reopen..": "Roblox の再オープンを無効にしています..",
  "This will only apply to Roblox Player.": "これは Roblox Player にのみ適用されます..",
  "Would you like to disable allowing Roblox to reopen after macOS sleep/restart? (y/n)": "macOS のスリープ/再起動後に Roblox を再度開くことを無効にしますか? (はい/いいえ)",
- "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Shift キーを押しながら上/下矢印キーを押すと,Mod の順序を上または下に移動できます. (上が最初,下が最後)"
+ "Hold shift and press the up/down arrow keys to move a mod up or down in the order! (Top is first, Bottom is last)": "Shift キーを押しながら上/下矢印キーを押すと,Mod の順序を上または下に移動できます. (上が最初,下が最後)",
+ "Are you sure you want to continue?": "続行してもよろしいですか?",
+ "Continue with Changes": "変更を続ける",
+ "Continuing may compromise the integrity of the OrangeBlox installation and may cause unexpected behavior. Please ensure you trust this before you continue.": "続行すると,OrangeBlox インストールの整合性が損なわれ,予期しない動作が発生する可能性があります.続行する前に,これが信頼できることを確認してください..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are:": "ああ,ああ!何かが OrangeBlox のインストールを変更したようです.影響を受けるファイルは次のとおりです..",
+ "Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: (*)": "ああ,ああ!何かが OrangeBlox のインストールを変更したようです.影響を受けるファイルは次のとおりです: (*)",
+ "--- Fast Flags Configurations ---": "--- 高速フラグ設定 ---",
+ "Fast Flags Configuration": "高速フラグ設定",
+ "--- Link Shortcuts ---": "--- リンクのショートカット ---",
+ "Link Shortcuts": "リンクのショートカット",
+ "Option finished!": "オプション完成しました!",
+ "Would you like to set the URL Schemes for the Roblox Client and (*)? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Roblox クライアントと (*)の URL スキームを設定しますか? [リンクのショートカットと Roblox の更新時に必要] (y/n)",
+ "Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)": "Roblox クライアントとブートストラップの URL スキームを設定しますか? [リンクのショートカットと Roblox の更新時に必要] (y/n)"
 }

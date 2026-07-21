@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 import Modules.config as cf
@@ -432,29 +432,6 @@ def applyOSRegistration():
                     else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle name not found")
                 else: printErrorMessage(f"Something went wrong reading Roblox Info.plist: Bundle not found")
         except Exception: printErrorMessage(f"Something went wrong modifying Info.plist of Roblox client: \n{trace()}")
-
-        try:
-            if cf.main_config.get("EFlagRemoveRobloxAppDockShortcut") == True:
-                dock_path = os.path.join(os.path.expanduser("~"), "Library", "Preferences", "com.apple.dock.plist")
-                dock_data = {}
-                shortcut_replaced = False
-                if os.path.exists(dock_path):
-                    cf.submit_status.submit(ts("Overwriting Dock Preferences.."), 75)
-                    dock_data = cf.plist_class.readPListFile(dock_path)
-                    if dock_data.get("persistent-apps"):
-                        for i in dock_data["persistent-apps"]:
-                            if i and i.get("tile-data"):
-                                if i["tile-data"].get("bundle-identifier") == ("com.Roblox.RobloxStudio" if cf.run_studio == True else "com.roblox.RobloxPlayer"):
-                                    dock_data["persistent-apps"].remove(i)
-                                    shortcut_replaced = True
-                if shortcut_replaced == True:
-                    cf.plist_class.writePListFile(dock_path, dock_data)
-                    time.sleep(1)
-                    subprocess.run([cf.pip_class.getPathFile("/usr/bin/killall"), "cfprefsd"], cwd=cf.cur_path)
-                    subprocess.run([cf.pip_class.getPathFile("/usr/bin/killall"), "Dock"], cwd=cf.cur_path)
-                    printSuccessMessage("Successfully removed RobloxStudio.app Dock Shortcut!" if cf.run_studio == True else "Successfully removed Roblox.app Dock Shortcut!")
-                else: printSuccessMessage("No changes were made to the dock!")
-        except Exception: printErrorMessage(f"Unable to make changes to the dock: \n{trace()}")
     elif cf.main_os == "Windows" and os.path.exists(os.path.join(cf.cur_path, "OrangeBlox.exe")):
         # Reapply URL Schemes
         if cf.main_config.get("EFlagDisableURLSchemeInstall") != True:

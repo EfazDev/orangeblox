@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0g
+# v2.6.0h
 # 
 
 # Modules
@@ -101,7 +101,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0g"}
+current_version = {"version": "2.6.0h"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -153,7 +153,6 @@ flag_types = {
     "EFlagBootstrapUpdateServer": "str",
     "EFlagLinkedComputerID": "str_local",
     "EFlagRobloxStudioEnabled": "bool",
-    "EFlagRemoveRobloxAppDockShortcut": "bool",
     "EFlagFreshCopyRoblox": "bool",
     "EFlagRobloxPlayerArguments": "str",
     "EFlagRobloxStudioArguments": "str",
@@ -202,7 +201,6 @@ flag_types = {
     "EFlagRobloxClientChannel": "str",
     "EFlagDisableRobloxUpdateChecks": "bool",
     "EFlagRobloxStudioClientChannel": "str",
-    "EFlagDisableSecureHashSecurity": "bool",
     "EFlagDisableSettingsAccess": "bool",
     "EFlagRobloxLinkShortcuts": "dict",
     "EFlagRobloxCodesigningName": "str",
@@ -1707,7 +1705,7 @@ if __name__ == "__main__":
                             else: printMainMessage("The bootstrap is currently on the latest version! No updates are needed!")
                     else: printErrorMessage("There was an issue while checking for updates.")
                 if main_os == "Windows":
-                    printMainMessage("Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Roblox Link Shortcuts and when Roblox updates] (y/n)")
+                    printMainMessage("Would you like to set the URL Schemes for the Roblox Client and the bootstrap? [Needed for Link Shortcuts and when Roblox updates] (y/n)")
                     a = input("> ")
                     if isYes(a) == False: disabled_url_scheme_installation = True
                     printMainMessage("Would you like to make shortcuts for the bootstrap? [Needed for launching through the Windows Start Menu and Desktop] (y/n)")
@@ -2153,7 +2151,7 @@ if __name__ == "__main__":
         if main_os == "Darwin":
             if os.path.exists(f"{sma[main_os][1]}"):
                 printMainMessage("Loading OrangeBlox executable!")
-                subprocess.Popen(["/usr/bin/open", "-a", sma[main_os][1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                subprocess.run(["/usr/bin/open", "-a", sma[main_os][1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             else: printErrorMessage("Bootstrap Launch Failed: App is not installed.")
         elif main_os == "Windows":
             generated_app_path = sma[main_os][0]
