@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0h
+# v2.6.0i
 # 
 
 # Modules
@@ -101,7 +101,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0h"}
+current_version = {"version": "2.6.0i"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -2151,7 +2151,14 @@ if __name__ == "__main__":
         if main_os == "Darwin":
             if os.path.exists(f"{sma[main_os][1]}"):
                 printMainMessage("Loading OrangeBlox executable!")
-                subprocess.run(["/usr/bin/open", "-a", sma[main_os][1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                launch_cmd = f"sleep 2 && /usr/bin/open -a '{sma[main_os][1]}'"
+                subprocess.Popen(
+                    launch_cmd, 
+                    shell=True, 
+                    start_new_session=True, 
+                    stdout=subprocess.DEVNULL, 
+                    stderr=subprocess.DEVNULL
+                )
             else: printErrorMessage("Bootstrap Launch Failed: App is not installed.")
         elif main_os == "Windows":
             generated_app_path = sma[main_os][0]

@@ -65,7 +65,7 @@ int main(int argc, const char * argv[]) {
         printWarnMessage("-----------");
         printWarnMessage("Welcome to OrangeBlox Loader 🍊!");
         printWarnMessage("Made by Efaz from efaz.dev!");
-        printWarnMessage("v2.6.0h");
+        printWarnMessage("v2.6.0i");
         printWarnMessage("-----------");
         printMainMessage("Determining System Paths...");
         NSFileManager *fm = [NSFileManager defaultManager];
