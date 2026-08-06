@@ -7,6 +7,7 @@ from fontTools.pens.recordingPen import RecordingPen
 from mod_generator.exceptions import ImageSetsNotFoundError, ImageSetDataNotFoundError
 from mod_generator.modules import Logger
 from PIL import Image, PngImagePlugin
+import concurrent.futures
 import pyclipper
 import typing
 import logging
@@ -70,22 +71,22 @@ def _recording_to_polygons(recording: list) -> list[list[tuple]]:
         elif op in ("closePath", "endPath"): _commit_contour(); current = []
     _commit_contour()
     return contours
-def _clip_contours_to_band(contours: list[list[tuple]], lo: float, hi: float, x_min: float, x_max: float) -> list[list[tuple]]:
+def _clip_contours_to_shape(contours: list[list[tuple]], clip_paths: list[list[tuple]]) -> list[list[tuple]]:
     if not contours: return []
     pc = pyclipper.Pyclipper(); SCALE = 1000.0  
     for poly in contours:
         if len(poly) < 3: continue
-        p_ys = [pt[1] for pt in poly]
-        if max(p_ys) < lo or min(p_ys) > hi: continue
         cleaned_poly = pyclipper.CleanPolygon([(int(x * SCALE), int(y * SCALE)) for x, y in poly])
         if len(cleaned_poly) >= 3:
             try: pc.AddPath(cleaned_poly, pyclipper.PT_SUBJECT, True)
             except pyclipper.ClipperException: continue
-    safe_x_min, safe_x_max = int((x_min - 1000) * SCALE), int((x_max + 1000) * SCALE)
-    rect = [(safe_x_min, int(lo * SCALE)), (safe_x_max, int(lo * SCALE)), (safe_x_max, int(hi * SCALE)), (safe_x_min, int(hi * SCALE))]
+    for clip_poly in clip_paths:
+        try:
+            pc.AddPath([(int(x * SCALE), int(y * SCALE)) for x, y in clip_poly], pyclipper.PT_CLIP, True)
+        except pyclipper.ClipperException: continue
     try:
-        pc.AddPath(rect, pyclipper.PT_CLIP, True)
-        return [[(pt[0] / SCALE, pt[1] / SCALE) for pt in poly] for poly in pc.Execute(pyclipper.CT_INTERSECTION, pyclipper.PFT_EVENODD, pyclipper.PFT_EVENODD) if len(poly) >= 3]
+        solution = pc.Execute(pyclipper.CT_INTERSECTION, pyclipper.PFT_EVENODD, pyclipper.PFT_EVENODD)
+        return [[(pt[0] / SCALE, pt[1] / SCALE) for pt in poly] for poly in solution if len(poly) >= 3]
     except pyclipper.ClipperException: return []
 def _write_sub_glyph(icon_name: str, band_idx: int, contours: list[list[tuple]], font: TTFont, glyf_table, orig_aw: int) -> str | None:
     int_contours = []
@@ -125,18 +126,26 @@ def _write_sub_glyph(icon_name: str, band_idx: int, contours: list[list[tuple]],
     SUB_GLYPH_CACHE[cache_key] = sub_name
     return sub_name
 def _resolve_icon_colors(icon_name: str, colors_config: dict | list) -> list[str] | None:
-    if type(colors_config) is list: return colors_config
-    if type(colors_config) is dict:
+    if isinstance(colors_config, list): return colors_config
+    if isinstance(colors_config, dict):
         for key in (icon_name, "_" + icon_name, "_font", "*"):
             val = colors_config.get(key)
-            if type(val) is list and all(type(v) is str for v in val): return val
+            if isinstance(val, list) and all(isinstance(v, str) for v in val): return val
+            elif isinstance(val, dict) and val.get("colors") and all(isinstance(v, str) for v in val.get("colors")): return val.get("colors")
     return None
+def _resolve_mask_type(file_name: str, colors_config: dict, old_icons: dict):
+    mask_level = "none"
+    if "mask-" in file_name: mask_level = "basic"
+    elif "mask2-" in file_name: mask_level = "alpha"
+    elif "whiteout-" in file_name: mask_level = "whiteout"
+    if colors_config.get("_old_icons") is True and isinstance(old_icons.get(file_name), str): mask_level = "whiteout"
+    return mask_level
 def _resolve_icon_image(icon_name: str, colors_config: dict | list, old_icons: dict) -> str | None:
-    if not type(colors_config) is dict: return None
+    if not isinstance(colors_config, dict): return _resolve_mask_type(icon_name, colors_config, old_icons), None
     for key in (icon_name, "_" + icon_name, "_font"):
-        if type(colors_config.get(key)) is str: return colors_config[key]
-    if colors_config.get("_old_icons") is True and type(old_icons.get(icon_name)) is str: return old_icons[icon_name]
-    return colors_config.get("*") if type(colors_config.get("*")) is str else None
+        if isinstance(colors_config.get(key), str): return _resolve_mask_type(key, colors_config, old_icons), colors_config[key]
+    if colors_config.get("_old_icons") is True and isinstance(old_icons.get(icon_name), str): return "whiteout", old_icons[icon_name]
+    return _resolve_mask_type(icon_name, colors_config, old_icons), colors_config.get("*") if isinstance(colors_config.get("*"), str) else None
 def _get_outline_contours(icon_name: str, font: TTFont) -> list[list[tuple]]:
     if icon_name not in font.getGlyphSet(): return []
     rec = RecordingPen()
@@ -251,6 +260,93 @@ def _get_native_color_contours(image_path: str, units: int, icon_name: str, glyf
             if result: final_color_contours[hex_col] = result
         except: pass
     return final_color_contours
+def get_icon_info(colors: typing.Union[list, dict], angle: int, icon_name: str, old_icons: dict = {}, is_font: bool = False):
+    if not angle: angle = 0
+    angle = angle % 360
+    if isinstance(colors, list): 
+        return {
+            "colors": colors,
+            "image": None,
+            "type": "gradient",
+            "angle": angle,
+            "gradient_type": "linear",
+            "mask_type": "none"
+        }
+    if isinstance(colors, dict):
+        specified = colors.get(icon_name)
+        if old_icons.get(icon_name) and not specified: specified = {"colors": _resolve_icon_colors(icon_name, colors), "image": old_icons.get(icon_name), "type": "gradient+image"}
+        if is_font and not specified: specified = colors.get("_font")
+        if not specified: specified = colors.get("*")
+        if not specified or not type(specified) in (list, dict, str): 
+            mask_type, icon_image = _resolve_icon_image(icon_name, colors, old_icons)
+            return {
+                "colors": ["#ffffff"],
+                "image": icon_image,
+                "type": "static",
+                "angle": angle,
+                "gradient_type": "linear",
+                "mask_type": mask_type
+            }
+        if isinstance(specified, dict):
+            base = {}
+            if isinstance(colors.get("*"), dict): base.update(colors.get("*"))
+            if isinstance(colors.get("_font"), dict): base.update(colors.get("_font"))
+            base.update(specified)
+            if base.get("type") not in ("static", "gradient", "image", "gradient+image"): base["type"] = "static"
+            if base.get("gradient_type") == "global": 
+                if colors.get("_gradient_type") == None: colors["_gradient_type"] = "linear"
+                base["gradient_type"] = colors.get("_gradient_type")
+            if base.get("gradient_type") not in ("linear", "radial", "conic"): base["gradient_type"] = "linear"
+            if base.get("image") == None or not isinstance(base.get("image"), str) or not os.path.exists(base.get("image")): base["image"] = None
+            if base.get("colors") == None or not isinstance(base.get("colors"), list): 
+                base["colors"] = ["#ffffff"]
+                if base.get("type") not in ("image", "gradient+image"): base["type"] = "static"
+            if base.get("type") == None or not isinstance(base.get("type"), str): base["type"] = "static"
+            if base.get("angle") == None or not isinstance(base.get("angle"), (int, float)): base["angle"] = angle
+            if base.get("mask_type") == None or base.get("mask_type") not in ("none", "basic", "alpha", "whiteout"): base["mask_type"] = _resolve_mask_type(icon_name, colors, old_icons)
+            base["angle"] %= 360
+            return base
+        elif isinstance(specified, (list, str)):
+            icon_colors = _resolve_icon_colors(icon_name, colors)
+            mask_type, icon_image = _resolve_icon_image(icon_name, colors, old_icons)
+            return {
+                "colors": icon_colors,
+                "image": icon_image,
+                "type": "image" if icon_image else ("gradient" if len(icon_colors) > 1 else "static"),
+                "angle": angle,
+                "gradient_type": "linear",
+                "mask_type": mask_type
+            }
+    elif isinstance(colors, list):
+        mask_type = _resolve_mask_type(icon_name, colors, old_icons)
+        return {
+            "colors": colors,
+            "image": None,
+            "type": "gradient" if len(colors) > 1 else "static",
+            "angle": angle,
+            "gradient_type": "linear",
+            "mask_type": mask_type
+        }
+    mask_type = _resolve_mask_type(icon_name, colors, old_icons)
+    return {
+        "colors": ["#ffffff"],
+        "image": None,
+        "type": "static",
+        "angle": angle,
+        "gradient_type": "linear",
+        "mask_type": mask_type
+    }
+def get_midpoint_color(hex_colors):
+    if not hex_colors: return "#000000"
+    if len(hex_colors) == 1: return hex_colors[0]
+    rgb_start = hex_to_rgb(hex_colors[0])
+    rgb_end = hex_to_rgb(hex_colors[-1])
+    mid_rgb = (
+        (rgb_start[0] + rgb_end[0]) // 2,
+        (rgb_start[1] + rgb_end[1]) // 2,
+        (rgb_start[2] + rgb_end[2]) // 2
+    )
+    return f"#{mid_rgb[0]:02x}{mid_rgb[1]:02x}{mid_rgb[2]:02x}"
 def hex_to_rgb(hex_color: str): hex_color = hex_color.lstrip("#"); return np.array([int(hex_color[i:i+2], 16) for i in (0, 2, 4)])
 def clear_cache() -> None: IMAGE_CACHE.clear()
 def add_watermark(mod_imagesets_directory: Path) -> None:
@@ -259,31 +355,19 @@ def add_watermark(mod_imagesets_directory: Path) -> None:
     for filepath in mod_imagesets_directory.iterdir():
         if not filepath.is_file() or not filepath.suffix == ".png": continue
         with Image.open(filepath, formats=("PNG",)) as image: image.save(filepath, format="PNG", optimize=False, pnginfo=metadata)
-def locate_imagesets(start: Path) -> Path:
-    folders = []
+def locate_all_assets(start: Path) -> dict[str, list[Path]]:
+    imagesets = []
+    imagesetdata_files = []
+    builderfonts = []
     for dirpath, dirnames, filenames in os.walk(start):
-        if IMAGESET_IMG_NAME not in filenames:
-            continue
-        folders.append(Path(dirpath).relative_to(start))
-    if len(folders) <= 0: raise ImageSetsNotFoundError(f"Failed to find path to ImageSets")
-    return folders
-def locate_imagesetdata_files(start: Path) -> Path:
-    files = []
-    for dirpath, dirnames, filenames in os.walk(start):
-        if IMAGESET_LUA_NAME not in filenames:
-            continue
-        files.append(Path(dirpath, IMAGESET_LUA_NAME).relative_to(start))
-    if len(files) <= 0: raise ImageSetDataNotFoundError("Failed to find path to ImageSetData")
-    return files
-def locate_builderfont(start: Path) -> Path:
-    files = []
-    for dirpath, dirnames, filenames in os.walk(start):
-        if BUILDERFONT_ICON_NAME in filenames:
-            files.append(Path(dirpath).relative_to(start) / BUILDERFONT_ICON_NAME)
-        if BUILDERFONT_FILLED_ICON_NAME in filenames:
-            files.append(Path(dirpath).relative_to(start) / BUILDERFONT_FILLED_ICON_NAME)
-    if len(files) <= 0: raise ImageSetsNotFoundError(f"Failed to find path to BuilderFonts")
-    return files
+        if IMAGESET_IMG_NAME in filenames: imagesets.append(Path(dirpath).relative_to(start))
+        if IMAGESET_LUA_NAME in filenames: imagesetdata_files.append(Path(dirpath, IMAGESET_LUA_NAME).relative_to(start))
+        if BUILDERFONT_ICON_NAME in filenames: builderfonts.append(Path(dirpath).relative_to(start) / BUILDERFONT_ICON_NAME)
+        if BUILDERFONT_FILLED_ICON_NAME in filenames: builderfonts.append(Path(dirpath).relative_to(start) / BUILDERFONT_FILLED_ICON_NAME)
+    if len(imagesets) <= 0: raise ImageSetDataNotFoundError("Failed to find path to ImageSetData")
+    if len(imagesetdata_files) <= 0: raise ImageSetsNotFoundError(f"Failed to find path to ImageSets")
+    if len(builderfonts) <= 0: raise ImageSetsNotFoundError(f"Failed to find path to BuilderFonts")
+    return (imagesets, imagesetdata_files, builderfonts)
 def parse_lua_content(content: str) -> dict[str, dict[str, dict[str, str | int]]]:
     # ChatGPT
     icon_map: dict[str, dict[str, dict[str, str | int]]] = {}
@@ -306,7 +390,7 @@ def parse_lua_content(content: str) -> dict[str, dict[str, dict[str, str | int]]
 def get_icon_map(filepath: Path) -> dict[str, dict[str, dict[str, str | int]]]:
     with open(filepath, "r", encoding="utf-8") as file: content: str = file.read()
     return parse_lua_content(content)
-def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int, icon_image: Image.Image = None) -> Image.Image:
+def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int, icon_image: Image.Image = None, gradient_type: str = "linear") -> Image.Image:
     angle -= 90
     width, height = size
     rgb_colors = [hex_to_rgb(c) for c in colors]
@@ -314,8 +398,11 @@ def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int, 
     x = np.linspace(0, 1, width)
     y = np.linspace(0, 1, height)
     xx, yy = np.meshgrid(x, y)
-    angle_rad = np.radians(angle)
-    gradient = xx * np.cos(angle_rad) + yy * np.sin(angle_rad)
+    if gradient_type == "radial": gradient = np.sqrt((xx - 0.5)**2 + (yy - 0.5)**2)
+    elif gradient_type == "conic": gradient = np.arctan2(yy - 0.5, xx - 0.5)
+    else:
+        angle_rad = np.radians(angle)
+        gradient = xx * np.cos(angle_rad) + yy * np.sin(angle_rad)
     if icon_image is not None:
         icon_arr = np.array(icon_image)
         if icon_arr.shape[-1] == 4:
@@ -339,51 +426,28 @@ def create_gradient_image(size: tuple[int, int], colors: list[str], angle: int, 
     norm = np.clip(norm, 0, 1)
     if num_segments <= 0:
         result = np.zeros((height, width, 3), dtype=np.uint8)
-        for ch in range(3):
-            result[..., ch] = int(rgb_colors[0][ch])
+        result[...] = rgb_colors[0]
         return Image.fromarray(result)
     xp = np.linspace(0.0, 1.0, len(rgb_colors))
     result = np.zeros((height, width, 3), dtype=np.uint8)
+    color_array = np.array(rgb_colors, dtype=float).T 
+    norm_flat = norm.ravel()
     for channel in range(3):
-        channel_values = np.array([c[channel] for c in rgb_colors], dtype=float)
-        flat = np.interp(norm.ravel(), xp, channel_values)
+        flat = np.interp(norm_flat, xp, color_array[channel])
         result[..., channel] = np.round(flat.reshape((height, width))).astype(np.uint8)
     return Image.fromarray(result)
-def get_mask(colors: list[str], angle: int, size: tuple[int, int], icon_name: str="*", icon_image: Image.Image = None) -> Image.Image:
-    if type(colors) is dict: key = f"image-mask-colors-{angle}-{size[0]}-{size[1]}-{icon_name}"
-    else: key = f"{'-'.join(colors)}-{angle}-{size[0]}-{size[1]}-{icon_name}"
-    if key in IMAGE_CACHE:  return IMAGE_CACHE[key]
-    if type(colors) is list and len(colors) == 1: mask = Image.new("RGBA", size, colors[0])
-    elif type(colors) is dict:
-        if colors.get(icon_name):
-            if type(colors.get(icon_name)) is list:
-                if len(colors.get(icon_name)) == 1:  mask = Image.new("RGBA", size, colors.get(icon_name)[0])
-                else: mask = create_gradient_image(size, colors.get(icon_name), angle, icon_image)
-                IMAGE_CACHE[key] = mask
-                return mask
-            else:
-                with Image.open(colors.get(icon_name)) as ma: image = ma.copy()
-        elif colors.get("*"):
-            if type(colors.get("*")) is list:
-                if len(colors.get("*")) == 1:  mask = Image.new("RGBA", size, colors.get("*")[0])
-                else: mask = create_gradient_image(size, colors.get("*"), angle, icon_image)
-                IMAGE_CACHE[key] = mask
-                return mask
-            else:
-                with Image.open(colors.get("*")) as ma: image = ma.copy()
-        else:
-            mask = Image.new("RGBA", size, "#ffffff")
-            IMAGE_CACHE[key] = mask
-            return mask
-        cache_key: str = f"{image}-{size}"
-        if image.mode != "RGBA": image = image.convert("RGBA")
-        image.resize(size, resample=Image.Resampling.LANCZOS)
-        IMAGE_CACHE[cache_key] = image
-        return image
-    else:
-        mask = create_gradient_image(size, colors, angle, icon_image)
-        IMAGE_CACHE[key] = mask
-        return mask
+def get_mask(colors: typing.Union[list[str], dict[str, typing.Any]], angle: int, size: tuple[int, int], icon_name: str="*", icon_image: Image.Image = None, old_icons: dict[str, str] = {}) -> Image.Image:
+    info = get_icon_info(colors, angle, icon_name, old_icons)
+    icon_type = info.get("type", "gradient")
+    gradient_type = info.get("gradient_type", "linear")
+    color_str = "-".join(info["colors"])
+    key = f"{color_str}-{icon_type}-{angle}-{size[0]}-{size[1]}-{icon_name}-{gradient_type}"
+    if key in IMAGE_CACHE: return IMAGE_CACHE[key]
+    if icon_type == "static": mask = Image.new("RGBA", size, get_midpoint_color(info["colors"]))
+    elif icon_type in ("gradient", "gradient+image"): mask = create_gradient_image(size, info["colors"], info["angle"], icon_image, gradient_type)
+    else: mask = Image.new("RGBA", size, "#ffffff")
+    IMAGE_CACHE[key] = mask
+    return mask
 def interpolate_gradient(hex_stops: list[str], t: float) -> tuple[float, float, float, float]:
     t = max(0.0, min(1.0, t))
     if len(hex_stops) == 1:
@@ -398,39 +462,39 @@ def interpolate_gradient(hex_stops: list[str], t: float) -> tuple[float, float, 
     g = (c1[1] + (c2[1] - c1[1]) * lt) / 255.0
     b = (c1[2] + (c2[2] - c1[2]) * lt) / 255.0
     return min(r, 1.0), min(g, 1.0), min(b, 1.0), 1.0
+def process_single_user_file(filepath, base_directory, colors, angle, old_icons):
+    source: Path = filepath["source"]
+    target: list[str] = filepath["target"]
+    if not source.is_file() or source.suffix.lower() not in SUPPORTED_FILETYPES: return
+    target_path: Path = Path(base_directory, *target)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    with Image.open(source, formats=("PNG",)) as image:
+        image = image.convert("RGBA")
+        a = image.getchannel("A")
+    modded_icon = get_mask(colors, angle, image.size, source.name, image, old_icons)
+    modded_icon.putalpha(a)
+    modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_user_selected_files(
     base_directory: Path,
     colors: list[str],
     angle: int,
     user_selected_files: list[dict[str, Path | list[str]]]
 ) -> None:
-    for filepath in user_selected_files:
-        source: Path = filepath["source"]
-        target: list[str] = filepath["target"]
-
-        if not source.is_file():
-            Logger.warning(f"File not found: {source.name}", prefix="mod_generator.generate_user_selected_files()")
-            continue
-
-        if source.suffix.lower() not in SUPPORTED_FILETYPES:
-            Logger.warning(f"Cannot generate file: {source.name}! Only .png files are supported", prefix="mod_generator.generate_user_selected_files()")
-            continue
-
-        target_path: Path = Path(base_directory, *target)
-        target_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with Image.open(source, formats=("PNG",)) as image:
-            image = image.convert("RGBA")
-            r, g, b, a = image.split()
-
-        modded_icon = get_mask(colors, angle, image.size, source.name, image)
-        modded_icon.putalpha(a)
-        modded_icon.save(target_path, format="PNG", optimize=False)
+    try: old_icons = get_old_icons()
+    except Exception: old_icons = {}
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = [
+            executor.submit(process_single_user_file, filepath, base_directory, colors, angle, old_icons) 
+            for filepath in user_selected_files
+        ]
+        concurrent.futures.wait(futures)
 def generate_additional_files(base_directory: Path, colors: list[str], angle: int, studio: bool) -> None:
     mod_generator_files = Path(CUR_PATH) / "additional_files"
     index_filepath: Path = mod_generator_files / "__index__.json"
     if not index_filepath.is_file(): Logger.warning("Cannot generate additional files! __index_.json does not exist!", prefix="mod_generator.generate_additional_files()"); return
     with open(index_filepath, "r", encoding="utf-8") as file: data: dict = json.load(file)
+    try: old_icons = get_old_icons()
+    except Exception: old_icons = {}
     for filepath in mod_generator_files.iterdir():
         if filepath.name == index_filepath.name or filepath.name == ".DS_Store": continue
         if studio == False and "studio-" in filepath.name: continue
@@ -438,7 +502,7 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
             with open(filepath, "r", encoding="utf-8") as file: builder_icons_data: dict = json.load(file)
             with open(Path(base_directory, "ExtraContent", "LuaPackages", "Packages", "_Index", "BuilderIcons", "BuilderIcons", "BuilderIcons.json"), "w", encoding="utf-8") as file: json.dump(builder_icons_data, file, indent=4)
             continue
-        if type(colors) is dict:
+        if isinstance(colors, dict):
             authorized = False
 
             # Enable basely
@@ -462,86 +526,45 @@ def generate_additional_files(base_directory: Path, colors: list[str], angle: in
             elif "topbar-" in filepath.name and colors.get("_topbar") == False: authorized = False
             if authorized == False: continue
         target: list[str] | None = data.get(filepath.name)
-        if not target or not type(target) is list: Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
+        if not target or not isinstance(target, list): Logger.warning(f"Cannot generate additional file: {filepath.name}! Unknown target path!", prefix="mod_generator.generate_additional_files()"); continue
         target_path: Path = Path(base_directory, *target)
         target_path.parent.mkdir(parents=True, exist_ok=True)
         with Image.open(filepath, formats=("PNG",)) as image:
             image = image.convert("RGBA")
             r, g, b, a = image.split()
-        if type(colors) is dict:
-            if type(colors.get(filepath.name)) is str:
-                if "mask-" in colors.get(filepath.name) or "mask-" in filepath.name:
-                    if "mask-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask-", "", 1)
-                    if "mask-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
-                    modded_icon = get_mask(colors, angle, image.size, f"{filepath.name}_temp", image)
-                    modded_icon.putalpha(a)
-                    modded_icon.save(target_path, format="PNG", optimize=False)
-                elif "mask2-" in colors.get(filepath.name) or "mask2-" in filepath.name:
-                    if "mask2-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("mask2-", "", 1)
-                    if "mask2-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
-                    base = image.convert("RGBA")
-                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp", base).convert("RGBA")
-                    mask = mask_overlay.getchannel("A")
-                    modded_icon = Image.composite(mask_overlay, base, mask)
-                    modded_icon.save(target_path, format="PNG", optimize=False)
-                elif "whiteout-" in colors.get(filepath.name) or "whiteout-" in filepath.name:
-                    if "whiteout-" in colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name].replace("whiteout-", "", 1)
-                    if "whiteout-" in filepath.name: colors[f"{filepath.name}_temp"] = colors[filepath.name]
-                    base = image.convert("RGBA")
-                    mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp", base).convert("RGBA")
-                    base_pixels = base.load()
-                    mask_overlay_pixels = mask_overlay.load()
-                    width, height = base.size
-                    for y in range(height):
-                        for x in range(width):
-                            r, g, b, a = base_pixels[x, y]
-                            if a > 0 and r > 175 and g > 175 and b > 175:
-                                or_, og, ob, oa = mask_overlay_pixels[x, y]
-                                base_pixels[x, y] = (or_, og, ob, a)
-                    modded_icon = base
-                    modded_icon.save(target_path, format="PNG", optimize=False)
-                else:
-                    custom_roblox_logo_path = Path(colors.get(filepath.name))
-                    custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
-                    custom_roblox_logo.thumbnail(image.size, resample=Image.Resampling.LANCZOS)
-                    clear_area = Image.new("RGBA", image.size, (0, 0, 0, 0))
-                    image.paste(clear_area, (0,0))
-                    centered_logo = Image.new("RGBA", image.size, (0, 0, 0, 0))
-                    x = (image.size[0] - custom_roblox_logo.width) // 2
-                    y = (image.size[1] - custom_roblox_logo.height) // 2
-                    centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
-                    image.paste(centered_logo, (0,0), mask=centered_logo)
-                    image.save(target_path, format="PNG", optimize=False)
-            elif "mask2-" in filepath.name:
-                if colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name]
+        info = get_icon_info(colors, angle, filepath.name, old_icons)
+        if info["type"] == "image" and info["image"]:
+            custom_roblox_logo_path = Path(info["image"])
+            custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
+            custom_roblox_logo.thumbnail(image.size, resample=Image.Resampling.LANCZOS)
+            clear_area = Image.new("RGBA", image.size, (0, 0, 0, 0))
+            image.paste(clear_area, (0,0))
+            centered_logo = Image.new("RGBA", image.size, (0, 0, 0, 0))
+            x = (image.size[0] - custom_roblox_logo.width) // 2
+            y = (image.size[1] - custom_roblox_logo.height) // 2
+            centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
+            image.paste(centered_logo, (0,0), mask=centered_logo)
+            image.save(target_path, format="PNG", optimize=False)
+        else:
+            if info["mask_type"] == "alpha":
                 base = image.convert("RGBA")
-                mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp", base).convert("RGBA")
+                mask_overlay = get_mask(colors, angle, base.size, filepath.name, base, old_icons).convert("RGBA")
                 mask = mask_overlay.getchannel("A")
                 modded_icon = Image.composite(mask_overlay, base, mask)
                 modded_icon.save(target_path, format="PNG", optimize=False)
-            elif "whiteout-" in filepath.name:
-                if colors.get(filepath.name): colors[f"{filepath.name}_temp"] = colors[filepath.name]
+            elif info["mask_type"] == "whiteout":
                 base = image.convert("RGBA")
-                mask_overlay = get_mask(colors, angle, base.size, f"{filepath.name}_temp", base).convert("RGBA")
-                base_pixels = base.load()
-                mask_overlay_pixels = mask_overlay.load()
-                width, height = base.size
-                for y in range(height):
-                    for x in range(width):
-                        r, g, b, a = base_pixels[x, y]
-                        if a > 0 and r > 175 and g > 175 and b > 175:
-                            or_, og, ob, oa = mask_overlay_pixels[x, y]
-                            base_pixels[x, y] = (or_, og, ob, a)
-                modded_icon = base
+                mask_overlay = get_mask(colors, angle, base.size, filepath.name, base, old_icons).convert("RGBA")
+                base_arr = np.array(base)
+                mask_arr = np.array(mask_overlay)
+                condition = (base_arr[..., 3] > 0) & (base_arr[..., 0] > 175) & (base_arr[..., 1] > 175) & (base_arr[..., 2] > 175)
+                base_arr[condition, :3] = mask_arr[condition, :3]
+                modded_icon = Image.fromarray(base_arr)
                 modded_icon.save(target_path, format="PNG", optimize=False)
             else:
-                modded_icon = get_mask(colors, angle, image.size, filepath.name, image)
+                modded_icon = get_mask(colors, angle, image.size, filepath.name, image, old_icons)
                 modded_icon.putalpha(a)
                 modded_icon.save(target_path, format="PNG", optimize=False)
-        else:
-            modded_icon = get_mask(colors, angle, image.size, filepath.name, image)
-            modded_icon.putalpha(a)
-            modded_icon.save(target_path, format="PNG", optimize=False)
 def generate_imagesets(
     base_directory: Path,
     icon_map: dict[str, dict[str, dict[str, str | int]]],
@@ -552,6 +575,8 @@ def generate_imagesets(
     modded_imagesets: list[str] = []
     blacklist: list[str] = get_blacklist(get_authorized_from_blacklist(colors))
     formatted_icon_map: dict[str, dict[str, Path | list[tuple[int, int, int, int]]]] = {}
+    try: old_icons = get_old_icons()
+    except Exception: old_icons = {}
 
     for _, icons in icon_map.items():
         for icon_name, data in icons.items():
@@ -580,64 +605,37 @@ def generate_imagesets(
                 box = icon_data["box"]
                 icon: Image.Image = image.crop(box)
                 r, g, b, a = icon.split()
-                if type(colors) is dict:
-                    if type(colors.get(icon_name)) is str:
-                        if colors.get(icon_name).startswith("mask-"):
-                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("mask-", "", 1)
-                            modded_icon = get_mask(colors, angle, icon.size, f"{icon_name}_temp", icon)
-                            modded_icon.putalpha(a)
-                            masked_icon = modded_icon
-                        elif colors.get(icon_name).startswith("mask2-"):
-                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("mask2-", "", 1)
-                            mask_overlay = get_mask(colors, angle, icon.size, f"{icon_name}_temp", icon).convert("RGBA")
-                            mask = mask_overlay.getchannel("A")
-                            modded_icon = Image.composite(mask_overlay, icon, mask)
-                            masked_icon = modded_icon
-                        elif colors.get(icon_name).startswith("whiteout-") or icon_name.startswith("icons/controls/voice/"):
-                            colors[f"{icon_name}_temp"] = colors[icon_name].replace("whiteout-", "", 1)
-                            mask_overlay = get_mask(colors, angle, icon.size, f"{icon_name}_temp", icon).convert("RGBA")
-                            base_pixels = icon.load()
-                            mask_overlay_pixels = mask_overlay.load()
-                            width, height = icon.size
-                            for y in range(height):
-                                for x in range(width):
-                                    r, g, b, a = base_pixels[x, y]
-                                    if a > 0 and r > 175 and g > 175 and b > 175:
-                                        or_, og, ob, oa = mask_overlay_pixels[x, y]
-                                        base_pixels[x, y] = (or_, og, ob, a)
-                            modded_icon = icon
-                            masked_icon = modded_icon
-                        else:
-                            custom_roblox_logo_path = Path(colors.get(icon_name))
-                            custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
-                            custom_roblox_logo.thumbnail(icon.size, resample=Image.Resampling.LANCZOS)
-                            clear_area = Image.new("RGBA", icon.size, (0, 0, 0, 0))
-                            image.paste(clear_area, box)
-                            centered_logo = Image.new("RGBA", icon.size, (0, 0, 0, 0))
-                            x = (icon.size[0] - custom_roblox_logo.width) // 2
-                            y = (icon.size[1] - custom_roblox_logo.height) // 2
-                            centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
-                            image.paste(centered_logo, box, mask=centered_logo)
-                            continue
-                    elif icon_name.startswith("icons/controls/voice/"):
-                        mask_overlay = get_mask(colors, angle, icon.size, icon_name, icon).convert("RGBA")
-                        base_pixels = icon.load()
-                        mask_overlay_pixels = mask_overlay.load()
-                        width, height = icon.size
-                        for y in range(height):
-                            for x in range(width):
-                                r, g, b, a = base_pixels[x, y]
-                                if a > 0 and r > 175 and g > 175 and b > 175:
-                                    or_, og, ob, oa = mask_overlay_pixels[x, y]
-                                    base_pixels[x, y] = (or_, og, ob, a)
-                        modded_icon = icon
-                        masked_icon = modded_icon
-                    else:
-                        modded_icon = get_mask(colors, angle, icon.size, icon_name, icon)
-                        modded_icon.putalpha(a)
-                        masked_icon = modded_icon
-                else:
-                    modded_icon = get_mask(colors, angle, icon.size, icon_name, icon)
+                icon_info = get_icon_info(colors, angle, icon_name, old_icons)
+                if icon_info["type"] in ("image", "gradient+image") and icon_info["image"]:
+                    custom_roblox_logo_path = Path(icon_info["image"])
+                    custom_roblox_logo = Image.open(custom_roblox_logo_path).convert("RGBA")
+                    custom_roblox_logo.thumbnail(icon.size, resample=Image.Resampling.LANCZOS)
+                    clear_area = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+                    image.paste(clear_area, box)
+                    centered_logo = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+                    x = (icon.size[0] - custom_roblox_logo.width) // 2
+                    y = (icon.size[1] - custom_roblox_logo.height) // 2
+                    centered_logo.paste(custom_roblox_logo, (x, y), mask=custom_roblox_logo)
+                    image.paste(centered_logo, box, mask=centered_logo)
+                    continue
+                if icon_info["mask_type"] == "alpha":
+                    mask_overlay = get_mask(colors, angle, icon.size, icon_name, icon, old_icons).convert("RGBA")
+                    mask = mask_overlay.getchannel("A")
+                    masked_icon = Image.composite(mask_overlay, icon, mask)
+                elif icon_info["mask_type"] == "whiteout" or icon_name.startswith("icons/controls/voice/"):
+                    mask_overlay = get_mask(colors, angle, icon.size, icon_name, icon, old_icons).convert("RGBA")
+                    base_pixels = icon.load()
+                    mask_overlay_pixels = mask_overlay.load()
+                    width, height = icon.size
+                    for y in range(height):
+                        for x in range(width):
+                            pr, pg, pb, pa = base_pixels[x, y]
+                            if pa > 0 and pr > 175 and pg > 175 and pb > 175:
+                                or_, og, ob, oa = mask_overlay_pixels[x, y]
+                                base_pixels[x, y] = (or_, og, ob, pa)
+                    masked_icon = icon
+                else: # "basic" or "none"
+                    modded_icon = get_mask(colors, angle, icon.size, icon_name, icon, old_icons)
                     modded_icon.putalpha(a)
                     masked_icon = modded_icon
                 image.paste(masked_icon, box)
@@ -654,13 +652,12 @@ def generate_colored_fonts(
     angle: int = 0
 ) -> None:
     max_stops = 2
-    if type(colors) is list: max_stops = max(2, len(colors))
-    elif type(colors) is dict:
-        lists = [v for v in colors.values() if type(v) is list and all(type(i) is str for i in v)]
+    if isinstance(colors, list): max_stops = max(2, len(colors))
+    elif isinstance(colors, dict):
+        lists = [v for v in colors.values() if isinstance(v, list) and all(isinstance(i, str) for i in v)]
         if lists: max_stops = max([len(l) for l in lists] + [2])
     n_bands = max(2, max_stops * 8)
     angle = angle % 360
-    use_native_colors = type(colors) is dict and colors.get("_imagecolors_font") == True
     try: old_icons = get_old_icons()
     except Exception: old_icons = {}
     for font_path in builder_fonts:
@@ -685,10 +682,20 @@ def generate_colored_fonts(
             return palette_cache[cache_key]
         for icon_name in original_order:
             if icon_name in DEF_BLOCK: continue
-            icon_img = _resolve_icon_image(icon_name, colors, old_icons)
-            icon_stops = _resolve_icon_colors(icon_name, colors)
-            if icon_img and use_native_colors and colors.get(icon_name):
-                native_dict = _get_native_color_contours(icon_img, units, icon_name, glyf_table)
+            icon_info = get_icon_info(colors, angle, icon_name, old_icons, is_font=True)
+
+            icon_img = icon_info.get("image", None)
+            icon_stops = icon_info.get("colors", ["#ffffff"])
+            icon_angle = icon_info.get("angle", 0)
+            icon_type = icon_info.get("type", "static")
+
+            # Image-Based Icons
+            if icon_type == "image" and icon_img:
+                icon_max_colors = icon_info.get("max_colors", 64)
+                if icon_max_colors > 4096: icon_max_colors = 4096
+                elif icon_max_colors < 1: icon_max_colors = 1
+                icon_max_colors = int(icon_max_colors)
+                native_dict = _get_native_color_contours(icon_img, units, icon_name, glyf_table, max_colors=icon_max_colors)
                 if not native_dict: continue
                 orig_aw = font["hmtx"].metrics[icon_name][0]
                 layers = []
@@ -701,45 +708,94 @@ def generate_colored_fonts(
                 extra_names.extend(s for s, _ in layers if s not in extra_names)
                 color_glyphs[icon_name] = layers
                 continue 
-            if not icon_stops: continue
-            start_idx = get_palette_start_idx(icon_stops)
-            contours = _get_image_contours(icon_img, units, icon_name, glyf_table) if icon_img else _get_outline_contours(icon_name, font)
-            if not contours: continue
-            xs, ys = [pt[0] for p in contours for pt in p], [pt[1] for p in contours for pt in p]
-            if not xs or not ys: continue
-            if icon_img:
-                og = glyf_table.get(icon_name)
-                if og and hasattr(og, "xMin"):
-                    cx = (float(og.xMax) + float(og.xMin)) / 2.0
-                    cy = (float(og.yMax) + float(og.yMin)) / 2.0
-                else: cx, cy = float(units) / 2.0, float(units) / 2.0
-            else: cx, cy = sum([min(xs), max(xs)]) / 2.0, sum([min(ys), max(ys)]) / 2.0
-            alignment_offset = 0 
-            slice_angle = angle + alignment_offset
-            rot_contours = [[_rotate_point(x, y, cx, cy, slice_angle) for x, y in poly] for poly in contours]
-            r_xs, r_ys = [pt[0] for p in rot_contours for pt in p], [pt[1] for p in rot_contours for pt in p]
-            r_y_min, r_y_max = min(r_ys), max(r_ys)
-            r_x_min, r_x_max = min(r_xs), max(r_xs)
-            band_size = (r_y_max - r_y_min) / n_bands
-            orig_aw = font["hmtx"].metrics[icon_name][0]
-            layers = []
-            for band in range(n_bands):
-                lo = r_y_min + band * band_size
-                hi = r_y_min + (band + 1) * band_size
-                if band < n_bands - 1: hi += 50.0 
-                clipped_rot = _clip_contours_to_band(rot_contours, lo, hi, r_x_min, r_x_max)
-                clipped = [[_rotate_point(x, y, cx, cy, -slice_angle) for x, y in poly] for poly in clipped_rot]
-                if sub := _write_sub_glyph(icon_name, band, clipped, font, glyf_table, orig_aw): layers.append((sub, start_idx + band))
-            if not layers: continue
-            extra_names.extend(s for s, _ in layers if s not in extra_names)
-            color_glyphs[icon_name] = layers
+
+            # Static Color Icons
+            if icon_type == "static":
+                if len(icon_stops) > 1: color_idx = get_solid_color_idx(get_midpoint_color(icon_stops))
+                else: color_idx = get_solid_color_idx(icon_stops[0])
+                contours = _get_outline_contours(icon_name, font)
+                if not contours: continue
+                orig_aw = font["hmtx"].metrics[icon_name][0]
+                if sub := _write_sub_glyph(icon_name, "static_layer", contours, font, glyf_table, orig_aw):
+                    if sub not in extra_names: extra_names.append(sub)
+                    color_glyphs[icon_name] = [(sub, color_idx)]
+                continue
+
+            # Gradient Icons
+            if icon_type == "gradient" or icon_type == "gradient+image":
+                icon_gradient_type = icon_info.get("gradient_type", "linear")
+                image_and_grad = icon_img and icon_type == "gradient+image"
+                start_idx = get_palette_start_idx(icon_stops)
+                contours = _get_image_contours(icon_img, units, icon_name, glyf_table) if image_and_grad else _get_outline_contours(icon_name, font)
+                if not contours: continue
+                xs, ys = [pt[0] for p in contours for pt in p], [pt[1] for p in contours for pt in p]
+                if not xs or not ys: continue
+                if image_and_grad:
+                    og = glyf_table.get(icon_name)
+                    if og and hasattr(og, "xMin"):
+                        cx = (float(og.xMax) + float(og.xMin)) / 2.0
+                        cy = (float(og.yMax) + float(og.yMin)) / 2.0
+                    else: cx, cy = float(units) / 2.0, float(units) / 2.0
+                else: cx, cy = sum([min(xs), max(xs)]) / 2.0, sum([min(ys), max(ys)]) / 2.0
+                alignment_offset = 0 
+                slice_angle = icon_angle + alignment_offset
+                rot_contours = [[_rotate_point(x, y, cx, cy, slice_angle) for x, y in poly] for poly in contours]
+                r_xs, r_ys = [pt[0] for p in rot_contours for pt in p], [pt[1] for p in rot_contours for pt in p]
+                r_y_min, r_y_max = min(r_ys), max(r_ys)
+                r_x_min, r_x_max = min(r_xs), max(r_xs)
+                orig_aw = font["hmtx"].metrics[icon_name][0]
+                layers = []
+                all_x = [pt[0] for poly in rot_contours for pt in poly]
+                all_y = [pt[1] for poly in rot_contours for pt in poly]
+                if all_x and all_y:
+                    vis_x_min, vis_x_max = min(all_x), max(all_x)
+                    vis_y_min, vis_y_max = min(all_y), max(all_y)
+                else: vis_x_min, vis_x_max, vis_y_min, vis_y_max = r_x_min, r_x_max, r_y_min, r_y_max
+                grad_cx = (vis_x_min + vis_x_max) / 2.0
+                grad_cy = (vis_y_min + vis_y_max) / 2.0
+                dx = max(abs(vis_x_max - grad_cx), abs(vis_x_min - grad_cx))
+                dy = max(abs(vis_y_max - grad_cy), abs(vis_y_min - grad_cy))
+                if all_x and all_y: max_radius = max(math.hypot(pt[0] - grad_cx, pt[1] - grad_cy) for poly in rot_contours for pt in poly)
+                else:
+                    dx = max(abs(vis_x_max - grad_cx), abs(vis_x_min - grad_cx))
+                    dy = max(abs(vis_y_max - grad_cy), abs(vis_y_min - grad_cy))
+                    max_radius = math.hypot(dx, dy)
+                for band in range(n_bands):
+                    clip_paths = []
+                    if icon_gradient_type == "radial":
+                        r_inner = (band / n_bands) * max_radius
+                        r_outer = ((band + 1) / n_bands) * max_radius
+                        r_outer += 20.0
+                        outer_ring = [(grad_cx + r_outer * math.cos(math.radians(a)), grad_cy + r_outer * math.sin(math.radians(a))) for a in range(0, 360, 5)]
+                        inner_ring = [(grad_cx + r_inner * math.cos(math.radians(a)), grad_cy + r_inner * math.sin(math.radians(a))) for a in range(355, -1, -5)]
+                        clip_paths = [outer_ring, inner_ring]
+                    elif icon_gradient_type == "conic":
+                        angle_start = (band / n_bands) * 360
+                        angle_end = ((band + 1) / n_bands) * 360
+                        angle_end += 3.0
+                        wedge_radius = max_radius * 1.5
+                        wedge = [(grad_cx, grad_cy)]
+                        wedge.extend([(grad_cx + wedge_radius * math.cos(math.radians(a)), grad_cy + wedge_radius * math.sin(math.radians(a))) for a in range(int(angle_start), int(angle_end) + 1, 2)])
+                        clip_paths = [wedge]
+                    elif icon_gradient_type == "linear":
+                        band_size = (r_y_max - r_y_min) / n_bands
+                        lo = r_y_min + band * band_size
+                        hi = r_y_min + (band + 1) * band_size
+                        if band < n_bands - 1: hi += 50.0 
+                        safe_x_min, safe_x_max = r_x_min - 1000, r_x_max + 1000
+                        clip_paths = [[(safe_x_min, lo), (safe_x_max, lo), (safe_x_max, hi), (safe_x_min, hi)]]
+                    clipped_rot = _clip_contours_to_shape(rot_contours, clip_paths)
+                    clipped = [[_rotate_point(x, y, cx, cy, -slice_angle) for x, y in poly] for poly in clipped_rot]
+                    if sub := _write_sub_glyph(icon_name, band, clipped, font, glyf_table, orig_aw): layers.append((sub, start_idx + band))
+                extra_names.extend(s for s, _ in layers if s not in extra_names)
+                color_glyphs[icon_name] = layers
         font.setGlyphOrder(original_order + extra_names)
         font["CPAL"] = buildCPAL([master_palette])
         if color_glyphs: font["COLR"] = buildCOLR(color_glyphs)
         save_path = Path(base_directory, font_path).with_name(Path(font_path).stem + "Custom" + Path(font_path).suffix)
         font.save(save_path)
 def get_authorized_from_blacklist(colors: list):
-    if type(colors) is dict:
+    if isinstance(colors, dict):
         total = []
         if colors.get("_voice_chat") == True:
             total += [

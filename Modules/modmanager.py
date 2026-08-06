@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -312,7 +312,7 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
                 else: final_mod_enabled = "❌"
                 if v.get("version"): final_vers = v.get("version")
                 if v.get("name") == i: final_name = f"{i}"
-                elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{i}]"
+                elif isinstance(v.get("name"), str): final_name = f"{v.get('name')} [{i}]"
                 else: final_name = f"{i}"
                 if v["mod_script_supports"] <= cf.current_version["version"] and v["mod_script_end_support"] > cf.current_version["version"] and v["mod_script_supports_operating_system"] == True: mod_script_generated_ui_options.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                 else: mod_script_generated_ui_options.append({"index": 2, "message": f"[🔒] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
@@ -333,7 +333,7 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
                 if cf.main_config.get('EFlagSelectedModScripts') and cf.main_config.get('EFlagSelectedModScripts').get(reverify_mod_script) and cf.main_config.get('EFlagSelectedModScripts').get(reverify_mod_script).get("enabled") == True: final_mod_enabled = "✅"
                 else: final_mod_enabled = "❌"
                 if v.get("name") == reverify_mod_script: final_name = f"{reverify_mod_script}"
-                elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{reverify_mod_script}]"
+                elif isinstance(v.get("name"), str): final_name = f"{v.get('name')} [{reverify_mod_script}]"
                 else: final_name = f"{reverify_mod_script}"
                 if v["mod_script_supports"] <= cf.current_version["version"] and v["mod_script_end_support"] > cf.current_version["version"] and v["mod_script_supports_operating_system"] == True and v["python_version"] <= cf.pip_class.getCurrentPythonVersion(): mod_script_generated_ui_options.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": reverify_mod_script})
                 else: mod_script_generated_ui_options.append({"index": 2, "message": f"[🔒] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": reverify_mod_script})
@@ -371,7 +371,7 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
                         else: final_mod_enabled = "❌"
                         if v.get("version"): final_vers = v.get("version")
                         if v.get("name") == i: final_name = f"{i}"
-                        elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{i}]"
+                        elif isinstance(v.get("name"), str): final_name = f"{v.get('name')} [{i}]"
                         else: final_name = f"{i}"
                         if v["mod_script_supports"] <= cf.current_version["version"] and v["mod_script_end_support"] > cf.current_version["version"] and v["mod_script_supports_operating_system"] == True and v["python_version"] <= cf.pip_class.getCurrentPythonVersion(): mod_script_generated_ui_options2.append({"index": 1, "message": f"[{final_mod_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
                         else: mod_script_generated_ui_options2.append({"index": 2, "message": f"[🔒] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
@@ -406,8 +406,8 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
                         permissions_needed = sel_mod_script["mod_info"].get("permissions", [])
                         sorted_perms_1 = []
                         for i in permissions_needed:
-                            if type(i) is str and cf.handler.roblox_event_info.get(i):
-                                mai = cf.handler.roblox_event_info.get(i)
+                            if isinstance(i, str) and rbx.roblox_event_info.get(i):
+                                mai = rbx.roblox_event_info.get(i)
                                 sorted_perms_1.append({"level": mai.get("level", 0), "perm": i, "message": mai.get('message')})
                             else:
                                 sorted_perms_1.append({"level": 3, "perm": i, "message": ts("Unknown Requirement")})
@@ -439,17 +439,17 @@ def modScriptSettings(se, reverify_mod_script, mods_manifest, mod_order):
                                 if isYes(a) == True: con = True
                             if con == True:
                                 actual_permissions = []
-                                if type(permissions_needed) is list: actual_permissions = permissions_needed
-                                if type(python_modules) is list and len(python_modules) > 0:
+                                if isinstance(permissions_needed, list): actual_permissions = permissions_needed
+                                if isinstance(python_modules, list) and len(python_modules) > 0:
                                     if not cf.pip_class.installed(python_modules, boolonly=True): cf.pip_class.install(python_modules)
                                     s = []
                                     for pyt in python_modules:
-                                        if type(pyt) is str: s.append(f"pip_{pyt}")
+                                        if isinstance(pyt, str): s.append(f"pip_{pyt}")
                                     actual_permissions += s
                                 cf.main_config["EFlagSelectedModScripts"][set_mod_script] = {
                                     "enabled": True,
                                     "permissions": actual_permissions,
-                                    "hash": generateFileHash(os.path.join(cf.mods_folder, "Mods", set_mod_script, "ModScript.py"))
+                                    "hash": generateFileHash(os.path.join(cf.mods_folder, "Mods", set_mod_script, "ModScript.py"), is_text=True)
                                 }
                                 printSuccessMessage(f'Successfully enabled mod script to "{sel_mod_script["final_name"]}"!')
                             else:
@@ -511,7 +511,7 @@ def mainModManager(reverify_mod_script=None, mods_manifest=None, mod_order=None,
             if v.get("enabled") == True: final_enabled = "✅"
             else: final_enabled = "❌"
             if v.get("name") == i: final_name = f"{i}"
-            elif type(v.get("name")) is str: final_name = f"{v.get('name')} [{i}]"
+            elif isinstance(v.get("name"), str): final_name = f"{v.get('name')} [{i}]"
             else: final_name = f"{i}"
             if v.get("enabled") == False and v.get("list_in_normal_mods") == False: continue
             generated_ui_options.append({"index": 1, "message": f"[{final_enabled}] {final_name} [v{final_vers}]", "final_name": final_name, "mod_info": v, "mod_id": i})
@@ -555,7 +555,7 @@ def mainModManager(reverify_mod_script=None, mods_manifest=None, mod_order=None,
             return
         elif opt["index"] == 1000005: continueToInstallRobloxOptions(reinstall=True)
         else:
-            if not (cf.main_config.get("EFlagEnabledMods") and type(cf.main_config.get("EFlagEnabledMods")) is dict): cf.main_config["EFlagEnabledMods"] = {}
+            if not (cf.main_config.get("EFlagEnabledMods") and isinstance(cf.main_config.get("EFlagEnabledMods"), dict)): cf.main_config["EFlagEnabledMods"] = {}
             if opt.get("mod_info"):
                 if opt.get("target_mode") and opt["mod_info"]["enabled"] == True:
                     mod_order = generateModOrder()
@@ -572,8 +572,8 @@ def mainModManager(reverify_mod_script=None, mods_manifest=None, mod_order=None,
                                 mod_order[cur_org], mod_order[cur_org + 1] = mod_order[cur_org + 1], mod_order[cur_org]
                                 org_adjust += 1
                         next_start_index = opt.get("current_index", 0)+org_adjust
-                        cf.stdout._sys.__stdout__.write(f"\033[{len(generated_ui_options)+2}A")
-                        cf.stdout._sys.__stdout__.flush()
+                        sys.__stdout__.write(f"\033[{len(generated_ui_options)+2}A")
+                        sys.__stdout__.flush()
                         cf.main_config["EFlagEnabledModOrder"] = mod_order
                         saveSettings()
                         return mainModManager(reverify_mod_script=reverify_mod_script, mods_manifest=mods_manifest, mod_order=mod_order, start_index=next_start_index, use_already=True)
@@ -585,7 +585,9 @@ def mainModManager(reverify_mod_script=None, mods_manifest=None, mod_order=None,
                         cf.main_config["EFlagEnabledMods"][opt["mod_id"]] = True
                         printSuccessMessage(f"Successfully enabled mod {opt.get('final_name')}!")
             saveSettings()
-        if reverify_mod_script == None: mainModManager(start_index=opt.get("current_index", 0))
+            if reverify_mod_script == None: return mainModManager(start_index=opt.get("current_index", 0))
+            else: printMainMessage("Exiting Mods Manager.."); return 5
+        if reverify_mod_script == None: mainModManager()
         else: printMainMessage("Exiting Mods Manager.."); return 5
     else: return
 def continueToModsManager(reverify_mod_script=None): # Mods Manager

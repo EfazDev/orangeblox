@@ -5,26 +5,79 @@
     "colors": ["#ff4b00", "#ffff00", "#00ff00"],
     "angle": 135,
     "advanced": {
-        "*": ["#ff4b00", "#ffff00", "#00ff00"],
-        "tilt": ["#ff6a00"],
-        "studio": ["#ff6a00"],
-        "play-small": ["#ffffff"],
-        "play-large": ["#ffffff"],
-        "play-xlarge": ["#ffffff"],
-        "_tilt": "{main}/Logo.png",
-        "_studio": "{main}/AppIconRunStudio.png",
-        "icons/logo/block": "{main}/AppIcon.png",
-        "icons/logo/letterform": "{main}/Banner.png",
-        "icons/logo/studiologo": "{main}/AppIconRunStudio.png",
-        "icons/logo/studiologo_small": "{main}/AppIconRunStudio.png",
-        "extracontent.textures.luaapp.auth.logo_white_1x.png": "{main}/Banner.png",
-        "extracontent.textures.luaapp.auth.logo_white_luobu.png": "{main}/Banner.png",
-        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": "{main}/AppIconRunStudio.png",
-        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": "{main}/AppIconRunStudio.png",
-        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": "{main}/AppIconRunStudio.png",
-        "studio-studiocontent.textures.StartPage.RobloxStudioLockup.png": "{main}/Banner2.png",
-        "studio-studiocontent.textures.StartPage.RobloxStudioLockup@2x.png": "{main}/Banner2.png",
-        "_imagecolors_font": true,
+        "*": {
+            "colors": [
+                "#ff4b00",
+                "#ffff00",
+                "#00ff00"
+            ],
+            "type": "gradient",
+            "gradient_type": "linear"
+        },
+        "tilt": {
+            "image": "{main}/Logo.png",
+            "type": "image"
+        },
+        "studio": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "play-small": {
+            "type": "static",
+            "colors": ["#ffffff"]
+        },
+        "play-large": {
+            "type": "static",
+            "colors": ["#ffffff"]
+        },
+        "play-xlarge": {
+            "type": "static",
+            "colors": ["#ffffff"]
+        },
+        "icons/logo/block": {
+            "image": "{main}/Logo.png",
+            "type": "image"
+        },
+        "icons/logo/letterform": {
+            "image": "{main}/Banner.png",
+            "type": "image"
+        },
+        "icons/logo/studiologo": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "icons/logo/studiologo_small": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "extracontent.textures.luaapp.auth.logo_white_1x.png": {
+            "image": "{main}/Banner.png",
+            "type": "image"
+        },
+        "extracontent.textures.luaapp.auth.logo_white_luobu.png": {
+            "image": "{main}/Banner.png",
+            "type": "image"
+        },
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo.png": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@2x.png": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "studio-svgtextures.Lua.StartPage.Dark.StudioLogo@3x.png": {
+            "image": "{main}/AppIconRunStudio.png",
+            "type": "image"
+        },
+        "studio-studiocontent.textures.StartPage.RobloxStudioLockup.png": {
+            "image": "{main}/Banner2.png",
+            "type": "image"
+        },
+        "studio-studiocontent.textures.StartPage.RobloxStudioLockup@2x.png": {
+            "image": "{main}/Banner2.png",
+            "type": "image"
+        },
         "_all_optional": true,
         "_voice_chat": true,
         "_loading": true,

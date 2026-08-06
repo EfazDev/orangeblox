@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -93,7 +93,7 @@ def continueToOrangeBloxInstaller(): # Run OrangeBlox Installer
             elif cf.main_os == "Windows": setInstalledAppPath(cf.cur_path)
             printDebugMessage("Sending Request to Bootstrap Version Servers..") 
             version_server = cf.main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
-            if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
+            if not (isinstance(version_server, str) and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
             try: latest_vers_res = cf.requests.get(f"{version_server}", headers={"X-Bootstrap-Version": cf.current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": cf.main_config.get("EFlagUpdatesAuthorizationKey", "")})
             except Exception: latest_vers_res = PyKits.InstantRequestJSONResponse(ok=False)
             if latest_vers_res.ok:
@@ -496,7 +496,7 @@ def continueToInstallRobloxOptions(reinstall=False): # Roblox Installer Options
                 sys.exit(0)
                 return ts("Roblox has been uninstalled with user data removed!")
             elif fullReset == 6:
-                if not (cf.handler.getRobloxInstallFolder(directory="", studio=True)):
+                if not (cf.handler.getRobloxInstallFolder(studio=True)):
                     printErrorMessage("Roblox Studio is not installed right now! Please enable Roblox Studio mode in Bootstrap Settings to reinstall back!")
                     return ts("Roblox Studio was not uninstalled.")
                 cf.submit_status.start()
@@ -600,63 +600,34 @@ def continueToInstallRobloxOptions(reinstall=False): # Roblox Installer Options
     if reinstall == True: return goToReinstall()
     else:
         printSystemMessage("--- Roblox Installer Options ---")
-        li = {}
-        co = 1
-        printMainMessage(f"[{co}] Reinstall Roblox")
-        li[str(co)] = [goToReinstall, 1]
-        co += 1
-        printMainMessage(f"[{co}] Full Reinstall Roblox [No Resetting]")
-        li[str(co)] = [goToReinstall, 2]
-        co += 1
-        printMainMessage(f"[{co}] Full Reinstall Roblox [Removes User Data]")
-        li[str(co)] = [goToReinstall, 3]
-        co += 1
-        printMainMessage(f"[{co}] Install Vanilla Roblox")
-        li[str(co)] = [goToReinstall, 7]
+        generated_ui_options = []
+        generated_ui_options.append({"index": 1, "message": "Reinstall Roblox", "func": lambda: goToReinstall(1)})
+        generated_ui_options.append({"index": 2, "message": "Full Reinstall Roblox [No Resetting]", "func": lambda: goToReinstall(2)})
+        generated_ui_options.append({"index": 3, "message": "Full Reinstall Roblox [Removes User Data]", "func": lambda: goToReinstall(3)})
+        generated_ui_options.append({"index": 4, "message": "Install Vanilla Roblox", "func": lambda: goToReinstall(7)})
         if cf.main_config.get("EFlagRobloxStudioEnabled"):
-            co += 1
-            printMainMessage(f"[{co}] Reinstall Roblox Studio")
-            li[str(co)] = [goToReinstall, 6]
+            generated_ui_options.append({"index": 5, "message": "Reinstall Roblox Studio", "func": lambda: goToReinstall(6)})
             if cf.main_os == "Darwin":
-                co += 1
-                printMainMessage(f"[{co}] Install Vanilla Roblox Studio")
-                li[str(co)] = [goToReinstall, 8]
+                generated_ui_options.append({"index": 6, "message": "Install Vanilla Roblox Studio", "func": lambda: goToReinstall(8)})
                 if os.path.exists(os.path.join(cf.pip_class.getInstallableApplicationsFolder(), "RobloxStudio.app")): 
-                    co += 1
-                    printMainMessage(f"[{co}] Uninstall Vanilla Roblox Studio")
-                    li[str(co)] = [goToUninstall, 8]
+                    generated_ui_options.append({"index": 7, "message": "Uninstall Vanilla Roblox Studio", "func": lambda: goToUninstall(8)})
             elif cf.main_os == "Windows":
-                co += 1
-                printMainMessage(f"[{co}] Install Vanilla Roblox Studio")
-                li[str(co)] = [goToReinstall, 8]
+                generated_ui_options.append({"index": 6, "message": "Install Vanilla Roblox Studio", "func": lambda: goToReinstall(8)})
                 if cf.handler.getRobloxInstallFolder(directory=os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "Versions"), studio=True): 
-                    co += 1
-                    printMainMessage(f"[{co}] Uninstall Vanilla Roblox Studio")
-                    li[str(co)] = [goToUninstall, 8]
-        co += 1
-        printMainMessage(f"[{co}] Uninstall Roblox")
-        li[str(co)] = [goToUninstall, 4]
-        co += 1
-        printMainMessage(f"[{co}] Uninstall Roblox [Removes User Data]")
-        li[str(co)] = [goToUninstall, 5]
+                    generated_ui_options.append({"index": 7, "message": "Uninstall Vanilla Roblox Studio", "func": lambda: goToUninstall(8)})
+        generated_ui_options.append({"index": 8, "message": "Uninstall Roblox", "func": lambda: goToUninstall(4)})
+        generated_ui_options.append({"index": 9, "message": "Uninstall Roblox [Removes User Data]", "func": lambda: goToUninstall(5)})
         current_studio_version = cf.handler.getCurrentClientVersion(studio=True)
-        if current_studio_version["success"] == True:
-            co += 1
-            printMainMessage(f"[{co}] Uninstall Roblox Studio")
-            li[str(co)] = [goToUninstall, 6]
+        if current_studio_version.get("success") == True:
+            generated_ui_options.append({"index": 10, "message": "Uninstall Roblox Studio", "func": lambda: goToUninstall(6)})
         if cf.main_os == "Darwin":
             if os.path.exists(os.path.join(cf.pip_class.getInstallableApplicationsFolder(), "Roblox.app")): 
-                co += 1
-                printMainMessage(f"[{co}] Uninstall Vanilla Roblox")
-                li[str(co)] = [goToUninstall, 7]
+                generated_ui_options.append({"index": 11, "message": "Uninstall Vanilla Roblox", "func": lambda: goToUninstall(7)})
         elif cf.main_os == "Windows":
             if cf.handler.getRobloxInstallFolder(directory=os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "Versions")): 
-                co += 1
-                printMainMessage(f"[{co}] Uninstall Vanilla Roblox")
-                li[str(co)] = [goToUninstall, 7]
-        printMainMessage("[*] Exit Options Menu")
-        a = input("> ")
-        if li.get(a): return li.get(a)[0](li.get(a)[1])
+                generated_ui_options.append({"index": 11, "message": "Uninstall Vanilla Roblox", "func": lambda: goToUninstall(7)})
+        a = generateMenuSelection(generated_ui_options, star_option=ts("Exit Options Menu"))
+        if a: return a.get("func")()
         else: return ts("Option invalid!")
 def syncToFFlagConfiguration(): # Sync to Configuration
     printSystemMessage("--- Sync to Configuration ---")
@@ -904,20 +875,20 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
         input("> ")
         optionSelection(mes="Link Shortcuts was not used!")
         return
-    if type(url_scheme) is str and url_scheme != "efaz-bootstrap://shortcuts/?quick-action=true" and url_scheme != "orangeblox://shortcuts/?quick-action=true":
+    if isinstance(url_scheme, str) and url_scheme != "efaz-bootstrap://shortcuts/?quick-action=true" and url_scheme != "orangeblox://shortcuts/?quick-action=true":
         if '://' in url_scheme: path = url_scheme.split('://', 1)[1]
         else: path = url_scheme.split(':', 1)[1]
         generated_shortcut_id = path.replace("shortcuts/", "").replace("?quick-action=true", "")
-        if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+        if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
             if cf.main_config.get("EFlagRobloxLinkShortcuts").get(generated_shortcut_id):
                 shortcut_info = cf.main_config.get("EFlagRobloxLinkShortcuts").get(generated_shortcut_id)
                 running = False
-                if type(shortcut_info.get("url")) is str and (shortcut_info.get("url").startswith("roblox:") or shortcut_info.get("url").startswith("roblox-player:") or shortcut_info.get("url").startswith("roblox-studio:") or shortcut_info.get("url").startswith("roblox-studio-auth:")):
+                if isinstance(shortcut_info.get("url"), str) and (shortcut_info.get("url").startswith("roblox:") or shortcut_info.get("url").startswith("roblox-player:") or shortcut_info.get("url").startswith("roblox-studio:") or shortcut_info.get("url").startswith("roblox-studio-auth:")):
                     if len(cf.given_args) > 1: cf.given_args[1] = shortcut_info["url"]
                     else: cf.given_args.append(shortcut_info["url"])
                     if shortcut_info["url"].startswith("roblox-studio"): cf.run_studio = True
                     running = True
-                if type(shortcut_info.get("cookie_paths")) is dict:
+                if isinstance(shortcut_info.get("cookie_paths"), dict):
                     for i, v in shortcut_info.get("cookie_paths").items():
                         if cf.main_os == "Darwin" and (i.startswith(os.path.join(cf.pip_class.getLocalAppData(), "HTTPStorages", "com.roblox.")) and v.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[i] = v
                         elif cf.main_os == "Windows" and (i == os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "LocalStorage", "RobloxCookies.dat") and v.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[i] = v
@@ -939,7 +910,7 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
         def linkLoop():
             generated_ui_options = []
             has_cookies = False
-            if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+            if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                 for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
                     if v and v.get("name") and v.get("id"): 
                         approved = False
@@ -1086,9 +1057,9 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
                     else: printErrorMessage("Log in was not detected in the client!")
                     linkLoop()
                 elif opt["index"] == 1000002:
-                    if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                    if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                         def loo():
-                            if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                            if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                                 generated_ui_options = []
                                 printSystemMessage("--- Select Link Shortcut ---")
                                 for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
@@ -1152,7 +1123,7 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
                     else: printErrorMessage("You have no shortcuts created!")
                     linkLoop()
                 elif opt["index"] == 1000003:
-                    if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                    if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                         generated_ui_options = []
                         printSystemMessage("--- Select Link Shortcut ---")
                         for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
@@ -1176,7 +1147,7 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
                     printMainMessage("Validating cookies of cookie user shortcuts..")
                     failed = []
                     try:
-                        if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                        if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                             for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
                                 if v and v.get("name") and v.get("id"): 
                                     approved = False
@@ -1208,9 +1179,9 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
                     printSystemMessage("--- Link Shortcuts ---")
                     linkLoop()
                 elif opt["index"] == 1000005:
-                    if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                    if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                         def loo():
-                            if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                            if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict):
                                 generated_ui_options = []
                                 printSystemMessage("--- Select Link Shortcut ---")
                                 for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
@@ -1240,12 +1211,12 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
                     linkLoop()
                 else:
                     running = False
-                    if type(opt["shortcut_info"].get("cookie_paths")) is dict:
+                    if isinstance(opt["shortcut_info"].get("cookie_paths"), dict):
                         for i, v in opt["shortcut_info"].get("cookie_paths").items():
                             if cf.main_os == "Darwin" and (i.startswith(os.path.join(cf.pip_class.getLocalAppData(), "HTTPStorages", "com.roblox.")) and v.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[i] = v
                             elif cf.main_os == "Windows" and (i == os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "LocalStorage", "RobloxCookies.dat") and v.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[i] = v
                         running = True
-                    if type(opt["shortcut_info"].get("url")) is str and (opt["shortcut_info"].get("url").startswith("roblox:") or opt["shortcut_info"].get("url").startswith("roblox-player:") or opt["shortcut_info"].get("url").startswith("roblox-studio:") or opt["shortcut_info"].get("url").startswith("roblox-studio-auth:")):
+                    if isinstance(opt["shortcut_info"].get("url"), str) and (opt["shortcut_info"].get("url").startswith("roblox:") or opt["shortcut_info"].get("url").startswith("roblox-player:") or opt["shortcut_info"].get("url").startswith("roblox-studio:") or opt["shortcut_info"].get("url").startswith("roblox-studio-auth:")):
                         if len(cf.given_args) > 1: cf.given_args[1] = opt["shortcut_info"]["url"]
                         else: cf.given_args.append(opt["shortcut_info"]["url"])
                         if opt["shortcut_info"]["url"].startswith("roblox-studio"): cf.run_studio = True
@@ -1263,7 +1234,7 @@ def continueToUpdates(): # Check for Updates
     elif cf.main_os == "Windows": setInstalledAppPath(os.path.realpath(cf.cur_path))
     printDebugMessage("Sending Request to Bootstrap Version Servers..") 
     version_server = cf.main_config.get("EFlagBootstrapUpdateServer", "https://obx.efaz.dev/Version.json")
-    if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
+    if not (isinstance(version_server, str) and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
     try: latest_vers_res = cf.requests.get(f"{version_server}", headers={"X-Bootstrap-Version": cf.current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": cf.main_config.get("EFlagUpdatesAuthorizationKey", "")})
     except Exception: latest_vers_res = PyKits.InstantRequestJSONResponse(ok=False)
     if latest_vers_res.ok:

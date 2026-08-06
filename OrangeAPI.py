@@ -1,7 +1,7 @@
 # 
 # Orange API 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 # Provided to Mod Scripts using variable OrangeAPI
 # Developers may use the following line to see the full API in Visual Studio Code:
@@ -9,7 +9,7 @@
 # 
 
 """
-Orange API 🍊 | Made by Efaz from efaz.dev | v2.6.0i
+Orange API 🍊 | Made by Efaz from efaz.dev | v2.6.0j
 \n
 Provided to OrangeBlox Mod Scripts using variable OrangeAPI during runtime.
 Developers may use the following line to get the full API notes in Visual Studio Code:
@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from PyKits import Colors
 
 # Variables
-current_version = {"version": "2.6.0i", "bootstrap_version": "2.6.0i"}
+current_version = {"version": "2.6.0j", "bootstrap_version": "2.6.0j"}
 request_queues = {}
 cached_information = {}
 colors_class = Colors()
@@ -59,12 +59,12 @@ class UnusedAPI(Warning):
         super().__init__("This API variable/class is no longer usable! Please update your scripts!")
 class Request:
     def __init__(self, bootstrap_api, orangeapi_details, requested_function: str, args: typing.Dict={}):
-        if type(bootstrap_api) is OrangeAPI and type(orangeapi_details) is OrangeAPIDetails:
+        if isinstance(bootstrap_api, OrangeAPI) and isinstance(orangeapi_details, OrangeAPIDetails):
             generated_function_id = f"{orangeapi_details.mod_script_name}|{orangeapi_details.secret_key}|" + os.urandom(3).hex()
-            if type(requested_function) is str:
+            if isinstance(requested_function, str):
                 self.requested = requested_function
-                if type(args) is dict: self.args = args
-                elif type(args) is list: self.args = args
+                if isinstance(args, dict): self.args = args
+                elif isinstance(args, list): self.args = args
                 else: self.args = {}
                 self.id = generated_function_id
                 self.success = False
@@ -103,7 +103,7 @@ class Response:
     command = ""
     """The command used [This may not match with the function name]"""
     def __init__(self, main_req):
-        if type(main_req) is Request:
+        if isinstance(main_req, Request):
             self.success = main_req.success
             self.response = main_req.value
             self.code = main_req.code
@@ -191,46 +191,46 @@ class OrangeAPI:
         smallImage=None
         """The small image link value of the Discord Presence."""
         def __init__(self, details: str=None, state: str=None, timeStart: float=None, timeEnd: float=None, largeImage: typing.Dict=None, smallImage: typing.Dict=None):
-            if type(details) is str: self.details = details
-            if type(state) is str: self.state = state
-            if type(timeStart) is float or type(timeStart) is int: self.timeStart = timeStart
-            if type(timeEnd) is float or type(timeEnd) is int: self.timeEnd = timeEnd
-            if type(largeImage) is dict:
+            if isinstance(details, str): self.details = details
+            if isinstance(state, str): self.state = state
+            if isinstance(timeStart, float) or isinstance(timeStart, int): self.timeStart = timeStart
+            if isinstance(timeEnd, float) or isinstance(timeEnd, int): self.timeEnd = timeEnd
+            if isinstance(largeImage, dict):
                 generated_large_image = {
                     "assetId": None,
                     "hoverText": None,
                     "clear": False,
                     "reset": False
                 }
-                if type(largeImage.get("assetId")) is int: generated_large_image["assetId"] = largeImage.get("assetId")
-                elif type(largeImage.get("assetId")) is str:
+                if isinstance(largeImage.get("assetId"), int): generated_large_image["assetId"] = largeImage.get("assetId")
+                elif isinstance(largeImage.get("assetId"), str):
                     try:
                         parsed_link = urlparse(largeImage.get("assetId"))
                         if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"): generated_large_image["assetId"] = largeImage.get("assetId")
                         else: generated_large_image["assetId"] = None
                     except Exception as e: generated_large_image["assetId"] = None
-                if type(largeImage.get("hoverText")) is str: generated_large_image["hoverText"] = largeImage.get("hoverText")
-                if type(largeImage.get("clear")) is bool: generated_large_image["clear"] = largeImage.get("clear")
-                if type(largeImage.get("reset")) is bool: generated_large_image["reset"] = largeImage.get("reset")
+                if isinstance(largeImage.get("hoverText"), str): generated_large_image["hoverText"] = largeImage.get("hoverText")
+                if isinstance(largeImage.get("clear"), bool): generated_large_image["clear"] = largeImage.get("clear")
+                if isinstance(largeImage.get("reset"), bool): generated_large_image["reset"] = largeImage.get("reset")
                 if generated_large_image["assetId"] == None and generated_large_image["hoverText"] == None: generated_large_image = None
                 self.largeImage = generated_large_image
-            if type(smallImage) is dict:
+            if isinstance(smallImage, dict):
                 generated_small_image = {
                     "assetId": None,
                     "hoverText": None,
                     "clear": False,
                     "reset": False
                 }
-                if type(smallImage.get("assetId")) is int: generated_small_image["assetId"] = smallImage.get("assetId")
-                elif type(smallImage.get("assetId")) is str:
+                if isinstance(smallImage.get("assetId"), int): generated_small_image["assetId"] = smallImage.get("assetId")
+                elif isinstance(smallImage.get("assetId"), str):
                     try:
                         parsed_link = urlparse(smallImage.get("assetId"))
                         if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"): generated_small_image["assetId"] = smallImage.get("assetId")
                         else: generated_small_image["assetId"] = None
                     except Exception as e: generated_small_image["assetId"] = None
-                if type(smallImage.get("hoverText")) is str: generated_small_image["hoverText"] = smallImage.get("hoverText")
-                if type(smallImage.get("clear")) is bool: generated_small_image["clear"] = smallImage.get("clear")
-                if type(smallImage.get("reset")) is bool: generated_small_image["reset"] = smallImage.get("reset")
+                if isinstance(smallImage.get("hoverText"), str): generated_small_image["hoverText"] = smallImage.get("hoverText")
+                if isinstance(smallImage.get("clear"), bool): generated_small_image["clear"] = smallImage.get("clear")
+                if isinstance(smallImage.get("reset"), bool): generated_small_image["reset"] = smallImage.get("reset")
                 if generated_small_image["assetId"] == None and generated_small_image["hoverText"] == None: generated_small_image = None
                 self.smallImage = generated_small_image
         def generate_json(self):
@@ -548,8 +548,8 @@ class OrangeAPI:
         }) # -> Response class
         ```
         """
-        if type(data) is OrangeAPI.BloxstrapRichPresence: generated_rpc_data = data.generate_json()
-        elif type(data) is dict or type(data) is str: generated_rpc_data = data
+        if isinstance(data, OrangeAPI.BloxstrapRichPresence): generated_rpc_data = data.generate_json()
+        elif isinstance(data, dict) or isinstance(data, str): generated_rpc_data = data
         else: generated_rpc_data = {}
         return Request(self, self.__orangeapi_details__, "sendBloxstrapRPC", [{"command": command, "data": generated_rpc_data}, (disableWebhook == True)]).generateResponse()
     def getRobloxLogFolderSize(self, static: bool=False) -> typing.Optional[typing.Tuple[int, str]]: # Permission: getRobloxLogFolderSize
@@ -564,11 +564,11 @@ class OrangeAPI:
         ```
         """
         return Request(self, self.__orangeapi_details__, "getRobloxLogFolderSize", {"static": static}).generateResponse().response   
-    def getLatestRobloxVersion(self, channel: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestRobloxVersion
+    def getLatestRobloxVersion(self, channel: str="*", binary_type: str="*") -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getLatestRobloxVersion
         """
         This pings the Roblox servers to get what's the latest Roblox version in a channel.
 
-        Permission: getLatestRobloxVersion | Level: 0 [Normal]
+        Permission: getLatestRobloxVersion | Level: 1 [Warning]
 
         ```python
         latest_roblox_version = OrangeAPI.getLatestRobloxVersion() # -> 
@@ -580,7 +580,7 @@ class OrangeAPI:
         # }
         ```
         """
-        return Request(self, self.__orangeapi_details__, "getLatestRobloxVersion", {"channel": channel}).generateResponse().response 
+        return Request(self, self.__orangeapi_details__, "getLatestRobloxVersion", {"channel": channel, "binary_type": binary_type}).generateResponse().response 
     def getInstalledRobloxVersion(self) -> typing.Optional[typing.Dict[str, typing.Any]]: # Permission: getInstalledRobloxVersion
         """
         This gets the current Roblox version installed including the channel the user is connected to.
@@ -1171,7 +1171,7 @@ class OrangeAPI:
         false_res = OrangeAPI.checkIfResponseClass({"a": "b"}) # -> False
         ```
         """
-        if type(suspected) is Response:
+        if isinstance(suspected, Response):
             return True
         else:
             return False
@@ -1243,7 +1243,7 @@ class OrangeAPI:
         OrangeAPI.printColoredMessage("Hello World!", 202) # -> None
         ```
         """
-        if type(ansi) is int: 
+        if isinstance(ansi, int): 
             if ansi == 202 or ansi == 208 or ansi == 166: return
             colors_class.print(f"[MOD SCRIPT]: {self.translate(mes)}", ansi)
     def printErrorMessage(self, mes: str) -> None: # No Permission Needed
@@ -1338,7 +1338,7 @@ class OrangeAPI:
         non_existing_configuration = OrangeAPI.getConfiguration("non_existing") # -> None
         ```
         """
-        if type(name) is str:
+        if isinstance(name, str):
             return Request(self, self.__orangeapi_details__, "getConfiguration", {"name": name}).generateResponse().response
         else:
             return None
@@ -1352,7 +1352,7 @@ class OrangeAPI:
         response = OrangeAPI.setConfiguration("existing", "Woah") # -> Response
         ```
         """
-        if (data == None) or (type(data) is str) or (type(data) is dict) or (type(data) is bool) or (type(data) is int) or (type(data) is float) or (type(data) is list):
+        if (data == None) or (isinstance(data, str)) or (isinstance(data, dict)) or (isinstance(data, bool)) or (isinstance(data, int)) or (isinstance(data, float)) or (isinstance(data, list)):
             try:
                 a = json.dumps(data)
                 return Request(self, self.__orangeapi_details__, "setConfiguration", {"name": name, "data": data}).generateResponse()

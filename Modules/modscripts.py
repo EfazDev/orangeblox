@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -37,7 +37,7 @@ def loadModScript(sel_mo: str):
                         approved_items_list = cf.main_config.get('EFlagSelectedModScripts').get(sel_mod).get("permissions", [])
                         approved_through_scan = True
 
-                        for i, v in cf.handler.roblox_event_info.items():
+                        for i, v in rbx.roblox_event_info.items():
                             if v.get("detection") and v.get("detection") in mod_script_text and (not (i in approved_items_list)): approved_through_scan = False
                         if mod_manifest.get("permissions"):
                             for i in mod_manifest["permissions"]:
@@ -46,7 +46,7 @@ def loadModScript(sel_mo: str):
                             for i in mod_manifest["python_modules"]:
                                 if not f"pip_{i}" in approved_items_list: approved_through_scan = False
                         mod_script_detail = cf.main_config.get('EFlagSelectedModScripts').get(sel_mo)
-                        if mod_manifest["mod_script_hash"] != mod_script_detail.get("hash", ""): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {mod_manifest['mod_script_hash']} => {cf.main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')}")
+                        if mod_manifest["mod_script_hash"] != mod_script_detail.get("hash", ""): approved_through_scan = False; printDebugMessage(f"Unable to validate hash: {cf.main_config.get('EFlagSelectedModScripts').get(sel_mo).get('hash', '')} => {mod_manifest['mod_script_hash']}")
                         if approved_through_scan == True:
                             if mod_manifest.get("python_modules"):
                                 printDebugMessage("Validating Installation of Mod Script Modules..")
@@ -80,16 +80,16 @@ def loadModScript(sel_mo: str):
                                 setattr(rcf.mod_script_modules[sel_mod], "OrangeAPI", proxy_api)
                                 
                                 undefined_func = {
-                                    "endRoblox": cf.handler.endRobloxStudio if cf.run_studio==True else cf.handler.endRoblox,
-                                    "endOppositeRoblox": cf.handler.endRoblox if cf.run_studio==True else cf.handler.endRobloxStudio,
-                                    "getIfRobloxIsOpen": cf.handler.getIfRobloxStudioIsOpen if cf.run_studio==True else cf.handler.getIfRobloxIsOpen,
-                                    "getInstalledRobloxVersion": cf.handler.getCurrentStudioClientVersion if cf.run_studio==True else cf.handler.getCurrentClientVersion,
-                                    "getOppositeInstalledRobloxVersion": cf.handler.getCurrentClientVersion if cf.run_studio==True else cf.handler.getCurrentStudioClientVersion,
-                                    "getInstalledRobloxStudioVersion": cf.handler.getCurrentStudioClientVersion,
-                                    "getInstalledRobloxPlayerVersion": cf.handler.getCurrentClientVersion,
+                                    "endRoblox": lambda pid="": cf.handler.endRoblox(pid=pid, studio=cf.run_studio==True),
+                                    "endOppositeRoblox": lambda pid="": cf.handler.endRoblox(pid=pid, studio=cf.run_studio!=True),
+                                    "getIfRobloxIsOpen": lambda pid="": cf.handler.getIfRobloxIsOpen(pid=pid, studio=cf.run_studio==True),
+                                    "getInstalledRobloxVersion": lambda: cf.handler.getCurrentClientVersion(studio=cf.run_studio==True),
+                                    "getOppositeInstalledRobloxVersion": lambda: cf.handler.getCurrentClientVersion(studio=cf.run_studio!=True),
+                                    "getInstalledRobloxStudioVersion": lambda: cf.handler.getCurrentClientVersion(studio=True),
+                                    "getInstalledRobloxPlayerVersion": lambda: cf.handler.getCurrentClientVersion(studio=False),
                                     "getRobloxInstallFolder": cf.handler.getRobloxInstallFolder,
-                                    "getLatestRobloxPid": cf.handler.getLatestOpenedRobloxStudioPid if cf.run_studio==True else cf.handler.getLatestOpenedRobloxPid,
-                                    "getOpenedRobloxPids": cf.handler.getOpenedRobloxStudioPids if cf.run_studio==True else cf.handler.getOpenedRobloxPids,
+                                    "getLatestRobloxPid": lambda: cf.handler.getLatestOpenedRobloxPid(studio=cf.run_studio==True),
+                                    "getOpenedRobloxPids": lambda: cf.handler.getOpenedRobloxPids(studio=cf.run_studio==True),
                                     "getIfOSSupported": cf.pip_class.osSupported,
                                     "getIfPythonSupported": cf.pip_class.pythonSupported,
                                     "getIfConnectedToInternet": cf.pip_class.getIfConnectedToInternet,
@@ -112,24 +112,24 @@ def loadModScript(sel_mo: str):
                                         try:
                                             v = queue_block.get()
                                             if v is None: break
-                                            if type(v) is rcf.orangeapi_modules[selected_mod_scriptt].Request:
+                                            if isinstance(v, rcf.orangeapi_modules[selected_mod_scriptt].Request):
                                                 identification = v.id.split("|")
                                                 if identification[0] != selected_mod_scriptt:
                                                     queue_block.task_done()
                                                     continue
                                                 try:
-                                                    if ((v.requested in approved_lis) or (cf.handler.roblox_event_info.get(v.requested, {"free": False}).get("free") == True)) and (v.fulfilled == False):
+                                                    if ((v.requested in approved_lis) or (rbx.roblox_event_info.get(v.requested, {"free": False}).get("free") == True)) and (v.fulfilled == False):
                                                         if identification[1] == rcf.generated_secret_keys[identification[0]]:
                                                             if v and func_list.get(v.requested):
                                                                 if v and v.fulfilled == False:
                                                                     try:
                                                                         if undefined_func.get(v.requested):
-                                                                            if type(v.args) is list: val = func_list.get(v.requested)(*(v.args))
-                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(**(v.args))
+                                                                            if isinstance(v.args, list): val = func_list.get(v.requested)(*(v.args))
+                                                                            elif isinstance(v.args, dict): val = func_list.get(v.requested)(**(v.args))
                                                                             else: val = func_list.get(v.requested)()
                                                                         else:
-                                                                            if type(v.args) is list: val = func_list.get(v.requested)(identification[0], *(v.args))
-                                                                            elif type(v.args) is dict: val = func_list.get(v.requested)(identification[0], **(v.args))
+                                                                            if isinstance(v.args, list): val = func_list.get(v.requested)(identification[0], *(v.args))
+                                                                            elif isinstance(v.args, dict): val = func_list.get(v.requested)(identification[0], **(v.args))
                                                                             else: val = func_list.get(v.requested)(identification[0])
                                                                         v.complete_request(code=0, value=val)
                                                                     except Exception: v.complete_request(code=1)
@@ -169,7 +169,7 @@ def loadModScript(sel_mo: str):
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "print", handlePrint)
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "input", empty_str)
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "write", empty)
-                                        if not ("grantFileEditing" in apr_li or cf.handler.roblox_event_info.get("grantFileEditing", {"free": False}).get("free") == True): setattr(rcf.mod_script_modules[sel_mod], "open", open_config)
+                                        if not ("grantFileEditing" in apr_li or rbx.roblox_event_info.get("grantFileEditing", {"free": False}).get("free") == True): setattr(rcf.mod_script_modules[sel_mod], "open", open_config)
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "exec", None)
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "eval", None)
                                         setattr(rcf.mod_script_modules[selected_mod_scripttt], "setattr", empty)
@@ -225,7 +225,7 @@ def getFF(scri: str):
     if cf.run_studio == True: return cf.main_config.get("EFlagRobloxStudioFlags", {})
     else: return cf.main_config.get("EFlagRobloxPlayerFlags", {})
 def setMainConf(scri: str, js: dict, full=False): 
-    if type(js) is dict:
+    if isinstance(js, dict):
         before_config = cf.main_config
         if full == True: 
             cf.main_config = js
@@ -236,7 +236,7 @@ def setMainConf(scri: str, js: dict, full=False):
         for i in js.keys(): 
             if not i in cf.modified_flags_from_mod_scripts: cf.modified_flags_from_mod_scripts.append(i)
 def setFF(scri: str, js: dict, full=False): 
-    if type(js) is dict:
+    if isinstance(js, dict):
         if full == True: 
             if cf.run_studio == True: cf.main_config["EFlagRobloxStudioFlags"] = js
             else: cf.main_config["EFlagRobloxPlayerFlags"] = js
@@ -257,7 +257,7 @@ def setFF(scri: str, js: dict, full=False):
                 if i and (not i.startswith("EFlag")): filtered_fast_flags[i] = v
         cf.handler.installFastFlags(filtered_fast_flags, debug=(cf.main_config.get("EFlagEnableDebugMode") == True), endRobloxInstances=False, studio=cf.run_studio)
 def saveMainConf(scri: str, js: dict, full=False): 
-    if type(js) is dict:
+    if isinstance(js, dict):
         if full == True:
             filtered_fflag = {}
             filtered_fflag["EFlagRobloxPlayerFlags"] = cf.main_config.get("EFlagRobloxPlayerFlags", {})
@@ -280,7 +280,7 @@ def saveMainConf(scri: str, js: dict, full=False):
         elif "EFlagRobloxPlayerFlags" in cf.modified_flags_from_mod_scripts: cf.modified_flags_from_mod_scripts.remove("EFlagRobloxPlayerFlags")
         saveSettings()
 def saveFF(scri: str, js: dict, full=False):
-    if type(js) is dict:
+    if isinstance(js, dict):
         if full == True: 
             if cf.run_studio == True: cf.main_config["EFlagRobloxStudioFlags"] = js
             else: cf.main_config["EFlagRobloxPlayerFlags"] = js
@@ -302,7 +302,7 @@ def saveFF(scri: str, js: dict, full=False):
 def sendBloxstrapRPC(scri: str, info: dict, disableWebhook: bool=True): onBloxstrapMessage(info, disableWebhook)
 def getDebugMode(scri: str): return (cf.main_config.get("EFlagEnableDebugMode") == True)
 def getConfiguration(scri: str, name: str="*"):
-    if type(name) is str:
+    if isinstance(name, str):
         mod_script_config = {}
         config_path = os.path.join(cf.mods_folder, "Mods", scri, f"Configuration_{cf.user_folder_name}")
         if os.path.exists(config_path):
@@ -313,7 +313,7 @@ def getConfiguration(scri: str, name: str="*"):
         else: return mod_script_config.get(name)
     else: return None
 def setRobloxWindowTitle(scri: str, title: str):
-    if type(title) is str:
+    if isinstance(title, str):
         if rcf.connected_roblox_instance:
             windows_opened = rcf.connected_roblox_instance.getWindowsOpened()
             if len(windows_opened) > 0:
@@ -322,7 +322,7 @@ def setRobloxWindowTitle(scri: str, title: str):
         else: raise Exception("Connected Roblox Instance is not found!")
     else: raise Exception("Provided arguments are invalid!")
 def setRobloxWindowIcon(scri: str, icon: str):
-    if type(icon) is str:
+    if isinstance(icon, str):
         if rcf.connected_roblox_instance:
             windows_opened = rcf.connected_roblox_instance.getWindowsOpened()
             if len(windows_opened) > 0:
@@ -349,7 +349,7 @@ def getRobloxAppSettings(scri: str):
         "appConfiguration": a.get("appConfiguration", {})
     }
 def changeRobloxWindowSizeAndPosition(scri: str, size_x: int, size_y: int, position_x: int, position_y: int):
-    if type(size_x) is int and type(size_y) is int and type(position_x) is int and type(position_y) is int:
+    if isinstance(size_x, int) and isinstance(size_y, int) and isinstance(position_x, int) and isinstance(position_y, int):
         if rcf.connected_roblox_instance:
             windows_opened = rcf.connected_roblox_instance.getWindowsOpened()
             if len(windows_opened) > 0:
@@ -359,7 +359,7 @@ def changeRobloxWindowSizeAndPosition(scri: str, size_x: int, size_y: int, posit
         else: raise Exception("Connected Roblox Instance is not found!")
     else: raise Exception("Provided arguments are invalid!")
 def setConfiguration(scri: str, name: str="*", data=None):
-    if type(name) is str:
+    if isinstance(name, str):
         mod_script_config = {}
         config_path = os.path.join(cf.mods_folder, "Mods", scri, f"Configuration_{cf.user_folder_name}")
         if os.path.exists(config_path):
@@ -367,7 +367,7 @@ def setConfiguration(scri: str, name: str="*", data=None):
                 with open(config_path, "r", encoding="utf-8") as f: mod_script_config = json.load(f)
             except Exception: printDebugMessage("Invalid Mod Script Configuration, returned blank.")
         if name == "*":
-            if type(data) is dict:
+            if isinstance(data, dict):
                 try:
                     dumped = json.dumps(data)
                     for i, v in data.items(): mod_script_config[i] = v
@@ -391,7 +391,7 @@ def unzipFile(scri: str, path: str, output: str, look_for: list=[], export_out: 
 def sendDiscordWebhookMessage(scri: str, title: str="Message from Mod Script", description: str=None, color: int=0, fields: list=[], image=f"{cf.main_host}/Images/DiscordIcon.png"):
     if cf.main_config.get("EFlagUseDiscordWebhook") == True:
         for i in fields: 
-            if not (type(i) is rcf.generated_api_instances[scri].DiscordWebhookField): return False
+            if not (isinstance(i, rcf.generated_api_instances)[scri].DiscordWebhookField): return False
         if cf.main_config.get("EFlagDiscordWebhookURL"):
             generated_body = {
                 "content": f"<@{cf.main_config.get('EFlagDiscordWebhookUserId')}>",
@@ -447,26 +447,28 @@ def getIfModIsEnabled(scri: str, mod_name: str):
     return False
 def enableMod(scri: str, mod_name: str): 
     cur_mod_manifest = generateModsManifest()
-    if not (cf.main_config.get("EFlagEnabledMods") and type(cf.main_config.get("EFlagEnabledMods")) is dict): cf.main_config["EFlagEnabledMods"] = {}
+    if not (cf.main_config.get("EFlagEnabledMods") and isinstance(cf.main_config.get("EFlagEnabledMods"), dict)): cf.main_config["EFlagEnabledMods"] = {}
     if cur_mod_manifest.get(mod_name): cf.main_config["EFlagEnabledMods"][mod_name] = True
     saveSettings()
 def disableMod(scri: str, mod_name: str): 
     cur_mod_manifest = generateModsManifest()
-    if not (cf.main_config.get("EFlagEnabledMods") and type(cf.main_config.get("EFlagEnabledMods")) is dict): cf.main_config["EFlagEnabledMods"] = {}
+    if not (cf.main_config.get("EFlagEnabledMods") and isinstance(cf.main_config.get("EFlagEnabledMods"), dict)): cf.main_config["EFlagEnabledMods"] = {}
     if cur_mod_manifest.get(mod_name): cf.main_config["EFlagEnabledMods"][mod_name] = False
     saveSettings()
 def getCurrentRobloxPid(scri: str): 
     return rcf.connected_roblox_instance and rcf.connected_roblox_instance.pid
-def getRbxChannel(studio: bool=False):
+def getRbxChannel(studio: bool=False, binary_type: str="*"):
     if cf.main_config.get("EFlagRobloxSecurityCookieUsage") == True:
-        requesting_channel = cf.handler.getUserChannel(studio=cf.run_studio, debug=(cf.main_config.get("EFlagEnableDebugMode") == True))
+        requesting_channel = cf.handler.getUserChannel(studio=cf.run_studio, debug=(cf.main_config.get("EFlagEnableDebugMode") == True), binary_type=binary_type)
         if requesting_channel.get("success") == True and requesting_channel.get("channel_name") != "LIVE": return requesting_channel.get("channel_name")
-    r = cf.handler.getCurrentClientVersion(studio=studio)
-    if r and r["success"] == True: return r["channel"]
+    if binary_type == "*":
+        r = cf.handler.getCurrentClientVersion(studio=studio)
+        if r and r["success"] == True: return r["channel"]
+        else: return "LIVE"
     else: return "LIVE"
-def getLatestRobloxVersion(scri: str, channel: str="*"):
-    if channel == "*": channel = getRbxChannel(studio=cf.run_studio==True)
-    res = cf.handler.getLatestClientVersion(studio=cf.run_studio==True, channel=channel, token=createDownloadToken(cf.run_studio==True))
+def getLatestRobloxVersion(scri: str, channel: str="*", binary_type: str="*"):
+    if channel == "*": channel = getRbxChannel(studio=cf.run_studio==True, binary_type=binary_type)
+    res = cf.handler.getLatestClientVersion(studio=cf.run_studio==True, channel=channel, token=createDownloadToken(cf.run_studio==True, binary_type=binary_type), binary_type=binary_type)
     if res and res.get("attempted_channel"): res["channel"] = res["attempted_channel"]; res.pop("attempted_channel")
     return res
 def getLatestOppositeRobloxVersion(scri: str, channel: str="*"):

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import os
@@ -17,6 +17,7 @@ import typing
 import time
 import zlib
 import re
+import concurrent.futures
 from urllib.parse import unquote, urlparse
 
 from Modules.pkg import *
@@ -146,10 +147,10 @@ def readJSONFile(path, listExpected=False):
         try:
             main_content = json.load(f)
             if listExpected == True:
-                if type(main_content) is list: return main_content
+                if isinstance(main_content, list): return main_content
                 else: return None
             else:
-                if type(main_content) is dict: return main_content
+                if isinstance(main_content, dict): return main_content
                 else: return None
         except Exception: return None
     return None
@@ -159,84 +160,110 @@ def checkSyncFolder(path: typing.Optional[str]=None):
 def displayNotification(title="Unknown Title", message="Unknown Message"):
     try: cf.notification_socket.send("OrangeBloxAppNotification", {"title": title, "message": message, "authorization": cf.socket_authorization})
     except Exception: printErrorMessage(f"There was an error sending a notification. Error: \n{trace()}")
-def generateFileHash(file_path):
+def generateFileHash(file_path: str, is_text: bool=False):
     try:
-        hasher = hashlib.md5()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                if cf.main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
-                hasher.update(chunk)
-        return hasher.hexdigest()
+        sha_256 = hashlib.sha256()
+        if is_text:
+            with open(file_path, "r", encoding="utf-8", errors="ignore", newline="") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk.encode("utf-8"))
+        else:
+            with open(file_path, "rb") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk)
+        return sha_256.hexdigest()
     except Exception: return None
 def generateModsManifest():
     generated_manifest = {}
-    for i in os.listdir(os.path.join(cf.mods_folder, "Mods")):
-        mod_path = os.path.join(cf.mods_folder, "Mods", i)
-        if os.path.isfile(mod_path) and mod_path.endswith(".zip"):
-            dow_tar = os.path.join(cf.mods_folder, "Mods", i.split(".")[0])
-            makedirs(dow_tar)
-            zip_extract = cf.pip_class.unzipFile(mod_path, dow_tar, look_for=["Manifest.json", "ModScript.py", "content", "ExtraContent"], either=True, check=True)
-            if zip_extract.returncode == 0: os.remove(mod_path)
-    for i in os.listdir(os.path.join(cf.mods_folder, "Mods")):
-        mod_info = {
-            "name": i,
-            "id": i,
-            "version": "1.0.0",
-            "mod_script": False,
-            "mod_script_path": "",
-            "mod_script_supports": "1.0.0",
-            "mod_script_end_support": "99.99.99",
-            "mod_script_end_support_reasoning": "",
-            "mod_script_supports_operating_system": True,
-            "mod_script_hash": "00000000000000000000000000",
-            "manifest_path": "",
-            "both_supported": False,
-            "is_studio_mod": False,
-            "list_in_normal_mods": True,
-            "enabled": False,
-            "permissions": [],
-            "python_modules": [],
-            "python_version": "3.0.0"
-        }
-        mod_path = os.path.join(cf.mods_folder, "Mods", i)
-        if os.path.isdir(mod_path):
+    mods_dir = os.path.join(cf.mods_folder, "Mods")
+    if not os.path.exists(mods_dir): return generated_manifest
+    if not (cf.main_config.get("EFlagEnabledMods") and isinstance(cf.main_config.get("EFlagEnabledMods"), dict)): cf.main_config["EFlagEnabledMods"] = {}
+    enabled_mod_config = cf.main_config["EFlagEnabledMods"]
+    zip_files_to_extract = []
+    with os.scandir(mods_dir) as entries:
+        for entry in entries:
+            if entry.is_file() and entry.name.endswith(".zip"): zip_files_to_extract.append(entry.path)
+    def extract_mod_zip(mod_path):
+        file = os.path.basename(mod_path)
+        dow_tar = os.path.join(mods_dir, file.split(".")[0])
+        makedirs(dow_tar)
+        zip_extract = cf.pip_class.unzipFile(
+            mod_path, dow_tar, 
+            look_for=["Manifest.json", "ModScript.py", "content", "ExtraContent"], 
+            either=True, check=True
+        )
+        if zip_extract.returncode == 0:
+            try: os.remove(mod_path)
+            except OSError: pass
+    if zip_files_to_extract:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor: executor.map(extract_mod_zip, zip_files_to_extract)
+    with os.scandir(mods_dir) as entries:
+        for entry in entries:
+            if not entry.is_dir(): continue
+            i = entry.name
+            mod_info = {
+                "name": i,
+                "id": i,
+                "version": "1.0.0",
+                "mod_script": False,
+                "mod_script_path": "",
+                "mod_script_supports": "1.0.0",
+                "mod_script_end_support": "99.99.99",
+                "mod_script_end_support_reasoning": "",
+                "mod_script_supports_operating_system": True,
+                "mod_script_hash": "00000000000000000000000000",
+                "manifest_path": "",
+                "both_supported": False,
+                "is_studio_mod": False,
+                "list_in_normal_mods": True,
+                "enabled": enabled_mod_config.get(i, False),
+                "permissions": [],
+                "python_modules": [],
+                "python_version": "3.0.0"
+            }
+            mod_path = os.path.join(cf.mods_folder, "Mods", i)
             manifest_path = os.path.join(mod_path, "Manifest.json")
             mod_script_path = os.path.join(mod_path, "ModScript.py")
-            if not (cf.main_config.get("EFlagEnabledMods") and type(cf.main_config.get("EFlagEnabledMods")) is dict): cf.main_config["EFlagEnabledMods"] = {}
-            if cf.main_config.get("EFlagEnabledMods").get(i) == True: mod_info["enabled"] = True
             if os.path.exists(os.path.join(mod_path, "StudioMod")): mod_info["is_studio_mod"] = True
             if os.path.exists(os.path.join(mod_path, "PlayerStudioSupported")): mod_info["both_supported"] = True
-            if os.path.exists(manifest_path) and os.path.isfile(manifest_path):
+            if os.path.isfile(manifest_path):
                 res_json = readJSONFile(manifest_path)
                 if res_json:
-                    if type(res_json.get("name")) is str: mod_info["name"] = res_json.get("name")
-                    if type(res_json.get("version")) is str and len(res_json.get("version")) < 10: mod_info["version"] = res_json.get("version")
-                    if type(res_json.get("mod_script")) is bool: mod_info["mod_script"] = res_json.get("mod_script")
-                    if type(res_json.get("list_in_normal_mods")) is bool: mod_info["list_in_normal_mods"] = res_json.get("list_in_normal_mods")
-                    if type(res_json.get("mod_script_requirements")) is list:
+                    if isinstance(res_json.get("name"), str): mod_info["name"] = res_json.get("name")
+                    if isinstance(res_json.get("version"), str) and len(res_json.get("version")) < 10: mod_info["version"] = res_json.get("version")
+                    if isinstance(res_json.get("mod_script"), bool): mod_info["mod_script"] = res_json.get("mod_script")
+                    if isinstance(res_json.get("list_in_normal_mods"), bool): mod_info["list_in_normal_mods"] = res_json.get("list_in_normal_mods")
+                    if isinstance(res_json.get("mod_script_requirements"), list):
                         for req in res_json.get("mod_script_requirements"):
-                            if type(req) is str: mod_info["permissions"].append(req)
-                    if type(res_json.get("mod_script_supports")) is str and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_supports")): mod_info["mod_script_supports"] = res_json.get("mod_script_supports")
-                    if type(res_json.get("mod_script_end_support")) is str and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_end_support")): mod_info["mod_script_end_support"] = res_json.get("mod_script_end_support")
-                    if type(res_json.get("mod_script_end_support_reasoning")) is str and len(res_json.get("mod_script_end_support_reasoning")) < 250: mod_info["mod_script_end_support_reasoning"] = res_json.get("mod_script_end_support_reasoning")
-                    if type(res_json.get("python_version")) is str and re.match(r'^\d+\.\d+\.\d+(a\d+|b\d+|rc\d+)?$', res_json.get("python_version")): mod_info["python_version"] = res_json.get("python_version")
+                            if isinstance(req, str): mod_info["permissions"].append(req)
+                    if isinstance(res_json.get("mod_script_supports"), str) and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_supports")): mod_info["mod_script_supports"] = res_json.get("mod_script_supports")
+                    if isinstance(res_json.get("mod_script_end_support"), str) and re.match(r'^\d+\.\d+\.\d+$', res_json.get("mod_script_end_support")): mod_info["mod_script_end_support"] = res_json.get("mod_script_end_support")
+                    if isinstance(res_json.get("mod_script_end_support_reasoning"), str) and len(res_json.get("mod_script_end_support_reasoning")) < 250: mod_info["mod_script_end_support_reasoning"] = res_json.get("mod_script_end_support_reasoning")
+                    if isinstance(res_json.get("python_version"), str) and re.match(r'^\d+\.\d+\.\d+(a\d+|b\d+|rc\d+)?$', res_json.get("python_version")): mod_info["python_version"] = res_json.get("python_version")
                     if cf.main_os == "Darwin" and res_json.get("mod_script_does_not_support_macos") == True: mod_info["mod_script_supports_operating_system"] = False
                     elif cf.main_os == "Windows" and res_json.get("mod_script_does_not_support_windows") == True: mod_info["mod_script_supports_operating_system"] = False
                     if res_json.get("is_studio_mod") == True: mod_info["is_studio_mod"] = True
                     if res_json.get("player_studio_support") == True: mod_info["both_supported"] = True
-                    if type(res_json.get("python_modules")) is list:
+                    if isinstance(res_json.get("python_modules"), list):
                         for pyt in res_json.get("python_modules"):
-                            if type(pyt) is str: mod_info["python_modules"].append(pyt)
+                            if isinstance(pyt, str): mod_info["python_modules"].append(pyt)
                     mod_info["manifest_path"] = manifest_path
-            if os.path.exists(mod_script_path) and os.path.isfile(mod_script_path) and not os.path.islink(mod_script_path):
+            if os.path.isfile(mod_script_path) and not os.path.islink(mod_script_path):
                 contains_other_python_scripts = False
-                for a, b, c in os.walk(mod_path):
-                    for dsci in c:
-                        if dsci.endswith(".py") and dsci != "ModScript.py":  contains_other_python_scripts = True
+                for root, dirs, files in os.walk(mod_path):
+                    for file in files:
+                        if file.endswith(".py") and file != "ModScript.py":
+                            contains_other_python_scripts = True
+                            break
+                    if contains_other_python_scripts: break
                 if contains_other_python_scripts == True and not ("allowAccessingPythonFiles" in mod_info["permissions"]): mod_info["mod_script"] = False
                 else:
                     with open(mod_script_path, "r", encoding="utf-8") as f: org_content = f.read()
-                    for pe, va in cf.handler.roblox_event_info.items():
+                    for pe, va in rbx.roblox_event_info.items():
                         if va.get("detection") and va.get("detection") in org_content and not (pe in mod_info["permissions"]): mod_info["permissions"].append(pe)
                     if ("EfazRobloxBootstrapAPI" in org_content) and mod_info.get("mod_script_supports") < "1.3.0": mod_info["mod_script_supports"] = "1.3.0"
                     elif ("OrangeAPI" in org_content) and mod_info.get("mod_script_supports") < "2.0.0": mod_info["mod_script_supports"] = "2.0.0"
@@ -249,13 +276,13 @@ def generateModsManifest():
                     if ms_contents != org_content:
                         with open(mod_script_path, "w", encoding="utf-8") as f: f.write(ms_contents)
                     mod_info["mod_script_path"] = mod_script_path
-                    mod_info["mod_script_hash"] = generateFileHash(mod_script_path)
+                    mod_info["mod_script_hash"] = generateFileHash(mod_script_path, is_text=True)
             else: mod_info["mod_script"] = False
             generated_manifest[i] = mod_info
     return generated_manifest
 def generateModOrder():
     mod_order = []
-    if not cf.main_config.get("EFlagEnabledModOrder") or not type(cf.main_config.get("EFlagEnabledModOrder")) is list: cf.main_config["EFlagEnabledModOrder"] = []
+    if not cf.main_config.get("EFlagEnabledModOrder") or not isinstance(cf.main_config.get("EFlagEnabledModOrder"), list): cf.main_config["EFlagEnabledModOrder"] = []
     mod_order = cf.main_config["EFlagEnabledModOrder"]
     mods_manifest = generateModsManifest()
     for mod_id in mod_order:
@@ -277,7 +304,7 @@ def getSettings(updating: bool=False):
     else:
         with open(os.path.join(cf.cur_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
         try: obfuscated_json = json.loads(obfuscated_json)
-        except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+        except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
         cf.main_config = obfuscated_json
     if updating == False and cf.main_config.get("EFlagUseConfigurationWebServer") == True and cf.main_config.get("EFlagConfigurationWebServerURL"):
         try:
@@ -287,20 +314,18 @@ def getSettings(updating: bool=False):
                     flag_type = cf.flag_types.get(i)
                     if flag_type and "_local" not in flag_type and not flag_type.startswith("path"): cf.main_config[i] = v
         except: pass
-    remove_items = []
-    for i, v in cf.main_config.items():
-        if not (cf.flag_types.get(i) is None):
-            if cf.flag_types.get(i).startswith("str") and type(v) is str: pass
-            elif cf.flag_types.get(i).startswith("path") and type(v) is str and os.path.exists(v): pass
-            elif cf.flag_types.get(i).startswith("int") and type(v) is int: pass
-            elif cf.flag_types.get(i).startswith("float") and type(v) is float: pass
-            elif cf.flag_types.get(i).startswith("dict") and type(v) is dict: pass
-            elif cf.flag_types.get(i).startswith("bool") and type(v) is bool: pass
-            elif cf.flag_types.get(i).startswith("list") and type(v) is list: pass
-            elif cf.flag_types.get(cf.flag_types.get(i)): cf.main_config[cf.flag_types.get(i)] = v; remove_items.append(i)
-            else: remove_items.append(i)
-        else: remove_items.append(i)
-    for i in remove_items: cf.main_config.pop(i)
+    cf.main_config = {
+        i: v for i, v in cf.main_config.items() 
+        if i in cf.flag_types and (
+            (cf.flag_types[i] == "str" and isinstance(v, str)) or
+            (cf.flag_types[i] == "path" and isinstance(v, str) and os.path.exists(v)) or
+            (cf.flag_types[i] == "int" and isinstance(v, int)) or
+            (cf.flag_types[i] == "float" and isinstance(v, float)) or
+            (cf.flag_types[i] == "dict" and isinstance(v, dict)) or
+            (cf.flag_types[i] == "bool" and isinstance(v, bool)) or
+            (cf.flag_types[i] == "list" and isinstance(v, list))
+        )
+    }
     return cf.main_config
 def saveSettings():
     respo = {
@@ -309,21 +334,18 @@ def saveSettings():
     }
     before_edit = cf.main_config.copy()
     getSettings()
-    remove_items = []
-    for i, v in before_edit.items():
-        if i in cf.modified_flags_from_mod_scripts: before_edit[i] = cf.main_config.get(i); v = cf.main_config.get(i)
-        if not (cf.flag_types.get(i) is None):
-            if cf.flag_types.get(i) == "str" and type(v) is str: pass
-            elif cf.flag_types.get(i) == "path" and type(v) is str and os.path.exists(v): pass
-            elif cf.flag_types.get(i) == "int" and type(v) is int: pass
-            elif cf.flag_types.get(i) == "float" and type(v) is float: pass
-            elif cf.flag_types.get(i) == "dict" and type(v) is dict: pass
-            elif cf.flag_types.get(i) == "bool" and type(v) is bool: pass
-            elif cf.flag_types.get(i) == "list" and type(v) is list: pass
-            elif cf.flag_types.get(cf.flag_types.get(i)): before_edit[cf.flag_types.get(i)] = v; remove_items.append(i)
-            else: remove_items.append(i)
-        else: remove_items.append(i)
-    for i in remove_items: before_edit.pop(i)
+    TYPE_MAP = {"str": str, "path": str, "int": int, "float": float, "dict": dict, "bool": bool, "list": list}
+    new_dict = {}
+    for k, v in before_edit.items():
+        if k in cf.modified_flags_from_mod_scripts: v = cf.main_config.get(k)
+        flag_type = cf.flag_types.get(k)
+        if flag_type is None: continue
+        expected_py_type = TYPE_MAP.get(flag_type)
+        if expected_py_type and isinstance(v, expected_py_type):
+            if flag_type == "path" and not os.path.exists(v): continue
+            new_dict[k] = v
+        elif cf.flag_types.get(flag_type) is not None: new_dict[flag_type] = v
+    before_edit = new_dict
     cf.main_config = before_edit
     if cf.main_config.get("EFlagDisableAutosaveToInstallation") != True and checkSyncFolder():
         if os.path.exists(os.path.join(cf.main_config.get("EFlagOrangeBloxSyncDir"), 'Configuration.json')):
@@ -353,16 +375,23 @@ def waitForInternet():
         while cf.pip_class.getIfConnectedToInternet() == False:
             time.sleep(0.05)
         return True
-def generateCodesignCommand(pa, iden, entitlements: str=None): return [["/usr/bin/xattr", "-dr", "com.apple.metadata:_kMDItemUserTags", pa], ["/usr/bin/xattr", "-dr", "com.apple.FinderInfo", pa], ["/usr/bin/xattr", "-cr", pa], ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"] + (["--entitlements", entitlements] if entitlements else []) + ["-s", iden, pa]]
+def generateCodesignCommand(pa, iden, entitlements: str=None, is_roblox: bool=False):
+    commands = [["/usr/bin/xattr", "-cr", pa]]
+    codesign_cmd = ["/usr/bin/codesign", "-f", "--deep", "--timestamp=none"]
+    if entitlements: codesign_cmd.extend(["--entitlements", entitlements])
+    codesign_cmd.extend(["-s", iden, pa])
+    commands.append(codesign_cmd)
+    return commands
 def pythonVersionStr(): return f"{cf.pip_class.getCurrentPythonVersion()}{cf.pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
 def validateInstallation(): return (cf.main_os == "Darwin" and os.path.exists(os.path.join(cf.macos_app_path, "Contents", "MacOS", "OrangeBlox"))) or (cf.main_os == "Windows" and os.path.exists(os.path.join(cf.cur_path, "OrangeBlox.exe")))
 def safeConvertNumber(testing: str, type: typing.Type=int):
     try: return type(testing)
     except: return None
-def createDownloadToken(studio: bool=None):
+def createDownloadToken(studio: bool=None, binary_type: str="*"):
     if studio == None: studio = cf.run_studio
+    if binary_type == "*": binary_type = cf.handler.getSystemBinaryType(studio=studio)
     if cf.main_config.get("EFlagRobloxSecurityCookieUsage") == True:
-        requesting_channel = cf.handler.getUserChannel(studio=studio, debug=(cf.main_config.get("EFlagEnableDebugMode") == True))
+        requesting_channel = cf.handler.getUserChannel(studio=studio, debug=(cf.main_config.get("EFlagEnableDebugMode") == True), binary_type=binary_type)
         if requesting_channel.get("success") == True and requesting_channel.get("channel_name") != "LIVE":
             if requesting_channel.get("token"): cf.main_config["EFlagRobloxChannelUpdateToken"] = requesting_channel.get("token")
             return requesting_channel.get("token")
@@ -387,34 +416,10 @@ def generateFileKey(id: str, ext: str="", dire: str=""):
         makedirs(cf.orangeblox_library)
         return os.path.join(cf.orangeblox_library, f"{id}{ext}")
     return os.path.join(cf.cur_path, f"{id}_{cf.user_folder_name}{ext}")
-def _generateMenuSelection(options: typing.Dict[str, str], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.List=[]): 
-    main_ui_options = {}
-    options = sorted(options, key=lambda x: x["index"])
-    count = 0
-    for i in options:
-        count += 1
-        if cf.main_config.get("EFlagEnableSeeMoreAwaiting") == True and count % 13 == 0: input("[press enter to see more]")
-        printMainMessage(f"[{str(count)}] {i['message']}"); main_ui_options[str(count)] = i
-        main_ui_options[str(count)] = i
-    if star_option != "": printMainMessage(f"[*] {star_option}")
-    if before_input != "": printMainMessage(before_input)
-    res = input("> ")
-    if send_input_response == True: return res
-    if main_ui_options.get(res): return main_ui_options[res]
-    if scripted_responses:
-        target_mode = None
-        for mode in scripted_responses:
-            if res.endswith(mode): target_mode = mode
-        if target_mode:
-            spli = res[:-len(target_mode)]
-            if main_ui_options.get(spli):
-                main_ui_options[spli]["target_mode"] = target_mode
-                return main_ui_options[spli]
-    else: return None
 def generateMenuSelection(options: typing.List[typing.Dict[str, str]], before_input: str="", star_option: str="", send_input_response: bool=False, scripted_responses: typing.Dict[str, str]=None, start_index: int=None): 
     if scripted_responses is None: scripted_responses = {}
     options = sorted(options, key=lambda x: x.get("index", 0))
-    sel_index = start_index if start_index is not None else (0 if star_option == "" else len(options))
+    sel_index = start_index if start_index is not None else (0 if star_option == "" or cf.main_config.get("EFlagBeginMenuCursorAtStart") else len(options))
     total_options = len(options)
     max_index = total_options if star_option != "" else total_options - 1
     sel_buffer = ""
@@ -433,18 +438,18 @@ def generateMenuSelection(options: typing.List[typing.Dict[str, str]], before_in
             else: output_lines.append(f"[*] {star_option}")
         output_lines.append(f"> {sel_buffer}")
         lines_printed = len(output_lines) - 1 
-        menu_text = "\n".join([f"\r\033[2K{line}" for line in output_lines])
-        if not first_run: cf.stdout._sys.__stdout__.write(f"\033[{lines_printed}A")
+        menu_text = "\n".join([f"\r\033[2K{cf.colors_class.wrap(line, 255)}" for line in output_lines])
+        if not first_run: sys.__stdout__.write(f"\033[{lines_printed}A")
         first_run = False
-        cf.stdout._sys.__stdout__.write(menu_text)
-        cf.stdout._sys.__stdout__.flush()
+        sys.__stdout__.write(menu_text)
+        sys.__stdout__.flush()
         key = getNextKeyboardKey()
         if isinstance(key, bytes):
             try: key = key.decode("utf-8")
             except Exception: pass
         if key in scripted_responses:
-            cf.stdout._sys.__stdout__.write("\n")
-            cf.stdout._sys.__stdout__.flush()
+            sys.__stdout__.write("\n")
+            sys.__stdout__.flush()
             mode = scripted_responses[key]
             if sel_index == total_options:
                 if send_input_response: return "*"
@@ -473,11 +478,15 @@ def generateMenuSelection(options: typing.List[typing.Dict[str, str]], before_in
                     val = int(sel_buffer)
                     sel_index = min(max_index, max(0, val - 1))
                 else: sel_index = total_options
-        if key == "_up": sel_index = max(0, sel_index - 1)
-        elif key == "_down": sel_index = min(max_index, sel_index + 1)
+        if key == "_up": 
+            if sel_index - 1 < 0: sel_index = max_index
+            else: sel_index = max(0, sel_index - 1)
+        elif key == "_down": 
+            if sel_index + 1 > max_index: sel_index = 0
+            else: sel_index = min(max_index, sel_index + 1)
         elif key == "_enter":
-            cf.stdout._sys.__stdout__.write("\n")
-            cf.stdout._sys.__stdout__.flush()
+            sys.__stdout__.write("\n")
+            sys.__stdout__.flush()
             if sel_index == total_options:
                 if send_input_response: return "*"
                 return None
@@ -618,26 +627,24 @@ def createWindowsShortcut(shell, target_path, shortcut_path, working_directory=N
     del shortcut
 def checkMacOSCodesign(app_path: str=None, silent: bool=False):
     try:
-        if not os.path.isfile(app_path): return False
+        if not app_path or not os.path.isfile(app_path): return False
         result = subprocess.run(
-            ["/usr/bin/codesign", "-v", "--no-strict", app_path],
-            cwd=cf.cur_path,
+            ["/usr/bin/codesign", "-v", app_path],
             stdout=subprocess.DEVNULL if silent else subprocess.PIPE,
             stderr=subprocess.DEVNULL if silent else subprocess.PIPE
         )   
         printDebugMessage(f"Code Signing Validation Response: {result.returncode}")
-        if result.returncode == 0: return True
-        else: return False
+        return result.returncode == 0
     except Exception:
         printDebugMessage(f"Unable to validate codesign: \n{trace()}")
         return False
-def createMacOSCodesign(app_path: str=None, identity: str=None, entitlements: str=None, run_only: bool=False):
+def createMacOSCodesign(app_path: str=None, identity: str=None, entitlements: str=None, run_only: bool=False, is_roblox: bool=False):
+    if not app_path: return None
     result = None
-    for i in generateCodesignCommand(app_path, identity, entitlements=entitlements): 
+    for i in generateCodesignCommand(app_path, identity, entitlements=entitlements, is_roblox=is_roblox): 
         if i[0] == "/usr/bin/xattr" or run_only: result = subprocess.run(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        else: result = subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else: result = subprocess.Popen(i, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL); result.wait()
     return result
-
 if __name__ == "__main__":
     print("This module is not a runable instance.")
     sys.exit(1)

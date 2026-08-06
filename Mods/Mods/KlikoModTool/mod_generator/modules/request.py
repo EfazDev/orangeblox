@@ -8,23 +8,25 @@ from requests import Response, ConnectionError
 COOLDOWN: float = 2
 TIMEOUT: tuple[int,int] = (5,15)
 _cache: dict = {}
+_app_settings_cache = {}
 
 def getLatestRobloxStudioAppSettings(debug=False, bootstrapper=False, bucket=""):
     # Mac: https://clientsettingscdn.roblox.com/v2/settings/application/MacStudioApp
     # Windows: https://clientsettingscdn.roblox.com/v2/settings/application/PCStudioApp
+    cache_key = (bootstrapper, bucket)
+    if cache_key in _app_settings_cache: return _app_settings_cache[cache_key]
     try:    
         if bucket == "LIVE" or bucket == "production": bucket = ""
         res = requests.get(f"https://clientsettingscdn.roblox.com/v2/settings/application/{'PCStudioBootstrapper' if bootstrapper == True else 'PCStudioApp'}{f'/bucket/{bucket}' if not bucket == '' else ''}")
         if res.ok:
             jso = res.json()
             if jso.get("applicationSettings"):
-                return {"success": True, "application_settings": jso.get("applicationSettings")}
-            else:
-                return {"success": False, "message": "Something went wrong."}
-        else:
-            return {"success": False, "message": "Something went wrong."}
-    except Exception as e:
-        return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
+                result = {"success": True, "application_settings": jso.get("applicationSettings")}
+                _app_settings_cache[cache_key] = result
+                return result
+            else: return {"success": False, "message": "Something went wrong."}
+        else: return {"success": False, "message": "Something went wrong."}
+    except Exception as e: return {"success": False, "message": "There was an error checking. Please check your internet connection!"}
 
 # region APIs
 class Api:

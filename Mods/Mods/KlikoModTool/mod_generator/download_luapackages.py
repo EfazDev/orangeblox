@@ -1,4 +1,5 @@
 from pathlib import Path
+import concurrent.futures
 import os
 import shutil
 import platform
@@ -33,17 +34,24 @@ def download_luapackages(version: str, channel: str, output_directory: str | Pat
         shutil.move(os.path.join(output_directory, version, "RobloxStudio.app", "RobloxStudio.app", "Contents", "Resources", "ExtraContent"), output_directory / version / "ExtraContent")
         shutil.rmtree(os.path.join(output_directory, version, "RobloxStudio.app"), ignore_errors=True)
     else:
-        progress_bar.submit("[MOD_GEN] Downloading Extra Content Textures..", 30)
-        download(Api.Roblox.Deployment.download(version, "extracontent-textures.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-textures.zip")
-        extract(os.path.join(output_directory, "download", f"{version}-extracontent-textures.zip"), output_directory / version / "ExtraContent" / "textures")
-        progress_bar.submit("[MOD_GEN] Downloading Lua Packages..", 40)
-        download(Api.Roblox.Deployment.download(version, "extracontent-luapackages.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-luapackages.zip")
-        extract(os.path.join(output_directory, "download", f"{version}-extracontent-luapackages.zip"), output_directory / version / "ExtraContent" / "LuaPackages")
-        progress_bar.submit("[MOD_GEN] Downloading Extra Lua Scripts..", 40)
-        download(Api.Roblox.Deployment.download(version, "extracontent-scripts.zip", channel, macos), output_directory / "download" / f"{version}-extracontent-scripts.zip")
-        extract(os.path.join(output_directory, "download", f"{version}-extracontent-scripts.zip"), output_directory / version / "ExtraContent" / "scripts")
-        progress_bar.submit("[MOD_GEN] Downloading Textures..", 45)
-        download(Api.Roblox.Deployment.download(version, "content-textures2.zip", channel, macos), output_directory / "download" / f"{version}-content-textures2.zip")
-        extract(os.path.join(output_directory, "download", f"{version}-content-textures2.zip"), output_directory / version / "content" / "textures")
-        download(Api.Roblox.Deployment.download(version, "content-textures3.zip", channel, macos), output_directory / "download" / f"{version}-content-textures3.zip")
-        extract(os.path.join(output_directory, "download", f"{version}-content-textures3.zip"), output_directory / version / "content" / "textures")
+        progress_bar.submit("[MOD_GEN] Downloading Packages...", 30)
+        packages = [
+            ("extracontent-textures.zip", "ExtraContent/textures"),
+            ("extracontent-luapackages.zip", "ExtraContent/LuaPackages"),
+            ("extracontent-scripts.zip", "ExtraContent/scripts"),
+            ("content-textures2.zip", "content/textures"),
+            ("content-textures3.zip", "content/textures")
+        ]
+        def process_package(pkg_name, extract_subpath):
+            download_url = Api.Roblox.Deployment.download(version, pkg_name, channel, macos)
+            download_path = output_directory / "download" / f"{version}-{pkg_name}"
+            extract_path = output_directory / version / extract_subpath
+            download(download_url, download_path)
+            extract(os.path.join(output_directory, "download", f"{version}-{pkg_name}"), extract_path)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [
+                executor.submit(process_package, pkg, dest) 
+                for pkg, dest in packages
+            ]
+            concurrent.futures.wait(futures)
+        progress_bar.submit("[MOD_GEN] Finished Downloading Packages..", 45)

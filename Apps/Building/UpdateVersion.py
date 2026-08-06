@@ -6,20 +6,28 @@ import re
 import os
 
 # Generate Hash Function based on Contents
-def generateFileHash(file_path):
+def generateFileHash(file_path: str, is_text: bool=False):
     try:
-        hasher = hashlib.md5()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                if platform.system() == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
-                hasher.update(chunk)
-        return hasher.hexdigest()
+        sha_256 = hashlib.sha256()
+        if is_text:
+            with open(file_path, "r", encoding="utf-8", errors="ignore", newline="") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk.encode("utf-8"))
+        else:
+            with open(file_path, "rb") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk)
+        return sha_256.hexdigest()
     except Exception: return None
 
 # Load Version.json
 version_json = {
-    "version": "2.6.0i",
-    "latest_version": "2.6.0i",
+    "version": "2.6.0j",
+    "latest_version": "2.6.0j",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }
@@ -51,13 +59,13 @@ generated_hash_json = {}
 blocked_scripts = ["RobloxFastFlagsInstaller.py"]
 for i in os.listdir("./"):
     if i.endswith(".py") and i not in blocked_scripts:
-        generated_hash = generateFileHash(f"./{i}")
+        generated_hash = generateFileHash(f"./{i}", is_text=True)
         generated_hash_json[i] = generated_hash
 for i in os.listdir("./Modules"):
     if i.endswith(".py") and i not in blocked_scripts:
-        generated_hash = generateFileHash(f"./Modules/{i}")
+        generated_hash = generateFileHash(f"./Modules/{i}", is_text=True)
         generated_hash_json[f"Modules/{i}"] = generated_hash
-generated_hash2 = generateFileHash(f"./Apps/Building/OrangeBlox.py")
+generated_hash2 = generateFileHash(f"./Apps/Building/OrangeBlox.py", is_text=True)
 generated_hash_json["OrangeBlox.py"] = generated_hash2
 previous_hashes = version_json["hashes"]
 version_json["hashes"] = generated_hash_json
@@ -82,7 +90,7 @@ with open("Apps/Storage/Version.txt", "w", encoding="utf-8") as f: f.write(versi
 
 # Build README.md
 try:
-    table_md = "| File | MD5 Hash |\n| --- | --- |\n"
+    table_md = "| File | SHA256 Hash |\n| --- | --- |\n"
     for file_key, file_hash in generated_hash_json.items():
         display = display_names.get(file_key, file_key)
         table_md += f"| {display} ({file_key}) | `{file_hash}` |\n" 

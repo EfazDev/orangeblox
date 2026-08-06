@@ -17,7 +17,7 @@ def printSuccessMessage(mes): OrangeAPI.printSuccessMessage(mes) # Success Color
 def printYellowMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
 def printWarnMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
 def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
-def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
+def isYes(text): return text.lower() in {"y", "yes", "true", "t"}
 
 # Main Handler
 def onRobloxAppStart(data):

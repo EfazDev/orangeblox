@@ -26,7 +26,7 @@ def printSuccessMessage(mes): OrangeAPI.printSuccessMessage(mes) # Success Color
 def printYellowMessage(mes): OrangeAPI.printYellowMessage(mes) # Yellow Colored Console Text
 def printWarnMessage(mes): OrangeAPI.printWarnMessage(mes) # Yellow Colored Console Text
 def printDebugMessage(mes): OrangeAPI.printDebugMessage(mes) # Debug Console Text
-def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
+def isYes(text): return text.lower() in {"y", "yes", "true", "t"}
 def ts(text): return OrangeAPI.translate(text)
 
 # Main Handler
@@ -84,7 +84,7 @@ def handling_task(data):
         try: res = getattr(OrangeAPI, func_name)(*args, **kwargs)
         except Exception:  res = False
     if OrangeAPI.checkIfResponseClass(res):  formatted_res = res.success
-    elif type(res) is dict:  formatted_res = res
+    elif isinstance(res, dict):  formatted_res = res
     else: formatted_res = str(res)
     return formatted_res
 def run_handling():

@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -168,7 +168,7 @@ def updateRMEvents():
             "allowAccessingPythonFiles": {"message": ts("Allow access to other Python files"), "level": 2},
             "sendDiscordWebhookMessage": {"message": ts("Send messages through your Discord Webhooks"), "level": 1},
             "sendBloxstrapRPC": {"message": ts("Send requests through Bloxstrap RPC"), "level": 2},
-            "getLatestRobloxVersion": {"message": ts("Get the latest Roblox version"), "level": 0},
+            "getLatestRobloxVersion": {"message": ts("Get the latest Roblox version"), "level": 1},
             "getInstalledRobloxVersion": {"message": ts("Get the currently installed Roblox version"), "level": 1},
             "getLatestOppositeRobloxVersion": {"message": ts("Get the latest version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
             "getOppositeInstalledRobloxVersion": {"message": ts("Get the current version of the opposite application (Roblox Player -> Studio, Studio -> Player)"), "level": 1},
@@ -228,7 +228,7 @@ def updateRMEvents():
             "printYellowMessage": {"message": ts("Print a console in a yellow text (indicates a warning)"), "level": 0, "free": True},
             "about": {"message": ts("Get bootstrap info"), "level": 0, "free": True}
         }
-        cf.handler.roblox_event_info.update(mod_script_events)
+        rbx.roblox_event_info.update(mod_script_events)
     except (KeyboardInterrupt, Exception) as e:
         printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
         printErrorMessage(f"Exception: \n{trace()}")

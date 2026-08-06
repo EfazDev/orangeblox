@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -280,7 +280,7 @@ def applyCustomMods():
     cf.submit_status.start()
     if cf.main_config.get("EFlagEnableMods") == True:
         cf.submit_status.submit(ts("Applying Mods.."), 10)
-        if type(cf.main_config.get("EFlagEnabledMods")) is dict:
+        if isinstance(cf.main_config.get("EFlagEnabledMods"), dict):
             mod_order = generateModOrder()
             mod_order_map = {m: i for i, m in enumerate(mod_order)}
             fallback_id = len(mod_order)
@@ -298,7 +298,7 @@ def applyCustomMods():
                             ignore_given_files = []
                             if os.path.exists(os.path.join(mod_path, "Manifest.json")):
                                 manife = readJSONFile(os.path.join(mod_path, "Manifest.json"))
-                                if manife and manife.get("ignore_transfer_of_files") and type(manife.get("ignore_transfer_of_files")) is list: ignore_given_files = manife.get("ignore_transfer_of_files")
+                                if manife and manife.get("ignore_transfer_of_files") and isinstance(manife.get("ignore_transfer_of_files"), list): ignore_given_files = manife.get("ignore_transfer_of_files")
                                 if manife and (manife.get("is_studio_mod") == True or (cf.run_studio == True and manife.get("player_studio_support") == True)): is_studio = True
                             if os.path.exists(os.path.join(mod_path, "StudioMod")): is_studio = True
                             if is_studio == cf.run_studio:
@@ -365,7 +365,7 @@ def applyOSRegistration():
                                     "com.apple.security.device.camera": True,
                                     "com.apple.security.network.client": True
                                 })
-                                result = createMacOSCodesign(rbx.macOS_studioDir, cf.main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cf.orangeblox_library, "RbxStudioEntitlements.plist"), run_only=True)
+                                result = createMacOSCodesign(rbx.macOS_studioDir, cf.main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cf.orangeblox_library, "RbxStudioEntitlements.plist"), run_only=True, is_roblox=True)
                                 os.remove(os.path.join(cf.orangeblox_library, "RbxStudioEntitlements.plist"))
                                 printDebugMessage(f"Code Signing Response: {result.returncode}")
                                 if result.returncode == 0: printSuccessMessage("Successfully signed Roblox Studio.app!")
@@ -418,7 +418,7 @@ def applyOSRegistration():
                                     "com.apple.security.device.camera": True,
                                     "com.apple.security.network.client": True
                                 })
-                                result = createMacOSCodesign(rbx.macOS_dir, cf.main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cf.orangeblox_library, "RbxEntitlements.plist"), run_only=True)
+                                result = createMacOSCodesign(rbx.macOS_dir, cf.main_config.get("EFlagRobloxCodesigningName", "-"), entitlements=os.path.join(cf.orangeblox_library, "RbxEntitlements.plist"), run_only=True, is_roblox=True)
                                 os.remove(os.path.join(cf.orangeblox_library, "RbxEntitlements.plist"))
                                 printDebugMessage(f"Code Signing Response: {result.returncode}")
                                 if result.returncode == 0: printSuccessMessage("Successfully signed Roblox.app!")
@@ -526,7 +526,7 @@ def validateRobloxPlayerInstallation():
     if cf.main_os == "Windows":
         target_install_name = cf.main_config.get("EFlagBootstrapRobloxInstallFolderName", "com.roblox.robloxplayer")
         if not os.path.exists(os.path.join(cf.versions_folder, target_install_name)): return False
-        for i, v in cf.handler.roblox_bundle_files.items(): 
+        for i, v in rbx.roblox_bundle_files.items(): 
             if v != "/" and not os.path.exists(os.path.join(cf.versions_folder, target_install_name, v.lstrip('/\\'))): return False
     elif cf.main_os == "Darwin":
         if not os.path.exists(rbx.macOS_dir): return False
@@ -836,7 +836,7 @@ def getStartData():
 def runRobloxClient():
     rcf.roblox_launched_affect_mod_script = True
     def connectCallEvents(cri):
-        if type(cri) is cf.handler.RobloxInstance:
+        if isinstance(cri, rbx.RobloxInstance):
             if cf.run_studio == True:
                 cri.addRobloxEventCallback("onOpeningGame", onOpeningGameStudio)
                 cri.addRobloxEventCallback("onRobloxExit", onRobloxExit)
@@ -881,7 +881,7 @@ def runRobloxClient():
     if cf.main_config.get("EFlagEnableEndingRobloxCrashHandler") == True: cf.handler.endRobloxCrashHandler()
     if cf.run_studio == True:
         if cf.connect_instead == True:
-            rcf.connected_roblox_instance = cf.handler.RobloxInstance(cf.handler, cf.handler.getLatestOpenedRobloxPid(studio=True), debug_mode=(cf.main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(cf.main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=True, await_log_creation=False)
+            rcf.connected_roblox_instance = rbx.RobloxInstance(cf.handler, cf.handler.getLatestOpenedRobloxPid(studio=True), debug_mode=(cf.main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(cf.main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=True, await_log_creation=False)
             if rcf.connected_roblox_instance:
                 connectCallEvents(rcf.connected_roblox_instance)
                 printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
@@ -936,7 +936,7 @@ def runRobloxClient():
             cf.roblox_launched = True
     else:
         if cf.connect_instead == True:
-            rcf.connected_roblox_instance = cf.handler.RobloxInstance(cf.handler, cf.handler.getLatestOpenedRobloxPid(), debug_mode=(cf.main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(cf.main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=False, await_log_creation=False)
+            rcf.connected_roblox_instance = rbx.RobloxInstance(cf.handler, cf.handler.getLatestOpenedRobloxPid(), debug_mode=(cf.main_config.get("EFlagEnableDebugMode") == True), allow_other_logs=(cf.main_config.get("EFlagAllowFullDebugMode") == True), created_mutex=False, studio=False, await_log_creation=False)
             if rcf.connected_roblox_instance:
                 connectCallEvents(rcf.connected_roblox_instance)
                 printSuccessMessage("Connected to Roblox Instance from log file for Activity Tracking!")
@@ -1176,7 +1176,7 @@ def startDiscordRPC(thumbnail_url: str=None):
             if cf.main_config.get("EFlagEnableDefaultDiscordRPC") != False:
                 if not thumbnail_url: thumbnail_url = getRobloxThumbnailURL()
                 start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
-                if cf.main_config.get("EFlagSetDiscordRPCStart") and (type(cf.main_config.get("EFlagSetDiscordRPCStart")) is float or type(cf.main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
+                if cf.main_config.get("EFlagSetDiscordRPCStart") and (isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), float) or isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), int)): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
                 cf.discord_rpc.update(
                     details=f"Idling Roblox{' Studio' if cf.run_studio == True else ''}",
                     start=start_time,
@@ -1341,7 +1341,7 @@ def onGameJoinedStudio(info):
                     except Exception: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                     try:
                         start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
-                        if cf.main_config.get("EFlagSetDiscordRPCStart") and (type(cf.main_config.get("EFlagSetDiscordRPCStart")) is float or type(cf.main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
+                        if cf.main_config.get("EFlagSetDiscordRPCStart") and (isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), float) or isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), int)): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
                         if rcf.current_place_info: rcf.current_place_info["start_time"] = start_time
                         if cf.main_config.get("EFlagEnableDiscordRPCStudio") == True:
                             # Handle User Thumbnail
@@ -1792,7 +1792,7 @@ def onGameJoined(info):
                         except Exception: printDebugMessage(f"Something went wrong setting the Window Title: \n{trace()}")
                         try:
                             start_time = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
-                            if cf.main_config.get("EFlagSetDiscordRPCStart") and (type(cf.main_config.get("EFlagSetDiscordRPCStart")) is float or type(cf.main_config.get("EFlagSetDiscordRPCStart")) is int): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
+                            if cf.main_config.get("EFlagSetDiscordRPCStart") and (isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), float) or isinstance(cf.main_config.get("EFlagSetDiscordRPCStart"), int)): start_time = cf.main_config.get("EFlagSetDiscordRPCStart")
                             if rcf.current_place_info: rcf.current_place_info["start_time"] = start_time
                             if cf.main_config.get("EFlagEnableDiscordRPC") == True:
                                 # Handle User Thumbnail
@@ -2085,9 +2085,9 @@ def onRobloxExit(consoleLine):
         cf.discord_rpc_info = None
     if cf.run_studio == False and cf.preserve_roblox == False and cf.main_config.get("EFlagEnableMultiAutoReconnect") == True and rcf.current_place_info and rcf.current_place_info.get("place_info") and rcf.current_place_info.get("placeId"): 
         printYellowMessage("Reconnecting Roblox..")
-        if type(cf.main_config.get("EFlagRobloxLinkShortcuts")) is dict and rcf.connected_user_info and rcf.connected_user_info.get("id"):
+        if isinstance(cf.main_config.get("EFlagRobloxLinkShortcuts"), dict) and rcf.connected_user_info and rcf.connected_user_info.get("id"):
             for i, v in cf.main_config.get("EFlagRobloxLinkShortcuts").items():
-                if type(v.get("cookie_paths")) is dict and v.get("cookie_id") == rcf.connected_user_info.get("id"):
+                if isinstance(v.get("cookie_paths"), dict) and v.get("cookie_id") == rcf.connected_user_info.get("id"):
                     for d, k in v.get("cookie_paths").items():
                         if cf.main_os == "Darwin" and (d.startswith(os.path.join(cf.pip_class.getLocalAppData(), "HTTPStorages", "com.roblox.")) and k.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[d] = k
                         elif cf.main_os == "Windows" and (d == os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "LocalStorage", "RobloxCookies.dat") and k.startswith(os.path.join(cf.pip_class.getLocalAppData(), "Roblox", "RBXCookies"))): cf.custom_cookies[d] = k
@@ -2129,21 +2129,21 @@ def onBloxstrapMessage(info, disableWebhook=False):
             if info["command"] == "SetRichPresence":
                 if cf.discord_rpc:
                     if cf.discord_rpc_info == None: cf.discord_rpc_info = {}
-                    if type(info["data"]) is dict:
+                    if isinstance(info["data"], dict):
                         if info["data"].get("clear") == True or info["data"].get("reset") == True: cf.discord_rpc_info = {}
-                        if type(info["data"].get("details")) is str or type(info["data"].get("details")) is None: 
+                        if isinstance(info["data"].get("details"), str) or isinstance(info["data"].get("details"), None): 
                             cf.discord_rpc_info["details"] = info["data"].get("details")
                             passed_data[data_names["details"]] = info["data"].get("details")
-                        if type(info["data"].get("state")) is str or type(info["data"].get("state")) is None: 
+                        if isinstance(info["data"].get("state"), str) or isinstance(info["data"].get("state"), None): 
                             cf.discord_rpc_info["state"] = info["data"].get("state")
                             passed_data[data_names["state"]] = info["data"].get("state")
-                        if type(info["data"].get("timeStart")) is int or type(info["data"].get("timeStart")) is None or type(info["data"].get("timeStart")) is float: 
+                        if isinstance(info["data"].get("timeStart"), int) or isinstance(info["data"].get("timeStart"), None) or isinstance(info["data"].get("timeStart"), float): 
                             cf.discord_rpc_info["start"] = info["data"].get("timeStart")
-                            if type(info["data"].get("timeStart")) is None: passed_data[data_names["timeStart"]] = f'None'
+                            if isinstance(info["data"].get("timeStart"), None): passed_data[data_names["timeStart"]] = f'None'
                             else: passed_data[data_names["timeStart"]] = f'<t:{int(info["data"].get("timeStart"))}:R>'
-                        if type(info["data"].get("timeEnd")) is int or type(info["data"].get("timeEnd")) is None or type(info["data"].get("timeEnd")) is float: 
+                        if isinstance(info["data"].get("timeEnd"), int) or isinstance(info["data"].get("timeEnd"), None) or isinstance(info["data"].get("timeEnd"), float): 
                             cf.discord_rpc_info["stop"] = info["data"].get("timeEnd")
-                            if type(info["data"].get("timeEnd")) is None: passed_data[data_names["timeEnd"]] = f'None'
+                            if isinstance(info["data"].get("timeEnd"), None): passed_data[data_names["timeEnd"]] = f'None'
                             else: passed_data[data_names["timeEnd"]] = f'<t:{int(info["data"].get("timeEnd"))}:R>'
                         def getImageUrlFromAsset(assetId):
                             url = f"https://thumbnails.roblox.com/v1/assets?assetIds={assetId}&returnPolicy=PlaceHolder&size=420x420&format=Png&isCircular=false"
@@ -2155,7 +2155,7 @@ def onBloxstrapMessage(info, disableWebhook=False):
                                     else: return None
                                 else: return None
                             else: return None
-                        if type(info["data"].get("largeImage")) is dict: 
+                        if isinstance(info["data"].get("largeImage"), dict): 
                             if info["data"]["largeImage"].get("clear") == True or info["data"]["largeImage"].get("reset") == True:
                                 cf.discord_rpc_info["large_image"] = None
                                 cf.discord_rpc_info["large_text"] = None
@@ -2163,11 +2163,11 @@ def onBloxstrapMessage(info, disableWebhook=False):
                             else:
                                 link = info["data"]["largeImage"].get("assetId")
                                 approved_image = None
-                                if link and type(link) is int:
+                                if link and isinstance(link, int):
                                     approved_image = getImageUrlFromAsset(link)
                                     if approved_image: link = f"[Image]({approved_image})"
                                     else: link = "None"
-                                elif link and type(link) is str:
+                                elif link and isinstance(link, str):
                                     try:
                                         parsed_link = urlparse(link)
                                         if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"):
@@ -2177,13 +2177,13 @@ def onBloxstrapMessage(info, disableWebhook=False):
                                     except Exception: link = "None"
                                 else: link = "None"
                                 if approved_image: cf.discord_rpc_info["small_image"] = approved_image
-                                if type(info["data"]["largeImage"].get("hoverText")) is str: cf.discord_rpc_info["large_text"] = info["data"]["largeImage"]["hoverText"]
+                                if isinstance(info["data"]["largeImage"].get("hoverText"), str): cf.discord_rpc_info["large_text"] = info["data"]["largeImage"]["hoverText"]
                                 passed_data[data_names["largeImage"]] = f'{info["data"]["largeImage"].get("hoverText", None)} | {link}'
-                        elif type(info["data"].get("largeImage")) is None:
+                        elif isinstance(info["data"].get("largeImage"), None):
                             cf.discord_rpc_info["large_image"] = None
                             cf.discord_rpc_info["large_text"] = None
                             passed_data[data_names["largeImage"]] = f'None'
-                        if type(info["data"].get("smallImage")) is dict: 
+                        if isinstance(info["data"].get("smallImage"), dict): 
                             if info["data"]["smallImage"].get("clear") == True or info["data"]["smallImage"].get("reset") == True:
                                 cf.discord_rpc_info["small_image"] = None
                                 cf.discord_rpc_info["small_text"] = None
@@ -2191,11 +2191,11 @@ def onBloxstrapMessage(info, disableWebhook=False):
                             else:
                                 link = info["data"]["smallImage"].get("assetId")
                                 approved_image = None
-                                if link and type(link) is int:
+                                if link and isinstance(link, int):
                                     approved_image = getImageUrlFromAsset(link)
                                     if approved_image: link = f"[Image]({approved_image})"
                                     else: link = "None"
-                                elif link and type(link) is str:
+                                elif link and isinstance(link, str):
                                     try:
                                         parsed_link = urlparse(link)
                                         if parsed_link.netloc.endswith("roblox.com") or parsed_link.netloc.endswith("rbxcdn.com"):
@@ -2205,9 +2205,9 @@ def onBloxstrapMessage(info, disableWebhook=False):
                                     except Exception: link = "None"
                                 else: link = "None"
                                 if approved_image: cf.discord_rpc_info["small_image"] = approved_image
-                                if type(info["data"]["smallImage"].get("hoverText")) is str: cf.discord_rpc_info["small_text"] = info["data"]["smallImage"]["hoverText"]
+                                if isinstance(info["data"]["smallImage"].get("hoverText"), str): cf.discord_rpc_info["small_text"] = info["data"]["smallImage"]["hoverText"]
                                 passed_data[data_names["smallImage"]] = f'{info["data"]["smallImage"].get("hoverText", None)} | {link}'
-                        elif type(info["data"].get("smallImage")) is None:
+                        elif isinstance(info["data"].get("smallImage"), None):
                             cf.discord_rpc_info["small_image"] = None
                             cf.discord_rpc_info["small_text"] = None
                             passed_data[data_names["smallImage"]] = f'None'
@@ -2215,7 +2215,7 @@ def onBloxstrapMessage(info, disableWebhook=False):
             elif info["command"] == "SetLaunchData":
                 if cf.discord_rpc:
                     if cf.discord_rpc_info == None: cf.discord_rpc_info = {}
-                    if type(info["data"]) is str: 
+                    if isinstance(info["data"], str): 
                         cf.discord_rpc_info["launch_data"] = info["data"]
                         passed_data[data_names["launch_data"]] = info["data"]
                     went_through = True

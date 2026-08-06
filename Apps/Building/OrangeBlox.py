@@ -1,3 +1,10 @@
+# 
+# OrangeBlox 🍊
+# Made by Efaz from efaz.dev
+# v2.6.0j
+# 
+
+# Python Modules
 import sys
 import subprocess
 import json
@@ -19,7 +26,8 @@ import hashlib
 import webbrowser
 import PyKits
 
-current_version = {"version": "2.6.0i"}
+# Variables
+current_version = {"version": "2.6.0j"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -29,8 +37,7 @@ app_path = ""
 macos_path = ""
 orangeblox_library = None
 logs = []
-
-COLOR_CODES = {
+color_codes = {
     0: "#ffffff",
     1: "#ff0000",
     2: "#ffff00",
@@ -111,6 +118,7 @@ flag_types = {
     "EFlagDisableBootstrapCooldown": "bool",
     "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
     "EFlagEnableGUIOptionMenus": "bool",
+    "EFlagBeginMenuCursorAtStart": "bool",
     "EFlagAllowFullDebugMode": "bool",
     "EFlagRobloxClientChannel": "str",
     "EFlagDisableRobloxUpdateChecks": "bool",
@@ -198,14 +206,14 @@ def obName0(): return main_config.get("EFlagCustomBootstrapName", "OrangeBlox").
 def obName1(): return main_config.get("EFlagCustomBootstrapEmoji", "🍊").strip()
 def obColorA(): return colors_class.hex_to_ansi(main_config.get("EFlagCustomBootstrapColor", "#ff4b00"))
 def obColorH(): return main_config.get("EFlagCustomBootstrapColor", "#ff4b00")
-def printMainMessage(mes): colors_class.print(ts(mes), 255); logs.append((ts(mes), 0))
-def printErrorMessage(mes): colors_class.print(ts(mes), 196); logs.append((ts(mes), 1))
-def printSuccessMessage(mes): colors_class.print(ts(mes), 82); logs.append((ts(mes), 4))
-def printWarnMessage(mes): colors_class.print(ts(mes), 202); logs.append((ts(mes), 3))
-def printSystemMessage(mes): colors_class.print(ts(mes), obColorA()); logs.append((ts(mes), 5))
-def printYellowMessage(mes): colors_class.print(ts(mes), 226); logs.append((ts(mes), 2))
+def printMainMessage(mes): mes = ts(mes); colors_class.print(mes, 255); logs.append((mes, 0))
+def printErrorMessage(mes): mes = ts(mes); colors_class.print(mes, 196); logs.append((mes, 1))
+def printSuccessMessage(mes): mes = ts(mes); colors_class.print(mes, 82); logs.append((mes, 4))
+def printWarnMessage(mes): mes = ts(mes); colors_class.print(mes, 202); logs.append((mes, 3))
+def printSystemMessage(mes): mes = ts(mes); colors_class.print(mes, obColorA()); logs.append((mes, 5))
+def printYellowMessage(mes): mes = ts(mes); colors_class.print(mes, 226); logs.append((mes, 2))
 def printDebugMessage(mes): 
-    if main_config.get("EFlagEnableDebugMode"): colors_class.print(f"[DEBUG]: {ts(mes)}", 226); logs.append((ts(mes), 2))
+    if main_config.get("EFlagEnableDebugMode"): mes = ts(mes); colors_class.print(f"[DEBUG]: {mes}", 226); logs.append((mes, 2))
 def pythonVersionStr(): return f"{pip_class.getCurrentPythonVersion()}{pip_class.getIfPythonVersionIsBeta() and ' (BETA)' or ''}"
 def setLoggingHandler(handler_name):
     global app_path
@@ -230,9 +238,9 @@ def setLoggingHandler(handler_name):
     sys.stderr = PyKits.stdout(logger, logging.ERROR, lang=(os.path.join(app_path, "Translations", main_config.get("EFlagSelectedBootstrapLanguage") + ".json")) if main_config.get("EFlagSelectedBootstrapLanguage") and not (main_config.get("EFlagSelectedBootstrapLanguage", "en") == "en") else None)
     if main_os == "Windows": colors_class.fix_windows_ansi()
     return True
-def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
-def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
-def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
+def isYes(text): return text.lower() in {"y", "yes", "true", "t"}
+def isNo(text): return text.lower() in {"n", "no", "false", "f"}
+def isRequestClose(text): return text.lower() in {"exit", "exit()"}
 def getIfCertainPlayer():
     if main_os == "Windows":
         if os.path.exists(os.path.join(app_path, "RobloxStudioBetaPlayRobloxRestart.txt")): 
@@ -272,14 +280,22 @@ def displayNotification(title="Unknown Title", message="Unknown Message"):
                 toast=True
             )
         except Exception as e: printErrorMessage(f"Something went wrong pinging Windows Notification Center: \n{trace()}")
-def generateFileHash(file_path):
+def generateFileHash(file_path: str, is_text: bool=False):
     try:
-        hasher = hashlib.md5()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
-                hasher.update(chunk)
-        return hasher.hexdigest()
+        sha_256 = hashlib.sha256()
+        if is_text:
+            with open(file_path, "r", encoding="utf-8", errors="ignore", newline="") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk.encode("utf-8"))
+        else:
+            with open(file_path, "rb") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk)
+        return sha_256.hexdigest()
     except Exception: return None
 if __name__ == "__main__":  
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -308,27 +324,25 @@ if __name__ == "__main__":
             else:
                 main_config = {}
                 loaded_json = True
-            remove_items = []
-            for i, v in main_config.items():
-                if not (flag_types.get(i) is None):
-                    if flag_types.get(i) == "str" and type(v) is str: pass
-                    elif flag_types.get(i) == "path" and type(v) is str and os.path.exists(v): pass
-                    elif flag_types.get(i) == "int" and type(v) is int: pass
-                    elif flag_types.get(i) == "float" and type(v) is float: pass
-                    elif flag_types.get(i) == "dict" and type(v) is dict: pass
-                    elif flag_types.get(i) == "bool" and type(v) is bool: pass
-                    elif flag_types.get(i) == "list" and type(v) is list: pass
-                    elif flag_types.get(flag_types.get(i)): main_config[flag_types.get(i)] = v; remove_items.append(i)
-                    else: remove_items.append(i)
-                else: remove_items.append(i)
-            for i in remove_items: main_config.pop(i)
+            main_config = {
+                i: v for i, v in main_config.items() 
+                if i in flag_types and (
+                    (flag_types[i] == "str" and isinstance(v, str)) or
+                    (flag_types[i] == "path" and isinstance(v, str) and os.path.exists(v)) or
+                    (flag_types[i] == "int" and isinstance(v, int)) or
+                    (flag_types[i] == "float" and isinstance(v, float)) or
+                    (flag_types[i] == "dict" and isinstance(v, dict)) or
+                    (flag_types[i] == "bool" and isinstance(v, bool)) or
+                    (flag_types[i] == "list" and isinstance(v, list))
+                )
+            }
             return main_config
         loadConfiguration()
     elif main_os == "Windows":
         if os.path.exists(os.path.join(app_path, "Main.py")):
             with open(os.path.join(app_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
             try: obfuscated_json = json.loads(obfuscated_json)
-            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
             main_config = obfuscated_json
             loaded_json = True
         
@@ -648,7 +662,7 @@ if __name__ == "__main__":
                                     integrated_app_hashes = current_version.get("hashes", {})
                                     for i, v in integrated_app_hashes.items():
                                         if i == "OrangeBlox.py": continue
-                                        file_hash = generateFileHash(os.path.join(app_path, i))
+                                        file_hash = generateFileHash(os.path.join(app_path, i), is_text=True)
                                         if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
                                     if not (validated == False) or main_config.get("EFlagDisableSecureHashSecurity") == True:
                                         validated = True
@@ -731,13 +745,14 @@ if __name__ == "__main__":
                                 storage.beginEditing() 
                                 try:
                                     tokens = re.split(r"(\x1B\[[0-?]*[ -/]*[@-~]|\r|\n|\x08|\x7f)", text)
-                                    for token in tokens:
-                                        if not token: continue
-                                        if token.startswith("\x1b"): self.parseAnsi(token)
-                                        elif token == "\r": self.handleCarriageReturn()
-                                        elif token == "\n": self.handleNewline()
-                                        elif token in ("\x08", "\x7f"): self.handleBackspace()
-                                        else: self.appendRaw(token)
+                                    with objc.autorelease_pool():
+                                        for token in tokens:
+                                            if not token: continue
+                                            if token.startswith("\x1b"): self.parseAnsi(token)
+                                            elif token == "\r": self.handleCarriageReturn()
+                                            elif token == "\n": self.handleNewline()
+                                            elif token in ("\x08", "\x7f"): self.handleBackspace()
+                                            else: self.appendRaw(token)
                                 finally:
                                     storage.endEditing() 
                                     self.text_view.setSelectedRange_((self.cursor_id, 0))
@@ -1001,21 +1016,22 @@ if __name__ == "__main__":
                                 self.updateDebugScrollHeight()
                             def debugLogsLoop_(self, obj):
                                 try:
-                                    COLOR_CODES[5] = obColorH()
+                                    color_codes[5] = obColorH()
                                     new_logs = logs[self.debug_last_checked_index:]
                                     if new_logs:
                                         batch_string = NSMutableAttributedString.alloc().init()
                                         font = self.debug_output_area.font()
-                                        for log, color_code in new_logs:
-                                            lines = textwrap.wrap(log, width=75)
-                                            for line in lines:
-                                                color_hex = COLOR_CODES.get(color_code, "#ffffff")
-                                                color_ns = self.get_color(color_hex)
-                                                attr_str = NSAttributedString.alloc().initWithString_attributes_(
-                                                    f" {line}\n",
-                                                    {NSForegroundColorAttributeName: color_ns, NSFontAttributeName: font}
-                                                )
-                                                batch_string.appendAttributedString_(attr_str)
+                                        with objc.autorelease_pool():
+                                            for log, color_code in new_logs:
+                                                lines = textwrap.wrap(log, width=75)
+                                                for line in lines:
+                                                    color_hex = color_codes.get(color_code, "#ffffff")
+                                                    color_ns = self.get_color(color_hex)
+                                                    attr_str = NSAttributedString.alloc().initWithString_attributes_(
+                                                        f" {line}\n",
+                                                        {NSForegroundColorAttributeName: color_ns, NSFontAttributeName: font}
+                                                    )
+                                                    batch_string.appendAttributedString_(attr_str)
                                         self.debug_last_checked_index = len(logs)
                                         self.performSelectorOnMainThread_withObject_waitUntilDone_("appendBatchLogs:", batch_string, False)
                                     if self.config_reload_period: self.config_reload_period = False
@@ -1346,7 +1362,7 @@ if __name__ == "__main__":
                                 self.top_menu.addItem_(shortcuts_menu_item)
                                 self.top_menu.setSubmenu_forItem_(shortcuts_menu, shortcuts_menu_item)
                                 generated_ui_options = []
-                                if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                if isinstance(main_config.get("EFlagRobloxLinkShortcuts"), dict):
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id"): 
                                             approved = False
@@ -1406,7 +1422,7 @@ if __name__ == "__main__":
                                     self.status_item.button().setImage_(icon)
                                 self.dock_menu.removeAllItems()
 
-                                if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                if isinstance(main_config.get("EFlagRobloxLinkShortcuts"), dict):
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id"): 
                                             approved = False
@@ -1450,11 +1466,11 @@ if __name__ == "__main__":
                             
                             # OrangeBlox Management Functions
                             def new_bootstrap(self, action="", action_name=""):
-                                if not (action == "") and type(action) is str:
+                                if not (action == "") and isinstance(action, str):
                                     url_scheme_path = f"{orangeblox_library}/URLLaunchExchange"
                                     with open(url_scheme_path, "w", encoding="utf-8") as f: f.write(f"orangeblox://{action}?quick-action=true")
                                 self.createNewTerminal()
-                                if not (action_name == "") and type(action_name) is str: printMainMessage(f"Launched Bootstrap with action: {action_name}")
+                                if not (action_name == "") and isinstance(action_name, str): printMainMessage(f"Launched Bootstrap with action: {action_name}")
                                 else: printMainMessage(f"Launched Bootstrap in new window!")
                             def new_bootstrap_play_roblox(self): self.new_bootstrap("continue", ts("Play Roblox"))
                             def new_bootstrap_play_roblox_studio(self): self.new_bootstrap("run-studio", ts("Run Roblox Studio"))
@@ -1529,7 +1545,7 @@ if __name__ == "__main__":
                             def shortcut_(self, sender):
                                 menu_title = sender.title()
                                 generated_ui_options = []
-                                if type(main_config.get("EFlagRobloxLinkShortcuts")) is dict:
+                                if isinstance(main_config.get("EFlagRobloxLinkShortcuts"), dict):
                                     for i, v in main_config.get("EFlagRobloxLinkShortcuts").items():
                                         if v and v.get("name") and v.get("id"): 
                                             approved = False
@@ -1944,7 +1960,7 @@ if __name__ == "__main__":
                         integrated_app_hashes = current_version.get("hashes", {})
                         for i, v in integrated_app_hashes.items():
                             if i == "OrangeBlox.py": continue
-                            file_hash = generateFileHash(os.path.join(app_path, i))
+                            file_hash = generateFileHash(os.path.join(app_path, i), is_text=True)
                             if not file_hash == v: validated = False; unable_to_validate.append([i, file_hash, v]); unable_to_validate2.append(i)
                         if validated == False and not (main_config.get("EFlagDisableSecureHashSecurity") == True):
                             printErrorMessage(f"Uh oh! It seems something has modified your OrangeBlox installation. The affected files are: {', '.join(unable_to_validate2)}")

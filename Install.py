@@ -1,13 +1,14 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 # Modules
 import subprocess
 import traceback
 import platform
+import tempfile
 import datetime
 import builtins
 import hashlib
@@ -101,7 +102,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0i"}
+current_version = {"version": "2.6.0j"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False
@@ -197,6 +198,7 @@ flag_types = {
     "EFlagDisableBootstrapCooldown": "bool",
     "EFlagEnableTkinterDockMenu": "EFlagEnableGUIOptionMenus",
     "EFlagEnableGUIOptionMenus": "bool",
+    "EFlagBeginMenuCursorAtStart": "bool",
     "EFlagAllowFullDebugMode": "bool",
     "EFlagRobloxClientChannel": "str",
     "EFlagDisableRobloxUpdateChecks": "bool",
@@ -289,9 +291,9 @@ def printYellowMessage(mes): colors_class.print(ts(mes), 226)
 def printDebugMessage(mes): colors_class.print(ts(mes), 226)
 
 def ignore_files_func(dir, files): return set(ignore_files) & set(files)
-def isYes(text): return text.lower() == "y" or text.lower() == "yes" or text.lower() == "true" or text.lower() == "t"
-def isNo(text): return text.lower() == "n" or text.lower() == "no" or text.lower() == "false" or text.lower() == "f"
-def isRequestClose(text): return text.lower() == "exit" or text.lower() == "exit()"
+def isYes(text): return text.lower() in {"y", "yes", "true", "t"}
+def isNo(text): return text.lower() in {"n", "no", "false", "f"}
+def isRequestClose(text): return text.lower() in {"exit", "exit()"}
 def makedirs(a): os.makedirs(a,mode=511,exist_ok=True)
 def copyTreeWithSymlinks(src, dest, ignore_files=[]):
     if os.path.exists(src):
@@ -327,7 +329,7 @@ def getOriginalInstalledAppPath():
             reg_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"SOFTWARE\\EfazRobloxBootstrap")
             value_data, _ = win32api.RegQueryValueEx(reg_key, "InstalledAppPath")
             win32api.RegCloseKey(reg_key)
-            if value_data and type(value_data) is str: return value_data, pip_class.getLocalAppData()
+            if value_data and isinstance(value_data, str): return value_data, pip_class.getLocalAppData()
             else: return None, None
         except Exception as e: return None, None
 def getSettings(directory=""):
@@ -345,7 +347,7 @@ def getSettings(directory=""):
         try:
             with open(directory, "rb") as f: obfuscated_json = f.read()
             try: obfuscated_json = json.loads(obfuscated_json)
-            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+            except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
             main_config = obfuscated_json
         except Exception as e:
             with open(os.path.join(cur_path, "Configuration.json")) as f: main_config = json.load(f)
@@ -357,40 +359,36 @@ def getSettings(directory=""):
                     flag_type = flag_types.get(i)
                     if flag_type and "_local" not in flag_type and not flag_type.startswith("path"): main_config[i] = v
         except: pass
-    remove_items = []
-    for i, v in main_config.items():
-        if not (flag_types.get(i) is None):
-            if flag_types.get(i).startswith("str") and type(v) is str: pass
-            elif flag_types.get(i).startswith("path") and type(v) is str and os.path.exists(v): pass
-            elif flag_types.get(i).startswith("int") and type(v) is int: pass
-            elif flag_types.get(i).startswith("float") and type(v) is float: pass
-            elif flag_types.get(i).startswith("dict") and type(v) is dict: pass
-            elif flag_types.get(i).startswith("bool") and type(v) is bool: pass
-            elif flag_types.get(i).startswith("list") and type(v) is list: pass
-            elif flag_types.get(flag_types.get(i)): main_config[flag_types.get(i)] = v; remove_items.append(i)
-            else: remove_items.append(i)
-        else: remove_items.append(i)
-    for i in remove_items: main_config.pop(i)
+    main_config = {
+        i: v for i, v in main_config.items() 
+        if i in flag_types and (
+            (flag_types[i] == "str" and isinstance(v, str)) or
+            (flag_types[i] == "path" and isinstance(v, str) and os.path.exists(v)) or
+            (flag_types[i] == "int" and isinstance(v, int)) or
+            (flag_types[i] == "float" and isinstance(v, float)) or
+            (flag_types[i] == "dict" and isinstance(v, dict)) or
+            (flag_types[i] == "bool" and isinstance(v, bool)) or
+            (flag_types[i] == "list" and isinstance(v, list))
+        )
+    }
     return main_config
 def saveSettings(main_config, directory=""):
     respo = {
         "saved_normally": False,
         "sync_success": False
     }
-    remove_items = []
-    for i, v in main_config.items():
-        if not (flag_types.get(i) is None):
-            if flag_types.get(i) == "str" and type(v) is str: pass
-            elif flag_types.get(i) == "path" and type(v) is str and os.path.exists(v): pass
-            elif flag_types.get(i) == "int" and type(v) is int: pass
-            elif flag_types.get(i) == "float" and type(v) is float: pass
-            elif flag_types.get(i) == "dict" and type(v) is dict: pass
-            elif flag_types.get(i) == "bool" and type(v) is bool: pass
-            elif flag_types.get(i) == "list" and type(v) is list: pass
-            elif flag_types.get(flag_types.get(i)): main_config[flag_types.get(i)] = v; remove_items.append(i)
-            else: remove_items.append(i)
-        else: remove_items.append(i)
-    for i in remove_items: main_config.pop(i)
+    main_config = {
+        i: v for i, v in main_config.items() 
+        if i in flag_types and (
+            (flag_types[i] == "str" and isinstance(v, str)) or
+            (flag_types[i] == "path" and isinstance(v, str) and os.path.exists(v)) or
+            (flag_types[i] == "int" and isinstance(v, int)) or
+            (flag_types[i] == "float" and isinstance(v, float)) or
+            (flag_types[i] == "dict" and isinstance(v, dict)) or
+            (flag_types[i] == "bool" and isinstance(v, bool)) or
+            (flag_types[i] == "list" and isinstance(v, list))
+        )
+    }
     if not (main_config.get("EFlagDisableAutosaveToInstallation") == True) and (main_config.get("EFlagOrangeBloxSyncDir") and os.path.exists(main_config.get("EFlagOrangeBloxSyncDir"))):
         if os.path.exists(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json')):
             with open(os.path.join(main_config.get("EFlagOrangeBloxSyncDir"), 'FastFlagConfiguration.json'), "w", encoding="utf-8") as f: json.dump(main_config, f, indent=4)
@@ -415,14 +413,22 @@ def saveSettings(main_config, directory=""):
         if not req.ok: respo["saved_normally"] = False
     respo["saved_normally"] = True
     return respo
-def generateFileHash(file_path):
+def generateFileHash(file_path: str, is_text: bool=False):
     try:
-        hasher = hashlib.md5()
-        with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                if main_os == "Windows": chunk = chunk.replace(b"\r\n", b"\n")
-                hasher.update(chunk)
-        return hasher.hexdigest()
+        sha_256 = hashlib.sha256()
+        if is_text:
+            with open(file_path, "r", encoding="utf-8", errors="ignore", newline="") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk.encode("utf-8"))
+        else:
+            with open(file_path, "rb") as f:
+                while True:
+                    chunk = f.read(8192)
+                    if not chunk: break
+                    sha_256.update(chunk)
+        return sha_256.hexdigest()
     except Exception: return None
 def getInstalledAppPath():
     if main_os == "Darwin":
@@ -437,7 +443,7 @@ def getInstalledAppPath():
             reg_key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER, r"SOFTWARE\\OrangeBlox")
             value_data, _ = win32api.RegQueryValueEx(reg_key, "InstalledAppPath")
             win32api.RegCloseKey(reg_key)
-            if value_data and type(value_data) is str:
+            if value_data and isinstance(value_data, str):
                 if os.path.exists(os.path.join(value_data, "OrangeBlox")): return os.path.join(value_data, "OrangeBlox"), pip_class.getLocalAppData()
                 else: return value_data, pip_class.getLocalAppData()
             else: return pip_class.getLocalAppData(), pip_class.getLocalAppData()
@@ -553,11 +559,11 @@ def runChartCode(chart_module, chart_code, *args, environment_variables={}, runn
             elif code_id == 1: 
                 if chart_module.variables.get("IDs"):
                     if chart_module.variables.get("IDs").get(code[1]) is not None:
-                        running_proc = subprocess.run(chart_module.variables.get("IDs", {}).get(code[1], "") + ([code[2]] if type(code[2]) is str else code[2]), shell=type(code[2]) is str, cwd=chart_module.cwd)
+                        running_proc = subprocess.run(chart_module.variables.get("IDs", {}).get(code[1], "") + ([code[2]] if isinstance(code[2], str) else code[2]), shell=isinstance(code[2], str), cwd=chart_module.cwd)
                         running.append(running_proc.returncode)
                     else: running.append(1)
                 else:
-                    running_proc = subprocess.run(code[1], shell=type(code[1]) is str, cwd=chart_module.cwd)
+                    running_proc = subprocess.run(code[1], shell=isinstance(code[1], str), cwd=chart_module.cwd)
                     running.append(running_proc.returncode)
             elif code_id == 2: 
                 while True:
@@ -1448,13 +1454,6 @@ if __name__ == "__main__":
         import win32api # type: ignore
         import win32con # type: ignore
 
-    # CPU Usage
-    try:
-        virutal_memory = psutil.virtual_memory()
-        cpu_percent = psutil.cpu_percent(interval=0.1)
-        printMainMessage(f"CPU Percentage: {round(cpu_percent, 2)}% | Memory Usage: {formatSize(virutal_memory.total-virutal_memory.available)}/{formatSize(virutal_memory.total)}")
-    except Exception as e: printErrorMessage("CPU Percentage: Error | Memory Usage: Error")
-
     # App Paths & Details
     expected_app_path, default_app_path = getInstalledAppPath()
     expected_app_paths = {}
@@ -1566,28 +1565,24 @@ if __name__ == "__main__":
                     printSuccessMessage(f"Latest Version: v{latest_vers['latest_version']}")
                     if isYes(input("> ")) == True:
                         printMainMessage("Downloading latest version..")
-                        download_update = requests.download(download_location, os.path.join(cur_path, 'Installer.zip'))
-                        if download_update.ok:
-                            printMainMessage("Download Success! Extracting ZIP now!")
-                            temp_installer_path = os.path.abspath(os.path.join(cur_path, "..", "OrangeBloxInstaller"))
-                            makedirs(temp_installer_path)
-                            zip_extract = pip_class.unzipFile(os.path.join(cur_path, "Installer.zip"), temp_installer_path, ["Main.py", "RobloxManager.py", "OrangeAPI.py", "Configuration.json", "Apps"])
-                            if zip_extract.returncode == 0:
-                                printMainMessage("Extracted successfully! Running Installer!")
-                                subprocess.run(args=[sys.executable, os.path.join(temp_installer_path, "Install.py")], check=False)
-                                os.remove("Installer.zip")
-                                shutil.rmtree(temp_installer_path)
-                                printSuccessMessage(f"Success!")
-                                sys.exit(0)
+                        with tempfile.TemporaryDirectory(prefix="OrangeBloxInstaller") as temp_dir:
+                            zip_file_path = os.path.join(temp_dir, 'Installer.zip')
+                            download_update = requests.download(download_location, zip_file_path)
+                            if download_update.ok:
+                                printMainMessage("Download Success! Extracting ZIP now!")
+                                zip_extract = pip_class.unzipFile(zip_file_path, temp_dir, ["Main.py", "RobloxManager.py", "OrangeAPI.py", "Configuration.json", "Apps"])
+                                if zip_extract.returncode == 0:
+                                    printMainMessage("Extracted successfully! Running Installer!")
+                                    subprocess.run(args=[sys.executable, os.path.join(temp_dir, "Install.py")], check=False)
+                                    printSuccessMessage(f"Success!")
+                                    sys.exit(0)
+                                else:
+                                    printMainMessage("Cleaning up files..")
+                                    printErrorMessage("Extracting ZIP File failed. Would you like to continue without updating? (y/n)")
+                                    if isYes(input("> ")) == False: sys.exit(0)
                             else:
-                                printMainMessage("Cleaning up files..")
-                                os.remove("Installer.zip")
-                                shutil.rmtree(temp_installer_path)
-                                printErrorMessage("Extracting ZIP File failed. Would you like to continue without updating? (y/n)")
+                                printErrorMessage("Downloading ZIP File failed. Would you like to continue without updating? (y/n)")
                                 if isYes(input("> ")) == False: sys.exit(0)
-                        else:
-                            printErrorMessage("Downloading ZIP File failed. Would you like to continue without updating? (y/n)")
-                            if isYes(input("> ")) == False: sys.exit(0)
                 else: printErrorMessage("There was an issue while checking for updates.")
             if overwrited == False:
                 printMainMessage("Before we continue to installing, you must follow this guide on how to navigate, so you can use for when you're using the bootstrap!")
@@ -2011,7 +2006,7 @@ if __name__ == "__main__":
                             json.dump({
                                 "installer_version": current_version["version"],
                                 "bootstrap_version": ver,
-                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py")),
+                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py"), is_text=True),
                                 "operating_system": main_os
                             }, f, indent=4)
                         printMainMessage("Uninstalling Bootstrap..")
@@ -2029,7 +2024,7 @@ if __name__ == "__main__":
                                 else:
                                     with open(os.path.join(repair_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                                     try: obfuscated_json = json.loads(obfuscated_json)
-                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+                                    except Exception as e: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
                                     main_config = obfuscated_json
                                 saveSettings(main_config, directory=os.path.join(app_location, "Configuration.json"))
                                 shutil.copy(os.path.join(repair_path, "Configuration.json"), os.path.join(app_location, "Configuration.json"))
@@ -2115,7 +2110,7 @@ if __name__ == "__main__":
                             json.dump({
                                 "installer_version": current_version["version"],
                                 "bootstrap_version": ver,
-                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py")),
+                                "script_hash": generateFileHash(os.path.join(app_location, "Main.py"), is_text=True),
                                 "operating_system": main_os
                             }, f, indent=4)
                         printMainMessage("Archiving Backup..")

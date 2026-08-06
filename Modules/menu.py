@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0i
+# v2.6.0j
 # 
 
 import Modules.config as cf
@@ -188,7 +188,7 @@ def backupAssistant():
                 else:
                     with open(os.path.join(backup_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                     try: obfuscated_json = json.loads(obfuscated_json)
-                    except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+                    except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
                     cf.main_config = obfuscated_json
                 saveSettings()
                 printMainMessage("Copying AvatarEditorMaps..")
@@ -315,7 +315,7 @@ def urlSchemeHandler():
                     continueToRoblox()
                 else: sys.exit(0)
         except BaseException as e:
-            if type(e) is SystemExit: raise e
+            if isinstance(e, SystemExit): raise e
             printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
             printErrorMessage(f"Exception: \n{trace()}")
             printErrorMessage(f"Location Code: 2")
@@ -374,7 +374,7 @@ def urlSchemeHandler():
                                 else:
                                     with open(os.path.join(backup_path, "Configuration.json"), "rb") as f: obfuscated_json = f.read()
                                     try: obfuscated_json = json.loads(obfuscated_json)
-                                    except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json).decode("utf-8", errors="ignore"))
+                                    except Exception: obfuscated_json = json.loads(zlib.decompress(obfuscated_json))
                                     cf.main_config = obfuscated_json
                                 saveSettings()
                                 printMainMessage("Copying AvatarEditorMaps..")
@@ -586,7 +586,7 @@ def mainMenu():
             elif cf.main_config.get("EFlagUpdatesAuthorizationKey", "") != "": emoji_to_define_update = "🔨"; get_updates_anyway = True; unic = "226"
             else: emoji_to_define_update = "❌"; get_updates_anyway = False; unic = "196"
             if get_updates_anyway == True:
-                if not (type(version_server) is str and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
+                if not (isinstance(version_server, str) and version_server.startswith("https://")): version_server = "https://obx.efaz.dev/Version.json"
                 try: latest_vers_res = cf.requests.get(f"{version_server}", headers={"X-Bootstrap-Version": cf.current_version["version"], "X-Python-Version": platform.python_version(), "X-Authorization-Key": cf.main_config.get("EFlagUpdatesAuthorizationKey", "")})
                 except Exception: latest_vers_res = PyKits.InstantRequestJSONResponse(ok=False)
                 if latest_vers_res.ok:
@@ -670,10 +670,10 @@ def mainMenu():
             if opt.get("studio") == True: re = opt["func"](studio=True)
             else: re = opt["func"]()
             if opt.get("go_to_rbx") == True: 
-                if type(re) is str: optionSelection(re)
+                if isinstance(re, str): optionSelection(re)
                 else: optionSelection(opt.get("end_mes"))
         except BaseException as e:
-            if type(e) is SystemExit: raise e
+            if isinstance(e, SystemExit): raise e
             printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
             printErrorMessage(f"Exception: \n{trace()}")
             printErrorMessage(f"Location Code: 1")
@@ -726,7 +726,7 @@ def optionSelection(mes=None, isRedirectedFromApp=False): # Handle Continue to R
                 try:
                     if a.get("func"): a["func"]()
                 except BaseException as e:
-                    if type(e) is SystemExit: raise e
+                    if isinstance(e, SystemExit): raise e
                     printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
                     printErrorMessage(f"Exception: \n{trace()}")
                     printErrorMessage(f"Location Code: 3")
@@ -749,7 +749,7 @@ def optionSelection(mes=None, isRedirectedFromApp=False): # Handle Continue to R
                 try:
                     if a.get("func"): a["func"]()
                 except BaseException as e:
-                    if type(e) is SystemExit: raise e
+                    if isinstance(e, SystemExit): raise e
                     printErrorMessage("Uh oh! A Python exception that causes the script to end has occurred!")
                     printErrorMessage(f"Exception: \n{trace()}")
                     printErrorMessage(f"Location Code: 3")
