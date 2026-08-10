@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "Хотите открыть (*)? (да/нет)",
  "Your FFlags have been installed to (*)!": "Ваши FFlags установлены в (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Ваши быстрые флаги были успешно сохранены в настройках быстрого флага!",
- "Return to Settings": "Вернуться в настройки"
+ "Return to Settings": "Вернуться в настройки",
+ "Allow getting Roblox game error log messages": "Разрешить получение сообщений журнала ошибок игры Roblox",
+ "Allow getting Roblox game log messages": "Разрешить получение сообщений журнала игры Roblox",
+ "Allow getting Roblox game warning log messages": "Разрешить получение сообщений журнала предупреждений игры Roblox",
+ "Exit Link Shortcuts Menu": "Выход из меню ярлыков ссылок",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Присутствие discord,clear()]: Невозможно напрямую очистить присутствие Discord! Ошибка: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Присутствие discord, close()]: Закрытое присутствие Discord!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Присутствие discord, close()]: Невозможно закрыть Discord! Ошибка: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Присутствие discord, connect()]: соединение может быть разорвано. Ошибка: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Присутствие discord, connect()]: деактивировано присутствие Discord!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Присутствие discord, connect()]: повторно активировано присутствие Discord!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Присутствие discord, connect()]: Присутствие Discord началось!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Присутствие discord, connect()]: Невозможно подключиться к Discord (1)! Ошибка: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Присутствие discord, подключение()]: Невозможно подключиться к Discord (2)! Ошибка: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Присутствие discord,generate_loop_key()]: ключ цикла сгенерирован! Ключ: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Присутствие discord, set_debug_mode()]: режим отладки включен!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Присутствие discord] Невозможно загрузить функции pypresence v4.5.0+. Исключение: (*)"
 }

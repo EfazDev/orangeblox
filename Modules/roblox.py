@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0j
+# v2.6.0k
 # 
 
 import Modules.config as cf
@@ -2131,19 +2131,19 @@ def onBloxstrapMessage(info, disableWebhook=False):
                     if cf.discord_rpc_info == None: cf.discord_rpc_info = {}
                     if isinstance(info["data"], dict):
                         if info["data"].get("clear") == True or info["data"].get("reset") == True: cf.discord_rpc_info = {}
-                        if isinstance(info["data"].get("details"), str) or isinstance(info["data"].get("details"), None): 
+                        if isinstance(info["data"].get("details"), str) or info["data"].get("details") is None: 
                             cf.discord_rpc_info["details"] = info["data"].get("details")
                             passed_data[data_names["details"]] = info["data"].get("details")
-                        if isinstance(info["data"].get("state"), str) or isinstance(info["data"].get("state"), None): 
+                        if isinstance(info["data"].get("state"), str) or info["data"].get("state") is None: 
                             cf.discord_rpc_info["state"] = info["data"].get("state")
                             passed_data[data_names["state"]] = info["data"].get("state")
-                        if isinstance(info["data"].get("timeStart"), int) or isinstance(info["data"].get("timeStart"), None) or isinstance(info["data"].get("timeStart"), float): 
+                        if isinstance(info["data"].get("timeStart"), int) or info["data"].get("timeStart") is None or isinstance(info["data"].get("timeStart"), float): 
                             cf.discord_rpc_info["start"] = info["data"].get("timeStart")
-                            if isinstance(info["data"].get("timeStart"), None): passed_data[data_names["timeStart"]] = f'None'
+                            if info["data"].get("timeStart") is None: passed_data[data_names["timeStart"]] = f'None'
                             else: passed_data[data_names["timeStart"]] = f'<t:{int(info["data"].get("timeStart"))}:R>'
-                        if isinstance(info["data"].get("timeEnd"), int) or isinstance(info["data"].get("timeEnd"), None) or isinstance(info["data"].get("timeEnd"), float): 
+                        if isinstance(info["data"].get("timeEnd"), int) or info["data"].get("timeEnd") is None or isinstance(info["data"].get("timeEnd"), float): 
                             cf.discord_rpc_info["stop"] = info["data"].get("timeEnd")
-                            if isinstance(info["data"].get("timeEnd"), None): passed_data[data_names["timeEnd"]] = f'None'
+                            if info["data"].get("timeEnd") is None: passed_data[data_names["timeEnd"]] = f'None'
                             else: passed_data[data_names["timeEnd"]] = f'<t:{int(info["data"].get("timeEnd"))}:R>'
                         def getImageUrlFromAsset(assetId):
                             url = f"https://thumbnails.roblox.com/v1/assets?assetIds={assetId}&returnPolicy=PlaceHolder&size=420x420&format=Png&isCircular=false"
@@ -2179,7 +2179,7 @@ def onBloxstrapMessage(info, disableWebhook=False):
                                 if approved_image: cf.discord_rpc_info["small_image"] = approved_image
                                 if isinstance(info["data"]["largeImage"].get("hoverText"), str): cf.discord_rpc_info["large_text"] = info["data"]["largeImage"]["hoverText"]
                                 passed_data[data_names["largeImage"]] = f'{info["data"]["largeImage"].get("hoverText", None)} | {link}'
-                        elif isinstance(info["data"].get("largeImage"), None):
+                        elif info["data"].get("largeImage") is None:
                             cf.discord_rpc_info["large_image"] = None
                             cf.discord_rpc_info["large_text"] = None
                             passed_data[data_names["largeImage"]] = f'None'
@@ -2207,7 +2207,7 @@ def onBloxstrapMessage(info, disableWebhook=False):
                                 if approved_image: cf.discord_rpc_info["small_image"] = approved_image
                                 if isinstance(info["data"]["smallImage"].get("hoverText"), str): cf.discord_rpc_info["small_text"] = info["data"]["smallImage"]["hoverText"]
                                 passed_data[data_names["smallImage"]] = f'{info["data"]["smallImage"].get("hoverText", None)} | {link}'
-                        elif isinstance(info["data"].get("smallImage"), None):
+                        elif info["data"].get("smallImage") is None:
                             cf.discord_rpc_info["small_image"] = None
                             cf.discord_rpc_info["small_text"] = None
                             passed_data[data_names["smallImage"]] = f'None'

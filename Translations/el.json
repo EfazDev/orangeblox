@@ -2709,5 +2709,21 @@
  "Would you like to open (*)? (y/n)": "Θέλετε να ανοίξετε το (*); (y/n)",
  "Your FFlags have been installed to (*)!": "Τα FFlags σας έχουν εγκατασταθεί στο (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Οι γρήγορες σημαίες σας αποθηκεύτηκαν με επιτυχία στις Ρυθμίσεις Γρήγορης Σημαίας!",
- "Return to Settings": "Επιστρέψτε στις Ρυθμίσεις"
+ "Return to Settings": "Επιστρέψτε στις Ρυθμίσεις",
+ "Allow getting Roblox game error log messages": "Να επιτρέπεται η λήψη μηνυμάτων αρχείου καταγραφής σφαλμάτων παιχνιδιού Roblox",
+ "Allow getting Roblox game log messages": "Να επιτρέπεται η λήψη μηνυμάτων αρχείου καταγραφής παιχνιδιών Roblox",
+ "Allow getting Roblox game warning log messages": "Να επιτρέπεται η λήψη μηνυμάτων αρχείου καταγραφής προειδοποίησης παιχνιδιών Roblox",
+ "Exit Link Shortcuts Menu": "Έξοδος από το μενού συντομεύσεων συνδέσμου",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Δεν είναι δυνατή η απευθείας εκκαθάριση του Discord Presence! Σφάλμα: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]: Closed Discord Presence!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Δεν μπορώ να κλείσω στο Discord! Σφάλμα: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Η σύνδεση ενδέχεται να διακοπεί. Σφάλμα: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: Απενεργοποιημένη παρουσία Discord!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Επανενεργοποιημένη παρουσία Discord!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Ξεκίνησε το Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Δεν είναι δυνατή η σύνδεση στο Discord (1)! Σφάλμα: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Δεν είναι δυνατή η σύνδεση στο Discord (2)! Σφάλμα: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Δημιουργείται κλειδί βρόχου! Κλειδί: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Η λειτουργία εντοπισμού σφαλμάτων είναι ενεργοποιημένη!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Δεν είναι δυνατή η φόρτωση των χαρακτηριστικών του pypresence v4.5.0+. Εξαίρεση: (*)"
 }

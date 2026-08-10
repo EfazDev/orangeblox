@@ -1212,7 +1212,7 @@ class pip:
         if not self.executable: return False
         if os.path.exists(self.executable) and os.path.exists(sys.executable): return os.path.samefile(self.executable, sys.executable)
         else: return False
-    def getMajorMinorVersion(self, version: str="3.14.6"): return ".".join(version.split(".")[:-1])
+    def getMajorMinorVersion(self, version: str="3.14.7"): return ".".join(version.split(".")[:-1])
 
     # Python Functions
     def getLocalAppData(self):

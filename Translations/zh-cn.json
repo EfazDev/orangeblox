@@ -2710,5 +2710,21 @@
  "Would you like to open (*)? (y/n)": "您想打开(*)吗? (是/否)",
  "Your FFlags have been installed to (*)!": "您的 FFlags 已安装到 (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "您的快速标记已成功保存到您的快速标记设置中!",
- "Return to Settings": "返回设置"
+ "Return to Settings": "返回设置",
+ "Allow getting Roblox game error log messages": "允许获取 Roblox 游戏错误日志消息",
+ "Allow getting Roblox game log messages": "允许获取 Roblox 游戏日志消息",
+ "Allow getting Roblox game warning log messages": "允许获取 Roblox 游戏警告日志消息",
+ "Exit Link Shortcuts Menu": "退出链接快捷方式菜单",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence,clear()]:无法直接清除Discord Presence!错误: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]:关闭 Discord Presence!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]:无法关闭 Discord!错误: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]:连接可能已断开.错误: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]:停用 Discord Presence!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]:重新激活 Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence,connect()]:开始 Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord 存在,connect()]:无法连接到 Discord (1)!错误: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord 存在,connect()]:无法连接到 Discord (2)!错误: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence,generate_loop_key()]:循环密钥已生成!钥匙: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence,set_debug_mode()]:调试模式已启用!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] 无法加载 pypresence v4.5.0+功能.例外: (*)"
 }

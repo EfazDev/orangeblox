@@ -2707,5 +2707,21 @@
  "Would you like to open (*)? (y/n)": "Bạn có muốn mở (*)? (có/không)",
  "Your FFlags have been installed to (*)!": "FFlags của bạn đã được cài đặt vào (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Cờ nhanh của bạn đã được lưu thành công vào Cài đặt cờ nhanh của bạn!",
- "Return to Settings": "Quay lại Cài đặt"
+ "Return to Settings": "Quay lại Cài đặt",
+ "Allow getting Roblox game error log messages": "Cho phép nhận thông báo nhật ký lỗi trò chơi Roblox",
+ "Allow getting Roblox game log messages": "Cho phép nhận thông báo nhật ký trò chơi Roblox",
+ "Allow getting Roblox game warning log messages": "Cho phép nhận thông báo nhật ký cảnh báo trò chơi Roblox",
+ "Exit Link Shortcuts Menu": "Thoát khỏi Menu Phím tắt Liên kết",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Không thể xóa Discord Presence trực tiếp! Lỗi: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Sự hiện diện của discord, close()]: Sự hiện diện của Discord đã đóng!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Không thể đóng Discord! Lỗi: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Kết nối có thể bị hỏng. Lỗi: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Sự hiện diện của discord, kết nối()]: Sự hiện diện của Discord đã bị vô hiệu hóa!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Kích hoạt lại Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Bắt đầu Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Không thể kết nối với Discord (1)! Lỗi: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Không thể kết nối với Discord (2)! Lỗi: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Khóa vòng lặp được tạo! Chìa khóa: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Sự hiện diện của discord, set_debug_mode()]: Chế độ gỡ lỗi đã được bật!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Không thể tải các tính năng của pypresence v4.5.0+. Ngoại lệ: (*)"
 }

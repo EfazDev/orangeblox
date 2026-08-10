@@ -1,31 +1,25 @@
 # 
 # OrangeBlox Discord Presence Handler 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0j
+# v2.6.0k
 # 
 
 # Modules
 import sys
 import os
 import socket
-import typing
 import tempfile
 import threading
 import logging
 import warnings
 import time
-import platform
 import uuid
-import PyKits
+import Modules.config as cf
+from Modules.printing import *
 from enum import Enum
 
 try: import pypresence
-except Exception as e: pypresence = PyKits.pip().importModule("pypresence", install_module_if_not_found=True)
-
-main_os = platform.system()
-pip_class = PyKits.pip()
-colors_class = PyKits.Colors()
-current_version: typing.Dict[str, str] = {"version": "2.6.0j"}
+except Exception as e: pypresence = cf.pip_class.importModule("pypresence", install_module_if_not_found=True)
 pypresence_version = pypresence.__version__
 
 def suppress_hook():
@@ -33,16 +27,6 @@ def suppress_hook():
     def a(): return
     sys.__excepthook__ = a
     warnings.simplefilter("ignore", ResourceWarning)
-
-def ts(mes):
-    mes = str(mes)
-    if hasattr(sys.stdout, "translate"): mes = sys.stdout.translate(mes)
-    return mes
-def printMainMessage(mes): print(colors_class.wrap(ts(mes), 255))
-def printErrorMessage(mes): print(colors_class.wrap(ts(mes), 196))
-def printSuccessMessage(mes): print(colors_class.wrap(ts(mes), 82))
-def printWarnMessage(mes): print(colors_class.wrap(ts(mes), 202))
-def printYellowMessage(mes): print(colors_class.wrap(ts(mes), 226))
 
 class StatusDisplayType(Enum):
     NAME = 0
@@ -56,17 +40,15 @@ class ActivityType(Enum):
     CUSTOM = 4
     COMPETING = 5
 class Presence(pypresence.Presence):
-    connected = False
-    discord_session_connected = False
-    current_presence = None
-    main_thread = None
-    stop_event = None
-    debug_mode = False
-    current_loop_id = None
-    default_presence = None
-    _presence = None
-
     def __init__(self, *args, **kwargs): 
+        self.connected = False
+        self.discord_session_connected = False
+        self.current_presence = None
+        self.main_thread = None
+        self.stop_event = None
+        self.debug_mode = False
+        self.current_loop_id = None
+        self.default_presence = None
         self._presence = super(Presence, self)
         self._presence.__init__(*args, **kwargs)
     def get_if_socket_is_available(self):
@@ -127,7 +109,7 @@ class Presence(pypresence.Presence):
                     self._presence.connect()
                     self.stop_event = threading.Event()
                     suppress_hook()
-                    self.printDebugMessage(f"Started Discord Presence!")
+                    printDebugMessage(f"[Discord Presence, connect()]: Started Discord Presence!")
 
                     def loop():
                         try:
@@ -140,11 +122,11 @@ class Presence(pypresence.Presence):
                                                 while True:
                                                     if self.get_if_socket_is_available() == True:
                                                         self._presence.connect()
-                                                        self.printDebugMessage(f"Reactivated Discord Presence!")
+                                                        printDebugMessage(f"[Discord Presence, connect()]: Reactivated Discord Presence!")
                                                         break
                                                     else: time.sleep(2)
                                             except Exception as e:
-                                                self.printDebugMessage(f"Connection may be broken. Error: {str(e)}")
+                                                printDebugMessage(f"[Discord Presence, connect()]: Connection may be broken. Error: {str(e)}")
                                                 time.sleep(2)
                                                 connect_attempt()
                                         connect_attempt()
@@ -155,32 +137,32 @@ class Presence(pypresence.Presence):
                                             else: self._presence.clear()
                                     except Exception as e: pass
                                 else:
-                                    if self.discord_session_connected == True: self.printDebugMessage(f"Deactivated Discord Presence!")
+                                    if self.discord_session_connected == True: printDebugMessage(f"[Discord Presence, connect()]: Deactivated Discord Presence!")
                                     self.discord_session_connected = False
                                 time.sleep(4.5)
                         except Exception as e:
-                            self.printDebugMessage(f"Unable to connect to Discord (2)! Error: {str(e)}")
+                            printDebugMessage(f"[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: {str(e)}")
                             self.discord_session_connected = False
                             try: self.close()
                             except Exception as e: pass
-                    self.main_thread = pip_class.startThread(func=loop, daemon=True)
+                    self.main_thread = cf.pip_class.startThread(func=loop, daemon=True)
                 except Exception as e:
                     # Discord may not be open, await opening loop.
-                    if not isinstance(e, pypresence.DiscordNotFound) and not isinstance(e, ConnectionRefusedError): self.printDebugMessage(f"Unable to connect to Discord (1)! Error: {str(e)}")
+                    if not isinstance(e, pypresence.DiscordNotFound) and not isinstance(e, ConnectionRefusedError): printDebugMessage(f"[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: {str(e)}")
                     if self.connected == True:
                         while (self.get_if_socket_is_available() == False and self.connected == True): time.sleep(0.5)
                         if self.connected == True: create_connection()
             self.connected = True
-            pip_class.startThread(func=create_connection, daemon=True)
+            cf.pip_class.startThread(func=create_connection, daemon=True)
             return {"success": True, "code": 0}
         else: return {"success": True, "code": 1}
     def generate_loop_key(self):
         self.current_loop_id = str(uuid.uuid4())
-        self.printDebugMessage(f"[generate_loop_key()]: Loop key is generated! Key: {self.current_loop_id}")
+        printDebugMessage(f"[Discord Presence, generate_loop_key()]: Loop key is generated! Key: {self.current_loop_id}")
         return self.current_loop_id
     def set_debug_mode(self, enabled: bool):
         self.debug_mode = enabled==True
-        self.printDebugMessage(f"[set_debug_mode()]: Debug Mode is enabled!")
+        printDebugMessage(f"[Discord Presence, set_debug_mode()]: Debug Mode is enabled!")
     def update(self, *args, **kwargs):
         if self.connected == True:
             kwargs = self.update_kwargs(kwargs)
@@ -215,7 +197,7 @@ class Presence(pypresence.Presence):
             except Exception as e:
                 if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
                 if kwargs.get("activity_type") != None: kwargs.pop("activity_type")
-                self.printDebugMessage(f"Unable to load pypresence v4.5.0+ features. Exception: {str(e)}")
+                printDebugMessage(f"[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: {str(e)}")
         else:
             if kwargs.get("status_display_type") != None: kwargs.pop("status_display_type")
             if kwargs.get("activity_type") != None: kwargs.pop("activity_type")
@@ -236,8 +218,8 @@ class Presence(pypresence.Presence):
                 try:
                     self._presence.close()
                     self.discord_session_connected = False
-                    self.printDebugMessage(f"[close()]: Closed Discord Presence!")
-                except Exception as e: self.printDebugMessage(f"[close()]: Unable to close to Discord! Error: {str(e)}")
+                    printDebugMessage(f"[Discord Presence, close()]: Closed Discord Presence!")
+                except Exception as e: printDebugMessage(f"[Discord Presence, close()]: Unable to close to Discord! Error: {str(e)}")
             self.current_presence = None
             self.current_loop_id = None
             return {"success": True, "code": 0}
@@ -247,11 +229,9 @@ class Presence(pypresence.Presence):
             try:
                 if self.default_presence == None and self.discord_session_connected == True: self._presence.clear(*args, **kwargs)
                 elif self.discord_session_connected == True: self._presence.update(**(self.default_presence))
-            except Exception as e: self.printDebugMessage(f"[clear()]: Unable to clear Discord Presence directly! Error: {str(e)}")
+            except Exception as e: printDebugMessage(f"[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: {str(e)}")
             self.current_presence = self.default_presence
             self.current_loop_id = None
             return {"success": True, "code": 0}
         else: return {"success": False, "code": 1}
     def presence_class(self): return self._presence
-    def printDebugMessage(self, mes):
-        if self.debug_mode == True: print(colors_class.wrap(f"[Discord Presence] [DEBUG]: {ts(mes)}", 226))

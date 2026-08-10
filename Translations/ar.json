@@ -2715,5 +2715,21 @@
  "Would you like to open (*)? (y/n)": "هل ترغب في فتح (*)؟ (ص/ن)",
  "Your FFlags have been installed to (*)!": "لقد تم تثبيت FFlags الخاص بك على (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "تم حفظ إشاراتك السريعة بنجاح في إعدادات Fast Flag الخاصة بك!",
- "Return to Settings": "العودة إلى الإعدادات"
+ "Return to Settings": "العودة إلى الإعدادات",
+ "Allow getting Roblox game error log messages": "السماح بالحصول على رسائل سجل أخطاء لعبة Roblox",
+ "Allow getting Roblox game log messages": "السماح بالحصول على رسائل سجل لعبة Roblox",
+ "Allow getting Roblox game warning log messages": "السماح بالحصول على رسائل سجل تحذير لعبة Roblox",
+ "Exit Link Shortcuts Menu": "الخروج من قائمة اختصارات الارتباط",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[وجود discord، واضح ()]: غير قادر على مسح وجود Discord مباشرة! خطأ: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[حضور الديسكورد، إغلاق ()]: حضور ديسكورد مغلق!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[وجود discord، إغلاق ()]: غير قادر على إغلاق Discord! خطأ: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[وجود discord، الاتصال ()]: قد يكون الاتصال مقطوعًا. خطأ: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[وجود الديسكورد، الاتصال ()]: تم تعطيل حضور الديسكورد!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[وجود الديسكورد، الاتصال ()]: إعادة تنشيط تواجد الديسكورد!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[وجود الديسكورد، الاتصال ()]: بدء حضور الديسكورد!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[وجود discord، الاتصال ()]: غير قادر على الاتصال بـ Discord (1)! خطأ: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[وجود discord، الاتصال ()]: غير قادر على الاتصال بـ Discord (2)! خطأ: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[وجود discord، generator_loop_key()]: يتم إنشاء مفتاح الحلقة! مفتاح: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[وجود discord، set_debug_mode()]: تم تمكين وضع التصحيح!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[وجود discord] غير قادر على تحميل ميزات pypresence v4.5.0+. استثناء: (*)"
 }

@@ -2709,5 +2709,21 @@
  "Would you like to open (*)? (y/n)": "(*)を開きますか? (はい/いいえ)",
  "Your FFlags have been installed to (*)!": "FFlags は (*)にインストールされました..",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "高速フラグが高速フラグ設定に正常に保存されました..",
- "Return to Settings": "設定に戻る"
+ "Return to Settings": "設定に戻る",
+ "Allow getting Roblox game error log messages": "Roblox ゲームエラーログメッセージの取得を許可する",
+ "Allow getting Roblox game log messages": "Roblox ゲームログメッセージの取得を許可する",
+ "Allow getting Roblox game warning log messages": "Roblox ゲーム警告ログ メッセージの取得を許可する",
+ "Exit Link Shortcuts Menu": "リンクのショートカット メニューを終了する",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord プレゼンス,clear()]: Discord プレゼンスを直接クリアできません.エラー: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord プレゼンス,close()]: Discord プレゼンスを閉じました!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord の存在,close()]: Discord を閉じることができません.エラー: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: 接続が切断された可能性があります.エラー: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord プレゼンス,connect()]: Discord プレゼンスが無効になりました!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord プレゼンス,connect()]: Discord プレゼンスが再アクティブ化されました!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Discord Presenceを始めました!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord の存在,connect()]: Discord (1) に接続できません!エラー: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord の存在,connect()]: Discord (2) に接続できません!エラー: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence,generate_loop_key()]: ループキーが生成されました!鍵: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence,set_debug_mode()]: デバッグモードが有効になりました!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+の機能をロードできません.例外: (*)"
 }

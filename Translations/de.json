@@ -2709,5 +2709,21 @@
  "Would you like to open (*)? (y/n)": "Möchten Sie (*)öffnen? (j/n)",
  "Your FFlags have been installed to (*)!": "Ihre FFlags wurden auf (*)installiert!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Ihre Fast Flags wurden erfolgreich in Ihren Fast Flag-Einstellungen gespeichert!",
- "Return to Settings": "Kehren Sie zu den Einstellungen zurück"
+ "Return to Settings": "Kehren Sie zu den Einstellungen zurück",
+ "Allow getting Roblox game error log messages": "Erlauben Sie den Erhalt von Roblox-Spielfehlerprotokollmeldungen",
+ "Allow getting Roblox game log messages": "Erlauben Sie den Erhalt von Roblox-Spielprotokollmeldungen",
+ "Allow getting Roblox game warning log messages": "Erlauben Sie den Erhalt von Warnmeldungen im Roblox-Spielprotokoll",
+ "Exit Link Shortcuts Menu": "Link-Shortcuts-Menü verlassen",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Discord Presence kann nicht direkt gelöscht werden! Fehler: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]: Discord Presence geschlossen!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Discord kann nicht geschlossen werden! Fehler: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Die Verbindung ist möglicherweise unterbrochen. Fehler: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: Discord Presence deaktiviert!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Discord Presence reaktiviert!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Discord Presence gestartet!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Es konnte keine Verbindung zu Discord (1) hergestellt werden! Fehler: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Es konnte keine Verbindung zu Discord (2) hergestellt werden! Fehler: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generic_loop_key()]: Loop-Schlüssel wird generiert! Schlüssel: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Debug-Modus ist aktiviert!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Funktionen von Pypresence v4.5.0+können nicht geladen werden. Ausnahme: (*)"
 }

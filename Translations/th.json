@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "คุณต้องการเปิด (*)หรือไม่? (มี/ไม่มี)",
  "Your FFlags have been installed to (*)!": "FFlags ของคุณได้รับการติดตั้งไปที่ (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "การตั้งค่าสถานะด่วนของคุณได้รับการบันทึกลงในการตั้งค่าสถานะด่วนของคุณเรียบร้อยแล้ว!",
- "Return to Settings": "กลับไปที่การตั้งค่า"
+ "Return to Settings": "กลับไปที่การตั้งค่า",
+ "Allow getting Roblox game error log messages": "อนุญาตให้รับข้อความบันทึกข้อผิดพลาดของเกม Roblox",
+ "Allow getting Roblox game log messages": "อนุญาตให้รับข้อความบันทึกเกม Roblox",
+ "Allow getting Roblox game warning log messages": "อนุญาตให้รับข้อความบันทึกคำเตือนเกม Roblox",
+ "Exit Link Shortcuts Menu": "ออกจากเมนูทางลัดลิงก์",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[สถานะ discord, clear()]: ไม่สามารถล้างสถานะ Discord ได้โดยตรง! ข้อผิดพลาด: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[การแสดงตนที่ไม่ลงรอยกัน, ปิด()]: การแสดงตนที่ไม่ลงรอยกันแบบปิด!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[สถานะ discord, ปิด()]: ไม่สามารถปิด Discord ได้! ข้อผิดพลาด: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[การแสดงตนที่ไม่ลงรอยกัน เชื่อมต่อ()]: การเชื่อมต่ออาจขาดหาย ข้อผิดพลาด: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[การแสดงตนที่ไม่ลงรอยกัน เชื่อมต่อ()]: ปิดการใช้งานการแสดงตนความไม่ลงรอยกัน!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[สถานะ discord, เชื่อมต่อ()]: เปิดใช้งานสถานะ Discord อีกครั้ง!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[การแสดงตนที่ไม่ลงรอยกัน เชื่อมต่อ()]: เริ่มการแสดงตนที่ไม่ลงรอยกัน!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[สถานะ discord, เชื่อมต่อ()]: ไม่สามารถเชื่อมต่อกับ Discord (1) ได้! ข้อผิดพลาด: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[สถานะ discord, เชื่อมต่อ()]: ไม่สามารถเชื่อมต่อกับ Discord (2) ได้! ข้อผิดพลาด: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: สร้างลูปคีย์แล้ว! สำคัญ: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[การแสดงตนที่ไม่ลงรอยกัน, set_debug_mode()]: เปิดใช้งานโหมดแก้ไขข้อบกพร่องแล้ว!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] ไม่สามารถโหลดฟีเจอร์ pypresence v4.5.0+ได้ ข้อยกเว้น: (*)"
 }

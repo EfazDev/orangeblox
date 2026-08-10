@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0j
+# v2.6.0k
 # 
 
 import Modules.config as cf
@@ -927,7 +927,7 @@ def continueToLinkShortcuts(url_scheme=None): # Link Shortcuts
             if has_cookies == True and cf.main_config.get("EFlagRobloxSecurityCookieUsage") == True: generated_ui_options.append({"index": 1000004, "message": ts("Validate cookie shortcuts")})
             generated_ui_options.append({"index": 1000005, "message": ts("Delete a shortcut")})
             generated_ui_options = sorted(generated_ui_options, key=lambda x: x["index"])
-            opt = generateMenuSelection(generated_ui_options)
+            opt = generateMenuSelection(generated_ui_options, star_option=ts("Exit Link Shortcuts Menu"))
             if opt:
                 if opt["index"] == 1000000:
                     def loo():

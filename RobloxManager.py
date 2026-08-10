@@ -1,7 +1,7 @@
 # 
 # Roblox Manager
 # Made by Efaz from efaz.dev
-# v2.7.5
+# v2.7.6
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -33,7 +33,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.7.5"
+script_version = "2.7.6"
 
 # Base Functions 1
 def getLocalAppData():
@@ -109,6 +109,9 @@ if sys.version_info >= (3, 8, 0):
         "onGameLog",
         "onGameError",
         "onGameWarning",
+        "onRobloxOutput",
+        "onRobloxError",
+        "onRobloxWarning",
         "onRobloxVoiceChatMute",
         "onRobloxVoiceChatUnmute",
         "onRobloxVoiceChatStart",
@@ -215,6 +218,9 @@ roblox_player_event_names = [
     "onGameLog",
     "onGameError",
     "onGameWarning",
+    "onRobloxOutput",
+    "onRobloxError",
+    "onRobloxWarning",
     "onRobloxVoiceChatMute",
     "onRobloxVoiceChatUnmute",
     "onRobloxVoiceChatStart",
@@ -252,6 +258,9 @@ roblox_studio_event_names = [
     "onGameLog",
     "onGameError",
     "onGameWarning",
+    "onRobloxOutput",
+    "onRobloxError",
+    "onRobloxWarning",
     "onTelemetryLog",
     "onRobloxAppStart",
     "onOtherRobloxLog",
@@ -287,9 +296,12 @@ roblox_event_info = {
     "onRobloxCrash": {"message": ts("Allow detecting when Roblox crashes"), "level": 1, "robloxEvent": True},
     "onRobloxChannel": {"message": ts("Allow detecting the current Roblox channel"), "level": 0, "robloxEvent": True},
     "onRobloxTerminateInstance": {"message": ts("Allow detecting when Roblox closes an extra window."), "level": 1, "robloxEvent": True},
-    "onGameLog": {"message": ts("Allow getting Roblox log messages"), "level": 2, "robloxEvent": True}, 
-    "onGameWarning": {"message": ts("Allow getting Roblox warning log messages"), "level": 2, "robloxEvent": True}, 
-    "onGameError": {"message": ts("Allow getting Roblox error log messages"), "level": 2, "robloxEvent": True}, 
+    "onGameLog": {"message": ts("Allow getting Roblox game log messages"), "level": 2, "robloxEvent": True}, 
+    "onGameWarning": {"message": ts("Allow getting Roblox game warning log messages"), "level": 2, "robloxEvent": True}, 
+    "onGameError": {"message": ts("Allow getting Roblox game error log messages"), "level": 2, "robloxEvent": True}, 
+    "onRobloxOutput": {"message": ts("Allow getting Roblox log messages"), "level": 2, "robloxEvent": True}, 
+    "onRobloxWarning": {"message": ts("Allow getting Roblox warning log messages"), "level": 2, "robloxEvent": True}, 
+    "onRobloxError": {"message": ts("Allow getting Roblox error log messages"), "level": 2, "robloxEvent": True}, 
     "onGameStart": {"message": ts("Allow getting Job ID, Place ID and Roblox IP"), "level": 2, "robloxEvent": True}, 
     "onGameLoading": {"message": ts("Allow detecting when loading any server"), "level": 1, "robloxEvent": True}, 
     "onGameLoadingNormal": {"message": ts("Allow detecting when loading public server"), "level": 1, "robloxEvent": True}, 
@@ -712,7 +724,7 @@ class RobloxInstance():
                 event = "onPlayTestStart" if self.is_studio else "onGameStart"
                 self.submitEvent(event, data, isLine=False)
                 if not self.is_studio: self.connected_to_game = True
-        elif "[FLog::Output] [BloxstrapRPC]" in line:
+        elif "[FLog::CreatorOutput] [BloxstrapRPC]" in line:
             json_str = line.split('[BloxstrapRPC] ')[-1].strip()
             try: self.submitEvent("onBloxstrapSDK", json.loads(json_str), isLine=False)
             except json.JSONDecodeError as e:
@@ -782,9 +794,9 @@ class RobloxInstance():
                 self.submitEvent("onRobloxSharedLogLaunch", data=line)
                 return WatchdogLineResponse.ReconnectOrCloseWatchdog()
             else: self.submitEvent("onRobloxLauncherDestroyed", data=line)
-        elif "[FLog::Output]" in line and "Calling mi_collect" not in line: self.submitEvent("onGameLog", line.split('[FLog::Output] ')[-1].strip(), isLine=False)
-        elif "[FLog::Error]" in line and "Redundant Flag ID:" not in line: self.submitEvent("onGameError", line.split('[FLog::Error] ')[-1].strip(), isLine=False)
-        elif "[FLog::Warning]" in line and "WebLogin authentication" not in line and "fetch flag exception" not in line: self.submitEvent("onGameWarning", line.split('[FLog::Warning] ')[-1].strip(), isLine=False)
+        elif "[FLog::CreatorOutput]" in line: self.submitEvent("onGameLog", line.split('[FLog::CreatorOutput] ')[-1].strip(), isLine=False)
+        elif "[FLog::CreatorError]" in line: self.submitEvent("onGameError", line.split('[FLog::CreatorError] ')[-1].strip(), isLine=False)
+        elif "[FLog::CreatorWarning]" in line: self.submitEvent("onGameWarning", line.split('[FLog::CreatorWarning] ')[-1].strip(), isLine=False)
         elif self.is_studio:
             if "[FLog::TeamCreateJoinPayload] Joining game" in line:
                 match = self.REGEX_TEAM_CREATE.search(line)
@@ -837,6 +849,9 @@ class RobloxInstance():
                     self.disconnect_cooldown = True
                     pip_class.delayedThread(func=lambda: setattr(self, 'disconnect_cooldown', False), time=3)
                     self.submitEvent("onPlayTestDisconnected", None, isLine=False)
+            elif "[FLog::Output]" in line and "Calling mi_collect" not in line: self.submitEvent("onRobloxOutput", line.split('[FLog::Output] ')[-1].strip(), isLine=False)
+            elif "[FLog::Error]" in line and "Redundant Flag ID:" not in line: self.submitEvent("onRobloxError", line.split('[FLog::Error] ')[-1].strip(), isLine=False)
+            elif "[FLog::Warning]" in line and "WebLogin authentication" not in line and "fetch flag exception" not in line: self.submitEvent("onRobloxWarning", line.split('[FLog::Warning] ')[-1].strip(), isLine=False)
             else: self.submitEvent("onOtherRobloxLog", data=line, isLine=True)
         else:
             if "GameJoinUtil::initiateTeleportToPlace" in line:
@@ -899,6 +914,9 @@ class RobloxInstance():
             elif "Roblox::terminateWaiter" in line: self.submitEvent("onRobloxTerminateInstance", data=line, isLine=True)
             elif "[FLog::AudioFocusManager] AudioFocusManager::AudioFocusManager() constructor" in line: self.audio_focused = True
             elif "[FLog::Warning] WebLogin authentication is failed" in line or "[FLog::Warning] (RobloxPlayerAppDelegate) WebLogin authentication failure" in line or "[FLog::Error] fetch flag exception:" in line: self.submitEvent("onRobloxAppLoginFailed", data=line, isLine=True)
+            elif "[FLog::Output]" in line and "Calling mi_collect" not in line: self.submitEvent("onRobloxOutput", line.split('[FLog::Output] ')[-1].strip(), isLine=False)
+            elif "[FLog::Error]" in line and "Redundant Flag ID:" not in line: self.submitEvent("onRobloxError", line.split('[FLog::Error] ')[-1].strip(), isLine=False)
+            elif "[FLog::Warning]" in line and "WebLogin authentication" not in line and "fetch flag exception" not in line: self.submitEvent("onRobloxWarning", line.split('[FLog::Warning] ')[-1].strip(), isLine=False)
             else: self.submitEvent("onOtherRobloxLog", data=line, isLine=True)     
         return WatchdogLineResponse.NormalResponse()
     def submitEvent(self, eventName: str="onUnknownEvent", data: typing.Any=None, isLine: bool=True):
@@ -1536,18 +1554,20 @@ class Handler:
                     if submit_status: submit_status.submit("[BUNDLE] Fetching Package Manifest..", 30)
                     printDebugMessage(debug, f"Fetching Latest Package Manifest from Roblox's servers..")
                     rbx_manifest_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxPkgManifest.txt'
-                    rbx_hashes_link = f'https://{self.getBestRobloxDownloadServer()}/{starter_url}{cur_vers.get("client_version")}-rbxManifest.txt'
                     rbx_man_req = requests.get(rbx_manifest_link)
-                    rbx_hashes_link = requests.get(rbx_hashes_link)
                     if not rbx_man_req.ok:
                         printDebugMessage(debug, f"Unable to download Roblox manifest due to an http error. Code: {rbx_man_req.status_code}")
                         if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to fetch Roblox manifest file!", 100)
                         if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                         return {"success": False}
                     rbx_lines = rbx_man_req.text.splitlines()
-                    marked_install_files = [line for line in rbx_lines if line and not line.isdigit() and not re.fullmatch(r'[a-fA-F0-9]{32}', line) and line != "v0"]
-                    rbx_hashes_res = rbx_hashes_link.text.strip().split("\n")
-                    rbx_hash_dict = {rbx_hashes_res[i].strip(): rbx_hashes_res[i + 1].strip() for i in range(0, len(rbx_hashes_res), 2)}
+                    marked_install_files = []
+                    rbx_hash_dict = {}
+                    for i, line in enumerate(rbx_lines):
+                        line = line.strip()
+                        if line and line != "v0" and not line.isdigit() and not re.fullmatch(r'[a-fA-F0-9]{32}', line):
+                            marked_install_files.append(line)
+                            if i + 1 < len(rbx_lines): rbx_hash_dict[line] = rbx_lines[i + 1].strip()
                     if submit_status: submit_status.submit("[BUNDLE] Downloading Packages..", 40)
                     downloaded_zip_files = []
                     def download_install_file(args):
@@ -1558,19 +1578,24 @@ class Handler:
                         down_req = requests.download(file_url, dest_path)
                         if down_req.ok: return file_name
                         return None
+                    status_count_1 = 0
                     max_workers = min(6, len(marked_install_files))
                     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
                         futures = {executor.submit(download_install_file, (i, fn)): fn for i, fn in enumerate(marked_install_files, 1)}
                         for future in concurrent.futures.as_completed(futures):
                             res = future.result()
-                            if res: downloaded_zip_files.append(res)
+                            if res: 
+                                downloaded_zip_files.append(res)
+                                status_count_1 += 1 
+                                if submit_status: submit_status.submit(f"[BUNDLE] Downloading Packages.. ({status_count_1}/{len(marked_install_files)})", 40 + int((status_count_1 / len(marked_install_files)) * 10))
                             else: 
                                 printErrorMessage("Unable to install Roblox due to a download error.")
                                 if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to install Roblox due to a download error.", 80)
                                 if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                 return {"success": False}
                     if verify:
-                        if submit_status: submit_status.submit("[BUNDLE] Verifying Packages..", 0)
+                        status_count_2 = 0
+                        if submit_status: submit_status.submit("[BUNDLE] Verifying Packages..", 50)
                         def verify_single_file(file_name):
                             expected_hash = rbx_hash_dict.get(file_name)
                             if expected_hash:
@@ -1585,8 +1610,13 @@ class Handler:
                                     if submit_status: submit_status.submit(f"{submit_status.error()}[BUNDLE] Unable to install Roblox due to a verification error.", 80)
                                     if os.path.exists(installPath): shutil.rmtree(installPath, ignore_errors=True)
                                     return {"success": False}
-                    if submit_status: submit_status.submit(f"[BUNDLE] Installing Packages..", 0)
+                                else:
+                                    status_count_2 += 1
+                                    if submit_status: submit_status.submit(f"[BUNDLE] Verifying Packages.. ({status_count_2}/{len(downloaded_zip_files)})", 50 + int((status_count_2 / len(downloaded_zip_files)) * 10))
+                    if submit_status: submit_status.submit(f"[BUNDLE] Installing Packages..", 60)
+                    status_count_3  = 0
                     def extract_install_file(file_name):
+                        nonlocal status_count_3
                         export_destination = "/"
                         if studio and roblox_studio_bundle_files.get(file_name): export_destination = roblox_studio_bundle_files.get(file_name)
                         elif not studio and roblox_bundle_files.get(file_name): export_destination = roblox_bundle_files.get(file_name)
@@ -1597,6 +1627,8 @@ class Handler:
                             zip_extract = pip_class.unzipFile(zip_path, target_dir)
                             if zip_extract.returncode == 0: os.path.exists(zip_path) and os.remove(zip_path)
                         if file_name == "WebView2RuntimeInstaller.zip": self.installWebView2Runtime(os.path.join(installPath, "WebView2RuntimeInstaller", "MicrosoftEdgeWebview2Setup.exe"), debug=debug)
+                        status_count_3 += 1
+                        if submit_status: submit_status.submit(f"[BUNDLE] Installing Packages.. ({status_count_3}/{len(downloaded_zip_files)})", 60 + int((status_count_3 / len(downloaded_zip_files)) * 40))
                         return True
                     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
                         futures = [executor.submit(extract_install_file, fn) for fn in downloaded_zip_files]
@@ -2082,6 +2114,7 @@ class Handler:
             base_dir = macOS_studioDir if studio else macOS_dir
             client_settings_dir = os.path.join(base_dir, macOS_beforeClientServices, "ClientSettings")
             settings_file = os.path.join(client_settings_dir, "ClientAppSettings.json")
+            roblox_dir = os.path.join(base_dir, macOS_beforeClientServices)
         elif self.__main_os__ == "Windows":
             roblox_dir = self.getRobloxInstallFolder(studio=studio)
             if not roblox_dir: return {}

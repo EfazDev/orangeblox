@@ -1,7 +1,7 @@
 # 
 # OrangeBlox 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0j
+# v2.6.0k
 # 
 
 # Python Modules
@@ -27,7 +27,7 @@ import webbrowser
 import PyKits
 
 # Variables
-current_version = {"version": "2.6.0j"}
+current_version = {"version": "2.6.0k"}
 main_os = platform.system()
 args = sys.argv
 generated_app_id = os.urandom(3).hex()
@@ -184,6 +184,7 @@ flag_types = {
     "EFlagCustomBootstrapIconPath": "path",
     "EFlagUseEfazDevAPI": "bool"
 }
+embedded_signatures = {"OrangeAPI.py": "b513767b647fa2fdc0a8b8a816f404de6bb17e0665588e8797e240c2e05f77af", "PyKits.py": "181b982c486fcf913a9eb4fd1002e092418f5f972a6afdff6255566b8c1c890c", "RobloxManager.py": "7e5cf1e7c87afc99683229ea084b5ada8ecc6d2c94f9c1ef4e6a2e6eed991648", "Install.py": "0cd23cc5cd12be29a2e4293b863a2b066eda3394639dbc6d8edf8fa2a2bbbdf6", "Main.py": "1fa502de4370c36a5ff13d20771cee28149bd06b2324dd464757b5a06fb2fb56", "Modules/modmanager.py": "aa0e25945c3db93f49773186c29c9ad1d3d8061965e31c67d434d5daa5b18df0", "Modules/options.py": "644057b781861fcce2101b0fd1adb973174b4b48e554b823c544f4bfffdc124c", "Modules/startup.py": "4c3b6f3953aeca489259524d5068b6f83a4ed22ab48f68a6e233f7b7c72aa059", "Modules/config.py": "1e6c2532c10422e50acfaee044ce9601b19a19d577496e64b807b752b0eb1184", "Modules/modscripts.py": "10ced77f9a15fa4deb39fe7c5ccd44afe7d4d009c689ffb020cfddb29de41409", "Modules/discord.py": "a1a7a9f3177a23c10df48dcfd14938fcae0324a3a584806b0a0d75c4e95d9480", "Modules/roblox.py": "febbfdcdfe5d035a2a7c8986d7370bdc8bb2ceb64f21b7532716a61bbc622ac2", "Modules/menu.py": "d993ac77685f61c7a2916e21d4507f1923a21a578b5dbafb7ba21909938ae44d", "Modules/utils.py": "f8ceaba0eca97cf33480127e27c42f8576c51ebf554c557bd9d1a7a8f0bca394", "Modules/settings.py": "1eb605b5c979d03e227784724bee8109a806c3fa9e56e6bcf6832012b7db8bce", "Modules/pkg.py": "37aef07b696822ac9f47d46cb19308079a6f913b11cdf817be0bb1a6823d6be6", "Modules/printing.py": "2755ee709dfa2321b3b22ebacdcf327db1fe7f4706baa0a840167ace9a2fdd2a"} # Embedded Signatures for Python Scripts
 main_config = {}
 
 def ts(mes):
@@ -369,6 +370,7 @@ if __name__ == "__main__":
 
     with open(os.path.join(os.path.dirname(__file__), "Version.json"), "r", encoding="utf-8") as f:
         current_version = json.load(f)
+        current_version["hashes"] = embedded_signatures
         f.close()
 
     if main_os == "Darwin":

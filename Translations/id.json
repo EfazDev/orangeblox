@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "Apakah Anda ingin membuka (*)? (y/n)",
  "Your FFlags have been installed to (*)!": "FFlags Anda telah diinstal ke (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Bendera cepat Anda berhasil disimpan ke dalam Pengaturan Bendera Cepat Anda!",
- "Return to Settings": "Kembali ke Pengaturan"
+ "Return to Settings": "Kembali ke Pengaturan",
+ "Allow getting Roblox game error log messages": "Izinkan menerima pesan log kesalahan game Roblox",
+ "Allow getting Roblox game log messages": "Izinkan menerima pesan log game Roblox",
+ "Allow getting Roblox game warning log messages": "Izinkan menerima pesan log peringatan game Roblox",
+ "Exit Link Shortcuts Menu": "KeLuar dari Menu Pintasan Tautan",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Kehadiran perselisihan, hapus()]: Tidak dapat menghapus Kehadiran Perselisihan secara langsung! Kesalahan: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Kehadiran perselisihan, tutup()]: Kehadiran Perselisihan Tertutup!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Kehadiran discord, close()]: Tidak dapat menutup Discord! Kesalahan: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Kehadiran perselisihan, sambungkan()]: Koneksi mungkin terputus. Kesalahan: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Kehadiran perselisihan, sambungkan()]: Kehadiran Perselisihan yang Dinonaktifkan!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Kehadiran perselisihan, sambungkan()]: Kehadiran Perselisihan yang Diaktifkan Kembali!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Kehadiran perselisihan, sambungkan()]: Memulai Kehadiran Perselisihan!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Kehadiran discord, sambungkan()]: Tidak dapat terhubung ke Discord (1)! Kesalahan: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Kehadiran discord, sambungkan()]: Tidak dapat terhubung ke Discord (2)! Kesalahan: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Kehadiran perselisihan, generate_loop_key()]: Kunci loop dibuat! Kunci: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Kehadiran perselisihan, set_debug_mode()]: Mode Debug diaktifkan!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Kehadiran perselisihan] Tidak dapat memuat fitur pypresence v4.5.0+. Pengecualian: (*)"
 }

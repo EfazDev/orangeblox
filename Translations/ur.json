@@ -2707,5 +2707,21 @@
  "Would you like to open (*)? (y/n)": "کیا آپ (*)کھولنا چاہیں گے؟ (y/n)",
  "Your FFlags have been installed to (*)!": "آپ کے FFlags کو (*)پر انسٹال کر دیا گیا ہے!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "آپ کے تیز جھنڈوں کو کامیابی کے ساتھ آپ کی تیز پرچم کی ترتیبات میں محفوظ کر لیا گیا تھا!",
- "Return to Settings": "ترتیبات پر واپس جائیں۔"
+ "Return to Settings": "ترتیبات پر واپس جائیں۔",
+ "Allow getting Roblox game error log messages": "روبلوکس گیم ایرر لاگ میسجز حاصل کرنے کی اجازت دیں۔",
+ "Allow getting Roblox game log messages": "روبلوکس گیم لاگ پیغامات حاصل کرنے کی اجازت دیں۔",
+ "Allow getting Roblox game warning log messages": "روبلوکس گیم انتباہی لاگ پیغامات حاصل کرنے کی اجازت دیں۔",
+ "Exit Link Shortcuts Menu": "لنک شارٹ کٹ مینو سے باہر نکلیں۔",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence، clear()]: Discord Presence کو براہ راست صاف کرنے سے قاصر! خرابی: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]: بند ڈسکارڈ کی موجودگی!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[ڈسکارڈ کی موجودگی، بند()]: ڈسکارڈ کو بند کرنے سے قاصر! خرابی: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: کنکشن ٹوٹ سکتا ہے۔ خرابی: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: غیر فعال ڈسکارڈ کی موجودگی!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Reactivated Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Discord Presence شروع کیا!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Discord (1) سے جڑنے سے قاصر! خرابی: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord (2) سے جڑنے سے قاصر! خرابی: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: لوپ کی بنی ہوئی ہے! کلید: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: ڈیبگ موڈ فعال ہے!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+خصوصیات لوڈ کرنے سے قاصر۔ استثناء: (*)"
 }

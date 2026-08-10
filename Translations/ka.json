@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "Გსურთ გახსნათ (*)? (y/n)",
  "Your FFlags have been installed to (*)!": "Თქვენი FFlags დაინსტალირებულია (*)-ზე!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Თქვენი სწრაფი დროშები წარმატებით იქნა შენახული თქვენს სწრაფი დროშის პარამეტრებში!",
- "Return to Settings": "Დაუბრუნდით პარამეტრებს"
+ "Return to Settings": "Დაუბრუნდით პარამეტრებს",
+ "Allow getting Roblox game error log messages": "Roblox თამაშის შეცდომების ჟურნალის შეტყობინებების მიღების დაშვება",
+ "Allow getting Roblox game log messages": "Roblox თამაშის ჟურნალის შეტყობინებების მიღების დაშვება",
+ "Allow getting Roblox game warning log messages": "Roblox თამაშის გამაფრთხილებელი ჟურნალის შეტყობინებების მიღების დაშვება",
+ "Exit Link Shortcuts Menu": "Ბმულის მალსახმობების მენიუდან გასვლა",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: უშუალოდ Discord Presence-ის გასუფთავება შეუძლებელია! შეცდომა: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]: Closed Discord Presence!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Discord-ის დახურვა შეუძლებელია! შეცდომა: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: კავშირი შეიძლება გატეხილი იყოს. შეცდომა: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: გამორთულია Discord Presence!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: ხელახლა გააქტიურებულია Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: დაიწყო Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Discord (1)-თან დაკავშირება შეუძლებელია! შეცდომა: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord (2)-თან დაკავშირება შეუძლებელია! შეცდომა: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: ციკლის გასაღები გენერირებულია! გასაღები: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: გამართვის რეჟიმი ჩართულია!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+ფუნქციების ჩატვირთვა შეუძლებელია. გამონაკლისი: (*)"
 }

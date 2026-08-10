@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "(*)açmak ister misiniz? (y/n)",
  "Your FFlags have been installed to (*)!": "FFlag'leriniz (*)'a kuruldu!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Hızlı bayraklarınız, Hızlı Bayrak Ayarlarınıza başarıyla kaydedildi!",
- "Return to Settings": "Ayarlar'a dön"
+ "Return to Settings": "Ayarlar'a dön",
+ "Allow getting Roblox game error log messages": "Roblox oyun hata günlüğü mesajlarının alınmasına izin ver",
+ "Allow getting Roblox game log messages": "Roblox oyun günlüğü mesajlarının alınmasına izin ver",
+ "Allow getting Roblox game warning log messages": "Roblox oyun uyarı günlüğü mesajlarının alınmasına izin ver",
+ "Exit Link Shortcuts Menu": "Bağlantı Kısayolları Menüsünden Çık",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Discord Presence doğrudan temizlenemiyor! Hata: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord durumu, kapat()]: Kapalı Discord Durumu!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Discord kapatılamıyor! Hata: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Bağlantı kopmuş olabilir. Hata: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: Discord Presence Devre Dışı Bırakıldı!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Discord Presence yeniden etkinleştirildi!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Discord Presence'ı başlattı!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Discord'a (1) bağlanılamıyor! Hata: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord'a (2) bağlanılamıyor! Hata: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, created_loop_key()]: Döngü anahtarı oluşturuldu! Anahtar: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Hata Ayıklama Modu etkin!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Pypresence v4.5.0+özellikleri yüklenemiyor. İstisna: (*)"
 }

@@ -2709,5 +2709,21 @@
  "Would you like to open (*)? (y/n)": "Gusto mo bang buksan ang (*)? (y/n)",
  "Your FFlags have been installed to (*)!": "Ang iyong mga FFlag ay na-install sa (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Matagumpay na na-save ang iyong mga mabilis na flag sa iyong Mga Setting ng Mabilis na Flag!",
- "Return to Settings": "Bumalik sa Mga Setting"
+ "Return to Settings": "Bumalik sa Mga Setting",
+ "Allow getting Roblox game error log messages": "Payagan ang pagkuha ng mga mensahe ng log ng error sa laro ng Roblox",
+ "Allow getting Roblox game log messages": "Payagan ang pagkuha ng mga mensahe ng log ng laro ng Roblox",
+ "Allow getting Roblox game warning log messages": "Payagan ang pagkuha ng mga mensahe ng log ng babala sa laro ng Roblox",
+ "Exit Link Shortcuts Menu": "Lumabas sa Menu ng Mga Shortcut sa Link",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Hindi direktang i-clear ang Discord Presence! Error: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord presence, close()]: Closed Discord Presence!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Hindi maisara sa Discord! Error: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Maaaring maputol ang koneksyon. Error: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: Na-deactivate ang Discord Presence!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Muling na-activate ang Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Sinimulan ang Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Hindi makakonekta sa Discord (1)! Error: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Hindi makakonekta sa Discord (2)! Error: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Nabuo ang loop key! Susi: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Naka-enable ang Debug Mode!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Hindi ma-load ang pypresence v4.5.0+na feature. Exception: (*)"
 }

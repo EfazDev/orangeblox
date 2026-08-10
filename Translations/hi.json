@@ -2708,5 +2708,21 @@
  "Would you like to open (*)? (y/n)": "क्या आप (*)खोलना चाहेंगे? (य/नहीं)",
  "Your FFlags have been installed to (*)!": "आपके FFlags (*)पर स्थापित कर दिए गए हैं!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "आपके फ़ास्ट फ़्लैग सफलतापूर्वक आपकी फ़ास्ट फ़्लैग सेटिंग में सहेजे गए!",
- "Return to Settings": "सेटिंग्स पर लौटें"
+ "Return to Settings": "सेटिंग्स पर लौटें",
+ "Allow getting Roblox game error log messages": "Roblox गेम त्रुटि लॉग संदेश प्राप्त करने की अनुमति दें",
+ "Allow getting Roblox game log messages": "Roblox गेम लॉग संदेश प्राप्त करने की अनुमति दें",
+ "Allow getting Roblox game warning log messages": "Roblox गेम चेतावनी लॉग संदेश प्राप्त करने की अनुमति दें",
+ "Exit Link Shortcuts Menu": "लिंक शॉर्टकट मेनू से बाहर निकलें",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Discord Presence को सीधे साफ़ करने में असमर्थ! गलती: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[कलह उपस्थिति, बंद()]: बंद कलह उपस्थिति!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[डिस्कॉर्ड उपस्थिति, बंद करें()]: डिस्कॉर्ड को बंद करने में असमर्थ! गलती: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[कलह उपस्थिति, कनेक्ट()]: कनेक्शन टूट सकता है। गलती: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[डिस्कॉर्ड उपस्थिति, कनेक्ट()]: निष्क्रिय डिसॉर्डर उपस्थिति!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[कलह उपस्थिति, कनेक्ट()]: पुनः सक्रिय कलह उपस्थिति!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[डिसॉर्ड प्रेजेंस, कनेक्ट()]: डिसॉर्डर प्रेजेंस शुरू हुई!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[डिस्कॉर्ड उपस्थिति, कनेक्ट()]: डिस्कॉर्ड से कनेक्ट करने में असमर्थ (1)! गलती: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[डिस्कॉर्ड उपस्थिति, कनेक्ट()]: डिस्कॉर्ड से कनेक्ट करने में असमर्थ (2)! गलती: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[कलह उपस्थिति, generate_loop_key()]: लूप कुंजी उत्पन्न होती है! चाबी: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[डिस्कॉर्ड उपस्थिति, set_debug_mode()]: डिबग मोड सक्षम है!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[डिस्कॉर्ड उपस्थिति] पाइप्रेजेंस v4.5.0+सुविधाओं को लोड करने में असमर्थ। अपवाद: (*)"
 }

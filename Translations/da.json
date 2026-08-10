@@ -2709,5 +2709,21 @@
  "Would you like to open (*)? (y/n)": "Vil du åbne (*)? (å/n)",
  "Your FFlags have been installed to (*)!": "Dine FFlags er blevet installeret til (*)!",
  "Your fast flags were successfully saved into your Fast Flag Settings!": "Dine hurtigflag blev gemt i dine Fast Flag-indstillinger!",
- "Return to Settings": "Vend tilbage til Indstillinger"
+ "Return to Settings": "Vend tilbage til Indstillinger",
+ "Allow getting Roblox game error log messages": "Tillad at få Roblox-spilfejllogmeddelelser",
+ "Allow getting Roblox game log messages": "Tillad at få Roblox-spillogmeddelelser",
+ "Allow getting Roblox game warning log messages": "Tillad at få Roblox-spiladvarselslogmeddelelser",
+ "Exit Link Shortcuts Menu": "Afslut linkgenvejsmenuen",
+ "[Discord Presence, clear()]: Unable to clear Discord Presence directly! Error: (*)": "[Discord presence, clear()]: Kan ikke slette Discord Presence direkte! Fejl: (*)",
+ "[Discord Presence, close()]: Closed Discord Presence!": "[Discord-tilstedeværelse, close()]: Lukket Discord-tilstedeværelse!",
+ "[Discord Presence, close()]: Unable to close to Discord! Error: (*)": "[Discord presence, close()]: Kan ikke lukke til Discord! Fejl: (*)",
+ "[Discord Presence, connect()]: Connection may be broken. Error: (*)": "[Discord presence, connect()]: Forbindelsen kan være afbrudt. Fejl: (*)",
+ "[Discord Presence, connect()]: Deactivated Discord Presence!": "[Discord presence, connect()]: Deaktiveret Discord Presence!",
+ "[Discord Presence, connect()]: Reactivated Discord Presence!": "[Discord presence, connect()]: Genaktiveret Discord Presence!",
+ "[Discord Presence, connect()]: Started Discord Presence!": "[Discord presence, connect()]: Startede Discord Presence!",
+ "[Discord Presence, connect()]: Unable to connect to Discord (1)! Error: (*)": "[Discord presence, connect()]: Kan ikke oprette forbindelse til Discord (1)! Fejl: (*)",
+ "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Kan ikke oprette forbindelse til Discord (2)! Fejl: (*)",
+ "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord-tilstedeværelse, gener_loop_key()]: Loop-nøgle er genereret! Nøgle: (*)",
+ "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Debug Mode er aktiveret!",
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Kan ikke indlæse pypresence v4.5.0+funktioner. Undtagelse: (*)"
 }
