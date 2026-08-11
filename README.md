@@ -72,7 +72,7 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 
 ## Install
 1. Once you have installed Python 3.11 or higher and downloaded the ZIP file, extract the full ZIP into a new folder.
-2. After you have EXTRACTED the folder, open it and make sure you see Install.py. Once you do, run it.
+2. After you have EXTRACTED the folder, open it and make sure you see Install.py. Once you do, run it (you can also run it by running Install.bat (Windows) or Install.command (macOS)).
 2. Complete the installation process and once it says success, run the bootstrap by using the Launchpad for macOS or by using the Search Menu for Windows.
 3. Complete the tutorial about how to use the bootstrap.
 4. Done! You have installed OrangeBlox!
@@ -90,24 +90,24 @@ OrangeBlox is a Python [Console](https://www.google.com/search?q=developer+conso
 ## Hashes
 | File | SHA256 Hash |
 | --- | --- |
-| Bootstrap API (OrangeAPI.py) | `b513767b647fa2fdc0a8b8a816f404de6bb17e0665588e8797e240c2e05f77af` |
-| PyKits API (PyKits.py) | `181b982c486fcf913a9eb4fd1002e092418f5f972a6afdff6255566b8c1c890c` |
-| Roblox Manager (RobloxManager.py) | `7e5cf1e7c87afc99683229ea084b5ada8ecc6d2c94f9c1ef4e6a2e6eed991648` |
-| Installer (Install.py) | `0cd23cc5cd12be29a2e4293b863a2b066eda3394639dbc6d8edf8fa2a2bbbdf6` |
-| Main Bootstrap (Main.py) | `1fa502de4370c36a5ff13d20771cee28149bd06b2324dd464757b5a06fb2fb56` |
-| Mod Manager Module (Modules/modmanager.py) | `aa0e25945c3db93f49773186c29c9ad1d3d8061965e31c67d434d5daa5b18df0` |
-| Menu Options Module (Modules/options.py) | `644057b781861fcce2101b0fd1adb973174b4b48e554b823c544f4bfffdc124c` |
-| Startup Module (Modules/startup.py) | `4c3b6f3953aeca489259524d5068b6f83a4ed22ab48f68a6e233f7b7c72aa059` |
-| Configuration Module (Modules/config.py) | `1e6c2532c10422e50acfaee044ce9601b19a19d577496e64b807b752b0eb1184` |
-| Mod Scripts Module (Modules/modscripts.py) | `10ced77f9a15fa4deb39fe7c5ccd44afe7d4d009c689ffb020cfddb29de41409` |
-| Discord RPC Module (Modules/discord.py) | `a1a7a9f3177a23c10df48dcfd14938fcae0324a3a584806b0a0d75c4e95d9480` |
-| Roblox Module (Modules/roblox.py) | `febbfdcdfe5d035a2a7c8986d7370bdc8bb2ceb64f21b7532716a61bbc622ac2` |
-| Menu Module (Modules/menu.py) | `d993ac77685f61c7a2916e21d4507f1923a21a578b5dbafb7ba21909938ae44d` |
-| Utilities Module (Modules/utils.py) | `f8ceaba0eca97cf33480127e27c42f8576c51ebf554c557bd9d1a7a8f0bca394` |
-| Settings Module (Modules/settings.py) | `1eb605b5c979d03e227784724bee8109a806c3fa9e56e6bcf6832012b7db8bce` |
-| Python Package Module (Modules/pkg.py) | `37aef07b696822ac9f47d46cb19308079a6f913b11cdf817be0bb1a6823d6be6` |
-| Printing/Logging Module (Modules/printing.py) | `2755ee709dfa2321b3b22ebacdcf327db1fe7f4706baa0a840167ace9a2fdd2a` |
-| Bootstrap Loader (OrangeBlox.py) | `ed8ac14d28e2318b036398963e74a3f88e5bdff1d6de5611c733fe5d53ce9f11` |
+| Bootstrap API (OrangeAPI.py) | `1cf95576edea547dfaddc0a19bb1a075cdfd24bdb24122e52e1f52c50e889581` |
+| PyKits API (PyKits.py) | `d4adb81548da97ccc6f3f9bb18245482f6f9e9b236a6fa666e7d1f0c03f3a685` |
+| Roblox Manager (RobloxManager.py) | `1c6d4afe2ee841b39a17a11eb9e7a5fb4a5268bdd03645ee0f9a28e47064bd87` |
+| Installer (Install.py) | `8eb8f16d0bdc8bc657854bf647d62058561669dd1f5478dbbc013038725cc9c0` |
+| Main Bootstrap (Main.py) | `ad47151e417e925dada502696f50cabbbf1be26de84de00113c93041baa2861b` |
+| Mod Manager Module (Modules/modmanager.py) | `c777d977006382534612162f91b182e94e85a1eb6ec1ecaa7703d9f133d2e9ff` |
+| Menu Options Module (Modules/options.py) | `03abc80205026a2bd2dbf9305f03f74eb25ff46964a720c5080b91b6c28ba780` |
+| Startup Module (Modules/startup.py) | `7b72bfeb413ee1a547584e8f91e63218a69895ea7a0d1d6c29b17c127f726b20` |
+| Configuration Module (Modules/config.py) | `05c595d07fd3a5a725dd4973502575d8ea2a83a535abf1dfc166fbd17fd02f7d` |
+| Mod Scripts Module (Modules/modscripts.py) | `7290a5882271c01293f6fd13f4a387d40ba3aee94acd8bb7f03d9d15ff6ac122` |
+| Discord RPC Module (Modules/discord.py) | `f92510986c4573c585bfe6dc5b2b43edf45cca733aee30bbca6c6e433fad4f66` |
+| Roblox Module (Modules/roblox.py) | `c364c4567f44cc3d9ef970ccfc9825209c6c7e6c609fe381d1d2b34748087ad3` |
+| Menu Module (Modules/menu.py) | `604a2f38d7e7219d5b9be7fe075286d0decb203995a1b9b901edd8f5d8f74ddb` |
+| Utilities Module (Modules/utils.py) | `1f5262440e450cb708d56d60677c904a52617e0a055619df5c57f356360bf9bb` |
+| Settings Module (Modules/settings.py) | `a7f87d7111f6bfa34a84762ef6d414b342810d4053969277b7c8598762eb9fcd` |
+| Python Package Module (Modules/pkg.py) | `8679e4dbbd83c028425f1768081a2f511dbd8c9a29b2d5650de993ced90a2500` |
+| Printing/Logging Module (Modules/printing.py) | `9813179e1b0b4702934af8a57bcf7144f17b3170d829a7f19d38098aed1c8bdf` |
+| Bootstrap Loader (OrangeBlox.py) | `1e89192772bc417a22d690ea5b0395a3510ef3fdebc87d16eea1ea9edc4020d0` |
 
 ## Credits
 1. Made by <a href="https://www.efaz.dev"><img src="https://img.shields.io/static/v1?label=&color=ff4b00&message=@EfazDev%20%F0%9F%8D%8A" alt="@EfazDev 🍊"></a>

@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord 存在,connect()]:無法連接到 Discord (2)!錯誤: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence,generate_loop_key()]:循環金鑰已產生!鑰匙: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence,set_debug_mode()]:調試模式已啟用!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] 無法載入 pypresence v4.5.0+功能.例外: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] 無法載入 pypresence v4.5.0+功能.例外: (*)",
+ "Failed to add Python to the registry.": "無法將 Python 新增至註冊表..",
+ "Failed to create shortcuts: (*)": "建立捷徑失敗:(*)",
+ "Failed to write to registry: (*)": "無法寫入註冊表:(*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "已成功建立 Python 的\"開始\"功能表捷徑 (*)..",
+ "Successfully registered Python (*) in the Registry.": "已在登錄中成功註冊 Python (*).."
 }

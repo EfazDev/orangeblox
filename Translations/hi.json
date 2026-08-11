@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[डिस्कॉर्ड उपस्थिति, कनेक्ट()]: डिस्कॉर्ड से कनेक्ट करने में असमर्थ (2)! गलती: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[कलह उपस्थिति, generate_loop_key()]: लूप कुंजी उत्पन्न होती है! चाबी: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[डिस्कॉर्ड उपस्थिति, set_debug_mode()]: डिबग मोड सक्षम है!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[डिस्कॉर्ड उपस्थिति] पाइप्रेजेंस v4.5.0+सुविधाओं को लोड करने में असमर्थ। अपवाद: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[डिस्कॉर्ड उपस्थिति] पाइप्रेजेंस v4.5.0+सुविधाओं को लोड करने में असमर्थ। अपवाद: (*)",
+ "Failed to add Python to the registry.": "पायथन को रजिस्ट्री में जोड़ने में विफल।",
+ "Failed to create shortcuts: (*)": "शॉर्टकट बनाने में विफल: (*)",
+ "Failed to write to registry: (*)": "रजिस्ट्री को लिखने में विफल: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "पायथन (*)के लिए सफलतापूर्वक स्टार्ट मेनू शॉर्टकट बनाए गए।",
+ "Successfully registered Python (*) in the Registry.": "रजिस्ट्री में पायथॉन (*)को सफलतापूर्वक पंजीकृत किया गया।"
 }

@@ -1,5 +1,5 @@
 """
-PyKits v1.9.0 | Made by Efaz from efaz.dev
+PyKits v1.9.1 | Made by Efaz from efaz.dev
 
 A usable set of classes with extra functions that can be used within apps. \n
 Import from file: 
@@ -11,7 +11,7 @@ colors_class = PyKits.Colors()
 """
 
 # Module Information
-__version__ = "1.9.0"
+__version__ = "1.9.1"
 __license__ = "MIT"
 __author__ = "EfazDev"
 __maintainer__ = "EfazDev"
@@ -74,7 +74,9 @@ if main_os != "Windows":
     import pty
     import fcntl
     import termios
-else: import msvcrt
+else: 
+    import msvcrt
+    import winreg
 import http.client as http_client
 from http.cookiejar import CookieJar as _cookie_jar
 import urllib.request as urlreq
@@ -411,7 +413,7 @@ class request:
             if isinstance(cookies, self.CookieJar): cookie_jar = cookies._generate_http_cookiejar(url)
             elif isinstance(cookies, dict): cookie_jar = self.CookieJar(cookies)._generate_http_cookiejar(url)
             else: cookie_jar = self.cookie_jar
-            headers.setdefault("user-agent", f"PyKits/1.9.0")
+            headers.setdefault("user-agent", f"PyKits/{__version__}")
             headers = self._add_auth_to_headers(headers, auth)
             opener = self._make_opener(jar=cookie_jar)
             method = method.upper()
@@ -908,14 +910,36 @@ class pip:
             if not self.executable: return False
             if os.path.exists(self.executable): return True
             else: return False
-    def extractPythonVersion(self, path):
-        name = os.path.basename(path)
+    def extractPythonVersion(self, path, tar_arch: str=None):
+        if os.path.islink(path):
+            try: target_path = os.path.realpath(path)
+            except: target_path = path
+        else: target_path = path
+        path_lower = target_path.lower() 
+        name = os.path.basename(target_path).lower()
         match = re.search(r'python(?:w)?(?:-?|\s*)(\d+)(?:\.(\d+))?(?:\.(\d+))?', name)
-        if match: return tuple(int(g) if g is not None else 0 for g in match.groups())
-        version_part = os.path.basename(os.path.dirname(path))
-        match2 = re.match(r'(\d+)(?:\.(\d+))?(?:\.(\d+))?', version_part)
-        if match2: return tuple(int(g) if g is not None else 0 for g in match2.groups())
-        return (0, 0, 0)
+        if match: version_tuple = tuple(int(g) if g is not None else 0 for g in match.groups())
+        else:
+            version_part = os.path.basename(os.path.dirname(target_path))
+            match2 = re.match(r'(\d+)(?:\.(\d+))?(?:\.(\d+))?', version_part)
+            if match2: version_tuple = tuple(int(g) if g is not None else 0 for g in match2.groups())
+            else: version_tuple = (0, 0, 0)
+        arch_penalty = 0
+        host_arch = os.environ.get("PROCESSOR_ARCHITEW6432", platform.machine()).lower()
+        if not host_arch:  host_arch = platform.machine().lower()
+        if main_os == "Darwin":
+            if host_arch == "arm64" and "intel" in name: arch_penalty = -1
+            elif host_arch in ["x86_64", "amd64"] and "arm" in name: arch_penalty = -1
+        elif main_os == "Windows":
+            is_32bit_path = "-32" in path_lower or "wow64" in path_lower or "(x86)" in path_lower
+            is_arm_path = "arm64" in path_lower
+            if host_arch == "arm64":
+                if is_32bit_path: arch_penalty = -2
+                elif not is_arm_path:  arch_penalty = -1
+            else: 
+                if is_32bit_path: arch_penalty = -1 
+                elif is_arm_path: arch_penalty = -5 
+        return (*version_tuple, arch_penalty)
     def pythonSupported(self, major: int=3, minor: int=13, patch: int=2):
         cur_version = self.getCurrentPythonVersion()
         if not cur_version: return False
@@ -941,7 +965,6 @@ class pip:
             return version_tuple >= macos_version
         else: return False
     def pythonInstall(self, version: str="", beta: bool=False, silent: bool=False, manual: bool=False, arch: str=None):
-        ma_os = main_os
         ma_arch = platform.architecture()
         ma_processor = platform.machine()
         macos_version_numbers = {
@@ -960,7 +983,7 @@ class pip:
             return
         version_url_folder = version
         if beta == True: version_url_folder = re.match(r'^\d+\.\d+\.\d+', version).group()
-        if ma_os == "Darwin":
+        if main_os == "Darwin":
             url = f"https://www.python.org/ftp/python/{version_url_folder}/python-{version}-macos{macos_version_numbers.get(version, '11')}.pkg"
             with tempfile.NamedTemporaryFile(suffix=".pkg", delete=False) as temp_file: pkg_file_path = temp_file.name
             result = self.requests.download(url, pkg_file_path)            
@@ -975,7 +998,7 @@ class pip:
                     self.printDebugMessage(f"Python installer has been executed: {pkg_file_path}")
             else:
                 self.printDebugMessage("Failed to download Python installer.")
-        elif ma_os == "Windows":
+        elif main_os == "Windows":
             if version < "3.11.0": self.printDebugMessage("PyKits is not normally made for versions less than 3.11.0.")
             if arch == "arm64":
                 ma_processor = "arm64"
@@ -1045,7 +1068,9 @@ class pip:
                                     self._win32con.SMTO_ABORTIFHUNG,
                                     5000
                                 )
-                            self.printDebugMessage(f"Successfully installed Python {version} into path: {target_python_path}")
+                            registry, shortcuts = self.registerPython(target_python_path, version)
+                            if registry: self.printDebugMessage(f"Successfully installed Python {version} into path: {target_python_path}")
+                            else: self.printDebugMessage("Failed to add Python to the registry.")
                         else: self.printDebugMessage("Failed to bootstrap pip (download get-pip.py failed).")
                     else: self.printDebugMessage("Failed to download Python installer.")
                 else: self.printDebugMessage("Failed to download Python installer.")
@@ -1065,6 +1090,62 @@ class pip:
                         subprocess.run([exe_file_path], stdout=self.debug == False and subprocess.DEVNULL, stderr=self.debug == False and subprocess.DEVNULL, check=True)
                         self.printDebugMessage(f"Python installer has been executed: {exe_file_path}")
                 else: self.printDebugMessage("Failed to download Python installer.")
+    def registerPython(self, target_python_path: str, version: str):
+        """Only works on Windows."""
+        if main_os != "Windows": return
+        major_minor = self.getMajorMinorVersion(version)
+        python_exe = os.path.join(target_python_path, "python.exe")
+        pythonw_exe = os.path.join(target_python_path, "pythonw.exe")
+        passed1 = True
+        passed2 = True
+        try:
+            core_key_path = rf"Software\Python\PythonCore\{major_minor}"
+            base_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, core_key_path)
+            winreg.SetValueEx(base_key, "DisplayName", 0, winreg.REG_SZ, f"Python {major_minor}")
+            winreg.SetValueEx(base_key, "SupportUrl", 0, winreg.REG_SZ, "https://www.python.org/")
+            winreg.SetValueEx(base_key, "Version", 0, winreg.REG_SZ, version)
+            install_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, rf"{core_key_path}\InstallPath")
+            winreg.SetValue(install_key, "", winreg.REG_SZ, target_python_path)
+            winreg.SetValueEx(install_key, "ExecutablePath", 0, winreg.REG_SZ, python_exe)
+            winreg.SetValueEx(install_key, "WindowedExecutablePath", 0, winreg.REG_SZ, pythonw_exe)
+            path_key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, rf"{core_key_path}\PythonPath")
+            lib_path = os.path.join(target_python_path, "Lib")
+            dlls_path = os.path.join(target_python_path, "DLLs")
+            winreg.SetValue(path_key, "", winreg.REG_SZ, f"{lib_path};{dlls_path}")
+            winreg.CloseKey(path_key)
+            winreg.CloseKey(install_key)
+            winreg.CloseKey(base_key)
+            self.printDebugMessage(f"Successfully registered Python {version} in the Registry.")
+        except Exception as e: self.printDebugMessage(f"Failed to write to registry: {e}"); passed1 = False
+        try:
+            win32com = self.importModule("win32com.client", install_module_if_not_found=True)
+            shell = win32com.Dispatch("WScript.Shell")
+            major_minor = self.getMajorMinorVersion(version)
+            python_exe = os.path.join(target_python_path, "python.exe")
+            start_menu = shell.SpecialFolders("Programs")
+            shortcut_folder = os.path.join(start_menu, f"Python {major_minor}")
+            if not os.path.exists(shortcut_folder): os.makedirs(shortcut_folder, mode=511)
+            cli_shortcut_path = os.path.join(shortcut_folder, f"Python {major_minor}.lnk")
+            cli_shortcut = shell.CreateShortCut(cli_shortcut_path)
+            cli_shortcut.Targetpath = python_exe
+            cli_shortcut.WorkingDirectory = target_python_path
+            cli_shortcut.IconLocation = f"{python_exe},0"
+            cli_shortcut.Description = f"Python {major_minor} CLI"
+            cli_shortcut.save()
+            idle_path = os.path.join(target_python_path, "Lib", "idlelib", "idle.pyw")
+            if os.path.exists(idle_path):
+                pythonw_exe = os.path.join(target_python_path, "pythonw.exe")
+                idle_shortcut_path = os.path.join(shortcut_folder, f"IDLE (Python {major_minor}).lnk")
+                idle_shortcut = shell.CreateShortCut(idle_shortcut_path)
+                idle_shortcut.Targetpath = pythonw_exe
+                idle_shortcut.Arguments = f'"{idle_path}"'
+                idle_shortcut.WorkingDirectory = target_python_path
+                idle_shortcut.IconLocation = f"{idle_path},0"
+                idle_shortcut.Description = f"IDLE (Python {major_minor})"
+                idle_shortcut.save()
+            self.printDebugMessage(f"Successfully created Start Menu shortcuts for Python {major_minor}.")
+        except Exception as e: self.printDebugMessage(f"Failed to create shortcuts: {e}"); passed2 = False
+        return (passed1, passed2)
     def findPythonInstallManager(self):
         return shutil.which("python-install") or shutil.which("python-install-manager")
     def installLocalPythonCertificates(self):
@@ -1105,13 +1186,15 @@ class pip:
                     return final.strip()
                 except: return ""
             elif main_os == "Windows":
-                with open(exe, "rb") as f:
-                    mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-                    pe_offset = int.from_bytes(mm[0x3C:0x40], "little")
-                    machine = int.from_bytes(mm[pe_offset + 4:pe_offset + 6], "little")
-                    mm.close()
-                arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
-                return arch_map.get(machine, "")
+                try:
+                    with open(exe, "rb") as f:
+                        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+                        pe_offset = int.from_bytes(mm[0x3C:0x40], "little")
+                        machine = int.from_bytes(mm[pe_offset + 4:pe_offset + 6], "little")
+                        mm.close()
+                    arch_map = { 0x014c: "x86", 0x8664: "x64", 0xAA64: "arm", 0x01c0: "arm" }
+                    return arch_map.get(machine, "")
+                except: return ""
             else:
                 result = subprocess.run([exe, "-c", "import platform; print(platform.machine())"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 return result.stdout.decode().strip()
@@ -1119,55 +1202,16 @@ class pip:
         alleged_path = os.path.dirname(self.executable)
         return os.path.exists(os.path.join(alleged_path, "..", "pyvenv.cfg")) or (os.path.exists(os.path.join(alleged_path, "python.exe")) and os.path.exists(os.path.join(alleged_path, "pip.exe")))
     def findPython(self, arch=None, latest=True, optimize=True, path=False):
-        ma_os = main_os
-        if ma_os == "Darwin":
+        if main_os == "Darwin":
             target_name = "python3-intel64" if arch == "intel" else "python3"
-            if optimize == True and os.path.exists(f"/usr/local/bin/{target_name}") and os.path.islink(f"/usr/local/bin/{target_name}"): return f"/usr/local/bin/{target_name}" if path == True else pip(executable=f"/usr/local/bin/{target_name}")
-            else:
-                paths = [
-                    "/usr/local/bin/python*",
-                    "/opt/homebrew/bin/python*",
-                    "/Library/Frameworks/Python.framework/Versions/*/bin/python*",
-                    os.path.expanduser("~/Library/Python/*/bin/python*"),
-                    os.path.expanduser("~/.pyenv/versions/*/bin/python*"),
-                    os.path.expanduser("~/opt/anaconda*/bin/python*")
-                ]
-                found_paths = []
-                for path_pattern in paths: found_paths.extend(glob.glob(path_pattern))
-                if latest == True: found_paths.sort(reverse=True, key=self.extractPythonVersion)
-                for pat in found_paths:
-                    if os.path.isfile(pat):
-                        if pat.endswith("t") or pat.endswith("config") or pat.endswith("m") or os.path.basename(pat).startswith("pythonw"): continue
-                        pip_class = pip(executable=pat)
-                        if arch:
-                            py_arch = pip_class.getArchitecture()
-                            if py_arch == "": continue
-                            if py_arch == arch: return pat if path == True else pip_class
-                        else: return pat if path == True else pip_class
-                return None
-        elif ma_os == "Windows":
-            paths = [
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*'),
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES%\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES(x86)%\\Python*\\python.exe')
-            ]
-            found_paths = []
-            for path_pattern in paths: found_paths.extend(glob.glob(path_pattern))
-            if latest == True: found_paths.sort(reverse=True, key=self.extractPythonVersion)
-            for pat in found_paths:
-                if os.path.isfile(pat):
-                    pip_class = pip(executable=pat)
-                    if arch:
-                        py_arch = pip_class.getArchitecture()
-                        if py_arch == "": continue
-                        if py_arch == arch: return pat if path == True else pip_class
-                    else: return pat if path == True else pip_class
-            return None
+            target_path = f"/usr/local/bin/{target_name}"
+            if optimize == True and os.path.exists(target_path) and os.path.islink(target_path): return target_path if path == True else pip(executable=target_path, find=False)
+        all_pythons = self.findPythons(arch=arch, latest=latest, paths=path)
+        if len(all_pythons) > 0: return all_pythons[0]
+        return None
     def findPythons(self, arch=None, latest=True, paths=False):
-        ma_os = main_os
-        founded_pythons = []
-        if ma_os == "Darwin":
+        raw_paths = set()
+        if main_os == "Darwin":
             path_table = [
                 "/usr/local/bin/python*",
                 "/opt/homebrew/bin/python*",
@@ -1176,37 +1220,63 @@ class pip:
                 os.path.expanduser("~/.pyenv/versions/*/bin/python*"),
                 os.path.expanduser("~/opt/anaconda*/bin/python*")
             ]
-            found_paths = []
-            for path_pattern in path_table: found_paths.extend(glob.glob(path_pattern))
-            if latest == True: found_paths.sort(reverse=True, key=self.extractPythonVersion)
-            for path in found_paths:
-                if os.path.isfile(path):
-                    if path.endswith("t") or path.endswith("config") or path.endswith("m") or os.path.basename(path).startswith("pythonw"): continue
-                    pip_class = pip(executable=path)
-                    if arch:
-                        py_arch = pip_class.getArchitecture()
-                        if py_arch == "": continue
-                        if py_arch == arch: founded_pythons.append(path if paths == True else pip_class)
-                    else: founded_pythons.append(path if paths == True else pip_class)
-        elif ma_os == "Windows":
+            for pattern in path_table: raw_paths.update(glob.glob(pattern))
+            for cmd in ["python3", "python"]:
+                p = shutil.which(cmd)
+                if p: raw_paths.add(p)
+        elif main_os == "Windows":
             path_table = [
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*'),
-                os.path.expandvars(r'%LOCALAPPDATA%\\Programs\\Python\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES%\\Python*\\python.exe'),
-                os.path.expandvars(r'%PROGRAMFILES(x86)%\\Python*\\python.exe')
+                os.path.expandvars(r'%LOCALAPPDATA%\Programs\Python\Python*\python.exe'),
+                os.path.expandvars(r'%PROGRAMFILES%\Python*\python.exe'),
+                os.path.expandvars(r'%PROGRAMFILES(x86)%\Python*\python.exe')
             ]
-            found_paths = []
-            for path_pattern in path_table: found_paths.extend(glob.glob(path_pattern))
-            if latest == True: found_paths.sort(reverse=True, key=self.extractPythonVersion)
-            for path in found_paths:
-                if os.path.isfile(path):
-                    pip_class = pip(executable=path)
-                    if arch:
-                        py_arch = pip_class.getArchitecture()
-                        if py_arch == "": continue
-                        if py_arch == arch: founded_pythons.append(path if paths == True else pip_class)
-                    else: founded_pythons.append(path if paths == True else pip_class)
+            for pattern in path_table: raw_paths.update(glob.glob(pattern))
+            raw_paths.update(self.findPythonViaRegistry())
+            for cmd in ["python", "python3"]:
+                p = shutil.which(cmd)
+                if p: raw_paths.add(p)
+        valid_paths = []
+        for p in raw_paths:
+            if os.path.isfile(p):
+                basename = os.path.basename(p).lower()
+                if main_os == "Windows" and ".exe" in basename: basename = basename.replace(".exe", "")
+                if basename.startswith("pythonw") or basename.endswith("config") or basename.endswith("m") or basename.endswith("t") or basename.endswith("remotezip2"): continue
+                if "WindowsApps" in p: continue
+                valid_paths.append(p)
+        if latest == True: valid_paths.sort(reverse=True, key=self.extractPythonVersion)
+        founded_pythons = []
+        for p in valid_paths:
+            pip_class = pip(executable=p, find=False) 
+            if arch:
+                py_arch = pip_class.getArchitecture()
+                if py_arch == "": continue
+                if py_arch == arch: founded_pythons.append(p if paths == True else pip_class)
+            else: founded_pythons.append(p if paths == True else pip_class)
         return founded_pythons
+    def findPythonViaRegistry(self):
+        if main_os != "Windows": return []
+        found_paths = []
+        hkeys = [winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE]
+        access_flags = [
+            winreg.KEY_READ | winreg.KEY_WOW64_64KEY,  # 64
+            winreg.KEY_READ | winreg.KEY_WOW64_32KEY   # 32
+        ]
+        for hkey in hkeys:
+            for flag in access_flags:
+                try:
+                    core_key = winreg.OpenKey(hkey, r"Software\Python\PythonCore", 0, flag)
+                    num_of_subkeys = winreg.QueryInfoKey(core_key)[0]
+                    for i in range(num_of_subkeys):
+                        version_str = winreg.EnumKey(core_key, i)
+                        try:
+                            install_key = winreg.OpenKey(core_key, rf"{version_str}\InstallPath", 0, flag)
+                            executable_path, _ = winreg.QueryValueEx(install_key, "ExecutablePath")
+                            if os.path.exists(executable_path) and executable_path not in found_paths: found_paths.append(executable_path)
+                            winreg.CloseKey(install_key)
+                        except OSError: continue
+                    winreg.CloseKey(core_key)
+                except OSError: continue
+        return found_paths
     def isSameRunningPythonExecutable(self):
         if self.ignore_same == True: return False
         if not self.executable: return False
@@ -1216,14 +1286,12 @@ class pip:
 
     # Python Functions
     def getLocalAppData(self):
-        ma_os = main_os
-        if ma_os == "Windows": return os.path.expandvars(r'%LOCALAPPDATA%')
-        elif ma_os == "Darwin": return f'{os.path.expanduser("~")}/Library/'
+        if main_os == "Windows": return os.path.expandvars(r'%LOCALAPPDATA%')
+        elif main_os == "Darwin": return f'{os.path.expanduser("~")}/Library/'
         else: return f'{os.path.expanduser("~")}/'
     def getUserFolder(self): return os.path.expanduser("~")
     def getIfLoggedInIsMacOSAdmin(self):
-        ma_os = main_os
-        if ma_os == "Darwin":
+        if main_os == "Darwin":
             logged_in_folder = self.getUserFolder()
             username = os.path.basename(logged_in_folder)
             groups_res = subprocess.run([self.getPathFile("/usr/bin/groups"), username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -1231,11 +1299,10 @@ class pip:
             else: return False
         else: return False
     def getInstallableApplicationsFolder(self):
-        ma_os = main_os
-        if ma_os == "Darwin":
+        if main_os == "Darwin":
             if self.getIfLoggedInIsMacOSAdmin(): return os.path.join("/", "Applications")
             else: return os.path.join(self.getUserFolder(), "Applications")
-        elif ma_os == "Windows":
+        elif main_os == "Windows":
             return self.getLocalAppData()
     def restartScript(self, scriptname: str, argv: list):
         argv.pop(0)
@@ -1246,7 +1313,6 @@ class pip:
             while msvcrt.kbhit(): msvcrt.getch()
         else: termios.tcflush(sys.stdin, termios.TCIFLUSH)
     def endProcess(self, name="", pid=""):
-        main_os = main_os
         if pid == "":
             if main_os == "Darwin": subprocess.run([self.getPathFile("/usr/bin/killall"), "-9", name], stdout=subprocess.DEVNULL)
             elif main_os == "Windows": subprocess.run(f"taskkill /IM {name} /F", shell=True, stdout=subprocess.DEVNULL)
@@ -1384,8 +1450,7 @@ class pip:
             os.chmod(dst_root, os.stat(dst_root).st_mode | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH)
         return dst
     def getIfProcessIsOpened(self, process_name="", pid=""):
-        ma_os = main_os
-        if ma_os == "Windows":
+        if main_os == "Windows":
             process_list = subprocess.run(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode("utf-8", errors="ignore")
             if pid == "" or pid == None: return process_name in process_list
             else: return f"{pid} Console" in process_list or f"{pid} Service" in process_list
@@ -1393,8 +1458,7 @@ class pip:
             if pid == "" or pid == None: return subprocess.run(f"pgrep -f '{process_name}' > /dev/null 2>&1", shell=True).returncode == 0
             else: return subprocess.run(f"ps -p {pid} > /dev/null 2>&1", shell=True).returncode == 0
     def getAmountOfProcesses(self, process_name=""):
-        ma_os = main_os
-        if ma_os == "Windows":
+        if main_os == "Windows":
             process = subprocess.Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, _ = process.communicate()
             process_list = output.decode("utf-8")

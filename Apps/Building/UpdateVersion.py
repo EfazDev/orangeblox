@@ -27,8 +27,8 @@ def generateFileHash(file_path: str, is_text: bool=False):
 cur_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 obx_dir = os.path.abspath(os.path.join(cur_path, "..", ".."))
 version_json = {
-    "version": "2.6.0k",
-    "latest_version": "2.6.0k",
+    "version": "2.6.0l",
+    "latest_version": "2.6.0l",
     "hashes": {},
     "download_location": "https://github.com/EfazDev/orangeblox/archive/refs/heads/main.zip"
 }

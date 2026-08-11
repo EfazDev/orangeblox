@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord の存在,connect()]: Discord (2) に接続できません!エラー: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence,generate_loop_key()]: ループキーが生成されました!鍵: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence,set_debug_mode()]: デバッグモードが有効になりました!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+の機能をロードできません.例外: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+の機能をロードできません.例外: (*)",
+ "Failed to add Python to the registry.": "Python をレジストリに追加できませんでした..",
+ "Failed to create shortcuts: (*)": "ショートカットの作成に失敗しました: (*)",
+ "Failed to write to registry: (*)": "レジストリへの書き込みに失敗しました: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Python のスタート メニュー ショートカットが正常に作成されました (*)..",
+ "Successfully registered Python (*) in the Registry.": "Python (*)がレジストリに登録されました.."
 }

@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Présence discord, connect()] : Impossible de se connecter à Discord (2) ! Erreur: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()] : La clé de boucle est générée ! Clé: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Présence discord, set_debug_mode()] : le Mode débogage est activé !",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Impossible de charger les fonctionnalités de pypresence v4.5.0+. Exception: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Impossible de charger les fonctionnalités de pypresence v4.5.0+. Exception: (*)",
+ "Failed to add Python to the registry.": "Échec de l'ajout de Python au registre..",
+ "Failed to create shortcuts: (*)": "Échec de la création de raccourcis : (*)",
+ "Failed to write to registry: (*)": "Échec de l'écriture dans le registre : (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Création réussie des raccourcis du menu Démarrer pour Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Python (*)enregistré avec succès dans le registre.."
 }

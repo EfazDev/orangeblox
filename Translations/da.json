@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Kan ikke oprette forbindelse til Discord (2)! Fejl: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord-tilstedeværelse, gener_loop_key()]: Loop-nøgle er genereret! Nøgle: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Debug Mode er aktiveret!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Kan ikke indlæse pypresence v4.5.0+funktioner. Undtagelse: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Kan ikke indlæse pypresence v4.5.0+funktioner. Undtagelse: (*)",
+ "Failed to add Python to the registry.": "Kunne ikke tilføje Python til registreringsdatabasen..",
+ "Failed to create shortcuts: (*)": "Kunne ikke oprette genveje: (*)",
+ "Failed to write to registry: (*)": "Kunne ikke skrive til registreringsdatabasen: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Startmenuen er oprettet med succes til Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Registrerede Python (*)i registreringsdatabasen.."
 }

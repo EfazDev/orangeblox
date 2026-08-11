@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord (2)-თან დაკავშირება შეუძლებელია! შეცდომა: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: ციკლის გასაღები გენერირებულია! გასაღები: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: გამართვის რეჟიმი ჩართულია!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+ფუნქციების ჩატვირთვა შეუძლებელია. გამონაკლისი: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+ფუნქციების ჩატვირთვა შეუძლებელია. გამონაკლისი: (*)",
+ "Failed to add Python to the registry.": "Პითონის რეესტრში დამატება ვერ მოხერხდა..",
+ "Failed to create shortcuts: (*)": "Მალსახმობების შექმნა ვერ მოხერხდა: (*)",
+ "Failed to write to registry: (*)": "Რეესტრში ჩაწერა ვერ მოხერხდა: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Წარმატებით შეიქმნა Start მენიუს მალსახმობები Python-ისთვის (*)..",
+ "Successfully registered Python (*) in the Registry.": "Პითონი (*)წარმატებით დარეგისტრირდა რეესტრში.."
 }

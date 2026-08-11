@@ -2723,5 +2723,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Không thể kết nối với Discord (2)! Lỗi: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Khóa vòng lặp được tạo! Chìa khóa: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Sự hiện diện của discord, set_debug_mode()]: Chế độ gỡ lỗi đã được bật!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Không thể tải các tính năng của pypresence v4.5.0+. Ngoại lệ: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Không thể tải các tính năng của pypresence v4.5.0+. Ngoại lệ: (*)",
+ "Failed to add Python to the registry.": "Không thể thêm Python vào sổ đăng ký..",
+ "Failed to create shortcuts: (*)": "Không tạo được phím tắt: (*)",
+ "Failed to write to registry: (*)": "Không thể ghi vào sổ đăng ký: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Đã tạo thành công phím tắt Start Menu cho Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Đã đăng ký thành công Python (*)trong Sổ đăng ký.."
 }

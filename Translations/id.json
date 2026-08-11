@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Kehadiran discord, sambungkan()]: Tidak dapat terhubung ke Discord (2)! Kesalahan: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Kehadiran perselisihan, generate_loop_key()]: Kunci loop dibuat! Kunci: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Kehadiran perselisihan, set_debug_mode()]: Mode Debug diaktifkan!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Kehadiran perselisihan] Tidak dapat memuat fitur pypresence v4.5.0+. Pengecualian: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Kehadiran perselisihan] Tidak dapat memuat fitur pypresence v4.5.0+. Pengecualian: (*)",
+ "Failed to add Python to the registry.": "Gagal menambahkan Python ke registri..",
+ "Failed to create shortcuts: (*)": "Gagal membuat pintasan: (*)",
+ "Failed to write to registry: (*)": "Gagal menulis ke registri: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Berhasil membuat pintasan Start Menu untuk Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Berhasil mendaftarkan Python (*)di Registry.."
 }

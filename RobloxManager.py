@@ -1,7 +1,7 @@
 # 
 # Roblox Manager
 # Made by Efaz from efaz.dev
-# v2.7.6
+# v2.7.7
 # 
 # Fulfill your Roblox needs and configuration through Python!
 # 
@@ -33,7 +33,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 user_folder = (os.path.expanduser("~") if main_os == "Darwin" else os.getenv('LOCALAPPDATA'))
 orangeblox_mode = False
 installable_app_folder = None
-script_version = "2.7.6"
+script_version = "2.7.7"
 
 # Base Functions 1
 def getLocalAppData():
@@ -1044,7 +1044,6 @@ class RobloxWindow():
             current_hicon = win32gui.SendMessage(self.system_handler, win32con.WM_GETICON, win32con.ICON_SMALL, 0)
             if current_hicon == hicon: return
             win32gui.SendMessage(self.system_handler, win32con.WM_SETICON, win32con.ICON_SMALL, hicon)
-            win32gui.SendMessage(self.system_handler, win32con.WM_SETICON, win32con.ICON_SMALL2, hicon)
             win32gui.SendMessage(self.system_handler, win32con.WM_SETICON, win32con.ICON_BIG, hicon)
         elif main_os == "Darwin": printLog("Setting Window Icons is unavailable for macOS.")
     def setWindowPositionAndSize(self, size_x: int, size_y: int, position_x: int, position_y: int):

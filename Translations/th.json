@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[สถานะ discord, เชื่อมต่อ()]: ไม่สามารถเชื่อมต่อกับ Discord (2) ได้! ข้อผิดพลาด: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: สร้างลูปคีย์แล้ว! สำคัญ: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[การแสดงตนที่ไม่ลงรอยกัน, set_debug_mode()]: เปิดใช้งานโหมดแก้ไขข้อบกพร่องแล้ว!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] ไม่สามารถโหลดฟีเจอร์ pypresence v4.5.0+ได้ ข้อยกเว้น: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] ไม่สามารถโหลดฟีเจอร์ pypresence v4.5.0+ได้ ข้อยกเว้น: (*)",
+ "Failed to add Python to the registry.": "ไม่สามารถเพิ่ม Python ลงในรีจิสทรีได้",
+ "Failed to create shortcuts: (*)": "ไม่สามารถสร้างทางลัด: (*)",
+ "Failed to write to registry: (*)": "ไม่สามารถเขียนลงรีจิสทรี: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "สร้างทางลัดเมนู Start สำหรับ Python (*)สำเร็จแล้ว",
+ "Successfully registered Python (*) in the Registry.": "ลงทะเบียน Python (*)ใน Registry สำเร็จแล้ว"
 }

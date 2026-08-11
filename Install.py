@@ -1,7 +1,7 @@
 # 
 # OrangeBlox Installer 🍊
 # Made by Efaz from efaz.dev
-# v2.6.0k
+# v2.6.0l
 # 
 
 # Modules
@@ -53,6 +53,7 @@ ignore_files = (
     "build",
     "CNAME", 
     ".github",
+    ".vscode",
     "LICENSE", 
     "README.md",
     ".gitignore",
@@ -63,6 +64,8 @@ ignore_files = (
     "InstallPython.sh", 
     "InstallPython.command", 
     "InstallPython.bat",
+    "Install.command", 
+    "Install.bat",
     "Configuration.json", 
     "RobloxFastFlagLogFilesAttached.json"
 )
@@ -71,6 +74,7 @@ remove_found_files = (
     ".git",
     "build",
     "CNAME", 
+    ".vscode",
     ".github",
     "LICENSE", 
     "README.md",
@@ -90,6 +94,8 @@ remove_found_files = (
     "InstallPython.sh", 
     "InstallPython.command",
     "InstallPython.bat",
+    "Install.command",
+    "Install.bat"
 )
 bootstrap_images_needed = (
     "AppIcon.icns", 
@@ -102,7 +108,7 @@ bootstrap_images_needed = (
     "AppIconRunStudio.ico", 
     "AppIcon64.png"
 )
-current_version = {"version": "2.6.0k"}
+current_version = {"version": "2.6.0l"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
 rebuild_target = []
 repair_mode = False

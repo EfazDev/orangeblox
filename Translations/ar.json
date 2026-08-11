@@ -2731,5 +2731,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[وجود discord، الاتصال ()]: غير قادر على الاتصال بـ Discord (2)! خطأ: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[وجود discord، generator_loop_key()]: يتم إنشاء مفتاح الحلقة! مفتاح: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[وجود discord، set_debug_mode()]: تم تمكين وضع التصحيح!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[وجود discord] غير قادر على تحميل ميزات pypresence v4.5.0+. استثناء: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[وجود discord] غير قادر على تحميل ميزات pypresence v4.5.0+. استثناء: (*)",
+ "Failed to add Python to the registry.": "فشل في إضافة بايثون إلى التسجيل..",
+ "Failed to create shortcuts: (*)": "فشل في إنشاء الاختصارات: (*)",
+ "Failed to write to registry: (*)": "فشل في الكتابة إلى التسجيل: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "تم بنجاح إنشاء اختصارات قائمة ابدأ لـ Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "تم تسجيل بايثون (*)في السجل بنجاح.."
 }

@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Δεν είναι δυνατή η σύνδεση στο Discord (2)! Σφάλμα: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Δημιουργείται κλειδί βρόχου! Κλειδί: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Η λειτουργία εντοπισμού σφαλμάτων είναι ενεργοποιημένη!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Δεν είναι δυνατή η φόρτωση των χαρακτηριστικών του pypresence v4.5.0+. Εξαίρεση: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Δεν είναι δυνατή η φόρτωση των χαρακτηριστικών του pypresence v4.5.0+. Εξαίρεση: (*)",
+ "Failed to add Python to the registry.": "Αποτυχία προσθήκης Python στο μητρώο..",
+ "Failed to create shortcuts: (*)": "Αποτυχία δημιουργίας συντομεύσεων: (*)",
+ "Failed to write to registry: (*)": "Αποτυχία εγγραφής στο μητρώο: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Δημιουργήθηκαν με επιτυχία οι συντομεύσεις του μενού Έναρξη για την Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Η Python (*)καταχωρήθηκε με επιτυχία στο Μητρώο.."
 }

@@ -2723,5 +2723,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord (2) سے جڑنے سے قاصر! خرابی: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: لوپ کی بنی ہوئی ہے! کلید: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: ڈیبگ موڈ فعال ہے!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+خصوصیات لوڈ کرنے سے قاصر۔ استثناء: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] pypresence v4.5.0+خصوصیات لوڈ کرنے سے قاصر۔ استثناء: (*)",
+ "Failed to add Python to the registry.": "Python کو رجسٹری میں شامل کرنے میں ناکام۔",
+ "Failed to create shortcuts: (*)": "شارٹ کٹ بنانے میں ناکام: (*)",
+ "Failed to write to registry: (*)": "رجسٹری کو لکھنے میں ناکام: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Python (*)کے لیے اسٹارٹ مینو شارٹ کٹس کامیابی کے ساتھ بنائے گئے۔",
+ "Successfully registered Python (*) in the Registry.": "Python (*)کو رجسٹری میں کامیابی کے ساتھ رجسٹر کیا گیا۔"
 }

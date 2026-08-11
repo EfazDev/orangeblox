@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Discord'a (2) bağlanılamıyor! Hata: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, created_loop_key()]: Döngü anahtarı oluşturuldu! Anahtar: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Hata Ayıklama Modu etkin!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Pypresence v4.5.0+özellikleri yüklenemiyor. İstisna: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Pypresence v4.5.0+özellikleri yüklenemiyor. İstisna: (*)",
+ "Failed to add Python to the registry.": "Python kayıt defterine eklenemedi..",
+ "Failed to create shortcuts: (*)": "Kısayollar oluşturulamadı: (*)",
+ "Failed to write to registry: (*)": "Kayıt defterine yazılamadı: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Python için Başlat Menüsü kısayolları başarıyla oluşturuldu (*)..",
+ "Successfully registered Python (*) in the Registry.": "Python (*)Kayıt Defterine başarıyla kaydedildi.."
 }

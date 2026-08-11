@@ -2725,5 +2725,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Hindi makakonekta sa Discord (2)! Error: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: Nabuo ang loop key! Susi: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: Naka-enable ang Debug Mode!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Hindi ma-load ang pypresence v4.5.0+na feature. Exception: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Hindi ma-load ang pypresence v4.5.0+na feature. Exception: (*)",
+ "Failed to add Python to the registry.": "Nabigong magdagdag ng Python sa registry..",
+ "Failed to create shortcuts: (*)": "Nabigong gumawa ng mga shortcut: (*)",
+ "Failed to write to registry: (*)": "Nabigong sumulat sa pagpapatala: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Matagumpay na nakagawa ng mga shortcut sa Start Menu para sa Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Matagumpay na nairehistro ang Python (*)sa Registry.."
 }

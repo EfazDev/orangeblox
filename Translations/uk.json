@@ -2724,5 +2724,10 @@
  "[Discord Presence, connect()]: Unable to connect to Discord (2)! Error: (*)": "[Discord presence, connect()]: Неможливо підключитися до Discord (2)! Помилка: (*)",
  "[Discord Presence, generate_loop_key()]: Loop key is generated! Key: (*)": "[Discord presence, generate_loop_key()]: ключ циклу створено! Ключ: (*)",
  "[Discord Presence, set_debug_mode()]: Debug Mode is enabled!": "[Discord presence, set_debug_mode()]: режим налагодження ввімкнено!",
- "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Не вдалося завантажити функції pypresence v4.5.0+. Виняток: (*)"
+ "[Discord Presence] Unable to load pypresence v4.5.0+ features. Exception: (*)": "[Discord presence] Не вдалося завантажити функції pypresence v4.5.0+. Виняток: (*)",
+ "Failed to add Python to the registry.": "Не вдалося додати Python до реєстру..",
+ "Failed to create shortcuts: (*)": "Не вдалося створити ярлики: (*)",
+ "Failed to write to registry: (*)": "Не вдалося записати в реєстр: (*)",
+ "Successfully created Start Menu shortcuts for Python (*).": "Успішно створено ярлики меню «Пуск» для Python (*)..",
+ "Successfully registered Python (*) in the Registry.": "Python (*)успішно зареєстровано в реєстрі.."
 }
